@@ -383,6 +383,6 @@ const flatMap = dyadic((f, m) => {
 
 
 module.exports = {
-    field, has, exec, execRight, access, extend, merge, immutable, mirror, first,
+    field, has, exec, execRight, access, extend, merge, immutable, first,
     last, map, flatten, flatMap, assoc
 };
