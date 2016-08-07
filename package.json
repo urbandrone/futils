@@ -1,6 +1,6 @@
 {
   "name": "futils",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Functional utilities (lenses, decorators, transducers...)",
   "main": "futils.js",
   "scripts": {
