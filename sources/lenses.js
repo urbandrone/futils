@@ -29,6 +29,7 @@ const Identity = (x) => ({value: x, map(f){ return Identity(f(x)); }});
  *     than objects and arrays. Please note that the setter function has to
  *     take care to clone the given structure appropriate before manipulating it
  * @method 
+ * @version 0.6.0
  * @param {function} getter A function defining how to get a value from the structure
  * @param {function} setter A function defining how to clone the structure and set a value
  * @return {function} A lens for the given data type
@@ -53,6 +54,7 @@ const baseLens = lens(dot, assoc);
  * Given a lens and a data structure, returns the current value foci on the data
  *     structure
  * @method 
+ * @version 0.6.0
  * @param {function} lens A lens created by makeLenses
  * @param {array|object} data The data structure
  * @return {*} Whatever the current value is
@@ -72,6 +74,7 @@ const view = dyadic((lens, data) => lens(Const)(data).value);
  *     foci of the lens on the data structure and returns a copy of the given
  *     structure
  * @method 
+ * @version 0.6.0
  * @param {function} lens A lens created by makeLenses
  * @param {function} f A data transforming function
  * @param {array|object} data The data structure
@@ -93,6 +96,7 @@ const over = triadic((lens, f, data) => lens((y) => Identity(f(y)))(data).value 
  *     lens to the given value on the data structure and returns a copy of the
  *     given structure
  * @method 
+ * @version 0.6.0
  * @param {function} lens A lens created by makeLenses
  * @param {*} v The value to set
  * @param {array|object} data The data structure
@@ -114,6 +118,7 @@ const set = triadic((lens, v, data) => over(lens, getter(v), data));
  *     lenses where each lens points to one of the given parameters. A additional
  *     "num" lensmaker is returned too to allow peeking into array items
  * @method 
+ * @version 0.6.0
  * @param {string} fields* String representing the fields on a object
  * @return {object} Collection of lenses
  *
@@ -139,6 +144,7 @@ const makeLenses = (...fields) => fields.reduce((acc, field) => {
 /**
  * Utility function, maps a lens over a nested data structure
  * @method 
+ * @version 0.6.0
  * @param {function} f Data transformation function
  * @param {array|object} data The nested data structure
  * @return {array|object} Modified clone of the given structure

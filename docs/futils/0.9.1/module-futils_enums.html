@@ -1,0 +1,2816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>futils/enums - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-futils_aritize.html">futils/aritize</a><ul class='methods'><li data-type='method'><a href="module-futils_aritize.html#~aritize">aritize</a></li></ul></li><li><a href="module-futils_combinators.html">futils/combinators</a><ul class='methods'><li data-type='method'><a href="module-futils_combinators.html#~and">and</a></li><li data-type='method'><a href="module-futils_combinators.html#~compose">compose</a></li><li data-type='method'><a href="module-futils_combinators.html#~getter">getter</a></li><li data-type='method'><a href="module-futils_combinators.html#~identity">identity</a></li><li data-type='method'><a href="module-futils_combinators.html#~or">or</a></li><li data-type='method'><a href="module-futils_combinators.html#~pipe">pipe</a></li><li data-type='method'><a href="module-futils_combinators.html#~splat">splat</a></li><li data-type='method'><a href="module-futils_combinators.html#~tap">tap</a></li></ul></li><li><a href="module-futils_comparators.html">futils/comparators</a><ul class='methods'><li data-type='method'><a href="module-futils_comparators.html#~eq">eq</a></li><li data-type='method'><a href="module-futils_comparators.html#~gt">gt</a></li><li data-type='method'><a href="module-futils_comparators.html#~gte">gte</a></li><li data-type='method'><a href="module-futils_comparators.html#~locals">locals</a></li><li data-type='method'><a href="module-futils_comparators.html#~lt">lt</a></li><li data-type='method'><a href="module-futils_comparators.html#~lte">lte</a></li></ul></li><li><a href="module-futils_decorators.html">futils/decorators</a><ul class='methods'><li data-type='method'><a href="module-futils_decorators.html#~curry">curry</a></li><li data-type='method'><a href="module-futils_decorators.html#~curryRight">curryRight</a></li><li data-type='method'><a href="module-futils_decorators.html#~dyadic">dyadic</a></li><li data-type='method'><a href="module-futils_decorators.html#~flip">flip</a></li><li data-type='method'><a href="module-futils_decorators.html#~given">given</a></li><li data-type='method'><a href="module-futils_decorators.html#~maybe">maybe</a></li><li data-type='method'><a href="module-futils_decorators.html#~memoize">memoize</a></li><li data-type='method'><a href="module-futils_decorators.html#~monadic">monadic</a></li><li data-type='method'><a href="module-futils_decorators.html#~not">not</a></li><li data-type='method'><a href="module-futils_decorators.html#~once">once</a></li><li data-type='method'><a href="module-futils_decorators.html#~partial">partial</a></li><li data-type='method'><a href="module-futils_decorators.html#~partialRight">partialRight</a></li><li data-type='method'><a href="module-futils_decorators.html#~tetradic">tetradic</a></li><li data-type='method'><a href="module-futils_decorators.html#~triadic">triadic</a></li></ul></li><li><a href="module-futils_enums.html">futils/enums</a><ul class='methods'><li data-type='method'><a href="module-futils_enums.html#~access">access</a></li><li data-type='method'><a href="module-futils_enums.html#~assoc">assoc</a></li><li data-type='method'><a href="module-futils_enums.html#~exec">exec</a></li><li data-type='method'><a href="module-futils_enums.html#~execRight">execRight</a></li><li data-type='method'><a href="module-futils_enums.html#~extend">extend</a></li><li data-type='method'><a href="module-futils_enums.html#~field">field</a></li><li data-type='method'><a href="module-futils_enums.html#~first">first</a></li><li data-type='method'><a href="module-futils_enums.html#~flatMap">flatMap</a></li><li data-type='method'><a href="module-futils_enums.html#~flatten">flatten</a></li><li data-type='method'><a href="module-futils_enums.html#~has">has</a></li><li data-type='method'><a href="module-futils_enums.html#~immutable">immutable</a></li><li data-type='method'><a href="module-futils_enums.html#~last">last</a></li><li data-type='method'><a href="module-futils_enums.html#~map">map</a></li><li data-type='method'><a href="module-futils_enums.html#~merge">merge</a></li></ul></li><li><a href="module-futils_lenses.html">futils/lenses</a><ul class='methods'><li data-type='method'><a href="module-futils_lenses.html#~lens">lens</a></li><li data-type='method'><a href="module-futils_lenses.html#~makeLenses">makeLenses</a></li><li data-type='method'><a href="module-futils_lenses.html#~mappedLens">mappedLens</a></li><li data-type='method'><a href="module-futils_lenses.html#~over">over</a></li><li data-type='method'><a href="module-futils_lenses.html#~set">set</a></li><li data-type='method'><a href="module-futils_lenses.html#~view">view</a></li></ul></li><li><a href="module-futils_state.html">futils/state</a><ul class='methods'><li data-type='method'><a href="module-futils_state.html#~chosen">chosen</a></li><li data-type='method'><a href="module-futils_state.html#~counter">counter</a></li><li data-type='method'><a href="module-futils_state.html#~stateful">stateful</a></li></ul></li><li><a href="module-futils_transducers.html">futils/transducers</a><ul class='methods'><li data-type='method'><a href="module-futils_transducers.html#~drop">drop</a></li><li data-type='method'><a href="module-futils_transducers.html#~dropWhile">dropWhile</a></li><li data-type='method'><a href="module-futils_transducers.html#~filter">filter</a></li><li data-type='method'><a href="module-futils_transducers.html#~flatten">flatten</a></li><li data-type='method'><a href="module-futils_transducers.html#~fold">fold</a></li><li data-type='method'><a href="module-futils_transducers.html#~into">into</a></li><li data-type='method'><a href="module-futils_transducers.html#~keep">keep</a></li><li data-type='method'><a href="module-futils_transducers.html#~map">map</a></li><li data-type='method'><a href="module-futils_transducers.html#~partition">partition</a></li><li data-type='method'><a href="module-futils_transducers.html#~partitionWith">partitionWith</a></li><li data-type='method'><a href="module-futils_transducers.html#~take">take</a></li><li data-type='method'><a href="module-futils_transducers.html#~takeWhile">takeWhile</a></li><li data-type='method'><a href="module-futils_transducers.html#~transduce">transduce</a></li><li data-type='method'><a href="module-futils_transducers.html#~unique">unique</a></li></ul></li><li><a href="module-futils_types.html">futils/types</a><ul class='methods'><li data-type='method'><a href="module-futils_types.html#~isAny">isAny</a></li><li data-type='method'><a href="module-futils_types.html#~isArray">isArray</a></li><li data-type='method'><a href="module-futils_types.html#~isArrayOf">isArrayOf</a></li><li data-type='method'><a href="module-futils_types.html#~isBool">isBool</a></li><li data-type='method'><a href="module-futils_types.html#~isDate">isDate</a></li><li data-type='method'><a href="module-futils_types.html#~isFalse">isFalse</a></li><li data-type='method'><a href="module-futils_types.html#~isFloat">isFloat</a></li><li data-type='method'><a href="module-futils_types.html#~isFunc">isFunc</a></li><li data-type='method'><a href="module-futils_types.html#~isInt">isInt</a></li><li data-type='method'><a href="module-futils_types.html#~isIterable">isIterable</a></li><li data-type='method'><a href="module-futils_types.html#~isIterator">isIterator</a></li><li data-type='method'><a href="module-futils_types.html#~isNil">isNil</a></li><li data-type='method'><a href="module-futils_types.html#~isNode">isNode</a></li><li data-type='method'><a href="module-futils_types.html#~isNodeList">isNodeList</a></li><li data-type='method'><a href="module-futils_types.html#~isNull">isNull</a></li><li data-type='method'><a href="module-futils_types.html#~isNumber">isNumber</a></li><li data-type='method'><a href="module-futils_types.html#~isObject">isObject</a></li><li data-type='method'><a href="module-futils_types.html#~isObjectOf">isObjectOf</a></li><li data-type='method'><a href="module-futils_types.html#~isPromise">isPromise</a></li><li data-type='method'><a href="module-futils_types.html#~isRegex">isRegex</a></li><li data-type='method'><a href="module-futils_types.html#~isString">isString</a></li><li data-type='method'><a href="module-futils_types.html#~isTrue">isTrue</a></li><li data-type='method'><a href="module-futils_types.html#~isVoid">isVoid</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">futils/enums</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description">A collection of enumerable utility functions. Contains abstractions which    work on arrays, objects and monads</div>
+        
+
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line14">line 14</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li><a href="module-futils_types.html">module:futils/types</a></li>
+        
+            <li><a href="module-futils_decorators.html">module:futils/decorators</a></li>
+        </ul>
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="~access"><span class="type-signature">(inner) </span>access<span class="signature">(x, key)</span><span class="type-signature"> &rarr; {any|null}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Looks like the opposite of the `field` function but does the same
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
+|
+
+<span class="param-type">string</span>
+|
+
+<span class="param-type">Monad</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Data structure to access</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Single key or chain of keys separated by `.`</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line81">line 81</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Either the value of the key or null
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">any</span>
+|
+
+<span class="param-type">null</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {access} = require('futils');var keys = {8: 'Backspace', 9: 'Tab', 13: 'Enter', ... };const keyMeans = access(keys);// imagine a series of keystrokes:[8, 13, ... 13].map(keyMeans); // -> ['Backspace', 'Enter', ... 'Enter']</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~assoc"><span class="type-signature">(inner) </span>assoc<span class="signature">(k, v, x)</span><span class="type-signature"> &rarr; {array|object|*}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Assigns a value and a key to a given data structure, returns a clone of the    given structure
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>k</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The key to assign to</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>v</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The value to assing</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+|
+
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The data structure to transform</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.3.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line104">line 104</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    New array or object or the given thing
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">array</span>
+|
+
+<span class="param-type">object</span>
+|
+
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {assoc} = require('futils');let p = { name: 'John Doe', accounts: [{name: 'jdoe'}] };const setAccountCount = assoc('accountCount');setAccountCount(p.accounts.length, p);// -> {name: 'John Doe', ..., accountCount: 1}console.log(p); // -> {name: 'John Doe', accounts: [...]};</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~exec"><span class="type-signature">(inner) </span>exec<span class="signature">(method, partials<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {function}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Allows to predefine a method invocation
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>method</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Name of a method or a function</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>partials</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Presetted arguments</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line138">line 138</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Function awaiting a instance
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {exec} = require('futils');const upper = exec('toUpperCase');upper('hello world'); // -> 'HELLO WORLD'const firstHalf = exec('slice', 0, 5);firstHalf([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // -> [1, 2, 3, 4, 5]</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~execRight"><span class="type-signature">(inner) </span>execRight<span class="signature">(method, partials<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {function}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Allows to predefine a method invocation
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>method</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Name of a method or a function</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>partials</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Presetted arguments</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line167">line 167</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Function awaiting a instance
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">function</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {execRight} = require('futils');const upper = execRight('toUpperCase');upper('hello world'); // -> 'HELLO WORLD'const firstHalf = execRight('slice', 5, 0);firstHalf([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // -> [1, 2, 3, 4, 5]</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~extend"><span class="type-signature">(inner) </span>extend<span class="signature">(x)</span><span class="type-signature"> &rarr; {object}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Given a base object and some extension objects, extends the base object with    the rest of the extension objects. The extensions are included from left    to right, so that the last extension overrides the first. Note: This    performs a side effect by modifying the base object! If you instead need    a pure version, use the `merge` function
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Base object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>...xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">1 up to N extensions</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.3.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line203">line 203</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The extended base object
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {extend} = require('futils');var customer = {name: 'John Doe', id: 00000001},    basket = {items: [ ... number of items ... ]};var customerWithBasket = extend(customer, basket);customerWithBasket; // -> {name: '...', id: ..., items: [ ... ]}customer === customerWithBasket; // -> true</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~field"><span class="type-signature">(inner) </span>field<span class="signature">(key, x)</span><span class="type-signature"> &rarr; {any|null}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Accesses a given object by a chain of keys
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Single key or a chain of keys separated by `.`</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
+|
+
+<span class="param-type">string</span>
+|
+
+<span class="param-type">Monad</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Data structure to access</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line59">line 59</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Either the value of the key or null
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">any</span>
+|
+
+<span class="param-type">null</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {field} = require('futils');const getName = field('name');getName({name: 'John Doe'}); // -> 'John Doe'const firstName = field('name.first');firstName({name: {first: 'John', last: 'Doe'}}); // -> 'John'</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~first"><span class="type-signature">(inner) </span>first<span class="signature">(xs)</span><span class="type-signature"> &rarr; {any}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Given a iterable collection, returns the first item
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+|
+
+<span class="param-type">nodelist</span>
+|
+
+<span class="param-type">array-like</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The collection</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line267">line 267</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Whatever the first item is
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">any</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {first} = require('futils');first([1, 2, 3]); // -> 1first(document.querySelectorAll('a')); // -> &lt;a>...&lt;/a></code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~flatMap"><span class="type-signature">(inner) </span>flatMap<span class="signature">(f, m)</span><span class="type-signature"> &rarr; {object|array|Monad}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Generic flatMap method, works on anything which implements a `map` and a    `flatten` method as well as on arrays and on objects. Please note that    objects will not be flattened
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>f</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Transformation function</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>m</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
+|
+
+<span class="param-type">Monad</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The mappable</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line376">line 376</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    New instance of given mappable
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
+|
+
+<span class="param-type">Monad</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {flatMap} = require('futils');const split = (s) => s.split('');flatMap(split, ['Hello world']); // -> ['H', 'e', 'l', 'l', 'o', ...]</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~flatten"><span class="type-signature">(inner) </span>flatten<span class="signature">(m)</span><span class="type-signature"> &rarr; {object|array|Monad}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Generic flatten method, works on anything that implements a `flatten` method    as well as on arrays
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>m</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
+|
+
+<span class="param-type">Monad</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The thing to flatten</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line335">line 335</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    New instance or given if object
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
+|
+
+<span class="param-type">Monad</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {flatten} = require('futils');flatten([[1, 2], 3, [[4, 5]]]); // -> [1, 2, 3, 4, 5]</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~has"><span class="type-signature">(inner) </span>has<span class="signature">(key, x)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Checks if a given object has a field of a certain key by name which is not    inherited
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Name of the field</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The object to test</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line40">line 40</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    True if the field is present
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {has} = require('futils');let testee = {foo: 'bar'};has('foo', testee); // -> truehas('toString', testee); // -> false</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~immutable"><span class="type-signature">(inner) </span>immutable<span class="signature">(x)</span><span class="type-signature"> &rarr; {object}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Takes a object and prevents its pairs from being changed or removed, as well    as freezing their enumerability, writability and configurability.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Object to make immutable</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.3.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line251">line 251</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Immutable object
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {immutable} = require('futils');var money = immutable({dollar: 5, cents: 50});money.dollar; // -> 5money.dollar += 5; // ;-)money.dollar; // -> 5</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~last"><span class="type-signature">(inner) </span>last<span class="signature">(xs)</span><span class="type-signature"> &rarr; {any}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Given a iterable collection, returns the last item
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+|
+
+<span class="param-type">nodelist</span>
+|
+
+<span class="param-type">array-like</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The collection</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line283">line 283</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Whatever the last item is
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">any</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {last} = require('futils');last([1, 2, 3]); // -> 3last(document.querySelectorAll('a')); // -> &lt;a>...&lt;/a></code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~map"><span class="type-signature">(inner) </span>map<span class="signature">(f, m)</span><span class="type-signature"> &rarr; {object|array|Monad}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Generic mapper method, works on anything that implements a `map` method as    well as on arrays and objects
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>f</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Transformation function to map</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>m</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
+|
+
+<span class="param-type">Monad</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The mappable</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.2.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line303">line 303</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    New instance of the mappable
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+|
+
+<span class="param-type">array</span>
+|
+
+<span class="param-type">Monad</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {map} = require('futils');const addOne = (n) => n + 1;map(addOne, [1, 2, 3]); // -> [2, 3, 4]// auto curried:const mapAdd1 = map(addOne);</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~merge"><span class="type-signature">(inner) </span>merge<span class="signature">(x)</span><span class="type-signature"> &rarr; {object}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Given a base object and some extension objects, creates a copy of the base    object and extends that copy with the rest of the extension objects. The    extensions are included from left to right, so that the last    extension overrides the first. Note: This creates a new object, based on    the first given parameter. If you instead want to perform a side effect    use the `extend` function
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Base object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>...xs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">1 up to N extensions</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>0.3.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="enums.js.html">enums.js</a>, <a href="enums.js.html#line230">line 230</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The extended copy of the base object
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {merge} = require('futils');var customer = {name: 'John Doe', id: 00000001},    basket = {items: [ ... number of items ... ]};var customerWithBasket = merge(customer, basket);customerWithBasket; // -> {name: '...', id: ..., items: [ ... ]}customer === customerWithBasket; // -> false</code></pre>
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Aug 07 2016 18:34:20 GMT+0200 (Mitteleuropäische Sommerzeit) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

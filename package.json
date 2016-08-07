@@ -1,10 +1,11 @@
 {
   "name": "futils",
   "version": "0.9.1",
-  "description": "Functional utilities (lenses, decorators, transducers...)",
+  "description": "Functional programming utility toolkit",
   "main": "futils.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "./node_modules/.bin/jsdoc -c ./jsdocconf.json --verbose"
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,8 @@
     "url": "https://github.com/urbandrone/futils/issues"
   },
   "homepage": "https://github.com/urbandrone/futils#readme",
-  "devDependencies": {}
+  "devDependencies": {
+    "jsdoc": "^3.4.0",
+    "minami": "^1.1.1"
+  }
 }

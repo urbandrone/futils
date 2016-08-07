@@ -1,6 +1,46 @@
-/*
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>enums.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-futils_aritize.html">futils/aritize</a><ul class='methods'><li data-type='method'><a href="module-futils_aritize.html#~aritize">aritize</a></li></ul></li><li><a href="module-futils_combinators.html">futils/combinators</a><ul class='methods'><li data-type='method'><a href="module-futils_combinators.html#~and">and</a></li><li data-type='method'><a href="module-futils_combinators.html#~compose">compose</a></li><li data-type='method'><a href="module-futils_combinators.html#~getter">getter</a></li><li data-type='method'><a href="module-futils_combinators.html#~identity">identity</a></li><li data-type='method'><a href="module-futils_combinators.html#~or">or</a></li><li data-type='method'><a href="module-futils_combinators.html#~pipe">pipe</a></li><li data-type='method'><a href="module-futils_combinators.html#~splat">splat</a></li><li data-type='method'><a href="module-futils_combinators.html#~tap">tap</a></li></ul></li><li><a href="module-futils_comparators.html">futils/comparators</a><ul class='methods'><li data-type='method'><a href="module-futils_comparators.html#~eq">eq</a></li><li data-type='method'><a href="module-futils_comparators.html#~gt">gt</a></li><li data-type='method'><a href="module-futils_comparators.html#~gte">gte</a></li><li data-type='method'><a href="module-futils_comparators.html#~locals">locals</a></li><li data-type='method'><a href="module-futils_comparators.html#~lt">lt</a></li><li data-type='method'><a href="module-futils_comparators.html#~lte">lte</a></li></ul></li><li><a href="module-futils_decorators.html">futils/decorators</a><ul class='methods'><li data-type='method'><a href="module-futils_decorators.html#~curry">curry</a></li><li data-type='method'><a href="module-futils_decorators.html#~curryRight">curryRight</a></li><li data-type='method'><a href="module-futils_decorators.html#~dyadic">dyadic</a></li><li data-type='method'><a href="module-futils_decorators.html#~flip">flip</a></li><li data-type='method'><a href="module-futils_decorators.html#~given">given</a></li><li data-type='method'><a href="module-futils_decorators.html#~maybe">maybe</a></li><li data-type='method'><a href="module-futils_decorators.html#~memoize">memoize</a></li><li data-type='method'><a href="module-futils_decorators.html#~monadic">monadic</a></li><li data-type='method'><a href="module-futils_decorators.html#~not">not</a></li><li data-type='method'><a href="module-futils_decorators.html#~once">once</a></li><li data-type='method'><a href="module-futils_decorators.html#~partial">partial</a></li><li data-type='method'><a href="module-futils_decorators.html#~partialRight">partialRight</a></li><li data-type='method'><a href="module-futils_decorators.html#~tetradic">tetradic</a></li><li data-type='method'><a href="module-futils_decorators.html#~triadic">triadic</a></li></ul></li><li><a href="module-futils_enums.html">futils/enums</a><ul class='methods'><li data-type='method'><a href="module-futils_enums.html#~access">access</a></li><li data-type='method'><a href="module-futils_enums.html#~assoc">assoc</a></li><li data-type='method'><a href="module-futils_enums.html#~exec">exec</a></li><li data-type='method'><a href="module-futils_enums.html#~execRight">execRight</a></li><li data-type='method'><a href="module-futils_enums.html#~extend">extend</a></li><li data-type='method'><a href="module-futils_enums.html#~field">field</a></li><li data-type='method'><a href="module-futils_enums.html#~first">first</a></li><li data-type='method'><a href="module-futils_enums.html#~flatMap">flatMap</a></li><li data-type='method'><a href="module-futils_enums.html#~flatten">flatten</a></li><li data-type='method'><a href="module-futils_enums.html#~has">has</a></li><li data-type='method'><a href="module-futils_enums.html#~immutable">immutable</a></li><li data-type='method'><a href="module-futils_enums.html#~last">last</a></li><li data-type='method'><a href="module-futils_enums.html#~map">map</a></li><li data-type='method'><a href="module-futils_enums.html#~merge">merge</a></li></ul></li><li><a href="module-futils_lenses.html">futils/lenses</a><ul class='methods'><li data-type='method'><a href="module-futils_lenses.html#~lens">lens</a></li><li data-type='method'><a href="module-futils_lenses.html#~makeLenses">makeLenses</a></li><li data-type='method'><a href="module-futils_lenses.html#~mappedLens">mappedLens</a></li><li data-type='method'><a href="module-futils_lenses.html#~over">over</a></li><li data-type='method'><a href="module-futils_lenses.html#~set">set</a></li><li data-type='method'><a href="module-futils_lenses.html#~view">view</a></li></ul></li><li><a href="module-futils_state.html">futils/state</a><ul class='methods'><li data-type='method'><a href="module-futils_state.html#~chosen">chosen</a></li><li data-type='method'><a href="module-futils_state.html#~counter">counter</a></li><li data-type='method'><a href="module-futils_state.html#~stateful">stateful</a></li></ul></li><li><a href="module-futils_transducers.html">futils/transducers</a><ul class='methods'><li data-type='method'><a href="module-futils_transducers.html#~drop">drop</a></li><li data-type='method'><a href="module-futils_transducers.html#~dropWhile">dropWhile</a></li><li data-type='method'><a href="module-futils_transducers.html#~filter">filter</a></li><li data-type='method'><a href="module-futils_transducers.html#~flatten">flatten</a></li><li data-type='method'><a href="module-futils_transducers.html#~fold">fold</a></li><li data-type='method'><a href="module-futils_transducers.html#~into">into</a></li><li data-type='method'><a href="module-futils_transducers.html#~keep">keep</a></li><li data-type='method'><a href="module-futils_transducers.html#~map">map</a></li><li data-type='method'><a href="module-futils_transducers.html#~partition">partition</a></li><li data-type='method'><a href="module-futils_transducers.html#~partitionWith">partitionWith</a></li><li data-type='method'><a href="module-futils_transducers.html#~take">take</a></li><li data-type='method'><a href="module-futils_transducers.html#~takeWhile">takeWhile</a></li><li data-type='method'><a href="module-futils_transducers.html#~transduce">transduce</a></li><li data-type='method'><a href="module-futils_transducers.html#~unique">unique</a></li></ul></li><li><a href="module-futils_types.html">futils/types</a><ul class='methods'><li data-type='method'><a href="module-futils_types.html#~isAny">isAny</a></li><li data-type='method'><a href="module-futils_types.html#~isArray">isArray</a></li><li data-type='method'><a href="module-futils_types.html#~isArrayOf">isArrayOf</a></li><li data-type='method'><a href="module-futils_types.html#~isBool">isBool</a></li><li data-type='method'><a href="module-futils_types.html#~isDate">isDate</a></li><li data-type='method'><a href="module-futils_types.html#~isFalse">isFalse</a></li><li data-type='method'><a href="module-futils_types.html#~isFloat">isFloat</a></li><li data-type='method'><a href="module-futils_types.html#~isFunc">isFunc</a></li><li data-type='method'><a href="module-futils_types.html#~isInt">isInt</a></li><li data-type='method'><a href="module-futils_types.html#~isIterable">isIterable</a></li><li data-type='method'><a href="module-futils_types.html#~isIterator">isIterator</a></li><li data-type='method'><a href="module-futils_types.html#~isNil">isNil</a></li><li data-type='method'><a href="module-futils_types.html#~isNode">isNode</a></li><li data-type='method'><a href="module-futils_types.html#~isNodeList">isNodeList</a></li><li data-type='method'><a href="module-futils_types.html#~isNull">isNull</a></li><li data-type='method'><a href="module-futils_types.html#~isNumber">isNumber</a></li><li data-type='method'><a href="module-futils_types.html#~isObject">isObject</a></li><li data-type='method'><a href="module-futils_types.html#~isObjectOf">isObjectOf</a></li><li data-type='method'><a href="module-futils_types.html#~isPromise">isPromise</a></li><li data-type='method'><a href="module-futils_types.html#~isRegex">isRegex</a></li><li data-type='method'><a href="module-futils_types.html#~isString">isString</a></li><li data-type='method'><a href="module-futils_types.html#~isTrue">isTrue</a></li><li data-type='method'><a href="module-futils_types.html#~isVoid">isVoid</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">enums.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
 The MIT License (MIT)
-Copyright (c) 2015/2016 David Hofmann <the.urban.drone@gmail.com>
+Copyright (c) 2015/2016 David Hofmann &lt;the.urban.drone@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -57,8 +97,8 @@ const has = dyadic((key, x) => ({}.hasOwnProperty.call(x, key)));
  * firstName({name: {first: 'John', last: 'Doe'}}); // -> 'John'
  */
 const field = dyadic((key, x) => {
-    var ks = isString(key) && /\./.test(key) ? key.split('.') : [key];
-    return ks.reduce((a, b) => isAny(a) && isAny(a[b]) ? a[b] : null, x);
+    var ks = isString(key) &amp;&amp; /\./.test(key) ? key.split('.') : [key];
+    return ks.reduce((a, b) => isAny(a) &amp;&amp; isAny(a[b]) ? a[b] : null, x);
 });
 
 /**
@@ -106,7 +146,7 @@ const assoc = triadic((k, v, x) => {
     if (isArray(x)) {
         receiver = [...x];
         key = parseInt(key, 10);
-        if (isNumber(key) && key < x.length && key >= 0) {
+        if (isNumber(key) &amp;&amp; key &lt; x.length &amp;&amp; key >= 0) {
             receiver[key] = v;
         }
     } else if (isObject(x)) {
@@ -262,7 +302,7 @@ const immutable = (x) => Object.freeze(merge(x));
  *
  * first([1, 2, 3]); // -> 1
  *
- * first(document.querySelectorAll('a')); // -> <a>...</a>
+ * first(document.querySelectorAll('a')); // -> &lt;a>...&lt;/a>
  */
 const first = (xs) => xs[0];
 
@@ -278,7 +318,7 @@ const first = (xs) => xs[0];
  *
  * last([1, 2, 3]); // -> 3
  *
- * last(document.querySelectorAll('a')); // -> <a>...</a>
+ * last(document.querySelectorAll('a')); // -> &lt;a>...&lt;/a>
  */
 const last = (xs) => xs[xs.length - 1];
 
@@ -334,7 +374,7 @@ const map = dyadic((f, m) => {
  */
 const flatten = (m) => {
     var xs;
-    if (m && isFunc(m.flatten)) {
+    if (m &amp;&amp; isFunc(m.flatten)) {
         return m.flatten();
     }
     if (isArray(m)) {
@@ -346,7 +386,7 @@ const flatten = (m) => {
 }
 
 function flattenTCO (xs, ys = []) {
-    if (xs.lenght < 1) { return ys; }
+    if (xs.lenght &lt; 1) { return ys; }
     if (isArray(xs[0])) {
         return () => {
             return flattenTCO([...xs[0], ...xs.slice(1)], ys);
@@ -385,4 +425,22 @@ const flatMap = dyadic((f, m) => {
 module.exports = {
     field, has, exec, execRight, access, extend, merge, immutable, mirror, first,
     last, map, flatten, flatMap, assoc
-};
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Aug 07 2016 18:34:20 GMT+0200 (Mitteleuropäische Sommerzeit) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

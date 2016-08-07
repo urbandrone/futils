@@ -18,6 +18,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * Returns true if given either `null` or `undefined`
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True or false
  *
@@ -32,6 +33,7 @@ const isNil = (x) => x == null;
 /**
  * Returns true if given anything but `null` or `undefined`
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True or false
  *
@@ -46,6 +48,7 @@ const isAny = (x) => x != null;
 /**
  * Returns true if given `undefined`
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for `undefined`
  *
@@ -60,6 +63,7 @@ const isVoid = (x) => x === undefined;
 /**
  * Returns true if given `null`
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for `null`
  *
@@ -74,6 +78,7 @@ const isNull = (x) => x === null;
 /**
  * Returns true if given a string
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for strings
  *
@@ -88,6 +93,7 @@ const isString = (x) => typeof x === 'string';
 /**
  * Returns true if given a number. Returns false if given `NaN` or `Infinity`
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for number values
  *
@@ -103,6 +109,7 @@ const isNumber = (x) => typeof x === 'number' && !isNaN(x) && isFinite(x);
 /**
  * Returns true if given a integer
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for integers
  *
@@ -117,6 +124,7 @@ const isInt = (x) => isNumber(x) && x % 1 === 0;
 /**
  * Returns true if given a floating point number
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for floating point numbers
  *
@@ -131,6 +139,7 @@ const isFloat = (x) => isNumber(x) && x % 1 !== 0;
 /**
  * Returns true if given a boolean value
  * @method
+ * @version 0.2.0
  * @param {any} x Value to check
  * @return {boolean} True for boolean values
  *
@@ -145,6 +154,7 @@ const isBool = (x) => typeof x === 'boolean';
 /**
  * Returns true for any value which evaluates to true
  * @method
+ * @version 0.2.0
  * @param {any} x Value to check
  * @return {boolean} True for all truthy values
  *
@@ -159,6 +169,7 @@ const isTrue = (x) => !!x;
 /**
  * Returns true for any value which evaluates to false
  * @method
+ * @version 0.2.0
  * @param {any} x Value to check
  * @return {boolean} True for all falsy values
  *
@@ -173,6 +184,7 @@ const isFalse = (x) => !x;
 /**
  * Returns true if given functions
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for functions
  *
@@ -187,6 +199,7 @@ const isFunc = (x) => typeof x === 'function';
 /**
  * Returns true if given plain objects
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for object
  *
@@ -201,6 +214,7 @@ const isObject = (x) => ({}.toString.call(x) === '[object Object]');
 /**
  * Returns true if given a array
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for arrays
  *
@@ -215,6 +229,7 @@ const isArray = (x) => Array.isArray(x);
 /**
  * Returns true if given a `Date` instance
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for `Date` instances
  *
@@ -229,6 +244,7 @@ const isDate = (x) => Date.prototype.isPrototypeOf(x);
 /**
  * Returns true if given a `RegExp` instance
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for regular expressions
  *
@@ -243,6 +259,7 @@ const isRegex = (x) => RegExp.prototype.isPrototypeOf(x);
 /**
  * Returns true if given a single DOM node
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for DOM nodes
  *
@@ -257,6 +274,7 @@ const isNode = (x) => Node.prototype.isPrototypeOf(x);
 /**
  * Returns true if given a Nodelist
  * @method
+ * @version 0.1.0
  * @param {any} x Value to check
  * @return {boolean} True for Nodelists
  *
@@ -279,6 +297,7 @@ const isWeakSet = (x) => WeakSet.prototype.isPrototypeOf(x);
 /**
  * Returns true if given a promise
  * @method
+ * @version 0.1.0
  * @param {any} x The value to check
  * @return {boolean} True for promises
  *
@@ -295,6 +314,7 @@ const isPromise = (x) => Promise.prototype.isPrototypeOf(x) ||
 /**
  * Returns true if given a iterator
  * @method
+ * @version 0.2.0
  * @param {any} x Value to check
  * @return {boolean} True for iterators
  *
@@ -309,6 +329,7 @@ const isIterator = (x) => x && isFunc(x.next);
 /**
  * Returns true for all iterables which implement `Symbol.iterator`
  * @method
+ * @version 0.2.0
  * @param {any} x Value to check
  * @return {boolean} True for iterables
  *
@@ -324,6 +345,7 @@ const isIterable = (x) => x && (x[Symbol.iterator] || !isNaN(x.length));
  * Awaits a type predicate and a value and returns true if the value is a array
  *     and only contains items which pass the predicate
  * @method
+ * @version 0.3.0
  * @param {function} f The predicate
  * @param {any} x Value to check
  * @return {boolean} True if array of items which pass f
@@ -350,6 +372,7 @@ const isArrayOf = (f, x) => {
  * Awaits a type predicate and a value and returns true if the value is a object
  *     and only contains values which pass the predicate
  * @method
+ * @version 0.3.0
  * @param {function} f The predicate
  * @param {any} x Value to check
  * @return {boolean} True if object of values which pass f

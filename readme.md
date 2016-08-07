@@ -1,5 +1,5 @@
 # futils
-##### A toolkit for functional programming
+##### A toolkit for functional programming in JavaScript. 
 
 ## Requirements
 *Node*: `6.3.1 or higher`
@@ -16,19 +16,40 @@ npm install futils --save-dev
 ```
 
 ## Usage
-After installation you can access the functions by importing `futils`. How you access the `futils` package depends on your environment. Currently there is only support for NodeJS, but supporting AMD as well as Browsers and ES6 Modules is planned.
+After installation you can access the functions by importing `futils`. How you access the `futils` package depends on your environment. Currently there is only support for NodeJS and ES6 Modules via [jspm.io](http://jspm.io/), but supporting AMD as well as Browsers is planned.
+
+### NodeJS 6.3.1+
 ```
 const {given, isString, pipe, exec} = require('futils');
 
-const myFunc = given(isString, pipe('toUpperCase'), exec('split', '.'));
+const myFunc = given(isString, pipe(exec('toUpperCase'), exec('split', '.')));
 
 myFunc('hello.world'); // -> ['HELLO', 'WORLD']
 ```
 
-## Documentation
-Coming soon
+### ES6 (via jspm.io and SystemJS)
+```
+import {given, isString, pipe, exec} from 'futils';
 
-## Example
+const myFunc = given(isString, pipe(exec('toUpperCase'), exec('split', '.')));
+
+myFunc('hello.world'); // -> ['HELLO', 'WORLD']
+```
+
+### Browser
+```
+Coming soon
+```
+
+### AMD
+```
+Coming soon
+```
+
+## Documentation
+The documentation for `futils` is generated with JSDoc and can be found here:
+
+## Examples
 Coming soon
 
 ## Information

@@ -20,6 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * Takes a number and a function with a variadic number of arguments and returns
  *     a function which takes as much arguments as specified
  * @method 
+ * @version 0.8.0
  * @param {number} n Integer value describing the arity
  * @param {function} f The function to aritize
  * @return {function} A wrapper for f with a arity of n

@@ -8,21 +8,22 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+
 const {dyadic} = require('./decorators');
 const {isVoid} = require('./types');
-/*
+/**
+ * A collection of functional state utilities
  * @module futils/state
  * @requires futils/decorators
  * @requires futils/types
  */
-
-
 
 /**
  * Given a transform function and a seed value returns a function which
  *     update the seed with the result of the transformation function
  *     applied to the seed and the a new state
  * @method 
+ * @version 0.8.0
  * @param {function} f Transformation function
  * @param {*} init The seed value
  * @return {function} State transformer getter/setter
@@ -51,6 +52,7 @@ const stateful = dyadic((f, init) => {
 /**
  * Given a number as seed value, returns a stateful counter function
  * @method
+ * @version 0.8.0
  * @param {number} init The seed value
  * @return {function} Count transformer getter/setter
  *
@@ -66,6 +68,23 @@ const stateful = dyadic((f, init) => {
  */
 const counter = (seed) => stateful((a, b) => a + b, seed);
 
+/**
+ * Given a initial seed value, returns a state transformation which alwyas updates
+ *     the current state with a new state if both are not equal
+ * @method 
+ * @version 0.8.0
+ * @param {*} seed Initial state
+ * @return {function} The transformation
+ *
+ * @example
+ * const {chosen} = require('futils');
+ *
+ * const char = chosen('A');
+ * active(); // -> 'A'
+ * 
+ * active('B');
+ * active(); // -> 'B'
+ */
 const chosen = (seed) => stateful((a, b) => a === b ? a : b, seed);
 
 

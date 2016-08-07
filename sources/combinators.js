@@ -21,6 +21,7 @@ const aritize = require('./aritize');
 /**
  * The identity or I combinator (idiot in smullians "how to mock a mockingbird")
  * @method
+ * @version 0.4.0
  * @param {any} x Anything
  * @return {any} Returns x
  */
@@ -29,6 +30,7 @@ const identity = (x) => x;
 /**
  * The getter or K combinator (kestrel in smullians "how to mock a mockingbird")
  * @method
+ * @version 0.4.0
  * @param {anx} x Anything
  * @return {function} A getter of x
  */
@@ -37,6 +39,7 @@ const getter = (x) => () => x;
 /**
  * The tap or T combinator (thrush in smullians "how to mock a mockingbird")
  * @method
+ * @version 0.4.0
  * @param {any} x Anything
  * @return {function} Function awaiting a function to tap with
  *
@@ -58,11 +61,12 @@ const tap = (x) => (y) => y(x);
  *     given functions from right to left instead of from left to right. Use
  *     the `pipe` function if you want to opposite behaviour
  * @method
+ * @version 0.4.0
  * @param {function} ...fs 2 up to N functions
  * @return {function} Composition of the given functions
  *
  * @example
- * const {compose} = require('futils');;
+ * const {compose} = require('futils');
  *
  * const add1 = (n) => n + 1;
  * const mult2 = (n) => n * 2;
@@ -88,11 +92,12 @@ const compose = (...fs) => {
  *     composition from left to right instead of right to left. Use the `compose`
  *     function if you want the opposite behaviour
  * @method
+ * @version 0.4.0
  * @param {function} ...fs 2 up to N functions
  * @return {function} Composition of the given functions
  *
  * @example
- * const {pipe} = require('futils');;
+ * const {pipe} = require('futils');
  *
  * const add1 = (n) => n + 1;
  * const mult2 = (n) => n * 2;
@@ -116,11 +121,12 @@ const pipe = (f, ...fs) => {
  * Composes 2 up to N predicate functions into one. The returned predicate only
  *     returns true if all the composed predicates return true
  * @method 
+ * @version 0.4.0
  * @param {function} ...fs 2 up to N predicates to compose
  * @return {function} Composed predicate function
  *
  * @example
- * const {and} = require('futils');;
+ * const {and} = require('futils');
  *
  * const isStr = (s) => typeof s === 'string';
  * const hasAt = (s) => s.includes('@');
@@ -140,11 +146,12 @@ const and = (...fs) => {
  * Composes 2 up to N predicates into one. The returned predicate returns true
  *     as long as one of the given predicate functions evaluates to true
  * @method 
+ * @version 0.4.0
  * @param {function} ...fs 2 up to N predicates to compose
  * @return {function} Composed predicate function
  *
  * @example
- * const {or} = require('futils');;
+ * const {or} = require('futils');
  *
  * const isStr = (s) => typeof s === 'string';
  * const isNum = (n) => !isNaN(n);
@@ -166,11 +173,12 @@ const or = (...fs) => {
  *     The returned function returns whatever the first splatted function
  *     returns
  * @method 
+ * @version 0.4.0
  * @param {function} ...fs N functions to wrap
  * @return {function} A splatter function
  *
  * @example
- * const {splat} = require('futils');;
+ * const {splat} = require('futils');
  *
  * const sideFX1 = (...) => { ... };
  * const sideFX2 = (...) => { ... };
