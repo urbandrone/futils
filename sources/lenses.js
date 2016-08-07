@@ -55,7 +55,7 @@ const baseLens = lens(field, assoc);
  *     structure
  * @method 
  * @version 0.6.0
- * @param {function} lens A lens created by makeLenses
+ * @param {function} l A lens created by makeLenses
  * @param {array|object} data The data structure
  * @return {*} Whatever the current value is
  *
@@ -67,7 +67,7 @@ const baseLens = lens(field, assoc);
  *
  * view(L.name, data); // -> 'John Doe'
  */
-const view = dyadic((lens, data) => lens(Const)(data).value);
+const view = dyadic((l, data) => l(Const)(data).value);
 
 /**
  * Given a lens, a function and a data structure, applies the function to the
@@ -75,7 +75,7 @@ const view = dyadic((lens, data) => lens(Const)(data).value);
  *     structure
  * @method 
  * @version 0.6.0
- * @param {function} lens A lens created by makeLenses
+ * @param {function} l A lens created by makeLenses
  * @param {function} f A data transforming function
  * @param {array|object} data The data structure
  * @return {array|object} Modified clone of the given structure
@@ -89,7 +89,7 @@ const view = dyadic((lens, data) => lens(Const)(data).value);
  * over(L.name, (s) => s.toUpperCase(), data);
  * // -> {name: 'JOHN DOE', age: 30}
  */
-const over = triadic((lens, f, data) => lens((y) => Identity(f(y)))(data).value );
+const over = triadic((l, f, data) => l((y) => Identity(f(y)))(data).value );
 
 /**
  * Given a lens, a value and a data structure, sets the value of the foci of the
@@ -97,7 +97,7 @@ const over = triadic((lens, f, data) => lens((y) => Identity(f(y)))(data).value 
  *     given structure
  * @method 
  * @version 0.6.0
- * @param {function} lens A lens created by makeLenses
+ * @param {function} l A lens created by makeLenses
  * @param {*} v The value to set
  * @param {array|object} data The data structure
  * @return {array|object} Modified clone of the given structure
@@ -111,7 +111,7 @@ const over = triadic((lens, f, data) => lens((y) => Identity(f(y)))(data).value 
  * set(L.name, 'Adam Smith', data);
  * // -> {name: 'Adam Smith', age: 30}
  */
-const set = triadic((lens, v, data) => over(lens, getter(v), data));
+const set = triadic((l, v, data) => over(l, getter(v), data));
 
 /**
  * Takes a variadic number of string parameters and returns a collection of

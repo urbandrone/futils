@@ -8,7 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-const {isFunc} = require('./types');
+const {isFunc, isVoid} = require('./types');
 const {aritize} = require('./aritize');
 /**
  * A collection of function decorator functions. Please note that these are not
@@ -264,19 +264,6 @@ const maybe = (f) => {
     throw 'decorators::maybe awaits a function but saw ' + f;
 }
 
-const CurryLeftHand = (f, ...args) => {
-    // used internally, not exposed. Recursively curries a given function until
-    //   it has consumed enough parameters to execute the given function with
-    //   the arguments in the given order (lefthand)
-    return aritize(f.length - args.length, (...xs) => {
-        var _as = args.concat(xs);        
-        if (_as.length >= f.length) {
-            return f(..._as);
-        }
-        return CurryLeftHand(f, ..._as);
-    });
-}
-
 /**
  * Takes a function and returns a variant of it, which consecutevly consumes
  *     more arguments until enough parameters are given to execute the given
@@ -304,21 +291,14 @@ const CurryLeftHand = (f, ...args) => {
 const curry = (f) => {
     if (isFunc(f)) {
         if (f.length < 2) { return f; }
-        return CurryLeftHand(f);
+        return (...args) => {
+            if (f.length <= args.length) {
+                return f(...args);
+            }
+            return (...rest) => curry(f)(...args, ...rest);
+        }
     }
     throw 'decorators::curry awaits a function but saw ' + f;
-}
-
-const CurryRightHand = (f, ...args) => {
-    // internally used, works like CurryLeftHand but finally reverses the
-    //     given arguments before applying them
-    return aritize(f.length - args.length, (...xs) => {
-        var _as = args.concat(xs);        
-        if (_as.length >= f.length) {
-            return f(..._as.reverse());
-        }
-        return CurryRightHand(f, ..._as);
-    });
 }
 
 /**
@@ -348,21 +328,14 @@ const CurryRightHand = (f, ...args) => {
 const curryRight = (f) => {
     if (isFunc(f)) {
         if (f.length < 2) { return f; }
-        return CurryRightHand(f);
+        return (...args) => {
+            if (f.length <= args.length) {
+                return f(...args.reverse());
+            }
+            return (...rest) => curry(f)(...args, ...rest);
+        }
     }
     throw 'decorators::curryRight awaits a function but saw ' + f;
-}
-
-const PartialLeftHand = (f, ...pargs) => {
-    // used internally, recursively returns itself until all placeholders are
-    //  given
-    return (...rest) => {
-        var args = pargs.map((a) => a === void 0 ? rest.shift() : a);
-        if (args.lastIndexOf(void 0) < 0) {
-            return f(...args);
-        }
-        return PartialLeftHand(f, ...args);
-    }
 }
 
 /**
@@ -391,21 +364,15 @@ const partial = (f, ...pargs) => {
         while (_ps.length < f.length) {
             _ps.push(void 0);
         }
-        return PartialLeftHand(f, ..._ps);
+        return (...args) => {
+            let _as = _ps.map((a) => isVoid(a) ? args.shift() : a);
+            if (_as.lastIndexOf(void 0) < 0) {
+                return f(..._as);
+            }
+            return partial(f, ..._as);
+        }
     }
     throw 'decorators::partial awaits a function but saw ' + f;
-}
-
-const PartialRightHand = (f, ...pargs) => {
-    // internally used, works like PartialLeftHand but finally reverses the
-    //     given arguments before applying them
-    return (...rest) => {
-        var args = pargs.map((a) => a === void 0 ? rest.shift() : a);
-        if (args.lastIndexOf(void 0) < 0) {
-            return f(...args.reverse());
-        }
-        return PartialRightHand(f, ...args);
-    }
 }
 
 /**
@@ -434,7 +401,13 @@ const partialRight = (f, ...pargs) => {
         while (_ps.length < f.length) {
             _ps.push(void 0);
         }
-        return PartialRightHand(f, ..._ps);
+        return (...args) => {
+            let _as = _ps.map((a) => isVoid(a) ? args.shift() : a);
+            if (_as.lastIndexOf(void 0) < 0) {
+                return f(..._as.reverse());
+            }
+            return partial(f, ..._as);
+        }
     }
     throw 'decorators::partialRight awaits a function but saw ' + f;
 }
