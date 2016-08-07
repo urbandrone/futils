@@ -6,7 +6,7 @@
 
 [![Build Status](https://travis-ci.org/urbandrone/futils.svg?branch=master)](https://travis-ci.org/urbandrone/futils)
 
-## Install
+## Install with NPM
 Global installation
 ```
 npm install futils -g
@@ -52,7 +52,7 @@ Coming soon
 You can find the online documentation for `futils` here:
 [Online API Docs](http://www.der-davi.de/futils/docs/0.9.1/index.html)
 
-The documentation for `futils` can by generated like this:
+The documentation for `futils` can also be generated like this:
 ```
 cd path/to/futils/
 npm run docs

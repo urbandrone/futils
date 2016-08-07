@@ -319,6 +319,19 @@ const map = dyadic((f, m) => {
     throw 'enums::map awaits a function as first argument but saw ' + f;
 });
 
+/* -- internal util */
+function flattenTCO (xs, ys) {
+    if (xs.length <= 0) {
+        return ys;
+    }
+    return function () {
+        if (isArray(xs[0])) {
+            return flattenTCO([...xs[0], ...xs.slice(1)], ys);
+        }
+        return flattenTCO(xs.slice(1), [...ys, xs[0]]);
+    }
+}
+
 /**
  * Generic flatten method, works on anything that implements a `flatten` method
  *     as well as on arrays
@@ -334,27 +347,14 @@ const map = dyadic((f, m) => {
  */
 const flatten = (m) => {
     var xs;
-    if (m && isFunc(m.flatten)) {
-        return m.flatten();
-    }
     if (isArray(m)) {
-        xs = flattenTCO(m);
-        while (isFunc(xs)) { xs = xs(); }
+        xs = flattenTCO(m, []);
+        while (xs instanceof Function) {
+            xs = xs();
+        }
         return xs;
     }
     return m;
-}
-
-function flattenTCO (xs, ys = []) {
-    if (xs.lenght < 1) { return ys; }
-    if (isArray(xs[0])) {
-        return () => {
-            return flattenTCO([...xs[0], ...xs.slice(1)], ys);
-        }
-    }
-    return () => {
-        return flattenTCO([...xs.slice(1)], [...ys, xs[0]]);
-    }
 }
 
 /**
