@@ -47,7 +47,16 @@ Coming soon
 ```
 
 ## Documentation
-The documentation for `futils` is generated with JSDoc and can be found here:
+You can find the online documentation for `futils` here:
+[Online API Docs](http://www.der-davi.de/futils/docs/0.9.1/index.html)
+
+The documentation for `futils` can by generated like this:
+```
+cd path/to/futils/
+npm run docs
+```
+
+The generated documentation is placed under `node_modules/futils/docs/` if you installed `futils` locally
 
 ## Examples
 Coming soon
