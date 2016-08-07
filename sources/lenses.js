@@ -10,7 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 const {compose, getter} = require('./combinators');
 const {dyadic, triadic, curry} = require('./decorators');
-const {dot, assoc, map} = require('./enums');
+const {field, assoc, map} = require('./enums');
 
 /**
  * A collection of lens creators and operation functions for composable lenses
@@ -47,7 +47,7 @@ const lens = curry((gets, sets, k, f, xs) => {
 });
 
 // The bare bones, creates a lens which works on arrays and objects
-const baseLens = lens(dot, assoc);
+const baseLens = lens(field, assoc);
 
 
 /**
