@@ -1,0 +1,28 @@
+{
+  "name": "futils",
+  "version": "0.9.0",
+  "description": "Functional utilities (lenses, decorators, transducers...)",
+  "main": "futils.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/urbandrone/futils.git"
+  },
+  "keywords": [
+    "javascript",
+    "js",
+    "functional",
+    "toolkit",
+    "utilities",
+    "futils"
+  ],
+  "author": "David Hofmann <the.urban.drone@example.com> (https://github.com/urbandrone/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/urbandrone/futils/issues"
+  },
+  "homepage": "https://github.com/urbandrone/futils#readme",
+  "devDependencies": {}
+}

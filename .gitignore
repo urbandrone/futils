@@ -83,3 +83,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Sublime Text stuff
+*.sublime-project
+*.sublime-workspace
