@@ -50,7 +50,7 @@ Coming soon
 
 ## Documentation
 You can find the online documentation for `futils` here:
-[Online API Docs](http://www.der-davi.de/futils/docs/0.9.1/index.html)
+[Online API Docs](http://www.der-davi.de/futils/docs/index.html)
 
 The documentation for `futils` can also be generated like this:
 ```
