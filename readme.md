@@ -4,6 +4,8 @@
 ## Requirements
 *Node*: `6.3.1 or higher`
 
+[![Build Status](https://travis-ci.org/urbandrone/futils.svg?branch=master)](https://travis-ci.org/urbandrone/futils)
+
 ## Install
 Global installation
 ```
