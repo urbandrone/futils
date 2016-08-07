@@ -4,7 +4,7 @@
   "description": "Functional programming utility toolkit",
   "main": "futils.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "./node_modules/.bin/jasmine-node ./spec/",
     "docs": "./node_modules/.bin/jsdoc -c ./jsdocconf.json --verbose"
   },
   "repository": {
@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/urbandrone/futils#readme",
   "devDependencies": {
+    "jasmine-node": "^1.14.5",
     "jsdoc": "^3.4.0",
     "minami": "^1.1.1"
   }

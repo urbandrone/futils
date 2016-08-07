@@ -324,7 +324,7 @@ const isPromise = (x) => Promise.prototype.isPrototypeOf(x) ||
  * var ns = [1, 2, 3];
  * isIterator(ns[Symbol.iterator]()); // -> true
  */
-const isIterator = (x) => x && isFunc(x.next);
+const isIterator = (x) => !isNil(x) && isFunc(x.next);
 
 /**
  * Returns true for all iterables which implement `Symbol.iterator`
@@ -339,7 +339,7 @@ const isIterator = (x) => x && isFunc(x.next);
  * isIterable([1, 2, 3]); // -> true
  * isIterable({}); // -> false
  */
-const isIterable = (x) => x && (x[Symbol.iterator] || !isNaN(x.length));
+const isIterable = (x) => !isNil(x) && !!(x[Symbol.iterator] || !isNaN(x.length));
 
 /**
  * Awaits a type predicate and a value and returns true if the value is a array
