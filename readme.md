@@ -18,7 +18,7 @@ npm install futils --save-dev
 ```
 
 ## Usage
-After installation you can access the functions by importing `futils`. How you access the `futils` package depends on your environment. Currently there is only support for NodeJS and ES6 Modules via [jspm.io](http://jspm.io/), but supporting AMD as well as Browsers is planned.
+After installation you can access the functions by importing `futils`. How you access the `futils` package depends on your environment. Currently there is support for NodeJS, ES6 Modules via [jspm.io](http://jspm.io/) as well as Browsers.
 
 ### NodeJS 6.3.1+
 ```
@@ -38,14 +38,10 @@ const myFunc = given(isString, pipe(exec('toUpperCase'), exec('split', '.')));
 myFunc('hello.world'); // -> ['HELLO', 'WORLD']
 ```
 
-### Browser
+### Browsers
+Download the `futils.bundle.js` file and include it with a script tag in your page:
 ```
-Coming soon
-```
-
-### AMD
-```
-Coming soon
+<script src="path/to/futils.bundle.js"></script>
 ```
 
 ## Documentation
