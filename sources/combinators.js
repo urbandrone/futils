@@ -10,7 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 const {isFunc, isArrayOf} = require('./types');
-const aritize = require('./aritize');
+const {aritize} = require('./aritize');
 /**
  * A collection of higher order helpers for functional composition
  * @module futils/combinators
