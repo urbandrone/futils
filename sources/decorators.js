@@ -133,17 +133,20 @@ const triadic = (f) => {
  */
 const tetradic = (f) => {
     if (isFunc(f)) {
-        return (x = void 0, y = void 0, z = void 0) => {
+        return (w = void 0, x = void 0, y = void 0, z = void 0) => {
+            if (w === void 0) {
+                return tetradic(f);
+            }
             if (x === void 0) {
-                return triadic(f);
+                return triadic((_x, _y, _z) => f(w, _x, _y, _z));
             }
             if (y === void 0) {
-                return dyadic((_y, _z) => f(x, _y, _z));
+                return dyadic((_y, _z) => f(w, x, _y, _z));
             }
             if (z === void 0) {
-                return monadic((_z) => f(x, y, _z));
+                return monadic((_z) => f(w, x, y, _z));
             }
-            return f(x, y, z);
+            return f(w, x, y, z);
         }
     }
     throw 'decorators::tetradic awaits a function but saw ' + f;

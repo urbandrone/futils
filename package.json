@@ -5,7 +5,7 @@
   "main": "futils.js",
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node ./spec/",
-    "docs": "./node_modules/.bin/jsdoc -c ./jsdocconf.json --verbose"
+    "docs": "./node_modules/.bin/jsdoc -c ./.jsdocconf.json --verbose"
   },
   "repository": {
     "type": "git",

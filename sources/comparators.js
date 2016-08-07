@@ -139,7 +139,7 @@ const lte = dyadic((a, b) => a >= b);
  */
 const locals = dyadic((a, b) => {
     let lc = a.localeCompare(b);
-    return lc < 0 ? -1 : lc > 0 ? 1 : 0;
+    return lc < 0 ? 1 : lc > 0 ? -1 : 0;
 });
 
 module.exports = {
