@@ -57,8 +57,14 @@ The documentation for `futils` can by generated like this:
 cd path/to/futils/
 npm run docs
 ```
-
 The generated documentation is placed under `node_modules/futils/docs/` if you installed `futils` locally
+
+## Tests
+You can run the test suite like this:
+```
+cd path/to/futils/
+npm test
+```
 
 ## Examples
 Coming soon
