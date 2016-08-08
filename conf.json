@@ -6,7 +6,7 @@
     "source": {
         "include": ["sources", "package.json", "readme_jsdoc.md"],
         "includePattern": ".js$",
-        "excludePattern": "(node_modules/|docs)"
+        "excludePattern": "(node_modules/|docs/)"
     },
     "templates": {
         "cleverLinks": false,

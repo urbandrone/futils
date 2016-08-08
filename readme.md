@@ -8,8 +8,8 @@
 *NPM*: `3.7.1+`
 
 ## Information
-[API Documentation](http://www.der-davi.de/futils/docs/index.html) 
-[Examples](./examples/readme.md) 
+[API Documentation](http://www.der-davi.de/futils/docs/index.html)  
+[Examples](./examples/readme.md)  
 
 ## Install with NPM
 Global or local installation

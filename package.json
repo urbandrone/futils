@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node ./specs/",
-    "docs": "./node_modules/.bin/jsdoc -c ./.jsdocconf.json --verbose",
+    "docs": "./node_modules/.bin/jsdoc -c ./conf.json --verbose",
     "bundle": "browserify browser.js -o futils.bundle.js -t [ babelify --presets [ es2015 ] ] -t [ uglifyify ]"
   },
   "repository": {
