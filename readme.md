@@ -1,64 +1,65 @@
 # futils
-##### A toolkit for functional programming in JavaScript. 
-
-## Requirements
-*Node*: `6.3.1 or higher`
+**A collection of functions and tools to use functional programming paradigms in JavaScript** 
 
 [![Build Status](https://travis-ci.org/urbandrone/futils.svg?branch=master)](https://travis-ci.org/urbandrone/futils)
 
+## Requirements
+*Node*: `6.3.1+`  
+*NPM*: `3.7.1+`
+
+## Information
+[API Documentation](http://www.der-davi.de/futils/docs/index.html) 
+[Examples](./examples/readme.md) 
+
 ## Install with NPM
-Global installation
+Global or local installation
 ```
 npm install futils -g
-```
-
-Local installation
-```
 npm install futils --save-dev
 ```
 
-## Usage
-After installation you can access the functions by importing `futils`. How you access the `futils` package depends on your environment. Currently there is support for NodeJS, ES6 Modules via [jspm.io](http://jspm.io/) as well as Browsers.
-
-### NodeJS 6.3.1+
+After installation you can access the functions by calling require with `'futils'` as parameter:
 ```
 const {given, isString, pipe, exec} = require('futils');
 
-const myFunc = given(isString, pipe(exec('toUpperCase'), exec('split', '.')));
-
-myFunc('hello.world'); // -> ['HELLO', 'WORLD']
+// your code
 ```
 
-### ES6 (via jspm.io and SystemJS)
+## Install for ES6 (via jspm.io and SystemJS)
+If you use `jspm` either for a Node or Browser based application, just install the package from npm:
+```
+jspm install npm:futils
+```
+
+After the package has been installed successfully, you can import and use the toolkit like you would do with any other package too:
 ```
 import {given, isString, pipe, exec} from 'futils';
 
-const myFunc = given(isString, pipe(exec('toUpperCase'), exec('split', '.')));
-
-myFunc('hello.world'); // -> ['HELLO', 'WORLD']
+// your code
 ```
 
-### Browsers
-Download the `futils.bundle.js` file and include it with a script tag in your page:
+## Install for Browsers
+Download the `futils.bundle.js` file and include it with a script tag which allows you to get access to the global `futils` namespace:
 ```
 <script src="path/to/futils.bundle.js"></script>
-<script>
-if (futils.isString('yay')) {
-    console.log('It works!');
-}
-</script>
 ```
 
-## Documentation
-You can find the online documentation for `futils` here:
-[Online API Docs](http://www.der-davi.de/futils/docs/index.html)
+For cleaner code, you can wrap everything up into a IIFE (Immediatly invoked function expression) and access the namespace from there:
+```
+/* globals futils, jQuery */
+(function (run) { run(futils, jQuery); })(function (_, $) {
 
-The documentation for `futils` can also be generated like this:
+    // your code
+
+});
+```
+
+## Local API Docs
+You can create a local copy of the [Online API](http://www.der-davi.de/futils/docs/index.html) documentation like this:
 ```
 cd path/to/futils/
 npm run docs
 ```
-The generated documentation is placed under `node_modules/futils/docs/` if you installed `futils` locally
 
 ## Tests
 You can run the test suite like this:
@@ -67,11 +68,7 @@ cd path/to/futils/
 npm test
 ```
 
-## Examples
-Coming soon
-
-## Information
+---
 *License*: MIT  
-*Author*: D. Hofmann <the.urban.drone@gmail.com>  
 *NPM*: https://npmjs.org/package/futils  
 *GitHub*: https://github.com/urbandrone/futils

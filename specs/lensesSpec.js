@@ -10,7 +10,7 @@ describe('futils/lenses module', function () {
     it('testing makeLenses :: ss -> o', function () {
         let L = _.makeLenses('emails');
 
-        let getMail = _.compose(L.emails, L.num(1));
+        let getMail = _.compose(L.emails, L.index(1));
 
         expect(_.view(getMail, struct)).toBe('doejohn@company.com');
     });
@@ -28,7 +28,8 @@ describe('futils/lenses module', function () {
 
         let inc = _.over(L.age, (n) => n + 1);
 
-        expect(_.view(L.age, inc(struct))).toBe(40);
+        expect(inc(struct).age).toBe(40);
+        expect(struct.age).toBe(39);
     });
 
     it('testing set :: l -> a -> o -> o', function () {
@@ -36,9 +37,18 @@ describe('futils/lenses module', function () {
 
         let op = _.set(L.age, 50);
 
-        expect(_.view(L.age, op(struct))).toBe(50);
+        expect(op(struct).age).toBe(50);
+        expect(struct.age).toBe(39);
     });
 
+    it('testing mappedLens :: f -> xs -> lens', function () {
+        let L = _.compose(_.mappedLens, _.mappedLens);
+        let s = [[1, 2, 3]];
+
+        let f = (n) => n + 1;
+
+        expect(_.over(L, f, s)).toEqual([[2, 3, 4]]);
+    });
 
 });
 

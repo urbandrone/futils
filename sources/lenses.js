@@ -8,7 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-const {pipe, compose, getter} = require('./combinators');
+const {compose, getter} = require('./combinators');
 const {dyadic, triadic, curry} = require('./decorators');
 const {field, assoc, map} = require('./enums');
 
@@ -131,7 +131,7 @@ const set = triadic((l, v, data) => over(l, getter(v), data));
  * L.name(data); // -> 'John Doe'
  * L.age(data); // -> 30
  *
- * const firstFriendsName = compose(L.friends, L.num(0), L.name);
+ * const firstFriendsName = compose(L.friends, L.index(0), L.name);
  * firstFriendsName(data); // -> 'Adam Smith'
  */
 const makeLenses = (...fields) => fields.reduce((acc, field) => {
@@ -139,8 +139,28 @@ const makeLenses = (...fields) => fields.reduce((acc, field) => {
         acc[field] = baseLens(field);
     }
     return acc;
-}, { num: baseLens });
+}, { index: baseLens });
+
+/**
+ * Utility function, maps a lens over a nested data structure
+ * @method 
+ * @version 1.0.4
+ * @param {function} f Data transformation function
+ * @param {array|object} data The nested data structure
+ * @return {array|object} Modified clone of the given structure
+ *
+ * @example
+ * const {compose, makeLenses, mappedLens, over} = require('futils');
+ *
+ * let data = [[1, 2, 3]];
+ *
+ * const inc = (n) => n + 1;
+ *
+ * const mapMapLens = compose(mappedLens, mappedLens);
+ * over(mapMapLens, inc, data); // -> [[2, 3, 4]]
+ */
+const mappedLens = dyadic((f, xs) => Identity(map(compose(field('value'), f), xs)));
 
 
 
-module.exports = { lens, makeLenses, view, over, set };
+module.exports = { lens, makeLenses, mappedLens, view, over, set };

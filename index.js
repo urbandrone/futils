@@ -68,6 +68,7 @@ module.exports = {
     view: lenses.view,
     over: lenses.over,
     set: lenses.set,
+    mappedLens: lenses.mappedLens,
     assoc: enums.assoc,
     field: enums.field,
     has: enums.has,
