@@ -42,6 +42,11 @@ myFunc('hello.world'); // -> ['HELLO', 'WORLD']
 Download the `futils.bundle.js` file and include it with a script tag in your page:
 ```
 <script src="path/to/futils.bundle.js"></script>
+<script>
+if (futils.isString('yay')) {
+    console.log('It works!');
+}
+</script>
 ```
 
 ## Documentation
