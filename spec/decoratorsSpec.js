@@ -1,4 +1,4 @@
-const _ = require('../futils');
+const _ = require('../index');
 describe('futils/decorators module', function () {
     it('testing monadic :: f -> f', function () {
         var a = (...xs) => [...xs];

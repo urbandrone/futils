@@ -1,4 +1,4 @@
-const _ = require('../futils');
+const _ = require('../index');
 describe('futils/types module', function () {
 
     it('testing isNil :: f -> a -> b', function () {

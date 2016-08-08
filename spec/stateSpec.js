@@ -1,4 +1,4 @@
-const _ = require('../futils');
+const _ = require('../index');
 describe('futils/state module', function () {
     it('testing stateful :: f -> a -> f', function () {
         var a = _.stateful((n, m) => n + m, 0);

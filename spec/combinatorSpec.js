@@ -1,4 +1,4 @@
-const _ = require('../futils');
+const _ = require('../index');
 describe('futils/combinators module', function () {
     it('testing identity :: a -> a', function () {
         expect(_.identity(1)).toBe(1);
