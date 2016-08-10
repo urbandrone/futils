@@ -3,10 +3,6 @@
 
 [![Build Status](https://travis-ci.org/urbandrone/futils.svg?branch=master)](https://travis-ci.org/urbandrone/futils)
 
-## Requirements
-*Node*: `6.3.1+`  
-*NPM*: `3.7.1+`
-
 ## Information
 [API Documentation](http://www.der-davi.de/futils/docs/index.html)  
 [Examples](./examples/readme.md)  
@@ -18,7 +14,7 @@ npm install futils -g
 npm install futils --save-dev
 ```
 
-After installation you can access the functions by calling require with `'futils'` as parameter:
+After installation you can access the functions by calling require:
 ```
 const {given, isString, pipe, exec} = require('futils');
 
@@ -26,7 +22,7 @@ const {given, isString, pipe, exec} = require('futils');
 ```
 
 ## Install for ES6 (via jspm.io and SystemJS)
-If you use `jspm` either for a Node or Browser based application, just install the package from npm:
+If you use `jspm` either for a Node or Browser based application:
 ```
 jspm install npm:futils
 ```
@@ -38,19 +34,31 @@ import {given, isString, pipe, exec} from 'futils';
 // your code
 ```
 
-## Install for Browsers
-Download the `futils.bundle.js` file and include it with a script tag which allows you to get access to the global `futils` namespace:
+## Install for browsers
+Download the `futils.js` file and include it with a script tag which allows you to get access to the global `futils` namespace:
 ```
-<script src="path/to/futils.bundle.js"></script>
+<script src="path/to/futils.js"></script>
 ```
 
-For cleaner code, you can wrap everything up into a IIFE (Immediatly invoked function expression) and access the namespace from there:
+You can then access the namespace from there:
 ```
-/* globals futils, jQuery */
-(function (run) { run(futils, jQuery); })(function (_, $) {
+var given = futils.given,
+    isString = futils.isString,
+    pipe = futils.pipe,
+    exec = futils.exec;
 
+// your code
+```
+
+## Install for AMD
+If you want to use `futils` with a AMD powered development workflow, you can do that too. Just like using it in the browser, all you have to do is download the file `futils.js` and use it in your code:
+```
+define(['path/to/futils'], function (futils) {
     // your code
+});
 
+require(['path/to/futils'], function (futils) {
+    // your code
 });
 ```
 

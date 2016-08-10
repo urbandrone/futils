@@ -43,4 +43,4 @@ const aritize = (n, f) => {
     return new Function('fx', wrap)(f);
 }
 
-module.exports = { aritize };
+export default { aritize };

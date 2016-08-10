@@ -9,8 +9,8 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const {isFunc, isArrayOf} = require('./types');
-const {aritize} = require('./aritize');
+import type from './types';
+import arity from './aritize';
 /**
  * A collection of higher order helpers for functional composition
  * @module futils/combinators
@@ -78,8 +78,8 @@ const tap = (x) => (y) => y(x);
  */
 const compose = (...fs) => {
     var f = fs.pop();
-    if (isFunc(f) && isArrayOf(isFunc, fs)) {
-        return aritize(
+    if (type.isFunc(f) && type.isArrayOf(type.isFunc, fs)) {
+        return arity.aritize(
             f.length,
             (...args) => fs.reduce((v, g) => g(v), f(...args))
         );
@@ -108,8 +108,8 @@ const compose = (...fs) => {
  * // -> true
  */
 const pipe = (f, ...fs) => {
-    if (isFunc(f) && isArrayOf(isFunc, fs)) {
-        return aritize(
+    if (type.isFunc(f) && type.isArrayOf(type.isFunc, fs)) {
+        return arity.aritize(
             f.length,
             (...args) => fs.reduce((v, g) => g(v), f(...args))
         );
@@ -134,8 +134,8 @@ const pipe = (f, ...fs) => {
  * const smellsLikeMail = and(isStr, hasAt);
  */
 const and = (...fs) => {
-    if (isArrayOf(isFunc, fs)) {
-        return aritize(fs[0].length, (...xs) => {
+    if (type.isArrayOf(type.isFunc, fs)) {
+        return arity.aritize(fs[0].length, (...xs) => {
             return !fs.some((f) => !f(...xs));
         });
     }
@@ -159,8 +159,8 @@ const and = (...fs) => {
  * const strOrNum = or(isStr, isNum);
  */
 const or = (...fs) => {
-    if (isArrayOf(isFunc, fs)) {
-        return aritize(fs[0].length, (...xs) => {
+    if (type.isArrayOf(type.isFunc, fs)) {
+        return arity.aritize(fs[0].length, (...xs) => {
             return fs.some((f) => !!f(...xs));
         });
     }
@@ -189,7 +189,7 @@ const or = (...fs) => {
  * );
  */
 const splat = (...fs) => {
-    if (isArrayOf(isFunc, fs)) {
+    if (type.isArrayOf(type.isFunc, fs)) {
         return (...xs) => {
             var r = fs[0](...xs);
             fs.slice(1).forEach((f) => f(...xs));
@@ -201,4 +201,6 @@ const splat = (...fs) => {
 
 
 
-module.exports = { compose, pipe, identity, tap, getter, and, or, splat };
+export default { 
+    compose, pipe, identity, tap, getter, and, or, splat
+};

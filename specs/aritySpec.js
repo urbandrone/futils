@@ -1,4 +1,4 @@
-const _ = require('../index');
+const _ = require('../futils');
 describe('futils/aritize module', function () {
     it('testing aritize :: n -> f -> f', function () {
         const any = (...args) => [...args];

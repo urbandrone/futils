@@ -8,8 +8,8 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-const {isAny, isString, isNumber, isFunc, isArray, isObject} = require('./types');
-const {dyadic, triadic} = require('./decorators');
+import type from './types';
+import decorate from './decorators';
 
 /**
  * A collection of enumerable utility functions. Contains abstractions which
@@ -37,7 +37,7 @@ const {dyadic, triadic} = require('./decorators');
  * has('foo', testee); // -> true
  * has('toString', testee); // -> false
  */
-const has = dyadic((key, x) => ({}.hasOwnProperty.call(x, key)));
+const has = decorate.dyadic((key, x) => ({}.hasOwnProperty.call(x, key)));
 
 /**
  * Accesses a given object by a chain of keys
@@ -56,9 +56,9 @@ const has = dyadic((key, x) => ({}.hasOwnProperty.call(x, key)));
  * const firstName = field('name.first');
  * firstName({name: {first: 'John', last: 'Doe'}}); // -> 'John'
  */
-const field = dyadic((key, x) => {
-    var ks = isString(key) && /\./.test(key) ? key.split('.') : [key];
-    return ks.reduce((a, b) => isAny(a) && isAny(a[b]) ? a[b] : null, x);
+const field = decorate.dyadic((key, x) => {
+    var ks = type.isString(key) && /\./.test(key) ? key.split('.') : [key];
+    return ks.reduce((a, b) => type.isAny(a) && type.isAny(a[b]) ? a[b] : null, x);
 });
 
 /**
@@ -78,7 +78,7 @@ const field = dyadic((key, x) => {
  * // imagine a series of keystrokes:
  * [8, 13, ... 13].map(keyMeans); // -> ['Backspace', 'Enter', ... 'Enter']
  */
-const access = dyadic((x, k) => !!x ? field(k, x) : null);
+const access = decorate.dyadic((x, k) => !!x ? field(k, x) : null);
 
 /**
  * Assigns a value and a key to a given data structure, returns a clone of the
@@ -101,17 +101,17 @@ const access = dyadic((x, k) => !!x ? field(k, x) : null);
  *
  * console.log(p); // -> {name: 'John Doe', accounts: [...]};
  */
-const assoc = triadic((k, v, x) => {
+const assoc = decorate.triadic((k, v, x) => {
     let key = k, receiver = x;
-    if (isArray(x)) {
+    if (type.isArray(x)) {
         receiver = [...x];
         key = parseInt(key, 10);
-        if (isNumber(key) && key < x.length && key >= 0) {
+        if (type.isNumber(key) && key < x.length && key >= 0) {
             receiver[key] = v;
         }
-    } else if (isObject(x)) {
+    } else if (type.isObject(x)) {
         receiver = Object.assign({}, x);
-        if (isString(key)) {
+        if (type.isString(key)) {
             receiver[key] = v;
         }
     }
@@ -136,9 +136,9 @@ const assoc = triadic((k, v, x) => {
  * firstHalf([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // -> [1, 2, 3, 4, 5]
  */
 const exec = (method, ...partials) => (provider, ...rest) => {
-    var res = isFunc(provider[method]) ?
+    var res = type.isFunc(provider[method]) ?
               provider[method](...partials, ...rest) :
-              isFunc(method) ?
+              type.isFunc(method) ?
               method.call(provider, ...partials, ...rest) :
               null;
     if (res == null) {
@@ -165,9 +165,9 @@ const exec = (method, ...partials) => (provider, ...rest) => {
  * firstHalf([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // -> [1, 2, 3, 4, 5]
  */
 const execRight = (method, ...partials) => (provider, ...rest) => {
-    var res = isFunc(provider[method]) ?
+    var res = type.isFunc(provider[method]) ?
               provider[method](...[...partials, ...rest].reverse()) :
-              isFunc(method) ?
+              type.isFunc(method) ?
               method.call(provider, ...[...partials, ...rest].reverse()) :
               null;
     if (res == null) {
@@ -300,13 +300,13 @@ const last = (xs) => xs[xs.length - 1];
  * // auto curried:
  * const mapAdd1 = map(addOne);
  */
-const map = dyadic((f, m) => {
+const map = decorate.dyadic((f, m) => {
     var ks, r;
-    if (isFunc(f)) {
-        if (isFunc(m.map)) {
+    if (type.isFunc(f)) {
+        if (type.isFunc(m.map)) {
             return m.map(f);
         }
-        if (isObject(m)) {
+        if (type.isObject(m)) {
             ks = Object.keys(m);
             r = {};
             for (let k of ks) {
@@ -325,7 +325,7 @@ function flattenTCO (xs, ys) {
         return ys;
     }
     return function () {
-        if (isArray(xs[0])) {
+        if (type.isArray(xs[0])) {
             return flattenTCO([...xs[0], ...xs.slice(1)], ys);
         }
         return flattenTCO(xs.slice(1), [...ys, xs[0]]);
@@ -347,7 +347,7 @@ function flattenTCO (xs, ys) {
  */
 const flatten = (m) => {
     var xs;
-    if (isArray(m)) {
+    if (type.isArray(m)) {
         xs = flattenTCO(m, []);
         while (xs instanceof Function) {
             xs = xs();
@@ -373,8 +373,8 @@ const flatten = (m) => {
  * const split = (s) => s.split('');
  * flatMap(split, ['Hello world']); // -> ['H', 'e', 'l', 'l', 'o', ...]
  */
-const flatMap = dyadic((f, m) => {
-    if (isFunc(f)) {
+const flatMap = decorate.dyadic((f, m) => {
+    if (type.isFunc(f)) {
         return flatten(map(f, m));
     }
     throw 'enums::flatMap awaits a function as first argument but saw ' + f;
@@ -382,7 +382,7 @@ const flatMap = dyadic((f, m) => {
 
 
 
-module.exports = {
+export default {
     field, has, exec, execRight, access, extend, merge, immutable, first,
     last, map, flatten, flatMap, assoc
 };

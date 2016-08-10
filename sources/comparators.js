@@ -9,8 +9,8 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const {isFunc} = require('./types');
-const {dyadic} = require('./decorators');
+import types from './types';
+import decorate from './decorators';
 /**
  * A set of predefined comparator functions
  * @module futils/comparators
@@ -41,11 +41,11 @@ const {dyadic} = require('./decorators');
  * isHelloWorld('hello world'); // -> true
  * isHelloWorld('nay'); // -> false
  */
-const eq = dyadic((a, b) => {
-    if (isFunc(a)) {
+const eq = decorate.dyadic((a, b) => {
+    if (types.isFunc(a)) {
         return (ac) => eq(a(ac), b);
     }
-    if (isFunc(b)) {
+    if (types.isFunc(b)) {
         return (bc) => eq(a, b(bc));
     }
     return a === b;
@@ -67,7 +67,7 @@ const eq = dyadic((a, b) => {
  * gt2(3); // -> true
  * gt2(2); // -> false
  */
-const gt = dyadic((a, b) => a < b);
+const gt = decorate.dyadic((a, b) => a < b);
 
 /**
  * Takes two numbers and tests if the second is greater than or equal to the first
@@ -85,7 +85,7 @@ const gt = dyadic((a, b) => a < b);
  * gte2(3); // -> true
  * gte2(2); // -> true
  */
-const gte = dyadic((a, b) => a <= b);
+const gte = decorate.dyadic((a, b) => a <= b);
 
 /**
  * Takes two numbers and tests if the second is smaller than the first
@@ -103,7 +103,7 @@ const gte = dyadic((a, b) => a <= b);
  * lt2(1); // -> true
  * lt2(2); // -> false
  */
-const lt = dyadic((a, b) => a > b);
+const lt = decorate.dyadic((a, b) => a > b);
 
 /**
  * Takes two numbers and tests if the second is lower than or equal to the first
@@ -121,7 +121,7 @@ const lt = dyadic((a, b) => a > b);
  * lte2(1); // -> true
  * lte2(2); // -> true
  */
-const lte = dyadic((a, b) => a >= b);
+const lte = decorate.dyadic((a, b) => a >= b);
 
 /**
  * Takes two characters and compares them alphabetically
@@ -137,11 +137,11 @@ const lte = dyadic((a, b) => a >= b);
  * ['gamma', 'alpha', 'beta'].sort(locals);
  * // -> ['alpha', 'beta', 'gamma']
  */
-const locals = dyadic((a, b) => {
+const locals = decorate.dyadic((a, b) => {
     let lc = a.localeCompare(b);
     return lc < 0 ? 1 : lc > 0 ? -1 : 0;
 });
 
-module.exports = {
+export default {
     eq, gt, gte, lt, lte, locals
 };

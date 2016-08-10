@@ -1,4 +1,4 @@
-const _ = require('../index');
+const _ = require('../futils');
 describe('futils/enums module', function () {
     
     it('testing field :: s -> o -> a', function () {

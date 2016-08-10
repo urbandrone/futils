@@ -1,4 +1,4 @@
-const _ = require('../index');
+const _ = require('../futils');
 describe('futils/lenses module', function () {
     
     const struct = {

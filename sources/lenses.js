@@ -8,9 +8,9 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-const {compose, getter} = require('./combinators');
-const {dyadic, triadic, curry} = require('./decorators');
-const {field, assoc, map} = require('./enums');
+import combine from './combinators';
+import decorate from './decorators';
+import enums from './enums';
 
 /**
  * A collection of lens creators and operation functions for composable lenses
@@ -42,12 +42,12 @@ const Identity = (x) => ({value: x, map(f){ return Identity(f(x)); }});
  *
  * over(MapLens('users'), (s) => s.toUpperCase(), m); // -> ['JOHN DOE']
  */
-const lens = curry((gets, sets, k, f, xs) => {
-    return map((replacement) => sets(k, replacement, xs), f(gets(k, xs)))
+const lens = decorate.curry((gets, sets, k, f, xs) => {
+    return enums.map((replacement) => sets(k, replacement, xs), f(gets(k, xs)))
 });
 
 // The bare bones, creates a lens which works on arrays and objects
-const baseLens = lens(field, assoc);
+const baseLens = lens(enums.field, enums.assoc);
 
 
 /**
@@ -67,7 +67,7 @@ const baseLens = lens(field, assoc);
  *
  * view(L.name, data); // -> 'John Doe'
  */
-const view = dyadic((l, data) => l(Const)(data).value);
+const view = decorate.dyadic((l, data) => l(Const)(data).value);
 
 /**
  * Given a lens, a function and a data structure, applies the function to the
@@ -89,7 +89,7 @@ const view = dyadic((l, data) => l(Const)(data).value);
  * over(L.name, (s) => s.toUpperCase(), data);
  * // -> {name: 'JOHN DOE', age: 30}
  */
-const over = triadic((l, f, data) => l((y) => Identity(f(y)))(data).value );
+const over = decorate.triadic((l, f, data) => l((y) => Identity(f(y)))(data).value );
 
 /**
  * Given a lens, a value and a data structure, sets the value of the foci of the
@@ -111,7 +111,7 @@ const over = triadic((l, f, data) => l((y) => Identity(f(y)))(data).value );
  * set(L.name, 'Adam Smith', data);
  * // -> {name: 'Adam Smith', age: 30}
  */
-const set = triadic((l, v, data) => over(l, getter(v), data));
+const set = decorate.triadic((l, v, data) => over(l, combine.getter(v), data));
 
 /**
  * Takes a variadic number of string parameters and returns a collection of
@@ -159,8 +159,8 @@ const makeLenses = (...fields) => fields.reduce((acc, field) => {
  * const mapMapLens = compose(mappedLens, mappedLens);
  * over(mapMapLens, inc, data); // -> [[2, 3, 4]]
  */
-const mappedLens = dyadic((f, xs) => Identity(map(compose(field('value'), f), xs)));
+const mappedLens = decorate.dyadic((f, xs) => Identity(enums.map(combine.compose(enums.field('value'), f), xs)));
 
 
 
-module.exports = { lens, makeLenses, mappedLens, view, over, set };
+export default { lens, makeLenses, mappedLens, view, over, set };

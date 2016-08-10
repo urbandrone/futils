@@ -1,4 +1,4 @@
-const _ = require('../index');
+const _ = require('../futils');
 describe('futils/transducers module', function () {
     let t = _.transducers;
     let add1 = (v) => v + 1;

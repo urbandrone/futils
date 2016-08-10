@@ -406,7 +406,7 @@ const isObjectOf = (f, x) => {
 
 
 
-module.exports = {
+export default {
     isNil, isAny, isNull, isVoid, isArray, isBool, isSet, isString, isWeakMap,
     isWeakSet, isFalse, isTrue, isFunc, isFloat, isInt, isNumber, isNode,
     isNodeList, isDate, isObject, isPromise, isIterable, isArrayOf, isObjectOf,

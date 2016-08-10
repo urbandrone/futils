@@ -1,4 +1,4 @@
-const _ = require('../index');
+const _ = require('../futils');
 describe('futils/comparators module', function () {
     it('testing eq :: a -> a -> b', function () {
         var a = _.eq('a', 'a');

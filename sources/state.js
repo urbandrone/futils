@@ -9,8 +9,8 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-const {dyadic} = require('./decorators');
-const {isVoid} = require('./types');
+import decorate from './decorators';
+import type from './types';
 /**
  * A collection of functional state utilities
  * @module futils/state
@@ -39,10 +39,10 @@ const {isVoid} = require('./types');
  * counter(+2); // -> 3
  * counter(-1); // -> 2
  */
-const stateful = dyadic((f, init) => {
+const stateful = decorate.dyadic((f, init) => {
     let now = init;
     return (next) => {
-        if (!isVoid(next)) {
+        if (!type.isVoid(next)) {
             now = f(now, next);
         }
         return now;
@@ -88,4 +88,4 @@ const counter = (seed) => stateful((a, b) => a + b, seed);
 const chosen = (seed) => stateful((a, b) => a === b ? a : b, seed);
 
 
-module.exports = { stateful, counter, chosen }
+export default { stateful, counter, chosen };

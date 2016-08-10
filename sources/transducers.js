@@ -8,8 +8,8 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-const {isNil, isFunc, isArray, isObject, isNumber, isString} = require('./types');
-const {curry} = require('./decorators');
+import type from './types';
+import decorate from './decorators';
 /**
  * A collection of transducer functions, inspired by Clojure
  * @module futils/transducers
@@ -37,7 +37,7 @@ function Transformer (f) {
 
 
 Transformer.isReduced = (v) => {
-    return !isNil(v) && v.reduced;
+    return !type.isNil(v) && v.reduced;
 };
 Transformer.reduce = (v) => {
     return {value: v, reduced: true}
@@ -71,11 +71,11 @@ Transformer.deref = (rv) => {
  * );
  * // -> 'a: 1 - b: 2 - c: 3'
  */
-const fold = curry((tf, seed, ls) => {
-    var xf = isFunc(tf) ? Transformer(tf) : tf,
+const fold = decorate.curry((tf, seed, ls) => {
+    var xf = type.isFunc(tf) ? Transformer(tf) : tf,
         v = seed;
 
-    if (isObject(ls)) {
+    if (type.isObject(ls)) {
         let ks = Object.keys(ls);
         for (let k of ks) {
             v = xf[STEP](v, [ls[k], k]);
@@ -116,9 +116,9 @@ const fold = curry((tf, seed, ls) => {
  *
  * transduce(add1, sum, 0, [1, 2, 3]); // -> 9
  */
-const transduce = curry((tf, step, seed, ls) => {
+const transduce = decorate.curry((tf, step, seed, ls) => {
     return fold(
-        tf(isFunc(step) ? Transformer(step) : step),
+        tf(type.isFunc(step) ? Transformer(step) : step),
         seed,
         ls
     );
@@ -145,8 +145,8 @@ const transduce = curry((tf, step, seed, ls) => {
  * into([], add1, [1, 2, 3]); // -> [2, 3, 4]
  * into('', add1, [1, 2, 3]); // -> '234'
  */
-const into = curry((seed, tf, ls) => {
-    if (isArray(seed)) {
+const into = decorate.curry((seed, tf, ls) => {
+    if (type.isArray(seed)) {
         return transduce(
             tf,
             (arr, v) => [...arr, v],
@@ -154,7 +154,7 @@ const into = curry((seed, tf, ls) => {
             ls
         );
     }
-    if (isObject(seed)) {
+    if (type.isObject(seed)) {
         return transduce(
             tf,
             (obj, [v, k]) => {
@@ -166,7 +166,7 @@ const into = curry((seed, tf, ls) => {
             ls
         );
     }
-    if (isNumber(seed) || isString(seed)) {
+    if (type.isNumber(seed) || type.isString(seed)) {
         return transduce(
             tf,
             (acc, v) => acc + v,
@@ -417,7 +417,7 @@ const takeWhile = (f) => {
 const keep = (xf) => {
     return {
         '@@transducer/init': () => xf[INIT](),
-        '@@transducer/step': (xs, v) => !isNil(v) ? xf[STEP](xs, v) : xs,
+        '@@transducer/step': (xs, v) => !type.isNil(v) ? xf[STEP](xs, v) : xs,
         '@@transducer/result': (v) => xf[RESULT](v)
     };
 }
@@ -538,7 +538,7 @@ const partitionWith = (f) => {
     }
 }
 
-module.exports = {
+export default {
     fold, transduce, into, map, filter, unique, keep, partition, partitionWith,
     take, takeWhile, drop, dropWhile, flatten
 };
