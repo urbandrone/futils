@@ -1,5 +1,5 @@
 # Currying and partial application
-Sometimes it is useful, to create function which can consecutively consume their arguments, so that you can pass them around and set all parameters step-by-step instead of giving them all at once.
+Sometimes it is useful to create functions which can consecutively consume their arguments, so that you can pass them around and set all parameters step-by-step instead of giving them all at once.
 
 ## curry
 The curry decorator is for such a case. It consumes a function and returns a new function, which consecutively consumes parameters until it has enough arguments collected to execute the function initially given.
@@ -36,7 +36,7 @@ const sayHello = add('hello ');
 sayHello('world'); // -> 'hello world'
 ```
 
-"But", you might thing now, "all of this could have been done by calling `Function.prototype.bind`, too". And that's correct!
+"But", you might say, "all of this could have been done by calling `Function.prototype.bind`, too". And that's correct!
 ```javascript
 const add = (a, b) => a + b;
 
