@@ -45,6 +45,7 @@ sayHello('world'); // -> 'hello world'
 ```
 
 Let's make the above example a bit more complicated to demonstrate the difference between `curry` and `bind`. While it is in fact true that one can use partial application by using `bind`, it has two drawbacks:
+
 1. You _have to_ specify a context, even if it is `null`
 2. You can only skip _the first_ invocation but not subsequent ones
 
