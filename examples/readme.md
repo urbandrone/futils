@@ -3,4 +3,4 @@ A growing set of **How to** examples for solving some common programming problem
 
 ## Available examples
 * [Getting started](./ex00-getting-started.md)
-* [Currying and partial application (TBD)](./ex01-currypartial.md)
+* [Currying and partial application](./ex01-currypartial.md)
