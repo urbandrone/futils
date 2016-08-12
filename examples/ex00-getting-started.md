@@ -1,17 +1,11 @@
 # Getting started
 This is a step-by-step tutorial on how to install and use the `futils` toolset. The examples are written for writing a Node based application but are good enough to serve the general purpose, even if you use the toolkit in another environment. To get more information about how to install for a specific environment, please visit the projects [main readme](../readme.md).
 
-## Step 1: Check your Node and NPM version
-To use this package, you should have installed Node V6.3.1 or above. You can check the current version you are running:
+## Step 1: Check your Node version
+To use this package you must have installed Node V4 or higher. You can check the current version you are running:
 ```
 $ node -v
 v6.3.1
-```
-
-After that, also check your NPM version. It should be V3.7.1 or higher:
-```
-$ npm -v
-3.7.1
 ```
 
 ## Step 2: Download and install the package from NPM
