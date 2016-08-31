@@ -5,3 +5,4 @@ A growing set of **How to** examples for solving some common programming problem
 * [Getting started](./ex00-getting-started.md)
 * [Currying and partial application](./ex01-currypartial.md)
 * [Use with reactive streams](./ex02-reactive.md)
+* [Working with transducers](./ex03-transducers.md)

@@ -1,5 +1,5 @@
 # Use with reactive streams
-In this example we will see how to use `futils` together with reactive streams. There are many implementations of reactive streams, but we are going to use [Kefir](https://rpominov.github.io/kefir/) for now.
+In this example we will see how to use `futils` together with reactive streams and asynchronous data fetching. There are many implementations of reactive streams, but we are going to use [Kefir](https://rpominov.github.io/kefir/) for now.
 
 ## Before we can start
 To get started, install `Kefir`, `node-fetch` and `futils` into a new directory. You can install all of them from NPM:
@@ -23,7 +23,7 @@ const fetch = require('node-fetch');
 const rx = require('kefir');
 const f = require('futils');
 
-let URL = 'https://api.github.com/users/urbandrone/repos';
+let URL = 'https://api.github.com/users/octocat/repos';
 
 const fetchRepos = (url) => rx.fromPromise(fetch(url));
 ```
@@ -34,7 +34,7 @@ Since `fetch` in contrast to the older `XMLHttpRequest` or Node's `http` returns
 ```javascript
 ...
 
-let URL = 'https://api.github.com/users/urbandrone/repos';
+let URL = 'https://api.github.com/users/octocat/repos';
 
 const fetchRepos = (url) => rx.fromPromise(fetch(url));
 
@@ -86,7 +86,7 @@ const fetch = require('node-fetch');
 const rx = require('kefir');
 const f = require('futils');
 
-let URL = 'https://api.github.com/users/urbandrone/repos';
+let URL = 'https://api.github.com/users/octocat/repos';
 const fetchRepos = (url) => rx.fromPromise(fetch(url));
 
 // toJson :: Response -> JSON
