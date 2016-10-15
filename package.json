@@ -1,6 +1,6 @@
 {
   "name": "futils",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Functional programming utility toolkit",
   "main": "futils.js",
   "jsnext:main": "sources/__main.js",
