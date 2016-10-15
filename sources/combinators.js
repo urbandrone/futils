@@ -108,7 +108,7 @@ const pipe = (f, ...fs) => {
  */
 const compose = (...fs) => {
     if (type.isArrayOf(type.isFunc, fs)) {
-        return pipe(fs.reverse());
+        return pipe(...fs.reverse());
     }
     throw 'combinators::compose awaits functions but saw ' + fs;
 }
