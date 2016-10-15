@@ -347,6 +347,9 @@ function flattenTCO (xs, ys) {
  */
 const flatten = (m) => {
     var xs;
+    if (type.isFunc(m.flatten)) {
+        return m.flatten();
+    }
     if (type.isArray(m)) {
         xs = flattenTCO(m, []);
         while (xs instanceof Function) {
@@ -375,6 +378,9 @@ const flatten = (m) => {
  */
 const flatMap = decorate.dyadic((f, m) => {
     if (type.isFunc(f)) {
+        if (type.isFunc(m.flatMap)) {
+            return m.flatMap(f);
+        }
         return flatten(map(f, m));
     }
     throw 'enums::flatMap awaits a function as first argument but saw ' + f;

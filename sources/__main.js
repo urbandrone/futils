@@ -7,6 +7,7 @@ import lenses from './lenses';
 import state from './state';
 import transducers from './transducers';
 import type from './types';
+import monads from './monads';
 
 export default {
     aritize: arity.aritize,
@@ -60,6 +61,7 @@ export default {
     given: decorate.given,
     memoize: decorate.memoize,
     transducers: transducers,
+    monads: monads,
     stateful: state.stateful,
     counter: state.counter,
     chosen: state.chosen,
