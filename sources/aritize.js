@@ -38,8 +38,7 @@ const aritize = (n, f) => {
     let len = n, args = [], wrap = null;
     if (f.length >= len) { return f; }
     while (len > 0) { args.push('arg' + len--); }
-    args = args.join(',');
-    wrap = 'return (' + args + ') => fx(' + args + ')';
+    wrap = 'return (' + args.join(',') + ') => fx(' + args.join(',') + ')';
     return new Function('fx', wrap)(f);
 }
 

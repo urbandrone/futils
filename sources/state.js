@@ -38,6 +38,8 @@ import type from './types';
  * counter(+1); // -> 1
  * counter(+2); // -> 3
  * counter(-1); // -> 2
+ * counter(); // -> 2
+ * counter(); // -> 2
  */
 const stateful = decorate.dyadic((f, init) => {
     let now = init;

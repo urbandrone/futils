@@ -18,6 +18,8 @@
     "js",
     "functional",
     "toolkit",
+    "lenses",
+    "transducers",
     "utilities",
     "futils"
   ],

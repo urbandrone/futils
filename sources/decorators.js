@@ -19,6 +19,7 @@ import arity from './aritize';
  */
 
 
+
 /**
  * Takes a function with a arity of N and returns a variant with arity of 1
  * @method
@@ -178,7 +179,7 @@ const tetradic = (f) => {
  * N; // -> 4
  */
 const once = (f) => {
-    var called = 0;
+    let called = 0;
     if (type.isFunc(f)) {
         return arity.aritize(f.length, (...xs) => {
             if (called === 0) {

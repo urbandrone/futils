@@ -57,37 +57,6 @@ const getter = (x) => () => x;
 const tap = (x) => (y) => y(x);
 
 /**
- * Composes 2 up to N functions together into one. `compose` composes the
- *     given functions from right to left instead of from left to right. Use
- *     the `pipe` function if you want to opposite behaviour
- * @method
- * @version 0.4.0
- * @param {function} ...fs 2 up to N functions
- * @return {function} Composition of the given functions
- *
- * @example
- * const {compose} = require('futils');
- *
- * const add1 = (n) => n + 1;
- * const mult2 = (n) => n * 2;
- *
- * const mult2Add1 = compose(add1, mult2);
- *
- * add1(mult2(2)) === mult2Add1(2);
- * // -> true
- */
-const compose = (...fs) => {
-    var f = fs.pop();
-    if (type.isFunc(f) && type.isArrayOf(type.isFunc, fs)) {
-        return arity.aritize(
-            f.length,
-            (...args) => fs.reduce((v, g) => g(v), f(...args))
-        );
-    }
-    throw 'combinators::compose awaits functions but saw ' + fs;
-}
-
-/**
  * Composes 2 up to N function together into one. `pipe` allows function
  *     composition from left to right instead of right to left. Use the `compose`
  *     function if you want the opposite behaviour
@@ -115,6 +84,33 @@ const pipe = (f, ...fs) => {
         );
     }
     throw 'combinators::pipe awaits functions but saw ' + [f, ...fs];
+}
+
+/**
+ * Composes 2 up to N functions together into one. `compose` composes the
+ *     given functions from right to left instead of from left to right. Use
+ *     the `pipe` function if you want to opposite behaviour
+ * @method
+ * @version 0.4.0
+ * @param {function} ...fs 2 up to N functions
+ * @return {function} Composition of the given functions
+ *
+ * @example
+ * const {compose} = require('futils');
+ *
+ * const add1 = (n) => n + 1;
+ * const mult2 = (n) => n * 2;
+ *
+ * const mult2Add1 = compose(add1, mult2);
+ *
+ * add1(mult2(2)) === mult2Add1(2);
+ * // -> true
+ */
+const compose = (...fs) => {
+    if (type.isArrayOf(type.isFunc, fs)) {
+        return pipe(fs.reverse());
+    }
+    throw 'combinators::compose awaits functions but saw ' + fs;
 }
 
 /**
