@@ -1,5 +1,4 @@
 const _ = require('../futils');
-const log = require('brolog');
 describe('futils/monads module', function () {
     const M = _.monads;
 
@@ -42,6 +41,13 @@ describe('futils/monads module', function () {
 
         expect(some.biMap(rej, id).result()).toBe(1);
         expect(none.biMap(rej, id).result()).toBe('Rejected a null value');
+
+        expect(M.Maybe.fromEither(
+            M.Either.ofRight(1)
+        ).map(f).result()).toBe(2);
+        expect(M.Maybe.fromEither(
+            M.Either.ofLeft('failure')
+        ).map(f).result()).toBe(null);
     });
 
     it('testing Either monad', () => {
@@ -69,6 +75,15 @@ describe('futils/monads module', function () {
 
         expect(right.biMap(rej, id).result()).toBe(1);
         expect(left.biMap(rej, id).result()).toBe(2);
+
+        expect(M.Either.fromMaybe(
+            'failure', M.Maybe.ofSome(1)
+        ).map(f).result()).toBe(2);
+        expect(M.Either.fromMaybe(
+            'failure', M.Maybe.ofNone()
+        ).map(f).result()).toBe('failure');
+
+        expect(M.Either.try(f)(1).result()).toBe(2);
     });
 
     it('testing IO monad', () => {

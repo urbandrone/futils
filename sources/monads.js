@@ -97,7 +97,7 @@ class Some extends Identity {
 
 class Maybe {
     static of (a) {
-        return type.isNull(a) || type.isVoid(a) ? None.of(a) : Some.of(a);
+        return type.isNil(a) ? Maybe.ofNone() : Maybe.ofSome(a);
     }
     static ofNone () {
         return Maybe.None.of();
@@ -170,12 +170,9 @@ Either.Right = Right;
 
 
 class IO extends Identity {
-    constructor (a) {
-        super(a, 'IO');
-    }
     static of (a) {
         // of :: f -> IO f
-        return new IO(a);
+        return new IO(a 'IO');
     }
     result () {
         // result :: () => a
