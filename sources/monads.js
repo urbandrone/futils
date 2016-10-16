@@ -172,7 +172,7 @@ Either.Right = Right;
 class IO extends Identity {
     static of (a) {
         // of :: f -> IO f
-        return new IO(a 'IO');
+        return new IO(a, 'IO');
     }
     result () {
         // result :: () => a
@@ -180,11 +180,11 @@ class IO extends Identity {
     }
     map (f) {
         // map :: f -> IO fa
-        return IO.of(combine.compose(f, this[MVAL]));
+        return IO.of(combine.compose(f, () => this.result()));
     }
     flatten () {
         // this = IO(IO( f ))
-        return IO.of(this.result()[MVAL]);
+        return IO.of(() => this.result().result());
     }
 }
 
