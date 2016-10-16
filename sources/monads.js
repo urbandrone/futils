@@ -20,8 +20,8 @@ import decorate from './decorators';
  */
 
 
-
 const MVAL = Symbol('value');
+const MTYPE = Symbol('type');
 
 /**
  * Checks if a given object has a field of a certain key by name which is not
@@ -34,19 +34,18 @@ const MVAL = Symbol('value');
  *
  * @example
  * const {has} = require('futils');
- *
- * let testee = {foo: 'bar'};
- *
- * has('foo', testee); // -> true
- * has('toString', testee); // -> false
  */
 
 class Identity {
-    constructor (a) {
+    constructor (a, t) {
+        this[MTYPE] = t;
         this[MVAL] = a;
     }
     static of (a) {
-        return new Identity(a);
+        return new Identity(a, 'Identity');
+    }
+    toString () {
+        return `${this[MTYPE]}(${this[MVAL]})`;
     }
     result () {
         return this[MVAL];
@@ -66,43 +65,39 @@ class Identity {
 
 
 class None extends Identity {
-    constructor () { super(null); }
+    constructor () { super(null, 'Maybe.None'); }
     static of () { return new None(); }
     isSome () { return false; }
     map () { return this; }
     flatten () { return this; }
     orElse (a) {
-        return Some.of(a);
+        return Maybe.of(a);
     }
-    fold (f, _) {
-        return f(this.result());
+    biMap (f) {
+        return Maybe.of(f());
     }
 }
 
 class Some extends Identity {
-    static of (a) { return new Some(a); }
+    static of (a) { return new Some(a, 'Maybe.Some'); }
     orElse () { return this; }
     isSome () {
         return this.result() != null;
     }
     map (f) {
-        return !this.isSome() ?
-                this :
-                Maybe.of(f(this.result()));
+        return this.isSome() ? Maybe.of(f(this.result())) : this;
     }
     flatten () {
-        return !this.isSome() ?
-                this :
-                Maybe.of(this.result().result());
+        return this.isSome() ? Maybe.of(this.result().result()) : this;
     }
-    fold (_, g) {
-        return g(this.result());
+    biMap (_, g) {
+        return this.map(g);
     }
 }
 
 class Maybe {
     static of (a) {
-        return Maybe[type.isNil(a) || isNaN(a) ? 'None' : 'Some'].of(a);
+        return type.isNull(a) || type.isVoid(a) ? None.of(a) : Some.of(a);
     }
     static ofNone () {
         return Maybe.None.of();
@@ -123,19 +118,19 @@ Maybe.Some = Some;
 
 
 class Left extends Identity {
-    static of (a) { return new Left(a); }
+    static of (a) { return new Left(a, 'Either.Left'); }
     orElse (a) { return Right.of(a); }
-    fold (f, _) { return f(this.result()); }
+    biMap (f) { return this.mapLeft(f); }
     isRight () { return false; }
     map () { return this; }
     flatten () { return this; }
-    mapLeft (f) { return Left.of(f(this.value)); }
+    mapLeft (f) { return Left.of(f(this.result())); }
 }
 
 class Right extends Identity {
-    static of (a) { return new Right(a); }
+    static of (a) { return new Right(a, 'Either.Right'); }
     orElse () { return this; }
-    fold (_, g) { return g(this.result()); }
+    biMap (_, g) { return this.map(g); }
     isRight () { return Right.prototype.isPrototypeOf(this); }
     map (f) {
         return this.isRight() ? Right.of(f(this.result())) : this;
@@ -143,7 +138,7 @@ class Right extends Identity {
     flatten () {
         return this.isRight() ? Right.of(this.result().result()) : this;
     }
-    mapLeft (f) { return this; }
+    mapLeft () { return this; }
 }
 
 class Either {
@@ -175,17 +170,24 @@ Either.Right = Right;
 
 
 class IO extends Identity {
+    constructor (a) {
+        super(a, 'IO');
+    }
     static of (a) {
-        return new IO(() => a);
+        // of :: f -> IO f
+        return new IO(a);
     }
     result () {
+        // result :: () => a
         return this[MVAL]();
     }
     map (f) {
-        return IO.of(combine.compose(f, this.result()));
+        // map :: f -> IO fa
+        return IO.of(combine.compose(f, this[MVAL]));
     }
     flatten () {
-        return IO.of(this.result().result());
+        // this = IO(IO( f ))
+        return IO.of(this.result()[MVAL]);
     }
 }
 

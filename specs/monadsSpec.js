@@ -1,68 +1,85 @@
 const _ = require('../futils');
+const log = require('brolog');
 describe('futils/monads module', function () {
     const M = _.monads;
-    const {pipe} = _;
-    
-    const inc = (n) => n + 1;
 
     it('testing Identity monad', () => {
         let m = M.Identity.of(1);
         let mm = M.Identity.of(M.Identity.of(1));
 
-        let minc = (n) => M.Identity.of(1).map((one) => one + n);
+    let f = (n) => n + 1;
+        let mf = (n) => M.Identity.of(1).map((one) => one + n);
 
+        expect(m.toString()).toBe('Identity(1)');
         expect(m.result()).toBe(1);
-        expect(m.map(inc).result()).toBe(2);
+        expect(m.map(f).result()).toBe(2);
         expect(mm.flatten().result()).toBe(1);
-        expect(m.flatMap(minc).result()).toBe(2);
+        expect(m.flatMap(mf).result()).toBe(2);
     });
 
     it('testing Maybe monad', () => {
-        let m = M.Maybe.of(1),
+        let some = M.Maybe.of(1),
             none = M.Maybe.of(null);
 
-        let minc = (n) => M.Maybe.of(1).map((one) => one + n);
+        let f = (n) => n + 1;
+        let mf = (n) => M.Maybe.of(1).map((one) => one + n);
 
-        expect(m.result()).toBe(1);
+        expect(some.toString()).toBe('Maybe.Some(1)');
+        expect(none.toString()).toBe('Maybe.None(null)');
+        expect(some.result()).toBe(1);
         expect(none.result()).toBe(null);
-        expect(m.isSome()).toBe(true);
+        expect(some.isSome()).toBe(true);
         expect(none.isSome()).toBe(false);
-        expect(m.map(inc).result()).toBe(2);
-        expect(none.map(inc).result()).toBe(null);
-        expect(m.flatMap(minc).result()).toBe(2);
-        expect(none.flatMap(minc).result()).toBe(null);
-        expect(m.orElse(2).result()).toBe(1);
+        expect(some.map(f).result()).toBe(2);
+        expect(none.map(f).result()).toBe(null);
+        expect(some.flatMap(mf).result()).toBe(2);
+        expect(none.flatMap(mf).result()).toBe(null);
+        expect(some.orElse(2).result()).toBe(1);
         expect(none.orElse(2).result()).toBe(2);
+
+        let rej = () => 'Rejected a null value';
+        let id = (a) => a;
+
+        expect(some.biMap(rej, id).result()).toBe(1);
+        expect(none.biMap(rej, id).result()).toBe('Rejected a null value');
     });
 
     it('testing Either monad', () => {
-        let m = M.Either.ofRight(1),
+        let right = M.Either.ofRight(1),
             left = M.Either.ofLeft('failure');
 
-        let minc = (n) => M.Either.ofRight(1).map((one) => one + n);
+        let f = (n) => n + 1;
+        let mf = (n) => M.Either.ofRight(1).map((one) => one + n);
 
-        expect(m.result()).toBe(1);
+        expect(right.toString()).toBe('Either.Right(1)');
+        expect(left.toString()).toBe('Either.Left(failure)');
+        expect(right.result()).toBe(1);
         expect(left.result()).toBe('failure');
-        expect(m.isRight()).toBe(true);
+        expect(right.isRight()).toBe(true);
         expect(left.isRight()).toBe(false);
-        expect(m.map(inc).result()).toBe(2);
-        expect(left.map(inc).result()).toBe('failure');
-        expect(m.flatMap(minc).result()).toBe(2);
-        expect(left.flatMap(minc).result()).toBe('failure');
-        expect(m.orElse('fallback').result()).toBe(1);
+        expect(right.map(f).result()).toBe(2);
+        expect(left.map(f).result()).toBe('failure');
+        expect(right.flatMap(mf).result()).toBe(2);
+        expect(left.flatMap(mf).result()).toBe('failure');
+        expect(right.orElse('fallback').result()).toBe(1);
         expect(left.orElse('fallback').result()).toBe('fallback');
+
+        let rej = () => 2;
+        let id = (a) => a;
+
+        expect(right.biMap(rej, id).result()).toBe(1);
+        expect(left.biMap(rej, id).result()).toBe(2);
     });
 
     it('testing IO monad', () => {
-        let vars = {location: {href: 'testrunner'}, postfix: '!'},
-            m = M.IO.of(() => vars.location.href),
-            n = M.IO.of(() => vars.postfix);
+        let obj = {location: {href: 'testrunner'}};
+        let m = M.IO.of(() => obj.location.href);
 
-        const f = (s) => s + '!';
-        const mf = (s) => n.map((p) => s + p);
+        let g = (s) => s + '!';
+        let mf = (s) => M.IO.of(() => '!').map((p) => s + p);
 
         expect(m.result()).toBe('testrunner');
-        expect(m.map(f).result()).toBe('testrunner!');
+        expect(m.map(g).result()).toBe('testrunner!');
         expect(m.flatMap(mf).result()).toBe('testrunner!');
     });
 
