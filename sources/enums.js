@@ -9,7 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import type from './types';
-import decorate from './decorators';
+import arity from './arity';
 
 /**
  * A collection of enumerable utility functions. Contains abstractions which
@@ -37,7 +37,7 @@ import decorate from './decorators';
  * has('foo', testee); // -> true
  * has('toString', testee); // -> false
  */
-const has = decorate.dyadic((key, x) => ({}.hasOwnProperty.call(x, key)));
+const has = arity.dyadic((key, x) => ({}.hasOwnProperty.call(x, key)));
 
 /**
  * Accesses a given object by a chain of keys
@@ -56,7 +56,7 @@ const has = decorate.dyadic((key, x) => ({}.hasOwnProperty.call(x, key)));
  * const firstName = field('name.first');
  * firstName({name: {first: 'John', last: 'Doe'}}); // -> 'John'
  */
-const field = decorate.dyadic((key, x) => {
+const field = arity.dyadic((key, x) => {
     var ks = type.isString(key) && /\./.test(key) ? key.split('.') : [key];
     return ks.reduce((a, b) => type.isAny(a) && type.isAny(a[b]) ? a[b] : null, x);
 });
@@ -78,7 +78,7 @@ const field = decorate.dyadic((key, x) => {
  * // imagine a series of keystrokes:
  * [8, 13, ... 13].map(keyMeans); // -> ['Backspace', 'Enter', ... 'Enter']
  */
-const access = decorate.dyadic((x, k) => !!x ? field(k, x) : null);
+const access = arity.dyadic((x, k) => !!x ? field(k, x) : null);
 
 /**
  * Assigns a value and a key to a given data structure, returns a clone of the
@@ -101,7 +101,7 @@ const access = decorate.dyadic((x, k) => !!x ? field(k, x) : null);
  *
  * console.log(p); // -> {name: 'John Doe', accounts: [...]};
  */
-const assoc = decorate.triadic((k, v, x) => {
+const assoc = arity.triadic((k, v, x) => {
     let key = k, receiver = x;
     if (type.isArray(x)) {
         receiver = [...x];
@@ -300,7 +300,7 @@ const last = (xs) => xs[xs.length - 1];
  * // auto curried:
  * const mapAdd1 = map(addOne);
  */
-const map = decorate.dyadic((f, m) => {
+const map = arity.dyadic((f, m) => {
     var ks, r;
     if (type.isFunc(f)) {
         if (type.isFunc(m.map)) {
@@ -376,7 +376,7 @@ const flatten = (m) => {
  * const split = (s) => s.split('');
  * flatMap(split, ['Hello world']); // -> ['H', 'e', 'l', 'l', 'o', ...]
  */
-const flatMap = decorate.dyadic((f, m) => {
+const flatMap = arity.dyadic((f, m) => {
     if (type.isFunc(f)) {
         if (type.isFunc(m.flatMap)) {
             return m.flatMap(f);

@@ -7,7 +7,8 @@
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node ./specs/",
     "docs": "./node_modules/.bin/jsdoc -c ./conf.json --verbose",
-    "bundle": "rollup -c"
+    "bundle": "rollup -c",
+    "debug": "rollup -c rollup.debug.config.js"
   },
   "repository": {
     "type": "git",

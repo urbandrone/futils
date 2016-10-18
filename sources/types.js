@@ -28,7 +28,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * isNil(null); // -> true
  * isNil(''); // -> false
  */
-const isNil = (x) => x == null;
+const isNil = (x) => x === null || x === void 0;
 
 /**
  * Returns true if given anything but `null` or `undefined`
@@ -43,7 +43,7 @@ const isNil = (x) => x == null;
  * isAny(null); // -> false
  * isAny(''); // -> true
  */
-const isAny = (x) => x != null;
+const isAny = (x) => !isNil(x);
 
 /**
  * Returns true if given `undefined`

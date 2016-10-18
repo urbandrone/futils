@@ -1,16 +1,16 @@
-const _ = require('../futils');
+const {combinators, type} = require('../futils');
 describe('futils/combinators module', function () {
     it('testing identity :: a -> a', function () {
-        expect(_.identity(1)).toBe(1);
+        expect(combinators.identity(1)).toBe(1);
     });
 
     it('testing getter :: a -> _ -> a', function () {
-        var a = _.getter('a');
+        var a = combinators.getter('a');
         expect(a('b')).toBe('a');
     });
 
     it('testing tap :: f -> g -> g(f)', function () {
-        var a = _.tap(function outer (x) { return outer.inner(x); })((outer) => {
+        var a = combinators.tap(function outer (x) { return outer.inner(x); })((outer) => {
             outer.inner = (n) => n + 1;
             return outer;
         });
@@ -21,7 +21,7 @@ describe('futils/combinators module', function () {
     it('testing compose :: fs -> f', function () {
         var a = (s) => s.toUpperCase();
         var b = (s) => s.replace('-', ' ');
-        var c = _.compose(a, b);
+        var c = combinators.compose(a, b);
 
         expect(c('hello-world')).toBe('HELLO WORLD');
     });
@@ -29,14 +29,14 @@ describe('futils/combinators module', function () {
     it('testing pipe :: fs -> f', function () {
         var a = (s) => s.toUpperCase();
         var b = (s) => s.replace('-', ' ');
-        var c = _.pipe(a, b);
+        var c = combinators.pipe(a, b);
 
         expect(c('hello-world')).toBe('HELLO WORLD');
     });
 
     it('testing and :: fs -> f', function () {
         var a = (s) => s.length > 2;
-        var b = _.and(_.isString, a);
+        var b = combinators.and(type.isString, a);
 
         expect(b('test')).toBe(true);
         expect(b('t')).toBe(false);
@@ -45,21 +45,11 @@ describe('futils/combinators module', function () {
 
     it('testing or :: fs -> f', function () {
         var a = (s) => !!s && s.length > 2;
-        var b = _.or(_.isString, a);
+        var b = combinators.or(type.isString, a);
 
         expect(b('test')).toBe(true);
         expect(b('t')).toBe(true);
         expect(b([1, 2, 3])).toBe(true);
         expect(b(null)).toBe(false);
-    });
-
-    it('testing splat :: fs -> f', function () {
-        var _s = '';
-        var a = (s) => s.toUpperCase();
-        var b = (s) => _s = s + ' b';
-        var c = _.splat(a, b)
-
-        expect(c('a')).toBe('A');
-        expect(_s).toBe('a b');
     });
 });   

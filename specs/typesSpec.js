@@ -1,10 +1,10 @@
-const _ = require('../futils');
+const {type} = require('../futils');
 describe('futils/types module', function () {
 
     it('testing isNil :: f -> a -> b', function () {
-        var nul = _.isNil(null);
-        var undef = _.isNil(void 0);
-        var s = _.isNil('a string');
+        var nul = type.isNil(null);
+        var undef = type.isNil(void 0);
+        var s = type.isNil('a string');
 
         expect(nul).toBe(true);
         expect(undef).toBe(true);
@@ -12,9 +12,9 @@ describe('futils/types module', function () {
     });
 
     it('testing isNull :: f -> a -> b', function () {
-        var nul = _.isNull(null);
-        var undef = _.isNull(void 0);
-        var s = _.isNull('a string');
+        var nul = type.isNull(null);
+        var undef = type.isNull(void 0);
+        var s = type.isNull('a string');
 
         expect(nul).toBe(true);
         expect(undef).toBe(false);
@@ -22,9 +22,9 @@ describe('futils/types module', function () {
     });
 
     it('testing isVoid :: f -> a -> b', function () {
-        var nul = _.isVoid(null);
-        var undef = _.isVoid(void 0);
-        var s = _.isVoid('a string');
+        var nul = type.isVoid(null);
+        var undef = type.isVoid(void 0);
+        var s = type.isVoid('a string');
 
         expect(nul).toBe(false);
         expect(undef).toBe(true);
@@ -32,43 +32,43 @@ describe('futils/types module', function () {
     });
 
     it('testing isBool :: f -> a -> b', function () {
-        var b = _.isBool(false);
-        var s = _.isBool('a string');
+        var b = type.isBool(false);
+        var s = type.isBool('a string');
 
         expect(b).toBe(true);
         expect(s).toBe(false);
     });
 
     it('testing isTrue :: f -> b -> b', function () {
-        var b = _.isTrue(false);
-        var s = _.isTrue('a string');
+        var b = type.isTrue(false);
+        var s = type.isTrue('a string');
 
         expect(b).toBe(false);
         expect(s).toBe(true);
     });
 
     it('testing isFalse :: f -> a -> b', function () {
-        var b = _.isFalse(false);
-        var s = _.isFalse('a string');
+        var b = type.isFalse(false);
+        var s = type.isFalse('a string');
 
         expect(b).toBe(true);
         expect(s).toBe(false);
     });
 
     it('testing isString :: f -> a -> b', function () {
-        var s = _.isString('a string');
-        var b = _.isString(true);
+        var s = type.isString('a string');
+        var b = type.isString(true);
 
         expect(s).toBe(true);
         expect(b).toBe(false);
     });
 
     it('testing isNumber :: f -> a -> b', function () {
-        var n = _.isNumber(1);
-        var b = _.isNumber(true);
-        var nan = _.isNumber(NaN);
-        var inf = _.isNumber(Infinity);
-        var nil = _.isNumber(null);
+        var n = type.isNumber(1);
+        var b = type.isNumber(true);
+        var nan = type.isNumber(NaN);
+        var inf = type.isNumber(Infinity);
+        var nil = type.isNumber(null);
 
         expect(n).toBe(true);
         expect(b).toBe(false);
@@ -78,9 +78,9 @@ describe('futils/types module', function () {
     });
 
     it('testing isInt :: f -> a -> b', function () {
-        var n = _.isInt(1);
-        var b = _.isInt(true);
-        var f32 = _.isInt(1.5);
+        var n = type.isInt(1);
+        var b = type.isInt(true);
+        var f32 = type.isInt(1.5);
 
         expect(n).toBe(true);
         expect(b).toBe(false);
@@ -88,9 +88,9 @@ describe('futils/types module', function () {
     });
 
     it('testing isFloat :: f -> a -> b', function () {
-        var n = _.isFloat(1.5);
-        var b = _.isFloat(true);
-        var i32 = _.isFloat(1);
+        var n = type.isFloat(1.5);
+        var b = type.isFloat(true);
+        var i32 = type.isFloat(1);
 
         expect(n).toBe(true);
         expect(b).toBe(false);
@@ -98,49 +98,49 @@ describe('futils/types module', function () {
     });
 
     it('testing isFunc :: f -> a -> b', function () {
-        var f = _.isFunc(_.isString);
-        var b = _.isFunc(true);
+        var f = type.isFunc(type.isString);
+        var b = type.isFunc(true);
 
         expect(f).toBe(true);
         expect(b).toBe(false);
     });
 
     it('testing isArray :: f -> a -> b', function () {
-        var a = _.isArray([]);
-        var b = _.isArray({});
+        var a = type.isArray([]);
+        var b = type.isArray({});
 
         expect(a).toBe(true);
         expect(b).toBe(false);
     });
 
     it('testing isObject :: f -> a -> b', function () {
-        var a = _.isObject({});
-        var b = _.isObject([]);
+        var a = type.isObject({});
+        var b = type.isObject([]);
 
         expect(a).toBe(true);
         expect(b).toBe(false);
     });
 
     it('testing isDate :: f -> a -> b', function () {
-        var a = _.isDate(new Date());
-        var b = _.isDate('2014-01-01');
+        var a = type.isDate(new Date());
+        var b = type.isDate('2014-01-01');
 
         expect(a).toBe(true);
         expect(b).toBe(false);
     });
 
     it('testing isRegex :: f -> a -> b', function () {
-        var a = _.isRegex(/.*/g);
-        var b = _.isRegex(' ');
+        var a = type.isRegex(/.*/g);
+        var b = type.isRegex(' ');
 
         expect(a).toBe(true);
         expect(b).toBe(false);
     });
 
     it('testing isPromise :: f -> a -> b', function () {
-        var a = _.isPromise(new Promise((r) => r(1)));
-        var b = _.isPromise('string');
-        var c = _.isPromise({length: 10});
+        var a = type.isPromise(new Promise((r) => r(1)));
+        var b = type.isPromise('string');
+        var c = type.isPromise({length: 10});
 
         expect(a).toBe(true);
         expect(b).toBe(false);
@@ -148,9 +148,9 @@ describe('futils/types module', function () {
     });
 
     it('testing isIterator :: f -> a -> b', function () {
-        var a = _.isIterator(null);
-        var b = _.isIterator({next: true});
-        var c = _.isIterator({next: function () {}});
+        var a = type.isIterator(null);
+        var b = type.isIterator({next: true});
+        var c = type.isIterator({next: function () {}});
 
         expect(a).toBe(false);
         expect(b).toBe(false);
@@ -158,10 +158,10 @@ describe('futils/types module', function () {
     });
 
     it('testing isIterable :: f -> a -> b', function () {
-        var a = _.isIterable([]);
-        var b = _.isIterable('string');
-        var c = _.isIterable({length: 10});
-        var d = _.isIterable(new Date());
+        var a = type.isIterable([]);
+        var b = type.isIterable('string');
+        var c = type.isIterable({length: 10});
+        var d = type.isIterable(new Date());
 
         expect(a).toBe(true);
         expect(b).toBe(true);
@@ -170,16 +170,16 @@ describe('futils/types module', function () {
     });
 
     it('testing isArrayOf :: f -> a -> b', function () {
-        var a = _.isArrayOf(_.isString, ['a', 'b', 'c']);
-        var b = _.isArrayOf(_.isString, [null, null, null]);
+        var a = type.isArrayOf(type.isString, ['a', 'b', 'c']);
+        var b = type.isArrayOf(type.isString, [null, null, null]);
 
         expect(a).toBe(true);
         expect(b).toBe(false);
     });
 
     it('testing isObjectOf :: f -> a -> b', function () {
-        var a = _.isObjectOf(_.isString, {a: 'a', b: 'b', c: 'c'});
-        var b = _.isObjectOf(_.isString, {a: 1, b: 'b', c: null});
+        var a = type.isObjectOf(type.isString, {a: 'a', b: 'b', c: 'c'});
+        var b = type.isObjectOf(type.isString, {a: 1, b: 'b', c: null});
 
         expect(a).toBe(true);
         expect(b).toBe(false);

@@ -1,94 +1,21 @@
-import arity from './aritize';
-import combine from './combinators';
-import decorate from './decorators';
-import compare from './comparators';
+import arity from './arity';
+import type from './types';
+import combinators from './combinators';
+import decorators from './decorators';
+import comparators from './comparators';
 import enums from './enums';
 import lenses from './lenses';
-import state from './state';
 import transducers from './transducers';
-import type from './types';
 import monads from './monads';
 
 export default {
-    aritize: arity.aritize,
-    isNil: type.isNil,
-    isVoid: type.isVoid,
-    isNull: type.isNull,
-    isString: type.isString,
-    isAny: type.isAny,
-    isTrue: type.isTrue,
-    isNumber: type.isNumber,
-    isFunc: type.isFunc,
-    isArray: type.isArray,
-    isObject: type.isObject,
-    isInt: type.isInt,
-    isFloat: type.isFloat,
-    isBool: type.isBool,
-    isFalse: type.isFalse,
-    isDate: type.isDate,
-    isRegex: type.isRegex,
-    isNode: type.isNode,
-    isNodeList: type.isNodeList,
-    isMap: type.isMap,
-    isSet: type.isSet,
-    isWeakMap: type.isWeakMap,
-    isWeakSet: type.isWeakSet,
-    isPromise: type.isPromise,
-    isIterator: type.isIterator,
-    isIterable: type.isIterable,
-    isArrayOf: type.isArrayOf,
-    isObjectOf: type.isObjectOf,
-    identity: combine.identity,
-    getter: combine.getter,
-    tap: combine.tap,
-    compose: combine.compose,
-    pipe: combine.pipe,
-    and: combine.and,
-    or: combine.or,
-    splat: combine.splat,
-    monadic: decorate.monadic,
-    dyadic: decorate.dyadic,
-    triadic: decorate.triadic,
-    tetradic: decorate.tetradic,
-    once: decorate.once,
-    not: decorate.not,
-    flip: decorate.flip,
-    maybe: decorate.maybe,
-    curry: decorate.curry,
-    curryRight: decorate.curryRight,
-    partial: decorate.partial,
-    partialRight: decorate.partialRight,
-    given: decorate.given,
-    memoize: decorate.memoize,
-    transducers: transducers,
-    monads: monads,
-    stateful: state.stateful,
-    counter: state.counter,
-    chosen: state.chosen,
-    lens: lenses.lens,
-    makeLenses: lenses.makeLenses,
-    view: lenses.view,
-    over: lenses.over,
-    set: lenses.set,
-    mappedLens: lenses.mappedLens,
-    assoc: enums.assoc,
-    field: enums.field,
-    has: enums.has,
-    exec: enums.exec,
-    execRight: enums.execRight,
-    access: enums.access,
-    extend: enums.extend,
-    merge: enums.merge,
-    immutable: enums.immutable,
-    first: enums.first,
-    last: enums.last,
-    map: enums.map,
-    flatMap: enums.flatMap,
-    flatten: enums.flatten,
-    eq: compare.eq,
-    gt: compare.gt,
-    lt: compare.lt,
-    gte: compare.gte,
-    lte: compare.lte,
-    locals: compare.locals
+    arity,
+    type,
+    combinators,
+    decorators,
+    monads,
+    lenses,
+    enums,
+    transducers,
+    comparators
 };

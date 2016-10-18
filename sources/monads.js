@@ -9,200 +9,57 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import type from './types';
-import combine from './combinators';
-import decorate from './decorators';
+import arity from './arity';
+import decorators from './decorators';
+import Identity from './monads/Identity';
+import Maybe from './monads/Maybe';
+import Either from './monads/Either';
+import IO from './monads/IO';
 
 /**
- * A collection of monadic functors
- * @module futils/monads
- * @requires futils/types
- * @requires futils/combinators
+ * 
  */
 
+const liftA2 = decorators.curry((f, M1, M2) => {
+    return M1.map(f).ap(M2);
+});
 
-const MVAL = Symbol('value');
-const MTYPE = Symbol('type');
+const liftA3 = decorators.curry((f, M1, M2, M3) => {
+    return M1.map(f).ap(M2).ap(M3);
+});
 
-/**
- * Checks if a given object has a field of a certain key by name which is not
- *     inherited
- * @method 
- * @version 0.2.0
- * @param {string} key Name of the field
- * @param {object} x The object to test
- * @return {boolean} True if the field is present
- *
- * @example
- * const {has} = require('futils');
- */
+const liftA4 = decorators.curry((f, M1, M2, M3, M4) => {
+    return M1.map(f).ap(M2).ap(M3).ap(M4);
+});
 
-class Identity {
-    constructor (a, t) {
-        this[MTYPE] = t;
-        this[MVAL] = a;
-    }
-    static of (a) {
-        return new Identity(a, 'Identity');
-    }
-    toString () {
-        return `${this[MTYPE]}(${this[MVAL]})`;
-    }
-    result () {
-        return this[MVAL];
-    }
-    map (f) {
-        return Identity.of(f(this.result()));
-    }
-    flatten () {
-        return Identity.of(this.result().result());
-    }
-    flatMap (f) {
-        return this.map(f).flatten();
-    }
-}
+const liftA5 = decorators.curry((f, M1, M2, M3, M4, M5) => {
+    return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5);
+});
 
+const liftA6 = decorators.curry((f, M1, M2, M3, M4, M5, M6) => {
+    return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5).ap(M6);
+});
 
-
-
-class None extends Identity {
-    constructor () { super(null, 'Maybe.None'); }
-    static of () { return new None(); }
-    isSome () { return false; }
-    map () { return this; }
-    flatten () { return this; }
-    orElse (a) {
-        return Maybe.of(a);
-    }
-    biMap (f) {
-        return Maybe.of(f());
-    }
-}
-
-class Some extends Identity {
-    static of (a) { return new Some(a, 'Maybe.Some'); }
-    orElse () { return this; }
-    isSome () {
-        return this.result() != null;
-    }
-    map (f) {
-        return this.isSome() ? Maybe.of(f(this.result())) : this;
-    }
-    flatten () {
-        return this.isSome() ? Maybe.of(this.result().result()) : this;
-    }
-    biMap (_, g) {
-        return this.map(g);
-    }
-}
-
-class Maybe {
-    static of (a) {
-        return type.isNil(a) ? Maybe.ofNone() : Maybe.ofSome(a);
-    }
-    static ofNone () {
-        return Maybe.None.of();
-    }
-    static ofSome (a) {
-        return Maybe.Some.of(a);
-    }
-    static fromEither (ma) {
-        return ma.isRight() ?
-               Maybe.ofSome(ma.result()) :
-               Maybe.ofNone();
-    }
-}
-
-Maybe.None = None;
-Maybe.Some = Some;
-
-
-
-class Left extends Identity {
-    static of (a) { return new Left(a, 'Either.Left'); }
-    orElse (a) { return Right.of(a); }
-    biMap (f) { return this.mapLeft(f); }
-    isRight () { return false; }
-    map () { return this; }
-    flatten () { return this; }
-    mapLeft (f) { return Left.of(f(this.result())); }
-}
-
-class Right extends Identity {
-    static of (a) { return new Right(a, 'Either.Right'); }
-    orElse () { return this; }
-    biMap (_, g) { return this.map(g); }
-    isRight () { return Right.prototype.isPrototypeOf(this); }
-    map (f) {
-        return this.isRight() ? Right.of(f(this.result())) : this;
-    }
-    flatten () {
-        return this.isRight() ? Right.of(this.result().result()) : this;
-    }
-    mapLeft () { return this; }
-}
-
-class Either {
-    static ofLeft (a) {
-        return Either.Left.of(a);
-    }
-    static ofRight (a) {
-        return Either.Right.of(a);
-    }
-    static fromMaybe (b, ma) {
-        return ma.isSome() ?
-               Either.ofRight(ma.result()) :
-               Either.ofLeft(b)
-    }
-    static try (f) {
-        return (...args) => {
-            try {
-                return Right.of(f(...args));
-            } catch (exc) {
-                return Left.of(exc);
-            }
-        }
-    }
-}
-
-Either.Left = Left;
-Either.Right = Right;
-
-
-
-class IO extends Identity {
-    static of (a) {
-        // of :: f -> IO f
-        return new IO(a, 'IO');
-    }
-    result () {
-        // result :: () => a
-        return this[MVAL]();
-    }
-    map (f) {
-        // map :: f -> IO fa
-        return IO.of(combine.compose(f, () => this.result()));
-    }
-    flatten () {
-        // this = IO(IO( f ))
-        return IO.of(() => this.result().result());
-    }
-}
-
-
-
-// Utilities
-// =========
-const mmaybe = decorate.curry((x, f, m) => m.isSome() ?
-                                            f(m.result()) :
-                                            x);
-
-const meither = decorate.curry((g, f, m) => m.isRight() ?
-                                            f(m.result()) :
-                                            g(m.result()));
+const liftA7 = decorators.curry((f, M1, M2, M3, M4, M5, M6, M7) => {
+    return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5).ap(M6).ap(M7);
+});
 
 
 
 export default {
-    Identity, Maybe, Either, Some, None, Left, Right, IO,
-    mmaybe, meither
+    Identity: Identity,
+    IO: IO,
+    Some: Maybe.Some,
+    None: Maybe.None,
+    Maybe: Maybe,
+    Right: Either.Right,
+    Left: Either.Left,
+    Either: Either,
+    liftA2: liftA2,
+    liftA3: liftA3,
+    liftA4: liftA4,
+    liftA5: liftA5,
+    liftA6: liftA6,
+    liftA7: liftA7
+    // mmaybe, meither, 
 };

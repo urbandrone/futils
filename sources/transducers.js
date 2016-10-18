@@ -9,7 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import type from './types';
-import decorate from './decorators';
+import decorators from './decorators';
 /**
  * A collection of transducer functions, inspired by Clojure
  * @module futils/transducers
@@ -71,7 +71,7 @@ Transformer.deref = (rv) => {
  * );
  * // -> 'a: 1 - b: 2 - c: 3'
  */
-const fold = decorate.curry((tf, seed, ls) => {
+const fold = decorators.curry((tf, seed, ls) => {
     var xf = type.isFunc(tf) ? Transformer(tf) : tf,
         v = seed;
 
@@ -116,7 +116,7 @@ const fold = decorate.curry((tf, seed, ls) => {
  *
  * transduce(add1, sum, 0, [1, 2, 3]); // -> 9
  */
-const transduce = decorate.curry((tf, step, seed, ls) => {
+const transduce = decorators.curry((tf, step, seed, ls) => {
     return fold(
         tf(type.isFunc(step) ? Transformer(step) : step),
         seed,
@@ -145,7 +145,7 @@ const transduce = decorate.curry((tf, step, seed, ls) => {
  * into([], add1, [1, 2, 3]); // -> [2, 3, 4]
  * into('', add1, [1, 2, 3]); // -> '234'
  */
-const into = decorate.curry((seed, tf, ls) => {
+const into = decorators.curry((seed, tf, ls) => {
     if (type.isArray(seed)) {
         return transduce(
             tf,

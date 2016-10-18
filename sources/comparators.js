@@ -10,12 +10,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 import types from './types';
-import decorate from './decorators';
+import arity from './arity';
 /**
  * A set of predefined comparator functions
  * @module futils/comparators
  * @requires futils/types
- * @requires futils/decorators
+ * @requires futils/arity
  */
 
 /**
@@ -41,7 +41,7 @@ import decorate from './decorators';
  * isHelloWorld('hello world'); // -> true
  * isHelloWorld('nay'); // -> false
  */
-const eq = decorate.dyadic((a, b) => {
+const eq = arity.dyadic((a, b) => {
     if (types.isFunc(a)) {
         return (ac) => eq(a(ac), b);
     }
@@ -67,7 +67,7 @@ const eq = decorate.dyadic((a, b) => {
  * gt2(3); // -> true
  * gt2(2); // -> false
  */
-const gt = decorate.dyadic((a, b) => a < b);
+const gt = arity.dyadic((a, b) => a < b);
 
 /**
  * Takes two numbers and tests if the second is greater than or equal to the first
@@ -85,7 +85,7 @@ const gt = decorate.dyadic((a, b) => a < b);
  * gte2(3); // -> true
  * gte2(2); // -> true
  */
-const gte = decorate.dyadic((a, b) => a <= b);
+const gte = arity.dyadic((a, b) => a <= b);
 
 /**
  * Takes two numbers and tests if the second is smaller than the first
@@ -103,7 +103,7 @@ const gte = decorate.dyadic((a, b) => a <= b);
  * lt2(1); // -> true
  * lt2(2); // -> false
  */
-const lt = decorate.dyadic((a, b) => a > b);
+const lt = arity.dyadic((a, b) => a > b);
 
 /**
  * Takes two numbers and tests if the second is lower than or equal to the first
@@ -121,7 +121,7 @@ const lt = decorate.dyadic((a, b) => a > b);
  * lte2(1); // -> true
  * lte2(2); // -> true
  */
-const lte = decorate.dyadic((a, b) => a >= b);
+const lte = arity.dyadic((a, b) => a >= b);
 
 /**
  * Takes two characters and compares them alphabetically
@@ -137,10 +137,14 @@ const lte = decorate.dyadic((a, b) => a >= b);
  * ['gamma', 'alpha', 'beta'].sort(locals);
  * // -> ['alpha', 'beta', 'gamma']
  */
-const locals = decorate.dyadic((a, b) => {
+const locals = arity.dyadic((a, b) => {
     let lc = a.localeCompare(b);
     return lc < 0 ? 1 : lc > 0 ? -1 : 0;
 });
+
+
+const divBy = arity.dyadic((a, b) => b % a === 0);
+
 
 export default {
     eq, gt, gte, lt, lte, locals

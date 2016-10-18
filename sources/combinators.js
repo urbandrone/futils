@@ -10,12 +10,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 import type from './types';
-import arity from './aritize';
+import arity from './arity';
 /**
  * A collection of higher order helpers for functional composition
  * @module futils/combinators
  * @requires futils/types
- * @requires futils/aritize
+ * @requires futils/arity
  */
 
 /**
@@ -163,40 +163,8 @@ const or = (...fs) => {
     throw 'combinators::or awaits functions but saw ' + fs;
 }
 
-/**
- * Takes N functions and returns a function which splats the incoming arguments
- *     onto the given function so that each function gets the same parameters.
- *     The returned function returns whatever the first splatted function
- *     returns
- * @method 
- * @version 0.4.0
- * @param {function} ...fs N functions to wrap
- * @return {function} A splatter function
- *
- * @example
- * const {splat} = require('futils');
- *
- * const sideFX1 = (...) => { ... };
- * const sideFX2 = (...) => { ... };
- *
- * const splattedFX = splat(
- *     sideFX1,
- *     sideFX2
- * );
- */
-const splat = (...fs) => {
-    if (type.isArrayOf(type.isFunc, fs)) {
-        return (...xs) => {
-            var r = fs[0](...xs);
-            fs.slice(1).forEach((f) => f(...xs));
-            return r == null ? null : r;
-        }
-    }
-    throw 'combinators::splat awaits a bunch of functions but saw ' + fs;
-}
-
 
 
 export default { 
-    compose, pipe, identity, tap, getter, and, or, splat
+    compose, pipe, identity, tap, getter, and, or
 };
