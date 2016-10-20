@@ -51,9 +51,12 @@ export default class Identity {
     // -- Monad
     flatMap (f) {
         if (type.isFunc(f)) {
-            return Identity.of(f(this.mvalue).mvalue);
+            return this.map(f).flatten();
         }
         throw 'Identity::flatMap expects argument to be function but saw ' + f;
+    }
+    flatten () {
+        return Identity.of(this.mvalue.mvalue);
     }
     // -- Foldable
     // reduce

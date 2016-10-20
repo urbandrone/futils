@@ -53,5 +53,4 @@ const liftA8 = decorators.curry((f, M1, M2, M3, M4, M5, M6, M7, M8) => {
 export default {
     Identity, IO, Maybe, None, Some, State, Either, Left, Right, Task,
     liftA2, liftA3, liftA4, liftA5, liftA6, liftA7, liftA8
-    // mmaybe, meither, 
 };

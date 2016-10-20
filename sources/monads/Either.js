@@ -41,7 +41,7 @@ export class Right {
         throw 'Right::map expects argument to be function but saw ' + f;
     }
     // -- Applicative
-    static of (a) { return new Right(a); }
+    static of (a) { return Right.is(a) ? a : new Right(a); }
     of (a) { return Right.of(a); }
     ap (m) {
         if (type.isFunc(m.map)) {
@@ -52,9 +52,12 @@ export class Right {
     // -- Monad
     flatMap (f) {
         if (type.isFunc(f)) {
-            return Either.try((mv) => f(mv).mvalue, this.mvalue);
+            return this.map(f).flatten();
         }
         throw 'Right::flatMap expects argument to be function but saw ' + f;
+    }
+    flatten () {
+        return Identity.of(this.mvalue.mvalue);
     }
     // -- Recovering
     orElse () { return this.mvalue; }
@@ -106,20 +109,17 @@ export class Left {
     // -- Functor
     map () { return this; }
     // -- Applicative
-    static of (a) { return new Left(a); }
+    static of (a) { return Left.is(a) ? a : new Left(a); }
     of (a) { return Left.of(a); }
-    ap () { return this; }
+    ap (m) { return m; }
     // -- Monad
     flatMap () { return this; }
+    flatten () { return this; }
     // -- Recovering
     orElse (a) { return a; }
     orRight (a) { return Right.of(a); }
     // -- Foldable
-    reduce(f, a) {
-        if (type.isFunc(f)) {
-            return f(a, this.mvalue);
-        }
-    }
+    // reduce
     // -- ?
     fold (f) {
         if (type.isFunc(f)) {

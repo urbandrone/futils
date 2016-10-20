@@ -110,18 +110,17 @@ export default class Task {
     // -- Monad
     flatMap (f) {
         if (type.isFunc(f)) {
-            return Task.of(
-                (rej, res) => this.fork(
-                    rej,
-                    (a) => f(a).fork(rej, res)
-                ),
-                this.cleanUp
-            );
-            // return this.map(f).flatten();
+            return this.map(f).flatten();
         }
         throw 'Task::flatMap expects argument to be function but saw ' + f;
     }
+    flatten () {
+        return Task.of((rej, res) => {
+            return this.fork.fork(rej, res);
+        }, this.cleanUp);
+    }
     // -- Foldable
+    // reduce
     // -- ?
     fold (f, g) {
         if (type.isFunc(g) && type.isFunc(f)) {

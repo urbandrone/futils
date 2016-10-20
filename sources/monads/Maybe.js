@@ -46,7 +46,7 @@ export class Some {
         throw 'Some::map expects argument to be function but saw ' + f;
     }
     // -- Applicative
-    static of (a) { return new Some(a); }
+    static of (a) { return Some.is(a) ? a : new Some(a); }
     of (a) { return Some.of(a); }
     ap (m) {
         if (type.isFunc(m.map)) {
@@ -57,10 +57,12 @@ export class Some {
     // -- Monad
     flatMap (f) {
         if (type.isFunc(f)) {
-            return Maybe.of(f(this.mvalue).mvalue);
-            // return this.map(f).flatten();
+            return this.map(f).flatten();
         }
         throw 'Some::flatMap expects argument to be function but saw ' + f;
+    }
+    flatten () {
+        return Identity.of(this.mvalue.mvalue);
     }
     // -- Recovering
     orElse () { return this.mvalue; }
@@ -117,6 +119,7 @@ export class None {
     ap (m) { return m; }
     // -- Monad
     flatMap () { return this; }
+    flatten () { return this; }
     // -- Recovering
     orElse (a) { return a; }
     orSome (a) { return Maybe.of(a); }

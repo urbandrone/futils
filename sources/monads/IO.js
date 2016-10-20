@@ -52,14 +52,12 @@ export default class IO {
     // -- Monad
     flatMap (f) {
         if (type.isFunc(f)) {
-            return IO.of(combinators.compose(
-                (mv) => mv.performIO ? mv.performIO() : mv.mvalue,
-                f,
-                this.performIO
-            ));
-            // return this.map(f).flatten();
+            return this.map(f).flatten();
         }
         throw 'IO::flatMap expects argument to be function but saw ' + f;
+    }
+    flatten () {
+        return IO.of(this.performIO().performIO);
     }
     // -- Semigroup
     concat (m) {

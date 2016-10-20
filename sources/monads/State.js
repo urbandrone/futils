@@ -43,7 +43,7 @@ export default class State {
         throw 'State::map expects argument to be function but saw ' + f;
     }
     // -- Applicative
-    static of (a, b) { return new State(a, b); }
+    static of (a, b) { return State.is(a) ? a : new State(a, b); }
     of (a, b) { return State.of(a, b); }
     ap (m) {
         if (type.isFunc(m.map)) {
@@ -54,9 +54,12 @@ export default class State {
     // -- Monad
     flatMap (f) {
         if (type.isFunc(f)) {
-            return State.of(f(this.mvalue).mvalue, this.mvalue);
+            return this.map(f).flatten();
         }
         throw 'State::flatMap expects argument to be function but saw ' + f;
+    }
+    flatten () {
+        return State.of(this.mvalue.mvalue, this.mvalue.mbefore);
     }
     // -- Foldable
     // reduce
