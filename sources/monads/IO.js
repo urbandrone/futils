@@ -21,7 +21,7 @@ const MV = Symbol('MonadicValue');
 
 
 
-class IO {
+export default class IO {
     constructor (a) { this.performIO = a; }
     set performIO (a) { this[MV] = a; }
     get performIO () { return this[MV]; }
@@ -42,6 +42,7 @@ class IO {
     }
     // -- Applicative
     static of (a) { return new IO(a); }
+    of (a) { return IO.of(a); }
     ap (m) {
         if (type.isFunc(m.map)) {
             return m.map(this.performIO);
@@ -49,20 +50,26 @@ class IO {
         throw 'IO::ap expects argument to be Functor but saw ' + m;
     }
     // -- Monad
-    flatten () {
-        return IO.of(this.performIO().performIO);
-    }
-    // -- Chain
     flatMap (f) {
         if (type.isFunc(f)) {
-            return this.map(f).flatten();
+            return IO.of(combinators.compose(
+                (mv) => mv.performIO ? mv.performIO() : mv.mvalue,
+                f,
+                this.performIO
+            ));
+            // return this.map(f).flatten();
         }
         throw 'IO::flatMap expects argument to be function but saw ' + f;
     }
+    // -- Semigroup
+    concat (m) {
+        if (IO.is(m)) {
+            return IO.of(combinators.compose(m.performIO, this.performIO));
+        }
+        throw 'IO::concat expected argument to be IO but saw ' + m;
+    }
+    // -- Monoid
+    static empty () { return IO.of(combinators.identity); }
+    // -- Foldable
+    // reduce
 }
-
-
-
-export default function _IO (a) {
-    return new IO(a);
-};

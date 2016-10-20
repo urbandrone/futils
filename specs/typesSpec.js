@@ -1,4 +1,4 @@
-const {type} = require('../futils');
+const {type, monads} = require('../futils');
 describe('futils/types module', function () {
 
     it('testing isNil :: f -> a -> b', function () {
@@ -183,6 +183,42 @@ describe('futils/types module', function () {
 
         expect(a).toBe(true);
         expect(b).toBe(false);
+    });
+
+    it('testing isSetoid :: f -> a -> b', function () {
+        class A { equals() {} };
+        let a = new A();
+        expect(type.isSetoid(a)).toBe(true);
+    });
+
+    it('testing isFunctor :: f -> a -> b', function () {
+        class A { map() {} };
+        let a = new A();
+        expect(type.isFunctor(a)).toBe(true);
+    });
+
+    it('testing isApply :: f -> a -> b', function () {
+        class A { ap() {} };
+        let a = new A();
+        expect(type.isApply(a)).toBe(true);
+    });
+
+    it('testing isFoldable :: f -> a -> b', function () {
+        class A { fold() {} };
+        let a = new A();
+        expect(type.isFoldable(a)).toBe(true);
+    });
+
+    it('testing isApplicative :: f -> a -> b', function () {
+        class A { of() {} ap() {} };
+        let a = new A();
+        expect(type.isApplicative(a)).toBe(true);
+    });
+
+    it('testing isMonad :: f -> a -> b', function () {
+        class A { equals() {} map() {} flatten() {} flatMap() {} };
+        let a = new A();
+        expect(type.isMonad(a)).toBe(true);
     });
 });
     

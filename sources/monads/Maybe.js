@@ -20,11 +20,11 @@ const MV = Symbol('MonadicValue');
 
 
 
-class Some {
+export class Some {
     constructor (a) { this.mvalue = a; }
     set mvalue (a) {
         if (type.isNil(a)) {
-            throw 'Some::of cannot hold a null or undefined value but saw ' + a;
+            throw 'Some::of cannot create from null or undefined but saw ' + a;
         }
         this[MV] = a;
     }
@@ -33,13 +33,6 @@ class Some {
     static is (a) { return Some.prototype.isPrototypeOf(a); }
     isSome () { return !type.isNil(this.mvalue); }
 
-    // -- Chain
-    chain (f) {
-        if (type.isFunc(f)) {
-            return f(this.value)
-        }
-        throw 'Some::chain expects argument to be function but saw ' + f;
-    }
     // -- Setoid
     equals (b) {
         return Some.prototype.isPrototypeOf(b) &&
@@ -54,6 +47,7 @@ class Some {
     }
     // -- Applicative
     static of (a) { return new Some(a); }
+    of (a) { return Some.of(a); }
     ap (m) {
         if (type.isFunc(m.map)) {
             return m.map(this.mvalue);
@@ -61,15 +55,10 @@ class Some {
         throw 'Some::ap expects argument to be Functor but saw ' + m;
     }
     // -- Monad
-    flatten () {
-        if (Maybe.is(this.mvalue)) {
-            return Maybe.of(this.mvalue.mvalue);
-        }
-        return this;
-    }
     flatMap (f) {
         if (type.isFunc(f)) {
-            return this.map(f).flatten();
+            return Maybe.of(f(this.mvalue).mvalue);
+            // return this.map(f).flatten();
         }
         throw 'Some::flatMap expects argument to be function but saw ' + f;
     }
@@ -77,6 +66,13 @@ class Some {
     orElse () { return this.mvalue; }
     orSome () { return this; }
     // -- Foldable
+    reduce (f, a) {
+        if (type.isFunc(f)) {
+            return f(a, this.mvalue);
+        }
+        throw 'Some::reduce expects first argument to be function but saw ' + f;
+    }
+    // -- ?
     fold (_, g) {
         if (type.isFunc(g)) {
             return g(this.mvalue);
@@ -89,6 +85,7 @@ class Some {
         }
         throw 'Some::cata expected Object of {Some: fn}, but saw ' + o; 
     }
+    // -- Bifunctor
     biMap (_, g) {
         if (type.isFunc(g)) {
             return Maybe.of(this.fold(_, g));
@@ -99,7 +96,7 @@ class Some {
 }
 
 
-class None {
+export class None {
     constructor () { this.mvalue = null; }
     set mvalue (a) { this[MV] = a; }
     get mvalue () { return this[MV]; }
@@ -115,16 +112,17 @@ class None {
     // -- Functor
     map () { return this; }
     // -- Applicative
-    static of () { return Maybe.None; }
-    ap () { return this; }
+    static of () { return new None(); }
+    of () { return None.of(); }
+    ap (m) { return m; }
     // -- Monad
-    flatten () { return this; }
-    // -- Chain
     flatMap () { return this; }
     // -- Recovering
     orElse (a) { return a; }
     orSome (a) { return Maybe.of(a); }
     // -- Foldable
+    // reduce
+    // -- ?
     fold (f) {
         if (type.isFunc(f)) {
             return f();
@@ -137,6 +135,7 @@ class None {
         }
         throw 'None::cata expected Object of {None: fn}, but saw ' + o; 
     }
+    // -- Bifunctor
     biMap (f) {
         if (type.isFunc(f)) {
             return Maybe.of(this.fold(f));
@@ -149,21 +148,13 @@ class None {
 
 
 
-class Maybe {
-    static None () {
-        return new None(null);
-    }
-    static Some (a) {
-        return new Some(a);
-    }
+export default class Maybe {
     static of (a) {
-        return type.isNil(a) ? new None(null) : new Some(a);
+        return type.isNil(a) ? None.of() : Some.of(a);
     }
     static fromNullable (a) { return Maybe.of(a); }
     static fromEither (m) {
-        return m.fold(Maybe.None, Maybe.Some);
+        return m.fold(None.of, Some.of);
     }
     static is (a) { return Some.is(a) || None.is(a); }
 }
-
-export default Maybe;

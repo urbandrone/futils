@@ -20,7 +20,7 @@ const MV = Symbol('MonadicValue');
 
 
 
-class Right {
+export class Right {
     constructor (a) { this.mvalue = a; }
     set mvalue (a) { this[MV] = a; }
     get mvalue () { return this[MV]; }
@@ -28,13 +28,6 @@ class Right {
     static is (a) { return Right.prototype.isPrototypeOf(a); }
     isRight () { return true; }
 
-    // -- Chain
-    chain (f) {
-        if (type.isFunc(f)) {
-            return f(this.value)
-        }
-        throw 'Right::chain expects argument to be function but saw ' + f;
-    }
     // -- Setoid
     equals (b) {
         return Right.prototype.isPrototypeOf(b) &&
@@ -49,6 +42,7 @@ class Right {
     }
     // -- Applicative
     static of (a) { return new Right(a); }
+    of (a) { return Right.of(a); }
     ap (m) {
         if (type.isFunc(m.map)) {
             return m.map(this.mvalue);
@@ -56,15 +50,9 @@ class Right {
         throw 'Right::ap expects argument to be Functor but saw ' + m;
     }
     // -- Monad
-    flatten () {
-        if (Right.is(this.mvalue)) {
-            return Right.of(this.mvalue.mvalue);
-        }
-        return this;
-    }
     flatMap (f) {
         if (type.isFunc(f)) {
-            return this.map(f).flatten();
+            return Either.try((mv) => f(mv).mvalue, this.mvalue);
         }
         throw 'Right::flatMap expects argument to be function but saw ' + f;
     }
@@ -72,6 +60,8 @@ class Right {
     orElse () { return this.mvalue; }
     orRight () { return this; }
     // -- Foldable
+    // reduce
+    // -- ?
     fold (_, g) {
         if (type.isFunc(g)) {
             return g(this.mvalue);
@@ -84,20 +74,23 @@ class Right {
         }
         throw 'Right::cata expected Object of {Right: fn}, but saw ' + o; 
     }
+    // -- Bifunctor
     biMap (_, g) {
         if (type.isFunc(g)) {
-            return this.map(g);
+            return Right.of(g(this.mvalue));
         }
         throw 'Right::biMap expects argument 2 to be function but saw ' + g;
     }
     swap () {
         return Left.of(this.mvalue);
     }
+    mapLeft () { return this; }
+    // -- Semigroup
     // -- Traversable
 }
 
 
-class Left {
+export class Left {
     constructor (a) { this.mvalue = a; }
     set mvalue (a) { this[MV] = a; }
     get mvalue () { return this[MV]; }
@@ -114,15 +107,20 @@ class Left {
     map () { return this; }
     // -- Applicative
     static of (a) { return new Left(a); }
+    of (a) { return Left.of(a); }
     ap () { return this; }
     // -- Monad
-    flatten () { return this; }
-    // -- Chain
     flatMap () { return this; }
     // -- Recovering
     orElse (a) { return a; }
     orRight (a) { return Right.of(a); }
     // -- Foldable
+    reduce(f, a) {
+        if (type.isFunc(f)) {
+            return f(a, this.mvalue);
+        }
+    }
+    // -- ?
     fold (f) {
         if (type.isFunc(f)) {
             return f(this.mvalue);
@@ -135,6 +133,7 @@ class Left {
         }
         throw 'Left::cata expected Object of {Left: fn}, but saw ' + o; 
     }
+    // -- Bifunctor
     biMap (f) {
         if (type.isFunc(f)) {
             return Left.of(f(this.mvalue));
@@ -144,31 +143,31 @@ class Left {
     swap () {
         return Right.of(this.mvalue);
     }
+    mapLeft (f) {
+        if (type.isFunc(f)) {
+            return this.biMap(f);
+        }
+        throw 'Left::biMap expects argument 1 to be function but saw ' + f;
+    }
     // -- Traversable
 }
 
 
 
 
-class Either {
-    static Left (a) {
-        return new Left(a);
-    }
-    static Right (a) {
-        return new Right(a);
-    }
+export default class Either {
     static fromNullable (exc, a) {
         if (!type.isNull(a) && !type.isVoid(a)) {
-            return new Right(a);
+            return Right.of(a);
         }
-        return new Left(exc);
+        return Left.of(exc);
     }
     static fromMaybe (exc, m) {
-        return m.fold(() => Either.Left(exc), Either.Right);
+        return m.fold(() => Left.of(exc), Right.of);
     }
     static fromIO (exc, m) {
         let e = Either.try(m.performIO);
-        return e.isRight() ? e : Either.Left(exc);
+        return e.isRight() ? e : Left.of(exc);
     }
     static try (f, ...partials) {
         if (type.isFunc(f)) {
@@ -176,26 +175,23 @@ class Either {
                 try {
                     let R = f(...partials);
                     return Error.prototype.isPrototypeOf(R) ?
-                           Either.Left(R.message) :
-                           Either.Right(R);
+                           Left.of(R.message) :
+                           Right.of(R);
                 } catch (exc) {
-                    return Either.Left(exc.message);
+                    return Left.of(exc.message);
                 }
             }
             return (...args) => {
                 try {
                     let R = f(...partials, ...args);
                     return Error.prototype.isPrototypeOf(R) ?
-                           Either.Left(R.message) :
-                           Either.Right(R);
+                           Left.of(R.message) :
+                           Right.of(R);
                 } catch (exc) {
-                    return Either.Left(exc.message);
+                    return Left.of(exc.message);
                 }
             }
         }
         throw 'Either::try expects argument to be function but saw ' + f;
     }
 }
-
-
-export default Either;

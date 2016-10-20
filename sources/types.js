@@ -83,10 +83,10 @@ const isNull = (x) => x === null;
  * @return {boolean} True for strings
  *
  * @example
- * const {isString} = require('futils');
+ * const {operators} = require('futils');
  *
- * isString('Hello world'); // -> true
- * isString(null); // -> false
+ * operators.isString('Hello world'); // -> true
+ * operators.isString(null); // -> false
  */
 const isString = (x) => typeof x === 'string';
 
@@ -378,12 +378,12 @@ const isArrayOf = (f, x) => {
  * @return {boolean} True if object of values which pass f
  *
  * @example
- * const {isString, isObjectOf} = require('futils');
+ * const {type} = require('futils');
  *
  * var pass = {greet: 'Hello', subject: 'World'},
  *     fail = {greet: 1, subject: 'World'};
  *
- * const isStrObject = isObjectOf(isString);
+ * const isStrObject = type.isObjectOf(type.isString);
  *
  * isStrObject(pass); // -> true
  * isStrObject(fail); // -> false
@@ -404,11 +404,173 @@ const isObjectOf = (f, x) => {
     return false;
 }
 
+/**
+ * Returns true if given a setoid (something that implements `equals`)
+ * @method 
+ * @version 2.0.0
+ * @param {any} x Value to check
+ * @return {boolean} True if given a setoid, false otherwise
+ *
+ * @example
+ * const {type} = require('futils');
+ *
+ * const makeSetoid = (x) => ({
+ *     equals(b) {}
+ * });
+ * 
+ * type.isSetoid(makeSetoid(10)); // -> true
+ */
+const isSetoid = (x) => !!x && isFunc(x.equals);
+
+/**
+ * Returns true if given a functor (something that implements `map`)
+ * @method 
+ * @version 2.0.0
+ * @param {any} x Value to check
+ * @return {boolean} True if given a functor, false otherwise
+ *
+ * @example
+ * const {type} = require('futils');
+ * 
+ * type.isFunctor([]); // -> true
+ */
+const isFunctor = (x) => !!x && isFunc(x.map);
+
+/**
+ * Returns true if given a apply (something that implements `ap`)
+ * @method 
+ * @version 2.0.0
+ * @param {any} x Value to check
+ * @return {boolean} True if given a apply, false otherwise
+ *
+ * @example
+ * const {type} = require('futils');
+ *
+ * const makeApply = (x) => ({
+ *     ap(f) {}
+ * });
+ * 
+ * type.isApply(makeApply(10)); // -> true
+ */
+const isApply = (x) => !!x && isFunc(x.ap);
+
+/**
+ * Returns true if given a foldable (something that implements `fold`)
+ * @method 
+ * @version 2.0.0
+ * @param {any} x Value to check
+ * @return {boolean} True if given a foldable, false otherwise
+ *
+ * @example
+ * const {type} = require('futils');
+ *
+ * const makeFoldable = (x) => ({
+ *     fold (f, g) {}
+ * });
+ * 
+ * type.isFoldable(makeFoldable(10)); // -> true
+ */
+const isFoldable = (x) => !!x && isFunc(x.fold);
+
+/**
+ * Returns true if given a bifunctor (something that implements `biMap`)
+ * @method
+ * @version 2.0.0
+ * @param {any} x Value to check
+ * @return {boolean} True if given a bifunctor, false otherwise
+ *
+ * @example
+ * const {type} = require('futils');
+ *
+ * const makeBifunctor = (x) => ({
+ *     biMap(f, g) {}
+ * });
+ *
+ * type.isBifunctor(makeBifunctor(1)); // -> true
+ */
+const isBifunctor = (x) => !!x && isFunc(x.biMap);
+
+/**
+ * Returns true if given a semigroup (something that implements `concat`)
+ * @method
+ * @version 2.0.0
+ * @param {any} x Value to check
+ * @return {boolean} True if given a semigroup, false otherwise
+ *
+ * @example
+ * const {type} = require('futils');
+ *
+ * type.isSemigroup([]); // -> true
+ */
+const isSemigroup = (x) => !!x && isFunc(x.concat);
+
+/**
+ * Returns true if given a monoid (something that implements `concat` and `empty`)
+ * @method
+ * @version 2.0.0
+ * @param {any} x Value to check
+ * @return {boolean} True if given a monoid
+ *
+ * @example
+ * const {type} = require('futils');
+ *
+ * type.isMonoid([]); // -> true
+ */
+const isMonoid = (x) => {
+    return isArray(x) ||
+           isSemigroup(x) && (isFunc(x.empty) || isFunc(x.constructor.empty));
+}
+
+/**
+ * Returns true if given a applicative (something that implements `ap` and `of`)
+ * @method 
+ * @version 2.0.0
+ * @param {any} x Value to check
+ * @return {boolean} True if given a applicative, false otherwise
+ *
+ * @example
+ * const {type} = require('futils');
+ *
+ * const makeApplicative = (x) => ({
+ *     of(a) {}
+ *     ap(f) {}
+ * });
+ * 
+ * type.isApplicative(makeApplicative(10)); // -> true
+ */
+const isApplicative = (x) => {
+    return isApply(x) && (isFunc(x.of) || isFunc(x.constructor.of));
+}
+
+/**
+ * Returns true if given a monad (something that implements `equals`,
+ *     `map`, `flatten` and `flatMap`)
+ * @method 
+ * @version 2.0.0
+ * @param {any} x Value to check
+ * @return {boolean} True if given a monad, false otherwise
+ *
+ * @example
+ * const {type} = require('futils');
+ *
+ * const makeMonad = (x) => ({
+ *     equals(y) {},
+ *     map(f) {},
+ *     flatten() {},
+ *     flatMap(f) {}
+ * });
+ * 
+ * type.isSetoid(makeMonad(10)); // -> true
+ */
+const isMonad = (x) => isFunctor(x) && isSetoid(x) &&
+                       isFunc(x.flatten) && isFunc(x.flatMap);
+
 
 
 export default {
     isNil, isAny, isNull, isVoid, isArray, isBool, isSet, isString, isWeakMap,
     isWeakSet, isFalse, isTrue, isFunc, isFloat, isInt, isNumber, isNode,
     isNodeList, isDate, isObject, isPromise, isIterable, isArrayOf, isObjectOf,
-    isMap, isRegex, isIterator
+    isMap, isRegex, isIterator, isSetoid, isFunctor, isApplicative, isApply,
+    isFoldable, isMonad
 };

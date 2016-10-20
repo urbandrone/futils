@@ -15,56 +15,49 @@ import type from '../types';
  */
 
 
-
 const MV = Symbol('MonadicValue');
+const OV = Symbol('OldMonadicValue');
 
 
 
-export default class Identity {
-    constructor (a) { this.mvalue = a; }
+export default class State {
+    constructor (a, b) { this.mvalue = a; this.mbefore = b; }
     set mvalue (a) { this[MV] = a; }
     get mvalue () { return this[MV]; }
-    toString () { return `Identity(${this.mvalue})`; }
-    static is (a) { return Identity.prototype.isPrototypeOf(a); }
+    set mbefore (a) { this[OV] = a; }
+    get mbefore () { return this[OV] || null; }
+    toString () { return `State(${this.mvalue}, ${this.mbefore})`; }
+    static is (a) { return State.prototype.isPrototypeOf(a); }
 
     // -- Setoid 
     equals (b) {
-        return Identity.prototype.isPrototypeOf(b) &&
-               b.mvalue === this.mvalue;
+        return State.prototype.isPrototypeOf(b) &&
+               b.mvalue === this.mvalue &&
+               b.mbefore === this.mbefore;
     }
     // -- Functor
     map (f) {
         if (type.isFunc(f)) {
-            return Identity.of(f(this.mvalue));
+            return State.of(f(this.mvalue), this.mvalue);
         }
-        throw 'Identity::map expects argument to be function but saw ' + f;
+        throw 'State::map expects argument to be function but saw ' + f;
     }
     // -- Applicative
-    static of (a) { return new Identity(a); }
-    of (a) { return Identity.of(a); }
+    static of (a, b) { return new State(a, b); }
+    of (a, b) { return State.of(a, b); }
     ap (m) {
         if (type.isFunc(m.map)) {
             return m.map(this.mvalue);
         }
-        throw 'Identity::ap expects argument to be Functor but saw ' + m;
+        throw 'State::ap expects argument to be Functor but saw ' + m;
     }
     // -- Monad
     flatMap (f) {
         if (type.isFunc(f)) {
-            return Identity.of(f(this.mvalue).mvalue);
+            return State.of(f(this.mvalue).mvalue, this.mvalue);
         }
-        throw 'Identity::flatMap expects argument to be function but saw ' + f;
+        throw 'State::flatMap expects argument to be function but saw ' + f;
     }
     // -- Foldable
     // reduce
-    // -- Bifunctor
-    // biMap, Functor
-    // -- Profunctor
-    // proMap, Functor
-    // -- Monoid
-    // empty, Semigroup
-    // -- Traversable
-    // traverse, Functor, Foldable
-    // -- Semigroup
-    // concat
 }

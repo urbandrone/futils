@@ -28,12 +28,12 @@ const isFn = (f) => typeof f === 'function';
  * @return {function} A wrapper for f with a arity of n
  *
  * @example
- * const {aritize} = require('futils');
+ * const {arity} = require('futils');
  *
  * const sum = (x, ...xs) => xs.reduce((a, b) => a + b, x);
  * sum(1, 2, 3); // -> 6
  *
- * const addTwo = aritize(2, sum);
+ * const addTwo = arity.aritize(2, sum);
  * addTwo(1, 2, 3); // -> 3
  */
 const aritize = (n, f) => {
@@ -54,13 +54,13 @@ const aritize = (n, f) => {
  * @return {function} Wrapped function
  *
  * @example
- * const {monadic} = require('futils');
+ * const {arity} = require('futils');
  * 
  * var all = (...xs) => xs;
  *
  * all(1, 2, 3, 4); // -> [1, 2, 3, 4]
  *
- * monadic(all)(1, 2, 3, 4); // -> [1]
+ * arity.monadic(all)(1, 2, 3, 4); // -> [1]
  */
 const monadic = (f) => {
     if (isFn(f)) {
@@ -82,13 +82,13 @@ const monadic = (f) => {
  * @return {function} Wrapped function
  *
  * @example
- * const {dyadic} = require('futils');
+ * const {arity} = require('futils');
  * 
  * var all = (...xs) => xs;
  *
  * all(1, 2, 3, 4); // -> [1, 2, 3, 4]
  *
- * const just2 = dyadic(all);
+ * const just2 = arity.dyadic(all);
  * just2(1, 2, 3, 4); // -> [1, 2]
  */
 const dyadic = (f) => {
@@ -114,13 +114,13 @@ const dyadic = (f) => {
  * @return {function} Wrapped function
  *
  * @example
- * const {triadic} = require('futils');
+ * const {arity} = require('futils');
  * 
  * var all = (...xs) => xs;
  *
  * all(1, 2, 3, 4); // -> [1, 2, 3, 4]
  *
- * const just3 = triadic(all);
+ * const just3 = arity.triadic(all);
  * just3(1, 2, 3, 4); // -> [1, 2, 3]
  */
 const triadic = (f) => {
@@ -149,13 +149,13 @@ const triadic = (f) => {
  * @return {function} Wrapped function
  *
  * @example
- * const {tetradic} = require('futils');
+ * const {arity} = require('futils');
  * 
  * var all = (...xs) => xs;
  *
  * all(1, 2, 3, 4, 5); // -> [1, 2, 3, 4, 5]
  *
- * const just4 = tetradic(all);
+ * const just4 = arity.tetradic(all);
  * just4(1, 2, 3, 4, 5); // -> [1, 2, 3, 4]
  */
 const tetradic = (f) => {

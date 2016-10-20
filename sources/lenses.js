@@ -8,21 +8,21 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import combine from './combinators';
 import decorators from './decorators';
-import enums from './enums';
+import operators from './operators';
 
 /**
  * A collection of lens creators and operation functions for composable lenses
  * @module futils/lenses
  * @requires futils/combinators
  * @requires futils/decorators
- * @requires futils/enums
+ * @requires futils/operators
  */
 
 
 const Const = (x) => ({value: x, map(){ return this; }});
-const Identity = (x) => ({value: x, map(f){ return Identity(f(x)); }});
+const Id = (x) => ({value: x, map(f){ return Id(f(x)); }});
+const comp = (f, g) => (...args) => f(g(...args));
 
 /**
  * Allows to create new types of lenses which work on different data structures
@@ -43,11 +43,14 @@ const Identity = (x) => ({value: x, map(f){ return Identity(f(x)); }});
  * over(MapLens('users'), (s) => s.toUpperCase(), m); // -> ['JOHN DOE']
  */
 const lens = decorators.curry((gets, sets, k, f, xs) => {
-    return enums.map((replacement) => sets(k, replacement, xs), f(gets(k, xs)))
+    return operators.map(
+        (replacement) => sets(k, replacement, xs),
+        f(gets(k, xs))
+    )
 });
 
 // The bare bones, creates a lens which works on arrays and objects
-const baseLens = lens(enums.field, enums.assoc);
+const baseLens = lens(operators.field, operators.assoc);
 
 
 /**
@@ -89,7 +92,7 @@ const view = decorators.curry((l, data) => l(Const)(data).value);
  * over(L.name, (s) => s.toUpperCase(), data);
  * // -> {name: 'JOHN DOE', age: 30}
  */
-const over = decorators.curry((l, f, data) => l((y) => Identity(f(y)))(data).value );
+const over = decorators.curry((l, f, data) => l((y) => Id(f(y)))(data).value );
 
 /**
  * Given a lens, a value and a data structure, sets the value of the foci of the
@@ -111,7 +114,7 @@ const over = decorators.curry((l, f, data) => l((y) => Identity(f(y)))(data).val
  * set(L.name, 'Adam Smith', data);
  * // -> {name: 'Adam Smith', age: 30}
  */
-const set = decorators.curry((l, v, data) => over(l, combine.getter(v), data));
+const set = decorators.curry((l, v, data) => over(l, () => v, data));
 
 /**
  * Takes a variadic number of string parameters and returns a collection of
@@ -135,7 +138,7 @@ const set = decorators.curry((l, v, data) => over(l, combine.getter(v), data));
  * firstFriendsName(data); // -> 'Adam Smith'
  */
 const makeLenses = (...fields) => fields.reduce((acc, field) => {
-    if (acc[field] === void 0) {
+    if (!operators.has(field, acc)) {
         acc[field] = baseLens(field);
     }
     return acc;
@@ -159,7 +162,9 @@ const makeLenses = (...fields) => fields.reduce((acc, field) => {
  * const mapMapLens = compose(mappedLens, mappedLens);
  * over(mapMapLens, inc, data); // -> [[2, 3, 4]]
  */
-const mappedLens = decorators.curry((f, xs) => Identity(enums.map(combine.compose(enums.field('value'), f), xs)));
+const mappedLens = decorators.curry((f, xs) => Id(operators.map(
+    comp(operators.field('value'), f), xs
+)));
 
 
 

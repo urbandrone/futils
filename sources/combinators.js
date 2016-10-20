@@ -44,13 +44,13 @@ const getter = (x) => () => x;
  * @return {function} Function awaiting a function to tap with
  *
  * @example
- * const {isNumber} = require('futils');
+ * const {combinators, type} = require('futils');
  * 
  * const sqr = (n) => n * n;
  * 
- * const saveSqr = tap(sqr)((op) => {
+ * const saveSqr = combinators.tap(sqr)((op) => {
  *     return (_n) => {
- *         return isNumber(_n) ? op(_n) : _n;
+ *         return type.isNumber(_n) ? op(_n) : _n;
  *     }
  * });
  */
@@ -66,12 +66,12 @@ const tap = (x) => (y) => y(x);
  * @return {function} Composition of the given functions
  *
  * @example
- * const {pipe} = require('futils');
+ * const {combinators} = require('futils');
  *
  * const add1 = (n) => n + 1;
  * const mult2 = (n) => n * 2;
  *
- * const mult2Add1 = pipe(mult2, add1);
+ * const mult2Add1 = combinators.pipe(mult2, add1);
  *
  * add1(mult2(2)) === mult2Add1(2);
  * // -> true
@@ -96,12 +96,12 @@ const pipe = (f, ...fs) => {
  * @return {function} Composition of the given functions
  *
  * @example
- * const {compose} = require('futils');
+ * const {combinators} = require('futils');
  *
  * const add1 = (n) => n + 1;
  * const mult2 = (n) => n * 2;
  *
- * const mult2Add1 = compose(add1, mult2);
+ * const mult2Add1 = combinators.compose(add1, mult2);
  *
  * add1(mult2(2)) === mult2Add1(2);
  * // -> true
@@ -122,12 +122,12 @@ const compose = (...fs) => {
  * @return {function} Composed predicate function
  *
  * @example
- * const {and} = require('futils');
+ * const {combinators} = require('futils');
  *
  * const isStr = (s) => typeof s === 'string';
  * const hasAt = (s) => s.includes('@');
  *
- * const smellsLikeMail = and(isStr, hasAt);
+ * const smellsLikeMail = combinators.and(isStr, hasAt);
  */
 const and = (...fs) => {
     if (type.isArrayOf(type.isFunc, fs)) {
@@ -147,12 +147,12 @@ const and = (...fs) => {
  * @return {function} Composed predicate function
  *
  * @example
- * const {or} = require('futils');
+ * const {combinators} = require('futils');
  *
  * const isStr = (s) => typeof s === 'string';
  * const isNum = (n) => !isNaN(n);
  *
- * const strOrNum = or(isStr, isNum);
+ * const strOrNum = combinators.or(isStr, isNum);
  */
 const or = (...fs) => {
     if (type.isArrayOf(type.isFunc, fs)) {

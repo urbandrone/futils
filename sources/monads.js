@@ -8,13 +8,13 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import type from './types';
-import arity from './arity';
 import decorators from './decorators';
 import Identity from './monads/Identity';
-import Maybe from './monads/Maybe';
-import Either from './monads/Either';
+import Maybe, {None, Some} from './monads/Maybe';
+import Either, {Left, Right} from './monads/Either';
 import IO from './monads/IO';
+import State from './monads/State';
+import Task from './monads/Task';
 
 /**
  * 
@@ -44,22 +44,14 @@ const liftA7 = decorators.curry((f, M1, M2, M3, M4, M5, M6, M7) => {
     return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5).ap(M6).ap(M7);
 });
 
+const liftA8 = decorators.curry((f, M1, M2, M3, M4, M5, M6, M7, M8) => {
+    return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5).ap(M6).ap(M7).ap(M8);
+});
+
 
 
 export default {
-    Identity: Identity,
-    IO: IO,
-    Some: Maybe.Some,
-    None: Maybe.None,
-    Maybe: Maybe,
-    Right: Either.Right,
-    Left: Either.Left,
-    Either: Either,
-    liftA2: liftA2,
-    liftA3: liftA3,
-    liftA4: liftA4,
-    liftA5: liftA5,
-    liftA6: liftA6,
-    liftA7: liftA7
+    Identity, IO, Maybe, None, Some, State, Either, Left, Right, Task,
+    liftA2, liftA3, liftA4, liftA5, liftA6, liftA7, liftA8
     // mmaybe, meither, 
 };
