@@ -12,7 +12,7 @@ import type from './types';
 import arity from './arity';
 
 /**
- * A collection of operator functions to work on arrays, objects, monads, etc...
+ * A collection of operator functions to work on data structures
  * @module futils/operators
  * @requires futils/types
  * @requires futils/arity
@@ -20,7 +20,7 @@ import arity from './arity';
 
 
 
-const _keyed = Object.prototype.hasOwnProperty;
+const _owns = Object.prototype.hasOwnProperty;
 
 /**
  * Allows to predefine a method invocation
@@ -68,7 +68,7 @@ const call = (method, ...partials) => (provider, ...rest) => {
  * operators.has('foo', testee); // -> true
  * operators.has('missing', testee); // -> false
  */
-const has = arity.dyadic((key, x) => _keyed.call(x, key));
+const has = arity.dyadic((key, x) => _owns.call(x, key));
 
 /**
  * Accesses a given object by a chain of keys
@@ -181,6 +181,20 @@ const merge = (...xs) => Object.assign({}, ...xs);
  * money.dollar; // -> 5
  */
 const immutable = (x) => Object.freeze(merge(x));
+
+/**
+ * Returns pairs of [key, value] from a given object
+ * @method 
+ * @version 2.0.0
+ * @param {object} xs The object to take pairs from
+ * @return {array} Array of pairs [ [pair], [pair], ... ]
+ *
+ * @example
+ * const {operators} = require('futils');
+ *
+ * operators.pairs({foo: 1, bar: 0}); // -> [['foo', 1], ['bar', 0]]
+ */
+const pairs = (xs) => Object.keys(xs).map((k) => [k, xs[k]]);
 
 
 
@@ -533,5 +547,5 @@ const flatMap = arity.dyadic((f, m) => {
 export default {
     field, has, call, merge, immutable, first, last, head, tail,
     initial, rest, unique, union, map, flatten, flatMap, assoc, equals,
-    ap, intersect, differ
+    ap, intersect, differ, pairs
 };

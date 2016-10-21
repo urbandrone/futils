@@ -39,6 +39,12 @@ describe('futils/operators module', function () {
         expect(o.b).toBe(void 0);
     });
 
+    it('testing pairs :: o -> as', function () {
+        let o = operators.pairs({foo: 1, bar: 0});
+
+        expect(o).toEqual([['foo', 1], ['bar', 0]]);
+    });
+
     it('testing first :: xs -> x', function () {
         expect(operators.first([1, 2, 3])).toBe(1);
     });

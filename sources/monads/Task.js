@@ -39,6 +39,9 @@ export default class Task {
 
     static resolve (a) { return Task.of((rej, res) => res(a)); }
     static reject (a) { return Task.of((rej) => rej(a)); }
+    static fromPromise (a) {
+        return Task.of((rej, res) => a.then(res, rej));
+    }
 
     // -- Setoid 
     equals (b) {
