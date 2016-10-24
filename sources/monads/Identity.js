@@ -96,7 +96,7 @@ export default class Identity {
     /**
      * Maps a function `f` over the value inside the Functor
      *
-     * @param {function|Applicative} f Function or Applicative to map with
+     * @param {function} f Function to map with
      * @return {Identity} New instance of the Functor
      *
      * @example

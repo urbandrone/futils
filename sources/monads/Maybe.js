@@ -11,8 +11,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import type from '../types';
 
 /**
- * Implementation of the Identity monad
- * @module futils/monads/Identity
+ * Implementation of the Maybe monad
+ * @module futils/monads/Maybe
  * @requires futils/types
  */
 
@@ -23,21 +23,21 @@ const MV = Symbol('MonadicValue');
 
 
 /**
- * The Identity monad class
+ * The Maybe.Some monad class
  * @class
  * @version 2.0.0
  */
 export class Some {
     /**
-     * Used with `new`, creates a new instance. Use `Identity.of` instead
+     * Used with `new`, creates a new instance. Use `Maybe.of` instead
      * 
      * @param {any} a Value to put into the monad
-     * @return {Identity} A monad containing `a`
+     * @return {Maybe} A monad containing `a`
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Maybe} = require('futils').monads;
      *
-     * let one = Identity.of(1);
+     * let one = Maybe.of(1);
      */
     constructor (a) { this.mvalue = a; }
     set mvalue (a) {
@@ -54,11 +54,13 @@ export class Some {
      * @return {string} String representation of the calling instance
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Maybe} = require('futils').monads;
      *
-     * let one = Identity.of(1);
+     * let one = Maybe.of(1);
+     * let nothing = Maybe.of(null);
      *
-     * one.toString(); // -> "Identity(1)"
+     * one.toString(); // -> "Some(1)"
+     * nothing.toString(); // -> "None"
      */
     toString () { return `Some(${this.mvalue})`; }
 
@@ -69,17 +71,16 @@ export class Some {
      * @return {boolean} True if instance of the class
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Maybe} = require('futils').monads;
      *
-     * let one = Identity.of(1);
+     * let one = Maybe.of(1);
      *
-     * Identity.is(one); // -> true
+     * Maybe.is(one); // -> true
      */
     static is (a) { return Some.prototype.isPrototypeOf(a); }
 
     /**
-     * Returns true if the Some wraps a value which is neither `undefined` nor
-     *     `null`
+     * Returns true if called on a Some and false if called on a None
      *     
      * @return {boolean} True
      */
@@ -93,11 +94,11 @@ export class Some {
      * @return {boolean} True if both are equal
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Maybe} = require('futils').monads;
      *
-     * let one = Identity.of(1);
-     * let one_b = Identity.of(1);
-     * let two = Identity.of(2);
+     * let one = Maybe.of(1);
+     * let one_b = Maybe.of(1);
+     * let two = Maybe.of(2);
      *
      * one.equals(one_b); // -> true
      * one.equals(two); // -> false
@@ -110,17 +111,17 @@ export class Some {
     /**
      * Maps a function `f` over the value inside the Functor
      *
-     * @param {function|Applicative} f Function or Applicative to map with
-     * @return {Identity} New instance of the Functor
+     * @param {function} f Function to map with
+     * @return {Maybe} New instance of the Functor
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Maybe} = require('futils').monads;
      *
-     * let one = Identity.of(1);
+     * let one = Maybe.of(1);
      *
      * const inc = (a) => a + 1;
      *
-     * one.map(inc); // -> Identity(2)
+     * one.map(inc); // -> Some(2)
      */
     map (f) {
         if (type.isFunc(f)) {
@@ -130,16 +131,16 @@ export class Some {
     }
     // -- Applicative
     /**
-     * Creates a new instance of a Identity wrapping the given value `a`. Use
+     * Creates a new instance of a Maybe wrapping the given value `a`. Use
      *     `.of` instead of the constructor together with `new`
      *
      * @param {any} a Any value
-     * @return {Identity} New instance of the Applicative
+     * @return {Maybe} New instance of the Applicative
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Maybe} = require('futils').monads;
      *
-     * let one = Identity.of(1);
+     * let one = Maybe.of(1);
      *
      * one.mvalue; // -> 1
      */
@@ -154,13 +155,13 @@ export class Some {
      * @return {Functor} New instance of the Functor
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Maybe} = require('futils').monads;
      *
-     * let one = Identity.of(1);
+     * let one = Maybe.of(1);
      *
-     * const aInc = Identity.of((a) => a + 1);
+     * const aInc = Maybe.of((a) => a + 1);
      *
-     * aInc.ap(one); // -> Identity(2)
+     * aInc.ap(one); // -> Some(2)
      */
     ap (m) {
         if (type.isFunc(m.map)) {
@@ -176,13 +177,13 @@ export class Some {
      * @return {Monad} New instance of the calling monads type
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Maybe} = require('futils').monads;
      *
-     * let one = Identity.of(1);
+     * let one = Maybe.of(1);
      *
-     * const mInc = (n) => Identity.of(1).map((m) => n + m);
+     * const mInc = (n) => Maybe.of(1).map((m) => n + m);
      *
-     * one.flatMap(mInc); // -> Identity(2);
+     * one.flatMap(mInc); // -> Some(2);
      */
     flatMap (f) {
         if (type.isFunc(f)) {
@@ -198,11 +199,11 @@ export class Some {
      * @return {Monad} New instance of the monad
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Maybe} = require('futils').monads;
      *
-     * let one = Identity.of(Identity.of(1));
+     * let one = Maybe.of(Maybe.of(1));
      *
-     * one.flatten(); // -> Identity(1)
+     * one.flatten(); // -> Some(1)
      */
     flatten () {
         return Maybe.of(this.mvalue.mvalue);
@@ -212,11 +213,12 @@ export class Some {
     orSome () { return this; }
     // -- Foldable
     // reduce
+    
     // -- ?
     /**
-     * Given two functions (`f` & `g`), folds `f` over the instance if it reflects
-     *     None and `g` over the instance if it reflects Some
-     * @method fold
+     * Given two functions, folds the first over the instance if it reflects
+     *     None and the second over the instance if it reflects Some
+     *     
      * @param {function} f Function handling the None case
      * @param {function} g Function handling the Some case
      * @return {any} Whatever f or g return
@@ -239,13 +241,62 @@ export class Some {
         }
         throw 'Some::fold expects argument 2 to be function but saw ' + g;
     }
+    
+    /**
+     * Implementation of the catamorphism. Given a object with `None` and `Some`
+     *     fields (functions) pipes the current value through the corresponding
+     *     function
+     *     
+     * @param {object} o Object with `None` and `Some`
+     * @return {any} Result of applying the functions to the current value
+     *
+     * @example
+     * const {Maybe} = require('futils').monads;
+     *
+     * let one = Maybe.of(1);
+     * let nothing = Maybe.of(null);
+     *
+     * one.cata({
+     *     None: () => 'Nothing found',
+     *     Some: (n) => 'Found number of ' + n
+     * });
+     * // -> 'Found number of 1'
+     *
+     * nothing.cata({
+     *     None: () => 'Nothing found',
+     *     Some: (n) => 'Found number of ' + n
+     * });
+     * // -> 'Nothing found'
+     */
     cata (o) {
         if (type.isFunc(o.Some) && type.isFunc(o.None)) {
             return this.fold(o.None, o.Some);
         }
         throw 'Some::cata expected Object of {Some: fn}, but saw ' + o; 
     }
+    
     // -- Bifunctor
+    /**
+     * Given two functions, maps the first over the instance if it reflects None
+     *     and the second if it reflects Some. Wraps the result into a new
+     *     Bifunctor of the same type before returning
+     *     
+     * @param {function} f Function to map if None
+     * @param {function} g Function to map if Some
+     * @return {Bifunctor} Result in a new container
+     *
+     * @example
+     * const {Maybe} = require('futils').monads;
+     *
+     * let one = Maybe.of(1);
+     * let nothing = Maybe.of(null);
+     *
+     * const fail = () => 'No int :(';
+     * const success = (n) => `Given ${n}!`;
+     *
+     * one.biMap(fail, success); // -> Some('Given 1!')
+     * nothing.biMap(fail, success); // -> Some('No int :(')
+     */
     biMap (f, g) {
         if (type.isFunc(f) && type.isFunc(g)) {
             return Maybe.of(this.fold(f, g));
@@ -258,166 +309,39 @@ export class Some {
 
 
 /**
- * Implementation of the Maybe.None monad
+ * Implementation of the Maybe.None monad. This shares the same interface with
+ *     the Maybe.Some class.
  * @class
  * @version 2.0.0
  */
 export class None {
-    /**
-     * Used with `new`, creates a new instance. Use `Identity.of` instead
-     * 
-     * @param {any} a Value to put into the monad
-     * @return {Identity} A monad containing `a`
-     *
-     * @example
-     * const {Identity} = require('futils').monads;
-     *
-     * let one = Identity.of(1);
-     */
     constructor () { this.mvalue = null; }
     set mvalue (a) { this[MV] = a; }
     get mvalue () { return this[MV]; }
-
-    /**
-     * Returns a string representation of the instance
-     * @method toString
-     * @return {string} String representation of the calling instance
-     *
-     * @example
-     * const {Identity} = require('futils').monads;
-     *
-     * let one = Identity.of(1);
-     *
-     * one.toString(); // -> "Identity(1)"
-     */
     toString () { return 'None'; }
-
-    /**
-     * Returns true if given a instance of the class
-     * @method is
-     * @param {any} a Value to check
-     * @return {boolean} True if instance of the class
-     *
-     * @example
-     * const {Identity} = require('futils').monads;
-     *
-     * let one = Identity.of(1);
-     *
-     * Identity.is(one); // -> true
-     */
     static is (a) { return None.prototype.isPrototypeOf(a); }
     isSome () { return false; }
 
     // -- Setoid
-    /**
-     * Given another Setoid, checks if they are equal
-     * 
-     * @param {Setoid} b Setoid to compare against
-     * @return {boolean} True if both are equal
-     *
-     * @example
-     * const {Identity} = require('futils').monads;
-     *
-     * let one = Identity.of(1);
-     * let one_b = Identity.of(1);
-     * let two = Identity.of(2);
-     *
-     * one.equals(one_b); // -> true
-     * one.equals(two); // -> false
-     */
     equals (b) {
         return None.prototype.isPrototypeOf(b) &&
                b.toString() === this.toString();
     }
     // -- Functor
-    /**
-     * Maps a function `f` over the value inside the Functor
-     *
-     * @param {function|Applicative} f Function or Applicative to map with
-     * @return {Identity} New instance of the Functor
-     *
-     * @example
-     * const {Identity} = require('futils').monads;
-     *
-     * let one = Identity.of(1);
-     *
-     * const inc = (a) => a + 1;
-     *
-     * one.map(inc); // -> Identity(2)
-     */
     map () { return this; }
     // -- Applicative
-    /**
-     * Creates a new instance of a Identity wrapping the given value `a`. Use
-     *     `.of` instead of the constructor together with `new`
-     *
-     * @param {any} a Any value
-     * @return {Identity} New instance of the Applicative
-     *
-     * @example
-     * const {Identity} = require('futils').monads;
-     *
-     * let one = Identity.of(1);
-     *
-     * one.mvalue; // -> 1
-     */
     static of () { return new None(); }
     of () { return None.of(); }
-
-    /**
-     * Applies a wrapped function to a given Functor and returns a new instance
-     *     of the Functor
-     *
-     * @param {Functor} m Functor to apply the Applicative to
-     * @return {Functor} New instance of the Functor
-     *
-     * @example
-     * const {Identity} = require('futils').monads;
-     *
-     * let one = Identity.of(1);
-     *
-     * const aInc = Identity.of((a) => a + 1);
-     *
-     * aInc.ap(one); // -> Identity(2)
-     */
     ap (m) { return m; }
     // -- Monad
-    /**
-     * Chains function calls which return monads into a single monad
-     * @method flatMap
-     * @param {function} f Function returning a monad
-     * @return {Monad} New instance of the calling monads type
-     *
-     * @example
-     * const {Identity} = require('futils').monads;
-     *
-     * let one = Identity.of(1);
-     *
-     * const mInc = (n) => Identity.of(1).map((m) => n + m);
-     *
-     * one.flatMap(mInc); // -> Identity(2);
-     */
     flatMap () { return this; }
-
-    /**
-     * Flattens down a nested monad one level and returns a new monad containing
-     *     the inner value
-     * @method flatten
-     * @return {Monad} New instance of the monad
-     *
-     * @example
-     * const {Identity} = require('futils').monads;
-     *
-     * let one = Identity.of(Identity.of(1));
-     *
-     * one.flatten(); // -> Identity(1)
-     */
     flatten () { return this; }
     // -- Recovering
     orElse (a) { return a; }
     orSome (a) { return Maybe.of(a); }
     // -- Foldable
     // reduce
+    
     // -- ?
     fold (f) {
         if (type.isFunc(f)) {
@@ -431,6 +355,7 @@ export class None {
         }
         throw 'None::cata expected Object of {None: fn}, but saw ' + o; 
     }
+    
     // -- Bifunctor
     biMap (f) {
         if (type.isFunc(f)) {
@@ -443,14 +368,64 @@ export class None {
 
 
 
-
+/**
+ * Implementation of the Maybe monad
+ * @class
+ * @version 2.0.0
+ */
 export default class Maybe {
+    /**
+     * Allows to test if a value is a instance of either None or Some
+     * @method is
+     * @param {any} a Value to check
+     * @return {boolean} True if given a None or Some, false otherwise
+     *
+     * @example
+     * const {Maybe} = require('futils').monads;
+     *
+     * let one = Maybe.of(1);
+     *
+     * Maybe.is(one); // -> true
+     * Maybe.is(1); // -> false
+     */
+    static is (a) { return Some.is(a) || None.is(a); }
+
+    /**
+     * Creates new instances of Some or None
+     * 
+     * @param {any} a Value to wrap
+     * @return {Maybe.None|Maybe.Some} None or Some wrapper
+     *
+     * @example
+     * const {Maybe} = require('futils').monads;
+     *
+     * let one = Maybe.of(1);
+     * let nothing = Maybe.of(null);
+     */
     static of (a) {
         return type.isNil(a) ? None.of() : Some.of(a);
     }
-    static fromNullable (a) { return Maybe.of(a); }
+
+    /**
+     * Creates either a Maybe.None or a Maybe.Some from a given Either.Left or
+     *     a Either.Right monad
+     * @method fromEither
+     * @param {Either.Left|Either.Right} m The Either instance to transform
+     * @return {Maybe.None|Maybe.Some} None or Some wrapper
+     *
+     * @example
+     * const {Maybe, Left, Right} = require('futils').monads;
+     *
+     * let left = Left.of('This is a failure');
+     * let right = Right.of('This is a success');
+     *
+     * let nothing = Maybe.fromEither(left);
+     * let some = Maybe.fromEither(right);
+     *
+     * nothing; // -> None(null)
+     * some; // -> Some('This is a success')
+     */
     static fromEither (m) {
         return m.fold(None.of, Some.of);
     }
-    static is (a) { return Some.is(a) || None.is(a); }
 }

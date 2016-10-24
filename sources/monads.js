@@ -20,37 +20,113 @@ import Task from './monads/Task';
  * 
  */
 
+/**
+ * Takes a (curried!) function and two Applicatives and applies the function to
+ *     both 
+ * @version 2.0.0 
+ * @param {function} f The function to lift
+ * @param {Applicative} M1 First applicative
+ * @param {Applicative} M2 Second applicative
+ * @return {Applicative} Result of the last computation as an applicative
+ *
+ * @example
+ * const {monads, decorators} = require('futils');
+ *
+ * let m1 = monads.Identity.of(1);
+ * let m2 = monads.Identity.of(1);
+ *
+ * const add = decorators.curry((a, b) => a + b);
+ *
+ * monads.liftA2(add, m1, m2); // -> Identity(2)
+ */
 const liftA2 = decorators.curry((f, M1, M2) => {
     return M1.map(f).ap(M2);
 });
 
+/**
+ * Takes a (curried!) function and three Applicatives and applies the function to
+ *     all three 
+ * @version 2.0.0 
+ * @param {function} f The function to lift
+ * @param {Applicative} M1 First applicative
+ * @param {Applicative} M2 Second applicative
+ * @param {Applicative} M3 Third applicative
+ * @return {Applicative} Result of the last computation as an applicative
+ *
+ * @example
+ * const {monads, decorators} = require('futils');
+ *
+ * let m1 = monads.Identity.of(1);
+ * let m2 = monads.Identity.of(1);
+ * let m3 = monads.Identity.of(1);
+ *
+ * const add = decorators.curry((a, b, c) => a + b + c);
+ *
+ * monads.liftA3(add, m1, m2, m3); // -> Identity(3)
+ */
 const liftA3 = decorators.curry((f, M1, M2, M3) => {
     return M1.map(f).ap(M2).ap(M3);
 });
 
+/**
+ * Takes a (curried!) function and four Applicatives and applies the function to
+ *     all four 
+ * @version 2.0.0 
+ * @param {function} f The function to lift
+ * @param {Applicative} M1 First applicative
+ * @param {Applicative} M2 Second applicative
+ * @param {Applicative} M3 Third applicative
+ * @param {Applicative} M4 Third applicative
+ * @return {Applicative} Result of the last computation as an applicative
+ *
+ * @example
+ * const {monads, decorators} = require('futils');
+ *
+ * let m1 = monads.Identity.of(1);
+ * let m2 = monads.Identity.of(1);
+ * let m3 = monads.Identity.of(1);
+ * let m4 = monads.Identity.of(1);
+ *
+ * const add = decorators.curry((a, b, c, d) => a + b + c + d);
+ *
+ * monads.liftA4(add, m1, m2, m3, m4); // -> Identity(4)
+ */
 const liftA4 = decorators.curry((f, M1, M2, M3, M4) => {
     return M1.map(f).ap(M2).ap(M3).ap(M4);
 });
 
+/**
+ * Takes a (curried!) function and five Applicatives and applies the function to
+ *     all five 
+ * @version 2.0.0 
+ * @param {function} f The function to lift
+ * @param {Applicative} M1 First applicative
+ * @param {Applicative} M2 Second applicative
+ * @param {Applicative} M3 Third applicative
+ * @param {Applicative} M4 Third applicative
+ * @param {Applicative} M5 Third applicative
+ * @return {Applicative} Result of the last computation as an applicative
+ *
+ * @example
+ * const {monads, decorators} = require('futils');
+ *
+ * let m1 = monads.Identity.of(1);
+ * let m2 = monads.Identity.of(1);
+ * let m3 = monads.Identity.of(1);
+ * let m4 = monads.Identity.of(1);
+ * let m5 = monads.Identity.of(1);
+ *
+ * const add = decorators.curry((a, b, c, d, e) => a + b + c + d + e);
+ *
+ * monads.liftA5(add, m1, m2, m3, m4, m5); // -> Identity(5)
+ */
 const liftA5 = decorators.curry((f, M1, M2, M3, M4, M5) => {
     return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5);
-});
-
-const liftA6 = decorators.curry((f, M1, M2, M3, M4, M5, M6) => {
-    return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5).ap(M6);
-});
-
-const liftA7 = decorators.curry((f, M1, M2, M3, M4, M5, M6, M7) => {
-    return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5).ap(M6).ap(M7);
-});
-
-const liftA8 = decorators.curry((f, M1, M2, M3, M4, M5, M6, M7, M8) => {
-    return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5).ap(M6).ap(M7).ap(M8);
 });
 
 
 
 export default {
     Identity, IO, Maybe, None, Some, State, Either, Left, Right, Task,
-    liftA2, liftA3, liftA4, liftA5, liftA6, liftA7, liftA8
+    liftA2, liftA3, liftA4, liftA5
 };
