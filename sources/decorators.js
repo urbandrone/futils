@@ -26,7 +26,7 @@ import arity from './arity';
  * @return {function} A wrapped function
  *
  * @example
- * const {once} = require('futils');
+ * const {once} = require('futils').decorators;
  *
  * var N = 0;
  * const inc = () => N += 1;
@@ -65,7 +65,7 @@ const once = (f) => {
  * @return {function} The wrapped function
  *
  * @example
- * const {not} = require('futils');
+ * const {not} = require('futils').decorators;
  *
  * const lower1 = (n) => n < 1;
  * const greater1 = not(lower1);
@@ -89,7 +89,7 @@ const not = (f) => {
  * @return {function} The wrapped function
  *
  * @example
- * const {flip} = require('futils');
+ * const {flip} = require('futils').decorators;
  *
  * const divideWith = (a, b) => a / b;
  * const divideWithR = flip(divideWith);
@@ -114,7 +114,7 @@ const flip = (f) => {
  * @return {function} The wrapped function
  *
  * @example
- * const {curry} = require('futils');
+ * const {curry} = require('futils').decorators;
  *
  * const greet = (greeting, who) => greeting + ' ' + who + '!';
  * const cGreet = curry(greet);
@@ -151,7 +151,7 @@ const curry = (f) => {
  * @return {function} The wrapped function
  *
  * @example
- * const {curryRight} = require('futils');
+ * const {curryRight} = require('futils').decorators;
  *
  * const greet = (greeting, who) => greeting + ' ' + who + '!';
  * const cGreet = curryRight(greet);
@@ -190,7 +190,7 @@ const curryRight = (f) => {
  * @return {function} The wrapped function
  *
  * @example
- * const {partial} = require('futils');
+ * const {partial} = require('futils').decorators;
  *
  * const add = (a, b) => a + b;
  * const pAdd = partial(add, undefined, 1);
@@ -227,7 +227,7 @@ const partial = (f, ...pargs) => {
  * @return {function} The wrapped function
  *
  * @example
- * const {partialRight} = require('futils');
+ * const {partialRight} = require('futils').decorators;
  *
  * const add = (a, b) => a + b;
  * const pAdd = partialRight(add, 1);
@@ -265,10 +265,10 @@ const partialRight = (f, ...pargs) => {
  * @return {function} A wrapped function
  *
  * @example
- * const {given, isString} = require('futils');
+ * const {decorators, type} = require('futils');
  *
- * const greet = given(
- *     isString,
+ * const greet = decorators.given(
+ *     type.isString,
  *     (subject) => `Hello ${subject}`,
  *     () => 'Need a string!'
  * );
@@ -307,7 +307,7 @@ const given = (p, t = void 0, f = void 0) => {
  * @return {function} A memoized function
  *
  * @example
- * const {memoize} = require('futils');
+ * const {memoize} = require('futils').decorators;
  *
  * const complexCalculation = memoize(( ... ) => { ... });
  */

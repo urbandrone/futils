@@ -23,10 +23,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * @return {boolean} True or false
  *
  * @example
- * const {isNil} = require('futils');
+ * const {type} = require('futils');
  *
- * isNil(null); // -> true
- * isNil(''); // -> false
+ * type.isNil(null); // -> true
+ * type.isNil(''); // -> false
  */
 const isNil = (x) => x === null || x === void 0;
 
@@ -38,10 +38,10 @@ const isNil = (x) => x === null || x === void 0;
  * @return {boolean} True or false
  *
  * @example
- * const {isAny} = require('futils');
+ * const {type} = require('futils');
  *
- * isAny(null); // -> false
- * isAny(''); // -> true
+ * type.isAny(null); // -> false
+ * type.isAny(''); // -> true
  */
 const isAny = (x) => !isNil(x);
 
@@ -53,10 +53,10 @@ const isAny = (x) => !isNil(x);
  * @return {boolean} True for `undefined`
  *
  * @example
- * const {isVoid} = require('futils');
+ * const {type} = require('futils');
  *
- * isVoid(null); // -> false
- * isVoid(undefined); // -> true
+ * type.isVoid(null); // -> false
+ * type.isVoid(undefined); // -> true
  */
 const isVoid = (x) => x === undefined;
 
@@ -68,10 +68,10 @@ const isVoid = (x) => x === undefined;
  * @return {boolean} True for `null`
  *
  * @example
- * const {isNull} = require('futils');
+ * const {type} = require('futils');
  *
- * isNull(null); // -> true
- * isNull(undefined); // -> false
+ * type.isNull(null); // -> true
+ * type.isNull(undefined); // -> false
  */
 const isNull = (x) => x === null;
 
@@ -83,10 +83,10 @@ const isNull = (x) => x === null;
  * @return {boolean} True for strings
  *
  * @example
- * const {operators} = require('futils');
+ * const {type} = require('futils');
  *
- * operators.isString('Hello world'); // -> true
- * operators.isString(null); // -> false
+ * type.isString('Hello world'); // -> true
+ * type.isString(null); // -> false
  */
 const isString = (x) => typeof x === 'string';
 
@@ -98,11 +98,11 @@ const isString = (x) => typeof x === 'string';
  * @return {boolean} True for number values
  *
  * @example
- * const {isNumber} = require('futils');
+ * const {type} = require('futils');
  *
- * isNumber(1); // -> true
- * isNumber('1'); // -> false
- * isNumber(NaN); // -> false
+ * type.isNumber(1); // -> true
+ * type.isNumber('1'); // -> false
+ * type.isNumber(NaN); // -> false
  */
 const isNumber = (x) => typeof x === 'number' && !isNaN(x) && isFinite(x);
 
@@ -114,10 +114,10 @@ const isNumber = (x) => typeof x === 'number' && !isNaN(x) && isFinite(x);
  * @return {boolean} True for integers
  *
  * @example
- * const {isInt} = require('futils');
+ * const {type} = require('futils');
  *
- * isInt(1); // -> true
- * isInt(1.1); // -> false
+ * type.isInt(1); // -> true
+ * type.isInt(1.1); // -> false
  */
 const isInt = (x) => isNumber(x) && x % 1 === 0;
 
@@ -129,10 +129,10 @@ const isInt = (x) => isNumber(x) && x % 1 === 0;
  * @return {boolean} True for floating point numbers
  *
  * @example
- * const {isFloat} = require('futils');
+ * const {type} = require('futils');
  *
- * isFloat(1); // -> false
- * isFloat(1.1); // -> true
+ * type.isFloat(1); // -> false
+ * type.isFloat(1.1); // -> true
  */
 const isFloat = (x) => isNumber(x) && x % 1 !== 0;
 
@@ -144,10 +144,10 @@ const isFloat = (x) => isNumber(x) && x % 1 !== 0;
  * @return {boolean} True for boolean values
  *
  * @example
- * const {isBool} = require('futils');
+ * const {type} = require('futils');
  *
- * isBool(false); // -> true
- * isBool('false'); // -> false
+ * type.isBool(false); // -> true
+ * type.isBool('false'); // -> false
  */
 const isBool = (x) => typeof x === 'boolean';
 
@@ -159,10 +159,10 @@ const isBool = (x) => typeof x === 'boolean';
  * @return {boolean} True for all truthy values
  *
  * @example
- * const {isTrue} = require('futils');
+ * const {type} = require('futils');
  *
- * isTrue(true); // -> true
- * isTrue(null); // -> false
+ * type.isTrue(true); // -> true
+ * type.isTrue(null); // -> false
  */
 const isTrue = (x) => !!x;
 
@@ -174,10 +174,10 @@ const isTrue = (x) => !!x;
  * @return {boolean} True for all falsy values
  *
  * @example
- * const {isFalse} = require('futils');
+ * const {type} = require('futils');
  *
- * isFalse(true); // -> false
- * isFalse(null); // -> true
+ * type.isFalse(true); // -> false
+ * type.isFalse(null); // -> true
  */
 const isFalse = (x) => !x;
 
@@ -189,10 +189,10 @@ const isFalse = (x) => !x;
  * @return {boolean} True for functions
  *
  * @example
- * const {isFunc} = require('futils');
+ * const {type} = require('futils');
  *
- * isFunc(() => null); // -> true
- * isFunc(null); // -> false
+ * type.isFunc(() => null); // -> true
+ * type.isFunc(null); // -> false
  */
 const isFunc = (x) => typeof x === 'function';
 
@@ -204,10 +204,10 @@ const isFunc = (x) => typeof x === 'function';
  * @return {boolean} True for object
  *
  * @example
- * const {isObject} = require('futils');
+ * const {type} = require('futils');
  *
- * isObject({}); // -> true
- * isObject([]); // -> false
+ * type.isObject({}); // -> true
+ * type.isObject([]); // -> false
  */
 const isObject = (x) => ({}.toString.call(x) === '[object Object]');
 
@@ -219,10 +219,10 @@ const isObject = (x) => ({}.toString.call(x) === '[object Object]');
  * @return {boolean} True for arrays
  *
  * @example
- * const {isArray} = require('futils');
+ * const {type} = require('futils');
  *
- * isArray([]); // -> true
- * isArray({}); // -> false
+ * type.isArray([]); // -> true
+ * type.isArray({}); // -> false
  */
 const isArray = (x) => Array.isArray(x);
 
@@ -234,10 +234,10 @@ const isArray = (x) => Array.isArray(x);
  * @return {boolean} True for `Date` instances
  *
  * @example
- * const {isDate} = require('futils');
+ * const {type} = require('futils');
  *
- * isDate(new Date()); // -> true
- * isDate('2016-05-01'); // -> false
+ * type.isDate(new Date()); // -> true
+ * type.isDate('2016-05-01'); // -> false
  */
 const isDate = (x) => Date.prototype.isPrototypeOf(x);
 
@@ -249,10 +249,10 @@ const isDate = (x) => Date.prototype.isPrototypeOf(x);
  * @return {boolean} True for regular expressions
  *
  * @example
- * const {isRegex} = require('futils');
+ * const {type} = require('futils');
  *
- * isRegex(/.+/g); // -> true
- * isRegex('/.+/g'); // -> false
+ * type.isRegex(/.+/g); // -> true
+ * type.isRegex('/.+/g'); // -> false
  */
 const isRegex = (x) => RegExp.prototype.isPrototypeOf(x);
 
@@ -264,10 +264,10 @@ const isRegex = (x) => RegExp.prototype.isPrototypeOf(x);
  * @return {boolean} True for DOM nodes
  *
  * @example
- * const {isNode} = require('futils');
+ * const {type} = require('futils');
  *
- * isNode(document.body); // -> true
- * isNode(null); // -> false
+ * type.isNode(document.body); // -> true
+ * type.isNode(null); // -> false
  */
 const isNode = (x) => Node.prototype.isPrototypeOf(x);
 
@@ -279,10 +279,10 @@ const isNode = (x) => Node.prototype.isPrototypeOf(x);
  * @return {boolean} True for Nodelists
  *
  * @example
- * const {isNodeList} = require('futils');
+ * const {type} = require('futils');
  *
- * isNodeList(document.querySelectorAll('body')); // -> true
- * isNodeList([document.body]); // -> false
+ * type.isNodeList(document.querySelectorAll('body')); // -> true
+ * type.isNodeList([document.body]); // -> false
  */
 const isNodeList = (x) => NodeList.prototype.isPrototypeOf(x);
 
@@ -302,11 +302,11 @@ const isWeakSet = (x) => WeakSet.prototype.isPrototypeOf(x);
  * @return {boolean} True for promises
  *
  * @example
- * const {isPromise} = require('futils');
+ * const {type} = require('futils');
  *
- * isPromise(new Promise( ... )); // -> true
- * isPromise({then() { ... }}); // ->true
- * isPromise({}); // -> false
+ * type.isPromise(new Promise( ... )); // -> true
+ * type.isPromise({then() { ... }}); // ->true
+ * type.isPromise({}); // -> false
  */
 const isPromise = (x) => Promise.prototype.isPrototypeOf(x) ||
                          x && isFunc(x.then);
@@ -319,10 +319,10 @@ const isPromise = (x) => Promise.prototype.isPrototypeOf(x) ||
  * @return {boolean} True for iterators
  *
  * @example
- * const {isIterator} = require('futils');
+ * const {type} = require('futils');
  *
  * var ns = [1, 2, 3];
- * isIterator(ns[Symbol.iterator]()); // -> true
+ * type.isIterator(ns[Symbol.iterator]()); // -> true
  */
 const isIterator = (x) => !isNil(x) && isFunc(x.next);
 
@@ -334,10 +334,10 @@ const isIterator = (x) => !isNil(x) && isFunc(x.next);
  * @return {boolean} True for iterables
  *
  * @example
- * const {isIterable} = require('futils');
+ * const {type} = require('futils');
  *
- * isIterable([1, 2, 3]); // -> true
- * isIterable({}); // -> false
+ * type.isIterable([1, 2, 3]); // -> true
+ * type.isIterable({}); // -> false
  */
 const isIterable = (x) => !isNil(x) && !!(x[Symbol.iterator] || !isNaN(x.length));
 
@@ -351,12 +351,12 @@ const isIterable = (x) => !isNil(x) && !!(x[Symbol.iterator] || !isNaN(x.length)
  * @return {boolean} True if array of items which pass f
  *
  * @example
- * const {isString, isArrayOf} = require('futils');
+ * const {type} = require('futils');
  *
  * var pass = ['Hello', 'World'],
  *     fail = [1, 'World'];
  *
- * const isStrArray = isArrayOf(isString);
+ * const isStrArray = type.isArrayOf(type.isString);
  *
  * isStrArray(pass); // -> true
  * isStrArray(fail); // -> false
@@ -572,5 +572,5 @@ export default {
     isWeakSet, isFalse, isTrue, isFunc, isFloat, isInt, isNumber, isNode,
     isNodeList, isDate, isObject, isPromise, isIterable, isArrayOf, isObjectOf,
     isMap, isRegex, isIterator, isSetoid, isFunctor, isApplicative, isApply,
-    isFoldable, isMonad
+    isFoldable, isMonad, isMonoid, isBifunctor
 };

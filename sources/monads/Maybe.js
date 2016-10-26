@@ -12,7 +12,7 @@ import type from '../types';
 
 /**
  * Implementation of the Maybe monad
- * @module futils/monads/Maybe
+ * @module futils/monads/maybe
  * @requires futils/types
  */
 
@@ -24,21 +24,10 @@ const MV = Symbol('MonadicValue');
 
 /**
  * The Maybe.Some monad class
- * @class
+ * @class module:futils/monads/maybe.Some
  * @version 2.0.0
  */
 export class Some {
-    /**
-     * Used with `new`, creates a new instance. Use `Maybe.of` instead
-     * 
-     * @param {any} a Value to put into the monad
-     * @return {Maybe} A monad containing `a`
-     *
-     * @example
-     * const {Maybe} = require('futils').monads;
-     *
-     * let one = Maybe.of(1);
-     */
     constructor (a) { this.mvalue = a; }
     set mvalue (a) {
         if (type.isNil(a)) {
@@ -50,7 +39,8 @@ export class Some {
 
     /**
      * Returns a string representation of the instance
-     * 
+     * @method toString
+     * @memberof module:futils/monads/maybe.Some
      * @return {string} String representation of the calling instance
      *
      * @example
@@ -66,7 +56,9 @@ export class Some {
 
     /**
      * Returns true if given a instance of the class
-     * 
+     * @method is
+     * @memberof module:futils/monads/maybe.Some
+     * @static
      * @param {any} a Value to check
      * @return {boolean} True if instance of the class
      *
@@ -81,7 +73,8 @@ export class Some {
 
     /**
      * Returns true if called on a Some and false if called on a None
-     *     
+     * @method isSome
+     * @memberof module:futils/monads/maybe.Some
      * @return {boolean} True
      */
     isSome () { return true; }
@@ -89,7 +82,8 @@ export class Some {
     // -- Setoid
     /**
      * Given another Setoid, checks if they are equal
-     * 
+     * @method equals
+     * @memberof module:futils/monads/maybe.Some
      * @param {Setoid} b Setoid to compare against
      * @return {boolean} True if both are equal
      *
@@ -110,9 +104,10 @@ export class Some {
     // -- Functor
     /**
      * Maps a function `f` over the value inside the Functor
-     *
+     * @method map
+     * @memberof module:futils/monads/maybe.Some
      * @param {function} f Function to map with
-     * @return {Maybe} New instance of the Functor
+     * @return {Functor} New instance of the Functor
      *
      * @example
      * const {Maybe} = require('futils').monads;
@@ -133,7 +128,9 @@ export class Some {
     /**
      * Creates a new instance of a Maybe wrapping the given value `a`. Use
      *     `.of` instead of the constructor together with `new`
-     *
+     * @method of
+     * @memberof module:futils/monads/maybe.Some
+     * @static
      * @param {any} a Any value
      * @return {Maybe} New instance of the Applicative
      *
@@ -150,7 +147,8 @@ export class Some {
     /**
      * Applies a wrapped function to a given Functor and returns a new instance
      *     of the Functor
-     *
+     * @method ap
+     * @memberof module:futils/monads/maybe.Some
      * @param {Functor} m Functor to apply the Applicative to
      * @return {Functor} New instance of the Functor
      *
@@ -172,7 +170,8 @@ export class Some {
     // -- Monad
     /**
      * Chains function calls which return monads into a single monad
-     * 
+     * @method flatMap
+     * @memberof module:futils/monads/maybe.Some
      * @param {function} f Function returning a monad
      * @return {Monad} New instance of the calling monads type
      *
@@ -195,7 +194,8 @@ export class Some {
     /**
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
-     *     
+     * @method flatten
+     * @memberof module:futils/monads/maybe.Some
      * @return {Monad} New instance of the monad
      *
      * @example
@@ -218,7 +218,8 @@ export class Some {
     /**
      * Given two functions, folds the first over the instance if it reflects
      *     None and the second over the instance if it reflects Some
-     *     
+     * @method fold
+     * @memberof module:futils/monads/maybe.Some
      * @param {function} f Function handling the None case
      * @param {function} g Function handling the Some case
      * @return {any} Whatever f or g return
@@ -246,7 +247,8 @@ export class Some {
      * Implementation of the catamorphism. Given a object with `None` and `Some`
      *     fields (functions) pipes the current value through the corresponding
      *     function
-     *     
+     * @method cata   
+     * @memberof module:futils/monads/maybe.Some
      * @param {object} o Object with `None` and `Some`
      * @return {any} Result of applying the functions to the current value
      *
@@ -280,7 +282,8 @@ export class Some {
      * Given two functions, maps the first over the instance if it reflects None
      *     and the second if it reflects Some. Wraps the result into a new
      *     Bifunctor of the same type before returning
-     *     
+     * @method biMap   
+     * @memberof module:futils/monads/maybe.Some 
      * @param {function} f Function to map if None
      * @param {function} g Function to map if Some
      * @return {Bifunctor} Result in a new container
@@ -309,9 +312,9 @@ export class Some {
 
 
 /**
- * Implementation of the Maybe.None monad. This shares the same interface with
+ * Implementation of the Maybe.None monad. This shares the interface with
  *     the Maybe.Some class.
- * @class
+ * @class module:futils/monads/maybe.None
  * @version 2.0.0
  */
 export class None {
@@ -370,13 +373,16 @@ export class None {
 
 /**
  * Implementation of the Maybe monad
- * @class
+ * @class module:futils/monads/maybe.Maybe
+ * @static
  * @version 2.0.0
  */
 export default class Maybe {
     /**
      * Allows to test if a value is a instance of either None or Some
      * @method is
+     * @memberof module:futils/monads/maybe.Maybe
+     * @static
      * @param {any} a Value to check
      * @return {boolean} True if given a None or Some, false otherwise
      *
@@ -392,7 +398,9 @@ export default class Maybe {
 
     /**
      * Creates new instances of Some or None
-     * 
+     * @method of
+     * @memberof module:futils/monads/maybe.Maybe
+     * @static
      * @param {any} a Value to wrap
      * @return {Maybe.None|Maybe.Some} None or Some wrapper
      *
@@ -410,6 +418,8 @@ export default class Maybe {
      * Creates either a Maybe.None or a Maybe.Some from a given Either.Left or
      *     a Either.Right monad
      * @method fromEither
+     * @memberof module:futils/monads/maybe.Maybe
+     * @static
      * @param {Either.Left|Either.Right} m The Either instance to transform
      * @return {Maybe.None|Maybe.Some} None or Some wrapper
      *

@@ -154,8 +154,6 @@ describe('futils/monads module', function () {
         expect(m.map(g).performIO()).toBe('test!');
         expect(m.flatMap(mf).performIO()).toBe('test!');
         expect(Some.of(g).ap(m).performIO()).toBe('test!');
-        expect(m.concat(IO.empty()).performIO()).toBe('test');
-        expect(m.concat(IO.of(g)).performIO()).toBe('test!');
     });
 
     // it('testing Task monad', () => {

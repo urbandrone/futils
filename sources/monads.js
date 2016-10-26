@@ -9,20 +9,74 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import decorators from './decorators';
-import Identity from './monads/Identity';
-import Maybe, {None, Some} from './monads/Maybe';
-import Either, {Left, Right} from './monads/Either';
-import IO from './monads/IO';
-import State from './monads/State';
-import Task from './monads/Task';
+import Identity from './monads/identity';
+import Maybe, {None, Some} from './monads/maybe';
+import Either, {Left, Right} from './monads/either';
+import IO from './monads/io';
+import State from './monads/state';
+import Task from './monads/task';
 
 /**
- * 
+ * A collection of monads and monad helper functions
+ * @module futils/monads
+ * @requires futils/decorators
+ * @requires futils/monads/identity
+ * @requires futils/monads/maybe
+ * @requires futils/monads/either
+ * @requires futils/monads/io
+ * @requires futils/monads/state
+ * @requires futils/monads/task
+ */
+
+/**
+ * Grants access to the Identity monad class
+ * @member Identity
+ */
+
+/**
+ * Grants access to the Maybe.Some monad class
+ * @member Some
+ */
+
+/**
+ * Grants access to the Maybe.None monad class
+ * @member None
+ */
+
+/**
+ * Grants access to the Maybe monad class
+ * @member Maybe
+ */
+
+/**
+ * Grants access to the Either.Right monad class
+ * @member Right
+ */
+
+/**
+ * Grants access to the Either monad class
+ * @member Either
+ */
+
+/**
+ * Grants access to the IO monad class
+ * @member IO
+ */
+
+/**
+ * Grants access to the State monad class
+ * @member State
+ */
+
+/**
+ * Grants access to the Task monad class
+ * @member Task
  */
 
 /**
  * Takes a (curried!) function and two Applicatives and applies the function to
  *     both 
+ * @method 
  * @version 2.0.0 
  * @param {function} f The function to lift
  * @param {Applicative} M1 First applicative
@@ -46,6 +100,7 @@ const liftA2 = decorators.curry((f, M1, M2) => {
 /**
  * Takes a (curried!) function and three Applicatives and applies the function to
  *     all three 
+ * @method 
  * @version 2.0.0 
  * @param {function} f The function to lift
  * @param {Applicative} M1 First applicative
@@ -71,6 +126,7 @@ const liftA3 = decorators.curry((f, M1, M2, M3) => {
 /**
  * Takes a (curried!) function and four Applicatives and applies the function to
  *     all four 
+ * @method 
  * @version 2.0.0 
  * @param {function} f The function to lift
  * @param {Applicative} M1 First applicative
@@ -98,6 +154,7 @@ const liftA4 = decorators.curry((f, M1, M2, M3, M4) => {
 /**
  * Takes a (curried!) function and five Applicatives and applies the function to
  *     all five 
+ * @method 
  * @version 2.0.0 
  * @param {function} f The function to lift
  * @param {Applicative} M1 First applicative

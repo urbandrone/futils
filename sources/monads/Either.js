@@ -12,7 +12,7 @@ import type from '../types';
 
 /**
  * Implementation of the Either monad
- * @module futils/monads/Either
+ * @module futils/monads/either
  * @requires futils/types
  */
 
@@ -23,28 +23,18 @@ const MV = Symbol('MonadicValue');
 
 /**
  * The Either.Right monad class
- * @class
+ * @class module:futils/monads/either.Right
  * @version 2.0.0
  */
 export class Right {
-    /**
-     * Used with `new`, creates a new instance. Use `Right.of` instead
-     * 
-     * @param {any} a Value to put into the monad
-     * @return {Right} A monad containing `a`
-     *
-     * @example
-     * const {Right} = require('futils').monads;
-     *
-     * let one = Right.of(1);
-     */
     constructor (a) { this.mvalue = a; }
     set mvalue (a) { this[MV] = a; }
     get mvalue () { return this[MV]; }
 
     /**
      * Returns a string representation of the instance
-     * 
+     * @method toString
+     * @memberof module:futils/monads/either.Right
      * @return {string} String representation of the calling instance
      *
      * @example
@@ -58,7 +48,9 @@ export class Right {
 
     /**
      * Returns true if given a instance of the class
-     * 
+     * @method is
+     * @memberof module:futils/monads/either.Right
+     * @static
      * @param {any} a Value to check
      * @return {boolean} True if instance of the class
      *
@@ -73,7 +65,8 @@ export class Right {
 
     /**
      * Returns true if called on a Right and false if called on a Left
-     *     
+     * @method isRight
+     * @memberof module:futils/monads/either.Right
      * @return {boolean} True
      */
     isRight () { return true; }
@@ -81,7 +74,8 @@ export class Right {
     // -- Setoid
     /**
      * Given another Setoid, checks if they are equal
-     * 
+     * @method equals
+     * @memberof module:futils/monads/either.Right
      * @param {Setoid} b Setoid to compare against
      * @return {boolean} True if both are equal
      *
@@ -103,9 +97,10 @@ export class Right {
     // -- Functor
     /**
      * Maps a function `f` over the value inside the Functor
-     *
+     * @method map
+     * @memberof module:futils/monads/either.Right
      * @param {function} f Function to map with
-     * @return {Right} New instance of the Functor
+     * @return {Functor} New instance of the Functor
      *
      * @example
      * const {Right} = require('futils').monads;
@@ -127,7 +122,9 @@ export class Right {
     /**
      * Creates a new instance of a Right wrapping the given value `a`. Use
      *     `.of` instead of the constructor together with `new`
-     *
+     * @method of
+     * @memberof module:futils/monads/either.Right
+     * @static
      * @param {any} a Any value
      * @return {Right} New instance of the Applicative
      *
@@ -144,7 +141,8 @@ export class Right {
     /**
      * Applies a wrapped function to a given Functor and returns a new instance
      *     of the Functor
-     *
+     * @method ap
+     * @memberof module:futils/monads/either.Right
      * @param {Functor} m Functor to apply the Applicative to
      * @return {Functor} New instance of the Functor
      *
@@ -167,7 +165,8 @@ export class Right {
     // -- Monad
     /**
      * Chains function calls which return monads into a single monad
-     * 
+     * @method flatMap
+     * @memberof module:futils/monads/either.Right
      * @param {function} f Function returning a monad
      * @return {Monad} New instance of the calling monads type
      *
@@ -190,7 +189,8 @@ export class Right {
     /**
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
-     *     
+     * @method flatten  
+     * @memberof module:futils/monads/either.Right  
      * @return {Monad} New instance of the monad
      *
      * @example
@@ -215,7 +215,8 @@ export class Right {
     /**
      * Given two functions, folds the first over the instance if it reflects a
      *     Left and the second over the instance if it reflects a Right
-     *     
+     * @method fold    
+     * @memberof module:futils/monads/either.Right
      * @param {function} f Function handling the Left case
      * @param {function} g Function handling the Right case
      * @return {any} Whatever f or g return
@@ -243,7 +244,8 @@ export class Right {
      * Implementation of the catamorphism. Given a object with `Left` and `Right`
      *     fields (functions) pipes the current value through the corresponding
      *     function
-     *     
+     * @method cata   
+     * @memberof module:futils/monads/either.Right
      * @param {object} o Object with `Left` and `Right`
      * @return {any} Result of applying the functions to the current value
      *
@@ -277,7 +279,8 @@ export class Right {
      * Given two functions, maps the first over the instance if it reflects Left
      *     and the second if it reflects Right. Wraps the result into a new
      *     Bifunctor of the same type before returning
-     *     
+     * @method biMap    
+     * @memberof module:futils/monads/either.Right
      * @param {function} f Function to map if Left
      * @param {function} g Function to map if Right
      * @return {Bifunctor} Result in a new container
@@ -303,7 +306,8 @@ export class Right {
 
     /**
      * Swaps a Left into a Right and a Right into a Left (swaps the disjunction)
-     *
+     * @method swap
+     * @memberof module:futils/monads/either.Right
      * @return {Left|Right} A Left or Right, depending on the instance
      *
      * @example
@@ -322,7 +326,8 @@ export class Right {
     /**
      * Given a function, maps it if the instance is a Left and does nothing if
      *     it is a Right
-     * @method mapLeft
+     * @method mapLeft   
+     * @memberof module:futils/monads/either.Right
      * @param {function} f Function to map
      * @return {Left|Right} A Left with updated value or a Right
      *
@@ -347,28 +352,18 @@ export class Right {
 
 /**
  * The Either.Left monad class
- * @class
+ * @class module:futils/monads/either.Left
  * @version 2.0.0
  */
 export class Left {
-    /**
-     * Used with `new`, creates a new instance. Use `Left.of` instead
-     * 
-     * @param {any} a Value to put into the monad
-     * @return {Left} A monad containing `a`
-     *
-     * @example
-     * const {Left} = require('futils').monads;
-     *
-     * let one = Left.of(1);
-     */
     constructor (a) { this.mvalue = a; }
     set mvalue (a) { this[MV] = a; }
     get mvalue () { return this[MV]; }
 
     /**
      * Returns a string representation of the instance
-     * 
+     * @method toString
+     * @memberof module:futils/monads/either.Left
      * @return {string} String representation of the calling instance
      *
      * @example
@@ -382,7 +377,9 @@ export class Left {
 
     /**
      * Returns true if given a instance of the class
-     * 
+     * @method is
+     * @memberof module:futils/monads/either.Left
+     * @static
      * @param {any} a Value to check
      * @return {boolean} True if instance of the class
      *
@@ -397,7 +394,8 @@ export class Left {
 
     /**
      * Returns true if called on a Right and false if called on a Left
-     *     
+     * @method isRight    
+     * @memberof module:futils/monads/either.Left
      * @return {boolean} False
      */
     isRight () { return false; }
@@ -405,7 +403,8 @@ export class Left {
     // -- Setoid
     /**
      * Given another Setoid, checks if they are equal
-     * 
+     * @method equals
+     * @memberof module:futils/monads/either.Left
      * @param {Setoid} b Setoid to compare against
      * @return {boolean} True if both are equal
      *
@@ -427,9 +426,10 @@ export class Left {
     /**
      * Maps a function `f` over the value inside the Functor. Does nothing if
      *     called on a Left.
-     *
+     * @method map
+     * @memberof module:futils/monads/either.Left
      * @param {function} f Function to map with
-     * @return {Left} New instance of the Functor
+     * @return {Functor} New instance of the Functor
      *
      * @example
      * const {Left} = require('futils').monads;
@@ -445,7 +445,9 @@ export class Left {
     /**
      * Creates a new instance of a Left wrapping the given value `a`. Use
      *     `.of` instead of the constructor together with `new`
-     *
+     * @method of
+     * @memberof module:futils/monads/either.Left
+     * @static
      * @param {any} a Any value
      * @return {Left} New instance of the Applicative
      *
@@ -462,7 +464,8 @@ export class Left {
     /**
      * Applies a wrapped function to a given Functor and returns a new instance
      *     of the Functor. Does nothing if called on a Left
-     *
+     * @method ap
+     * @memberof module:futils/monads/either.Left
      * @param {Functor} m Functor to apply the Applicative to
      * @return {Functor} New instance of the Functor
      *
@@ -477,7 +480,39 @@ export class Left {
      */
     ap (m) { return m; }
     // -- Monad
+    /**
+     * Chains function calls which return monads into a single monad. Does nothing
+     *     if called on a Left
+     * @method flatMap
+     * @memberof module:futils/monads/either.Left
+     * @param {function} f Function returning a monad
+     * @return {Monad} New instance of the calling monads type
+     *
+     * @example
+     * const {Right, Left} = require('futils').monads;
+     *
+     * let one = Left.of(1);
+     *
+     * const mInc = (n) => Right.of(1).map((m) => n + m);
+     *
+     * one.flatMap(mInc); // -> Left(1);
+     */
     flatMap () { return this; }
+
+    /**
+     * Flattens down a nested monad one level and returns a new monad containing
+     *     the inner value. Does nothing if called on a Left
+     * @method flatten  
+     * @memberof module:futils/monads/either.Left 
+     * @return {Monad} New instance of the monad
+     *
+     * @example
+     * const {Left} = require('futils').monads;
+     *
+     * let one = Left.of(Left.of(1));
+     *
+     * one.flatten(); // -> Left(Left(1))
+     */
     flatten () { return this; }
     // -- Recovering
     orElse (a) { return a; }
@@ -485,12 +520,52 @@ export class Left {
     // -- Foldable
     // reduce
     // -- ?
+    /**
+     * Given two functions, folds the first over the instance if it is a
+     *     Left and the second over the instance if it is a Right
+     * @method fold
+     * @memberof module:futils/monads/either.Left
+     * @param {function} f Function handling the Left case
+     * @param {function} g Function handling the Right case
+     * @return {any} Whatever f or g return
+     *
+     * @example
+     * const {Left} = require('futils').monads;
+     *
+     * let one = Left.of(1);
+     *
+     * const fail = () => 'No int :(';
+     * const success = (n) => `Given ${n}!`;
+     *
+     * one.fold(fail, success); // -> 'No int!';
+     */
     fold (f) {
         if (type.isFunc(f)) {
             return f(this.mvalue);
         }
         throw 'Left::fold expects argument 1 to be function but saw ' + f;
     }
+    
+    /**
+     * Implementation of the catamorphism. Given a object with `Left` and `Right`
+     *     fields (functions) pipes the current value through the corresponding
+     *     function
+     * @method cata
+     * @memberof module:futils/monads/either.Left
+     * @param {object} o Object with `Left` and `Right`
+     * @return {any} Result of applying the functions to the current value
+     *
+     * @example
+     * const {Left} = require('futils').monads;
+     *
+     * let one = Left.of(1);
+     *
+     * one.cata({
+     *     Left: () => 'Nothing found',
+     *     Right: (n) => 'Found number of ' + n
+     * });
+     * // -> 'Nothing found'
+     */
     cata (o) {
         if (type.isFunc(o.Left)) {
             return o.Left(this.mvalue);
@@ -498,15 +573,71 @@ export class Left {
         throw 'Left::cata expected Object of {Left: fn}, but saw ' + o; 
     }
     // -- Bifunctor
+    /**
+     * Given two functions, maps the first over the instance if it is a Left
+     *     and the second if it is a Right. Wraps the result into a new
+     *     Bifunctor of the same type before returning
+     * @method biMap
+     * @memberof module:futils/monads/either.Left
+     * @param {function} f Function to map if None
+     * @param {function} g Function to map if Some
+     * @return {Bifunctor} Result in a new container
+     *
+     * @example
+     * const {Left} = require('futils').monads;
+     *
+     * let one = Left.of(1);
+     *
+     * const fail = () => 'No int :(';
+     * const success = (n) => `Given ${n}!`;
+     *
+     * one.biMap(fail, success); // -> Left('No int :(')
+     */
     biMap (f) {
         if (type.isFunc(f)) {
             return Left.of(f(this.mvalue));
         }
         throw 'Left::biMap expects argument 1 to be function but saw ' + f;
     }
+
+    /**
+     * Swaps a Left into a Right and a Right into a Left (swaps the disjunction)
+     * @method swap
+     * @memberof module:futils/monads/either.Left
+     * @return {Left|Right} A Left or Right, depending on the instance
+     *
+     * @example
+     * const {Right, Left} = require('futils').monads;
+     *
+     * let one = Right.of(1);
+     * let nan = Left.of(NaN);
+     *
+     * one.swap(); // -> Left(1);
+     * nan.swap(); // -> Right(NaN)
+     */
     swap () {
         return Right.of(this.mvalue);
     }
+
+    /**
+     * Given a function, maps it if the instance is a Left and does nothing if
+     *     it is a Right
+     * @method mapLeft
+     * @memberof module:futils/monads/either.Left
+     * @param {function} f Function to map
+     * @return {Left|Right} A Left with updated value or a Right
+     *
+     * @example
+     * const {Right, Left} = require('futils').monads;
+     *
+     * let one = Right.of(1);
+     * let nan = Left.of(NaN);
+     *
+     * const nanToZero = (x) => isNaN(x) ? 0 : x;
+     *
+     * one.mapLeft(nanToZero); // -> Right(1)
+     * nan.mapLeft(nanToZero); // -> Left(0)
+     */
     mapLeft (f) {
         if (type.isFunc(f)) {
             return this.biMap(f);
@@ -518,21 +649,111 @@ export class Left {
 
 
 
-
+/**
+ * Either monad class
+ * @class module:futils/monads/either.Either
+ * @static
+ * @version 2.0.0
+ */
 export default class Either {
+    /**
+     * Allows to test if a value is a instance of either Left or Right
+     * @method is
+     * @memberof module:futils/monads/either.Either
+     * @static
+     * @param {any} a Value to check
+     * @return {boolean} True if given a Left or Right, false otherwise
+     *
+     * @example
+     * const {Either, Left} = require('futils').monads;
+     *
+     * let one = Left.of(1);
+     *
+     * Either.is(one); // -> true
+     * Either.is(1); // -> false
+     */
     static is (a) { return Left.is(a) || Right.is(a); }
+
+    /**
+     * Given a fallback and the value to create from, returns a Left with the
+     *     fallback value if the actual value has been null or undefined and
+     *     a Right if the value has any other value
+     * @method fromNullable
+     * @memberof module:futils/monads/either.Either
+     * @static
+     * @param {any} exc Fallback value
+     * @param {any} a Value to wrap
+     * @return {Left|Right} Either a Left with the fallback or a Right
+     *
+     * @example
+     * const {Either} = require('futils').monads;
+     *
+     * let fallback = 'Fallback value';
+     * 
+     * Either.fromNullable(fallback, 1); // -> Right(1)
+     * Either.fromNullable(fallback, null); // -> Left('Fallback value')
+     */
     static fromNullable (exc, a) {
         if (!type.isNull(a) && !type.isVoid(a)) {
             return Right.of(a);
         }
         return Left.of(exc);
     }
-    static fromMaybe (exc, m) {
-        return m.fold(() => Left.of(exc), Right.of);
+
+    /**
+     * Creates a Either.Left or a Either.Right from a given Maybe.None or
+     *     Maybe.Some
+     * @method fromMaybe
+     * @memberof module:futils/monads/either.Either
+     * @static
+     * @param {Maybe.None|Maybe.Some} m The Maybe instance to transform
+     * @return {Either.Left|Either.Right} Left or Right wrapper
+     *
+     * @example
+     * const {Maybe, Either} = require('futils').monads;
+     *
+     * let some = Maybe.of(1);
+     * let none = Maybe.of(null);
+     *
+     * Either.fromMaybe(some); // -> Right(1)
+     * Either.fromMaybe(none); // -> Left(null)
+     */
+    static fromMaybe (m) {
+        return m.fold(Left.of, Right.of);
     }
-    static fromIO (exc, m) {
+
+    /**
+     * Creates a Either.Left or a Either.Right from a given IO monad
+     * @method fromIO
+     * @memberof module:futils/monads/either.Either
+     * @static
+     * @param {IO} m IO monad instance
+     * @return {Either.Left|Either.Right} Left or Right wrapper
+     *
+     * @example
+     * const {Either, IO} = require('futils').monads;
+     *
+     * let location = IO.of(() => window.location.href);
+     * let fails = IO.of(() => window.local.href);
+     *
+     * Either.fromIO(location); // -> Right('...')
+     * Either.fromIO(fails); // -> Left('TypeError: ...')
+     */
+    static fromIO (m) {
         return Either.try(m.performIO);
     }
+
+    /**
+     * Given a function and (optional) partial arguments, returns a function if
+     *     the given arguments are smaller than the functions arity, or executes
+     *     the function and returns a Left on failure and a Right on success
+     * @method try
+     * @memberof module:futils/monads/either.Either
+     * @static
+     * @param {function} f Function to execute
+     * @param {any} [partials] Any number of arguments to partially apply
+     * @return {function|Left|Right} Depending on the input
+     */
     static try (f, ...partials) {
         if (type.isFunc(f)) {
             if (f.length <= partials.length) {
@@ -546,14 +767,7 @@ export default class Either {
                 }
             }
             return (...args) => {
-                try {
-                    let R = f(...partials, ...args);
-                    return Error.prototype.isPrototypeOf(R) ?
-                           Left.of(R.message) :
-                           Right.of(R);
-                } catch (exc) {
-                    return Left.of(exc.message);
-                }
+                return Either.try(f, ...partials, ...args);
             }
         }
         throw 'Either::try expects argument to be function but saw ' + f;
