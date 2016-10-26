@@ -1,6 +1,5 @@
 const _ = require('../futils');
 describe('futils/lenses module', function () {
-    
     const struct = {
         name: 'John Doe',
         age: 39,

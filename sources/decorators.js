@@ -9,149 +9,14 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import type from './types';
-import arity from './aritize';
+import arity from './arity';
 /**
  * A collection of function decorator functions. Please note that these are not
  *     compatible with the proposed ES7 method decorators
  * @module futils/decorators
  * @requires futils/types
- * @requires futils/aritize
+ * @requires futils/arity
  */
-
-
-
-/**
- * Takes a function with a arity of N and returns a variant with arity of 1
- * @method
- * @version 0.4.0
- * @param {function} f Function to wrap
- * @return {function} Wrapped function
- *
- * @example
- * const {monadic} = require('futils');
- * 
- * var all = (...xs) => xs;
- *
- * all(1, 2, 3, 4); // -> [1, 2, 3, 4]
- *
- * monadic(all)(1, 2, 3, 4); // -> [1]
- */
-const monadic = (f) => {
-    if (type.isFunc(f)) {
-        return (x = void 0) => {
-            if (x === void 0) {
-                return monadic(f);
-            }
-            return f(x);
-        }
-    }
-    throw 'decorators::monadic awaits a function but saw ' + f;
-}
-
-/**
- * Takes a function with a arity of N and returns a variant with arity of 2
- * @method
- * @version 0.4.0
- * @param {function} f Function to wrap
- * @return {function} Wrapped function
- *
- * @example
- * const {dyadic} = require('futils');
- * 
- * var all = (...xs) => xs;
- *
- * all(1, 2, 3, 4); // -> [1, 2, 3, 4]
- *
- * const just2 = dyadic(all);
- * just2(1, 2, 3, 4); // -> [1, 2]
- */
-const dyadic = (f) => {
-    if (type.isFunc(f)) {
-        return (x = void 0, y = void 0) => {
-            if (x === void 0) {
-                return dyadic(f);
-            }
-            if (y === void 0) {
-                return monadic((_y) => f(x, _y));
-            }
-            return f(x, y);
-        }
-    }
-    throw 'decorators::dyadic awaits a function but saw ' + f;
-}
-
-/**
- * Takes a function with a arity of N and returns a variant with arity of 3
- * @method
- * @version 0.4.0
- * @param {function} f Function to wrap
- * @return {function} Wrapped function
- *
- * @example
- * const {triadic} = require('futils');
- * 
- * var all = (...xs) => xs;
- *
- * all(1, 2, 3, 4); // -> [1, 2, 3, 4]
- *
- * const just3 = triadic(all);
- * just3(1, 2, 3, 4); // -> [1, 2, 3]
- */
-const triadic = (f) => {
-    if (type.isFunc(f)) {
-        return (x = void 0, y = void 0, z = void 0) => {
-            if (x === void 0) {
-                return triadic(f);
-            }
-            if (y === void 0) {
-                return dyadic((_y, _z) => f(x, _y, _z));
-            }
-            if (z === void 0) {
-                return monadic((_z) => f(x, y, _z));
-            }
-            return f(x, y, z);
-        }
-    }
-    throw 'decorators::triadic awaits a function but saw ' + f;
-}
-
-/**
- * Takes a function with a arity of N and returns a variant with arity of 4
- * @method
- * @version 0.4.0
- * @param {function} f Function to wrap
- * @return {function} Wrapped function
- *
- * @example
- * const {tetradic} = require('futils');
- * 
- * var all = (...xs) => xs;
- *
- * all(1, 2, 3, 4, 5); // -> [1, 2, 3, 4, 5]
- *
- * const just4 = tetradic(all);
- * just4(1, 2, 3, 4, 5); // -> [1, 2, 3, 4]
- */
-const tetradic = (f) => {
-    if (type.isFunc(f)) {
-        return (w = void 0, x = void 0, y = void 0, z = void 0) => {
-            if (w === void 0) {
-                return tetradic(f);
-            }
-            if (x === void 0) {
-                return triadic((_x, _y, _z) => f(w, _x, _y, _z));
-            }
-            if (y === void 0) {
-                return dyadic((_y, _z) => f(w, x, _y, _z));
-            }
-            if (z === void 0) {
-                return monadic((_z) => f(w, x, y, _z));
-            }
-            return f(w, x, y, z);
-        }
-    }
-    throw 'decorators::tetradic awaits a function but saw ' + f;
-}
 
 /**
  * Takes a function and returns a variant of it which will only executed once
@@ -237,35 +102,6 @@ const flip = (f) => {
         return arity.aritize(f.length, (...xs) => f(...xs.reverse()));
     }
     throw 'decorators::flip awaits a function but saw ' + f;
-}
-
-/**
- * Takes a function and returns a variant, which only executes if the given
- *     argument is not `null` or `undefined`
- * @method
- * @version 0.4.0
- * @param {function} f The function to wrap
- * @return {function} The wrapped function
- *
- * @example
- * const {maybe} = require('futils');
- *
- * const toUpper = (s) => s.toUpperCase();
- * const mToUpper = maybe(toUpper);
- *
- * toUpper('hello'); // -> 'HELLO'
- * toUpper(); // -> Error trown
- *
- * mToUpper('hello'); // -> 'HELLO';
- * mToUpper(); // -> null
- */
-const maybe = (f) => {
-    if (type.isFunc(f)) {
-        return (x = void 0) => {
-            return x == null || x === void 0 ? null : f(x);
-        }
-    }
-    throw 'decorators::maybe awaits a function but saw ' + f;
 }
 
 /**
@@ -491,6 +327,6 @@ const memoize = (f) => {
 
 
 export default {
-    monadic, dyadic, triadic, not, flip, maybe, curry, curryRight, partial,
-    partialRight, given, memoize, once, tetradic
+    not, flip, curry, curryRight, partial, partialRight, given,
+    memoize, once
 };

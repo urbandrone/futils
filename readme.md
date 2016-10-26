@@ -4,7 +4,8 @@
 [![Build Status](https://travis-ci.org/urbandrone/futils.svg?branch=master)](https://travis-ci.org/urbandrone/futils)
 
 ## About
-`futils` is a collection of small utility functions composed of helpers from these categories:
+`futils` is a collection of monads, lenses, transducers and small utility functions composed of helpers from these categories:
+
 1. Type checking
 2. Arity modifier
 3. Function combinators and decorators
@@ -12,12 +13,13 @@
 5. Collection iterators
 6. Lenses
 7. Transducers
+8. Monads (Identity, Maybe, Either, State, IO, Task)
 
-One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code with reactive streams. It can be compared with the excellent `allong.es` library written by [Mr. Braithwaite](http://raganwald.com/) to a certain extend, but instead of it supporting monads it supports lenses and transducers, as well as supporting es2015 which [allong.es](http://allong.es/) does not.
+One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with reactive streams and can be compared with the excellent `allong.es` library written by [Mr. Braithwaite](http://raganwald.com/) to a certain extend.
 
 Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the invocation until all needed parameters are given. Below is some code for demonstration purposes:
 ```
-const {pipe, and, isString, isObject, eq, field} = require('futils');
+const {pipe, field, and, equals, isString, isObject} = require('futils');
 
 let data = {
     "name": "Harrison Ford",
@@ -27,12 +29,12 @@ let data = {
 
 const hasHarrisonFordsName = pipe(
     field('name'),
-    and(isString, eq('Harrison Ford'))
+    and(isString, equals('Harrison Ford'))
 );
 
 const hasHarrisonFordsBirthday = pipe(
     field('dayOfBirth'),
-    and(isString, eq('1942-07-13'))
+    and(isString, equals('1942-07-13'))
 );
 
 const isHarrisonFord = and(
@@ -59,7 +61,7 @@ npm install futils --save-dev
 
 After installation you can access the functions by calling require:
 ```
-const {given, isString, pipe, exec} = require('futils');
+const _ = require('futils');
 
 // your code
 ```
@@ -72,7 +74,7 @@ jspm install npm:futils
 
 After the package has been installed successfully, you can import and use the toolkit like you would do with any other package too:
 ```
-import {given, isString, pipe, exec} from 'futils';
+import {pipe, isString, call} from 'futils';
 
 // your code
 ```
@@ -85,10 +87,7 @@ Download the `futils.js` file and include it with a script tag which allows you 
 
 You can then access the namespace from there:
 ```
-var given = futils.given,
-    isString = futils.isString,
-    pipe = futils.pipe,
-    exec = futils.exec;
+var _ = futils;
 
 // your code
 ```

@@ -184,5 +184,47 @@ describe('futils/types module', function () {
         expect(a).toBe(true);
         expect(b).toBe(false);
     });
+
+    it('testing isSetoid :: f -> a -> b', function () {
+        class A { equals() {} }
+
+        let a = new A();
+        expect(_.isSetoid(a)).toBe(true);
+    });
+
+    it('testing isFunctor :: f -> a -> b', function () {
+        class A { map() {} }
+
+        let a = new A();
+        expect(_.isFunctor(a)).toBe(true);
+    });
+
+    it('testing isApply :: f -> a -> b', function () {
+        class A { ap() {} }
+
+        let a = new A();
+        expect(_.isApply(a)).toBe(true);
+    });
+
+    it('testing isFoldable :: f -> a -> b', function () {
+        class A { fold() {} }
+
+        let a = new A();
+        expect(_.isFoldable(a)).toBe(true);
+    });
+
+    it('testing isApplicative :: f -> a -> b', function () {
+        class A { of() {} ap() {} }
+
+        let a = new A();
+        expect(_.isApplicative(a)).toBe(true);
+    });
+
+    it('testing isMonad :: f -> a -> b', function () {
+        class A { equals() {} map() {} flatten() {} flatMap() {} }
+        
+        let a = new A();
+        expect(_.isMonad(a)).toBe(true);
+    });
 });
     

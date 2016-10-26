@@ -1,29 +1,5 @@
 const _ = require('../futils');
 describe('futils/decorators module', function () {
-    it('testing monadic :: f -> f', function () {
-        var a = (...xs) => [...xs];
-
-        expect(_.monadic(a)(1, 2, 3, 4, 5)).toEqual([1]);
-    });
-
-    it('testing dyadic :: f -> f', function () {
-        var a = (...xs) => [...xs];
-
-        expect(_.dyadic(a)(1, 2, 3, 4, 5)).toEqual([1, 2]);
-    });
-
-    it('testing triadic :: f -> f', function () {
-        var a = (...xs) => [...xs];
-
-        expect(_.triadic(a)(1, 2, 3, 4, 5)).toEqual([1, 2, 3]);
-    });
-
-    it('testing tetradic :: f -> f', function () {
-        var a = (...xs) => [...xs];
-
-        expect(_.tetradic(a)(1, 2, 3, 4, 5)).toEqual([1, 2, 3, 4]);
-    });
-
     it('testing once :: f -> f', function () {
         var a = _.once((s) => s.toUpperCase());
 
@@ -44,13 +20,6 @@ describe('futils/decorators module', function () {
 
         expect(a(2, 1)).toBe(1);
         expect(b(2, 1)).toBe(-1);
-    });
-
-    it('testing maybe :: f -> f', function () {
-        var a = _.maybe((x) => x + 1);
-
-        expect(a(1)).toBe(2);
-        expect(a(null)).toBe(null);
     });
 
     it('testing curry :: f -> f', function () {
@@ -101,8 +70,8 @@ describe('futils/decorators module', function () {
 
         a(1);
         a(1);
-        a(2);
+        a(1);
 
-        expect(n).toBe(2);
+        expect(n).toBe(1);
     });
 });   

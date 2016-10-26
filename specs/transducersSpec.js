@@ -1,6 +1,6 @@
-const _ = require('../futils');
+const {id, transducers} = require('../futils');
 describe('futils/transducers module', function () {
-    let t = _.transducers;
+    let t = transducers;
     let add1 = (v) => v + 1;
     let even = (v) => v % 2;    
     let append = (a, b) => {
@@ -28,7 +28,7 @@ describe('futils/transducers module', function () {
 
     it('testing transduce :: f -> xf, f, x, coll -> x', function () {
         let r = t.transduce(
-            _.identity,
+            id,
             function (r, v) { return r * v; },
             1,
             [1, 2, 3, 4, 5]

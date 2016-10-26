@@ -1,7 +1,7 @@
 const _ = require('../futils');
 describe('futils/combinators module', function () {
-    it('testing identity :: a -> a', function () {
-        expect(_.identity(1)).toBe(1);
+    it('testing id :: a -> a', function () {
+        expect(_.id(1)).toBe(1);
     });
 
     it('testing getter :: a -> _ -> a', function () {
@@ -51,15 +51,5 @@ describe('futils/combinators module', function () {
         expect(b('t')).toBe(true);
         expect(b([1, 2, 3])).toBe(true);
         expect(b(null)).toBe(false);
-    });
-
-    it('testing splat :: fs -> f', function () {
-        var _s = '';
-        var a = (s) => s.toUpperCase();
-        var b = (s) => _s = s + ' b';
-        var c = _.splat(a, b)
-
-        expect(c('a')).toBe('A');
-        expect(_s).toBe('a b');
     });
 });   
