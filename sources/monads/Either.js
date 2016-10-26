@@ -38,7 +38,7 @@ export class Right {
      * @return {string} String representation of the calling instance
      *
      * @example
-     * const {Right} = require('futils').monads;
+     * const {Right} = require('futils');
      *
      * let right = Right.of(1);
      *
@@ -55,7 +55,7 @@ export class Right {
      * @return {boolean} True if instance of the class
      *
      * @example
-     * const {Right} = require('futils').monads;
+     * const {Right} = require('futils');
      *
      * let one = Right.of(1);
      *
@@ -80,7 +80,7 @@ export class Right {
      * @return {boolean} True if both are equal
      *
      * @example
-     * const {Right} = require('futils').monads;
+     * const {Right} = require('futils');
      *
      * let one = Right.of(1);
      * let one_b = Right.of(1);
@@ -100,10 +100,10 @@ export class Right {
      * @method map
      * @memberof module:futils/monads/either.Right
      * @param {function} f Function to map with
-     * @return {Functor} New instance of the Functor
+     * @return {Right} New instance of the Functor
      *
      * @example
-     * const {Right} = require('futils').monads;
+     * const {Right} = require('futils');
      *
      * let one = Right.of(1);
      *
@@ -129,13 +129,13 @@ export class Right {
      * @return {Right} New instance of the Applicative
      *
      * @example
-     * const {Right} = require('futils').monads;
+     * const {Right} = require('futils');
      *
      * let one = Right.of(1);
      *
      * one.mvalue; // -> 1
      */
-    static of (a) { return Right.is(a) ? a : new Right(a); }
+    static of (a) { return new Right(a); }
     of (a) { return Right.of(a); }
 
     /**
@@ -144,10 +144,10 @@ export class Right {
      * @method ap
      * @memberof module:futils/monads/either.Right
      * @param {Functor} m Functor to apply the Applicative to
-     * @return {Functor} New instance of the Functor
+     * @return {Right} New instance of the Functor
      *
      * @example
-     * const {Right} = require('futils').monads;
+     * const {Right} = require('futils');
      *
      * let one = Right.of(1);
      *
@@ -168,10 +168,10 @@ export class Right {
      * @method flatMap
      * @memberof module:futils/monads/either.Right
      * @param {function} f Function returning a monad
-     * @return {Monad} New instance of the calling monads type
+     * @return {Right} New instance of the calling monads type
      *
      * @example
-     * const {Right} = require('futils').monads;
+     * const {Right} = require('futils');
      *
      * let one = Right.of(1);
      *
@@ -191,10 +191,10 @@ export class Right {
      *     the inner value
      * @method flatten  
      * @memberof module:futils/monads/either.Right  
-     * @return {Monad} New instance of the monad
+     * @return {Right} New instance of the monad
      *
      * @example
-     * const {Right} = require('futils').monads;
+     * const {Right} = require('futils');
      *
      * let one = Right.of(Right.of(1));
      *
@@ -222,7 +222,7 @@ export class Right {
      * @return {any} Whatever f or g return
      *
      * @example
-     * const {Right, Left} = require('futils').monads;
+     * const {Right, Left} = require('futils');
      *
      * let one = Right.of(1);
      * let nothing = Left.of(null);
@@ -250,7 +250,7 @@ export class Right {
      * @return {any} Result of applying the functions to the current value
      *
      * @example
-     * const {Right, Left} = require('futils').monads;
+     * const {Right, Left} = require('futils');
      *
      * let one = Right.of(1);
      * let nothing = Left.of(null);
@@ -283,10 +283,10 @@ export class Right {
      * @memberof module:futils/monads/either.Right
      * @param {function} f Function to map if Left
      * @param {function} g Function to map if Right
-     * @return {Bifunctor} Result in a new container
+     * @return {Right} Result in a new container
      *
      * @example
-     * const {Right, Left} = require('futils').monads;
+     * const {Right, Left} = require('futils');
      *
      * let one = Right.of(1);
      * let nothing = Left.of(null);
@@ -311,7 +311,7 @@ export class Right {
      * @return {Left|Right} A Left or Right, depending on the instance
      *
      * @example
-     * const {Right, Left} = require('futils').monads;
+     * const {Right, Left} = require('futils');
      *
      * let one = Right.of(1);
      * let nan = Left.of(NaN);
@@ -332,7 +332,7 @@ export class Right {
      * @return {Left|Right} A Left with updated value or a Right
      *
      * @example
-     * const {Right, Left} = require('futils').monads;
+     * const {Right, Left} = require('futils');
      *
      * let one = Right.of(1);
      * let nan = Left.of(NaN);
@@ -367,7 +367,7 @@ export class Left {
      * @return {string} String representation of the calling instance
      *
      * @example
-     * const {Left} = require('futils').monads;
+     * const {Left} = require('futils');
      *
      * let left = Left.of(1);
      *
@@ -384,7 +384,7 @@ export class Left {
      * @return {boolean} True if instance of the class
      *
      * @example
-     * const {Left} = require('futils').monads;
+     * const {Left} = require('futils');
      *
      * let one = Left.of(1);
      *
@@ -409,7 +409,7 @@ export class Left {
      * @return {boolean} True if both are equal
      *
      * @example
-     * const {Left} = require('futils').monads;
+     * const {Left} = require('futils');
      *
      * let one = Left.of(1);
      * let one_b = Left.of(1);
@@ -429,10 +429,10 @@ export class Left {
      * @method map
      * @memberof module:futils/monads/either.Left
      * @param {function} f Function to map with
-     * @return {Functor} New instance of the Functor
+     * @return {Left} New instance of the Functor
      *
      * @example
-     * const {Left} = require('futils').monads;
+     * const {Left} = require('futils');
      *
      * let one = Left.of(1);
      *
@@ -452,13 +452,13 @@ export class Left {
      * @return {Left} New instance of the Applicative
      *
      * @example
-     * const {Left} = require('futils').monads;
+     * const {Left} = require('futils');
      *
      * let one = Left.of(1);
      *
      * one.mvalue; // -> 1
      */
-    static of (a) { return Left.is(a) ? a : new Left(a); }
+    static of (a) { return new Left(a); }
     of (a) { return Left.of(a); }
 
     /**
@@ -467,10 +467,10 @@ export class Left {
      * @method ap
      * @memberof module:futils/monads/either.Left
      * @param {Functor} m Functor to apply the Applicative to
-     * @return {Functor} New instance of the Functor
+     * @return {Left} New instance of the Functor
      *
      * @example
-     * const {Left} = require('futils').monads;
+     * const {Left} = require('futils');
      *
      * let one = Left.of(1);
      *
@@ -486,10 +486,10 @@ export class Left {
      * @method flatMap
      * @memberof module:futils/monads/either.Left
      * @param {function} f Function returning a monad
-     * @return {Monad} New instance of the calling monads type
+     * @return {Left} New instance of the calling monads type
      *
      * @example
-     * const {Right, Left} = require('futils').monads;
+     * const {Right, Left} = require('futils');
      *
      * let one = Left.of(1);
      *
@@ -504,10 +504,10 @@ export class Left {
      *     the inner value. Does nothing if called on a Left
      * @method flatten  
      * @memberof module:futils/monads/either.Left 
-     * @return {Monad} New instance of the monad
+     * @return {Left} New instance of the monad
      *
      * @example
-     * const {Left} = require('futils').monads;
+     * const {Left} = require('futils');
      *
      * let one = Left.of(Left.of(1));
      *
@@ -530,7 +530,7 @@ export class Left {
      * @return {any} Whatever f or g return
      *
      * @example
-     * const {Left} = require('futils').monads;
+     * const {Left} = require('futils');
      *
      * let one = Left.of(1);
      *
@@ -556,7 +556,7 @@ export class Left {
      * @return {any} Result of applying the functions to the current value
      *
      * @example
-     * const {Left} = require('futils').monads;
+     * const {Left} = require('futils');
      *
      * let one = Left.of(1);
      *
@@ -581,10 +581,10 @@ export class Left {
      * @memberof module:futils/monads/either.Left
      * @param {function} f Function to map if None
      * @param {function} g Function to map if Some
-     * @return {Bifunctor} Result in a new container
+     * @return {Left} Result in a new container
      *
      * @example
-     * const {Left} = require('futils').monads;
+     * const {Left} = require('futils');
      *
      * let one = Left.of(1);
      *
@@ -607,7 +607,7 @@ export class Left {
      * @return {Left|Right} A Left or Right, depending on the instance
      *
      * @example
-     * const {Right, Left} = require('futils').monads;
+     * const {Right, Left} = require('futils');
      *
      * let one = Right.of(1);
      * let nan = Left.of(NaN);
@@ -628,7 +628,7 @@ export class Left {
      * @return {Left|Right} A Left with updated value or a Right
      *
      * @example
-     * const {Right, Left} = require('futils').monads;
+     * const {Right, Left} = require('futils');
      *
      * let one = Right.of(1);
      * let nan = Left.of(NaN);
@@ -665,7 +665,7 @@ export default class Either {
      * @return {boolean} True if given a Left or Right, false otherwise
      *
      * @example
-     * const {Either, Left} = require('futils').monads;
+     * const {Either, Left} = require('futils');
      *
      * let one = Left.of(1);
      *
@@ -686,18 +686,16 @@ export default class Either {
      * @return {Left|Right} Either a Left with the fallback or a Right
      *
      * @example
-     * const {Either} = require('futils').monads;
-     *
-     * let fallback = 'Fallback value';
+     * const {Either} = require('futils');
      * 
-     * Either.fromNullable(fallback, 1); // -> Right(1)
-     * Either.fromNullable(fallback, null); // -> Left('Fallback value')
+     * Either.fromNullable(1); // -> Right(1)
+     * Either.fromNullable(null); // -> Left(null)
      */
-    static fromNullable (exc, a) {
+    static fromNullable (a) {
         if (!type.isNull(a) && !type.isVoid(a)) {
             return Right.of(a);
         }
-        return Left.of(exc);
+        return Left.of(a);
     }
 
     /**
@@ -706,11 +704,11 @@ export default class Either {
      * @method fromMaybe
      * @memberof module:futils/monads/either.Either
      * @static
-     * @param {Maybe.None|Maybe.Some} m The Maybe instance to transform
-     * @return {Either.Left|Either.Right} Left or Right wrapper
+     * @param {None|Some} m The Maybe instance to transform
+     * @return {Left|Right} Left or Right wrapper
      *
      * @example
-     * const {Maybe, Either} = require('futils').monads;
+     * const {Maybe, Either} = require('futils');
      *
      * let some = Maybe.of(1);
      * let none = Maybe.of(null);
@@ -719,7 +717,7 @@ export default class Either {
      * Either.fromMaybe(none); // -> Left(null)
      */
     static fromMaybe (m) {
-        return m.fold(Left.of, Right.of);
+        return m.fold(() => Left.of(null), Right.of);
     }
 
     /**
@@ -728,10 +726,10 @@ export default class Either {
      * @memberof module:futils/monads/either.Either
      * @static
      * @param {IO} m IO monad instance
-     * @return {Either.Left|Either.Right} Left or Right wrapper
+     * @return {Left|Right} Left or Right wrapper
      *
      * @example
-     * const {Either, IO} = require('futils').monads;
+     * const {Either, IO} = require('futils');
      *
      * let location = IO.of(() => window.location.href);
      * let fails = IO.of(() => window.local.href);

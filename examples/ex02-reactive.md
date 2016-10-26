@@ -39,7 +39,7 @@ let URL = 'https://api.github.com/users/octocat/repos';
 const fetchRepos = (url) => rx.fromPromise(fetch(url));
 
 // toJson :: Response -> JSON
-const toJson = f.exec('json');
+const toJson = f.call('json');
 
 fetchRepos(URL).
     map(toJson);
@@ -53,13 +53,13 @@ Now that we have a way to fetch data and parse it to JSON, all that's left to do
 const fetchRepos = (url) => rx.fromPromise(fetch(url));
 
 // toJson :: Response -> JSON
-const toJson = f.exec('json');
+const toJson = f.call('json');
 
 // render :: array[JSON] -> array[string]
 const render = f.map((repo) => `${repo.name}: ${repo.html_url}`);
 
 // join :: array[string] -> string
-const join = f.exec('join', '\n');
+const join = f.call('join', '\n');
 
 fetchRepos(URL).
     map(toJson).
@@ -90,13 +90,13 @@ let URL = 'https://api.github.com/users/octocat/repos';
 const fetchRepos = (url) => rx.fromPromise(fetch(url));
 
 // toJson :: Response -> JSON
-const toJson = f.exec('json');
+const toJson = f.call('json');
 
 // render :: array[JSON] -> array[string]
 const render = f.map((repo) => `${repo.name}: ${repo.html_url}`);
 
 // join :: array[string] -> string
-const join = f.exec('join', '\n');
+const join = f.call('join', '\n');
 
 fetchRepos(URL).
     map(f.pipe(toJson, render, join)).

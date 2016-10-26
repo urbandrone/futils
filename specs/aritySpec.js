@@ -1,4 +1,4 @@
-const _ = require('../futils').arity;
+const _ = require('../futils');
 describe('futils/arity module', function () {
     it('testing aritize :: n -> f -> f', function () {
         const any = (...args) => [...args];

@@ -35,16 +35,16 @@ const comp = (f, g) => (...args) => f(g(...args));
  * @return {function} A lens for the given data type
  *
  * @example
- * const {lenses} = require('futils');
+ * const {lens, over} = require('futils');
  *
- * let MapLens = lenses.lens(
+ * let MapLens = lens(
  *     (k, xs) => xs.get(k),
  *     (k, v, xs) => xs.set(k, v)
  * );
  * 
  * let m = new Map([['users', ['john doe']]]); 
  *
- * lenses.over(MapLens('users'), (s) => s.toUpperCase(), m); // -> ['JOHN DOE']
+ * over(MapLens('users'), (s) => s.toUpperCase(), m); // -> ['JOHN DOE']
  */
 const lens = decorators.curry((gets, sets, k, f, xs) => {
     return operators.map(
@@ -67,12 +67,12 @@ const baseLens = lens(operators.field, operators.assoc);
  * @return {*} Whatever the current value is
  *
  * @example
- * const {lenses} = require('futils');
+ * const {makeLenses, view} = require('futils');
  *
  * let data = {name: 'John Doe', age: 30};
- * let L = lenses.makeLenses('name', 'age');
+ * let L = makeLenses('name', 'age');
  *
- * lenses.view(L.name, data); // -> 'John Doe'
+ * view(L.name, data); // -> 'John Doe'
  */
 const view = decorators.curry((l, data) => l(Const)(data).value);
 
@@ -88,12 +88,12 @@ const view = decorators.curry((l, data) => l(Const)(data).value);
  * @return {array|object} Modified clone of the given structure
  *
  * @example
- * const {lenses} = require('futils');
+ * const {makeLenses, over} = require('futils');
  *
  * let data = {name: 'John Doe', age: 30};
- * let L = lenses.makeLenses('name', 'age');
+ * let L = makeLenses('name', 'age');
  *
- * lenses.over(L.name, (s) => s.toUpperCase(), data);
+ * over(L.name, (s) => s.toUpperCase(), data);
  * // -> {name: 'JOHN DOE', age: 30}
  */
 const over = decorators.curry((l, f, data) => l((y) => Id(f(y)))(data).value );
@@ -110,12 +110,12 @@ const over = decorators.curry((l, f, data) => l((y) => Id(f(y)))(data).value );
  * @return {array|object} Modified clone of the given structure
  *
  * @example
- * const {lenses} = require('futils');
+ * const {makeLenses, set} = require('futils');
  *
  * let data = {name: 'John Doe', age: 30};
- * let L = lenses.makeLenses('name', 'age');
+ * let L = makeLenses('name', 'age');
  *
- * lenses.set(L.name, 'Adam Smith', data);
+ * set(L.name, 'Adam Smith', data);
  * // -> {name: 'Adam Smith', age: 30}
  */
 const set = decorators.curry((l, v, data) => over(l, () => v, data));
@@ -130,15 +130,15 @@ const set = decorators.curry((l, v, data) => over(l, () => v, data));
  * @return {object} Collection of lenses
  *
  * @example
- * const {combinators, lenses} = require('futils');
+ * const {compose, makeLenses} = require('futils');
  *
  * let data = {name: 'John Doe', age: 30, friends: [{name: 'Adam Smith'}]};
- * let L = lenses.makeLenses('name', 'age', 'friends');
+ * let L = makeLenses('name', 'age', 'friends');
  *
  * L.name(data); // -> 'John Doe'
  * L.age(data); // -> 30
  *
- * const firstFriendsName = combinators.compose(L.friends, L.index(0), L.name);
+ * const firstFriendsName = compose(L.friends, L.index(0), L.name);
  * firstFriendsName(data); // -> 'Adam Smith'
  */
 const makeLenses = (...fields) => fields.reduce((acc, field) => {
@@ -157,14 +157,14 @@ const makeLenses = (...fields) => fields.reduce((acc, field) => {
  * @return {array|object} Modified clone of the given structure
  *
  * @example
- * const {combinators, lenses} = require('futils');
+ * const {compose, mappedLens} = require('futils');
  *
  * let data = [[1, 2, 3]];
  *
  * const inc = (n) => n + 1;
  *
- * const mapMapLens = combinators.compose(lenses.mappedLens, lenses.mappedLens);
- * lenses.over(mapMapLens, inc, data); // -> [[2, 3, 4]]
+ * const mapMapLens = compose(mappedLens, mappedLens);
+ * over(mapMapLens, inc, data); // -> [[2, 3, 4]]
  */
 const mappedLens = decorators.curry((f, xs) => Id(operators.map(
     comp(operators.field('value'), f), xs

@@ -40,7 +40,7 @@ export default class State {
      * @return {string} String representation of the calling instance
      *
      * @example
-     * const {State} = require('futils').monads;
+     * const {State} = require('futils');
      *
      * let one = State.of(1);
      *
@@ -57,7 +57,7 @@ export default class State {
      * @return {boolean} True if instance of the class
      *
      * @example
-     * const {State} = require('futils').monads;
+     * const {State} = require('futils');
      *
      * let one = State.of(1);
      *
@@ -74,7 +74,7 @@ export default class State {
      * @return {boolean} True if both are equal
      *
      * @example
-     * const {State} = require('futils').monads;
+     * const {State} = require('futils');
      *
      * let one = State.of(1);
      * let one_b = State.of(1);
@@ -94,10 +94,10 @@ export default class State {
      * @method map
      * @memberof module:futils/monads/state.State
      * @param {function} f Function to map with
-     * @return {Functor} New instance of the Functor
+     * @return {State} New instance of the Functor
      *
      * @example
-     * const {State} = require('futils').monads;
+     * const {State} = require('futils');
      *
      * let one = State.of(1);
      *
@@ -123,13 +123,13 @@ export default class State {
      * @return {State} New instance of the Applicative
      *
      * @example
-     * const {State} = require('futils').monads;
+     * const {State} = require('futils');
      *
      * let one = State.of(1);
      *
      * one.mvalue; // -> 1
      */
-    static of (a, b) { return State.is(a) ? a : new State(a, b); }
+    static of (a, b) { return new State(a, b); }
     of (a, b) { return State.of(a, b); }
 
     /**
@@ -138,10 +138,10 @@ export default class State {
      * @method ap
      * @memberof module:futils/monads/state.State
      * @param {Functor} m Functor to apply the Applicative to
-     * @return {Functor} New instance of the Functor
+     * @return {State} New instance of the Functor
      *
      * @example
-     * const {State, Identity} = require('futils').monads;
+     * const {State, Identity} = require('futils');
      *
      * let one = State.of(1);
      *
@@ -161,10 +161,10 @@ export default class State {
      * @method flatMap
      * @memberof module:futils/monads/state.State
      * @param {function} f Function returning a monad
-     * @return {Monad} New instance of the calling monads type
+     * @return {State} New instance of the calling monads type
      *
      * @example
-     * const {State} = require('futils').monads;
+     * const {State} = require('futils');
      *
      * let one = State.of(1);
      *
@@ -184,10 +184,10 @@ export default class State {
      *     the inner value
      * @method flatten
      * @memberof module:futils/monads/state.State
-     * @return {Monad} New instance of the monad
+     * @return {State} New instance of the monad
      *
      * @example
-     * const {State} = require('futils').monads;
+     * const {State} = require('futils');
      *
      * let one = State.of(State.of(1));
      *

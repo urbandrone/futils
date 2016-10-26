@@ -1,28 +1,25 @@
-const {monads, decorators} = require('../futils');
-const log = require('brolog');
+const {
+    curry,
+    liftA2,
+    liftA3,
+    Identity,
+    Maybe,
+    None,
+    Some,
+    Either,
+    Left,
+    Right,
+    IO,
+    State,
+    Task
+} = require('../futils');
 
 describe('futils/monads module', function () {
-    const {curry} = decorators;
-    const {
-        liftA2,
-        liftA3,
-        Identity,
-        Maybe,
-        None,
-        Some,
-        Either,
-        Left,
-        Right,
-        IO,
-        State,
-        Task
-    } = monads;
-
     it('testing Identity monad', () => {
         let m = Identity.of(1);
 
         let f = (n) => n + 1;
-        let mf = (n) => Identity.of(1).map((one) => one + n);
+        let mf = (n) => Identity.of(n + 1);
 
         expect(m.toString()).toBe('Identity(1)');
         expect(m.mvalue).toBe(1);
@@ -36,7 +33,7 @@ describe('futils/monads module', function () {
         let m = State.of(1);
 
         let f = (n) => n + 1;
-        let mf = (n) => State.of(1).map((one) => one + n);
+        let mf = (n) => State.of(n + 1, n);
 
         expect(m.toString()).toBe('State(1, null)');
         expect(m.mvalue).toBe(1);
@@ -54,7 +51,7 @@ describe('futils/monads module', function () {
             none = None.of();
 
         let f = (n) => n + 1;
-        let mf = (n) => Some.of(1).map((one) => one + n);
+        let mf = (n) => Some.of(n + 1);
 
         expect(some.toString()).toBe('Some(1)');
         expect(none.toString()).toBe('None');
@@ -96,7 +93,7 @@ describe('futils/monads module', function () {
             left = Left.of('failure');
 
         let f = (n) => n + 1;
-        let mf = (n) => Right.of(1).map((one) => one + n);
+        let mf = (n) => Right.of(n + 1);
 
         expect(right.toString()).toBe('Right(1)');
         expect(left.toString()).toBe('Left(failure)');
@@ -131,12 +128,12 @@ describe('futils/monads module', function () {
         expect(right.biMap(rej, id).mvalue).toBe(1);
         expect(left.biMap(rej, id).mvalue).toBe('Rejected');
 
-        expect(Either.fromNullable(msg, 1).mvalue).toBe(1);
-        expect(Either.fromNullable(msg, null).mvalue).toBe(msg);
-        expect(Either.fromMaybe(msg, Some.of(1)).mvalue).toBe(1);
-        expect(Either.fromMaybe(msg, None.of()).mvalue).toBe(msg);
-        expect(Either.fromIO(msg, IO.of(() => 1)).mvalue).toBe(1);
-        expect(Either.fromIO(msg, IO.of(() => new Error())).mvalue).toBe(msg);
+        expect(Either.fromNullable(1).mvalue).toBe(1);
+        expect(Either.fromNullable(null).mvalue).toBe(null);
+        expect(Either.fromMaybe(Some.of(1)).mvalue).toBe(1);
+        expect(Either.fromMaybe(None.of(null)).mvalue).toBe(null);
+        expect(Either.fromIO(IO.of(() => 1)).mvalue).toBe(1);
+        expect(Either.fromIO(IO.of(() => new Error('err'))).mvalue).toBe('err');
 
         let h = () => { return new Error('Either::try -> Left'); };
         expect(Either.try(f, 1).mvalue).toBe(2);

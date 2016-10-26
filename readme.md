@@ -13,13 +13,13 @@
 5. Collection iterators
 6. Lenses
 7. Transducers
-8. Monads (Identity, Maybe, Either, State, Task)
+8. Monads (Identity, Maybe, Either, State, IO, Task)
 
 One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with reactive streams and can be compared with the excellent `allong.es` library written by [Mr. Braithwaite](http://raganwald.com/) to a certain extend.
 
 Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the invocation until all needed parameters are given. Below is some code for demonstration purposes:
 ```
-const {combinators, type, operators} = require('futils');
+const {pipe, field, and, equals, isString, isObject} = require('futils');
 
 let data = {
     "name": "Harrison Ford",
@@ -27,17 +27,17 @@ let data = {
     "url": "https://en.wikipedia.org/wiki/Harrison_Ford"
 }
 
-const hasHarrisonFordsName = combinators.pipe(
-    operators.field('name'),
-    combinators.and(type.isString, operators.equals('Harrison Ford'))
+const hasHarrisonFordsName = pipe(
+    field('name'),
+    and(isString, equals('Harrison Ford'))
 );
 
-const hasHarrisonFordsBirthday = combinators.pipe(
-    operators.field('dayOfBirth'),
-    combinators.and(type.isString, operators.equals('1942-07-13'))
+const hasHarrisonFordsBirthday = pipe(
+    field('dayOfBirth'),
+    and(isString, equals('1942-07-13'))
 );
 
-const isHarrisonFord = combinators.and(
+const isHarrisonFord = and(
     isObject,
     hasHarrisonFordsName,
     hasHarrisonFordsBirthday
@@ -74,7 +74,7 @@ jspm install npm:futils
 
 After the package has been installed successfully, you can import and use the toolkit like you would do with any other package too:
 ```
-import * as _ from 'futils';
+import {pipe, isString, call} from 'futils';
 
 // your code
 ```

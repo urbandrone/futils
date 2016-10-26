@@ -44,7 +44,7 @@ export class Some {
      * @return {string} String representation of the calling instance
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      * let nothing = Maybe.of(null);
@@ -63,7 +63,7 @@ export class Some {
      * @return {boolean} True if instance of the class
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      *
@@ -88,7 +88,7 @@ export class Some {
      * @return {boolean} True if both are equal
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      * let one_b = Maybe.of(1);
@@ -107,10 +107,10 @@ export class Some {
      * @method map
      * @memberof module:futils/monads/maybe.Some
      * @param {function} f Function to map with
-     * @return {Functor} New instance of the Functor
+     * @return {Some} New instance of the Functor
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      *
@@ -132,16 +132,16 @@ export class Some {
      * @memberof module:futils/monads/maybe.Some
      * @static
      * @param {any} a Any value
-     * @return {Maybe} New instance of the Applicative
+     * @return {Some} New instance of the Applicative
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      *
      * one.mvalue; // -> 1
      */
-    static of (a) { return Some.is(a) ? a : new Some(a); }
+    static of (a) { return new Some(a); }
     of (a) { return Some.of(a); }
 
     /**
@@ -150,10 +150,10 @@ export class Some {
      * @method ap
      * @memberof module:futils/monads/maybe.Some
      * @param {Functor} m Functor to apply the Applicative to
-     * @return {Functor} New instance of the Functor
+     * @return {Some} New instance of the Functor
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      *
@@ -173,10 +173,10 @@ export class Some {
      * @method flatMap
      * @memberof module:futils/monads/maybe.Some
      * @param {function} f Function returning a monad
-     * @return {Monad} New instance of the calling monads type
+     * @return {Some} New instance of the calling monads type
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      *
@@ -196,10 +196,10 @@ export class Some {
      *     the inner value
      * @method flatten
      * @memberof module:futils/monads/maybe.Some
-     * @return {Monad} New instance of the monad
+     * @return {Some} New instance of the monad
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(Maybe.of(1));
      *
@@ -225,7 +225,7 @@ export class Some {
      * @return {any} Whatever f or g return
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      * let nothing = Maybe.of(null);
@@ -253,7 +253,7 @@ export class Some {
      * @return {any} Result of applying the functions to the current value
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      * let nothing = Maybe.of(null);
@@ -286,10 +286,10 @@ export class Some {
      * @memberof module:futils/monads/maybe.Some 
      * @param {function} f Function to map if None
      * @param {function} g Function to map if Some
-     * @return {Bifunctor} Result in a new container
+     * @return {Some} Result in a new container
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      * let nothing = Maybe.of(null);
@@ -387,7 +387,7 @@ export default class Maybe {
      * @return {boolean} True if given a None or Some, false otherwise
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      *
@@ -402,10 +402,10 @@ export default class Maybe {
      * @memberof module:futils/monads/maybe.Maybe
      * @static
      * @param {any} a Value to wrap
-     * @return {Maybe.None|Maybe.Some} None or Some wrapper
+     * @return {None|Some} None or Some wrapper
      *
      * @example
-     * const {Maybe} = require('futils').monads;
+     * const {Maybe} = require('futils');
      *
      * let one = Maybe.of(1);
      * let nothing = Maybe.of(null);
@@ -420,11 +420,11 @@ export default class Maybe {
      * @method fromEither
      * @memberof module:futils/monads/maybe.Maybe
      * @static
-     * @param {Either.Left|Either.Right} m The Either instance to transform
-     * @return {Maybe.None|Maybe.Some} None or Some wrapper
+     * @param {Left|Right} m The Either instance to transform
+     * @return {None|Some} None or Some wrapper
      *
      * @example
-     * const {Maybe, Left, Right} = require('futils').monads;
+     * const {Maybe, Left, Right} = require('futils');
      *
      * let left = Left.of('This is a failure');
      * let right = Right.of('This is a success');

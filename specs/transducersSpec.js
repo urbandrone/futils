@@ -1,4 +1,4 @@
-const {combinators, transducers} = require('../futils');
+const {id, transducers} = require('../futils');
 describe('futils/transducers module', function () {
     let t = transducers;
     let add1 = (v) => v + 1;
@@ -28,7 +28,7 @@ describe('futils/transducers module', function () {
 
     it('testing transduce :: f -> xf, f, x, coll -> x', function () {
         let r = t.transduce(
-            combinators.identity,
+            id,
             function (r, v) { return r * v; },
             1,
             [1, 2, 3, 4, 5]

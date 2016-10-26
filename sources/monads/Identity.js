@@ -38,7 +38,7 @@ export default class Identity {
      * @return {string} String representation of the calling instance
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Identity} = require('futils');
      *
      * let one = Identity.of(1);
      *
@@ -55,7 +55,7 @@ export default class Identity {
      * @return {boolean} True if instance of the class
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Identity} = require('futils');
      *
      * let one = Identity.of(1);
      *
@@ -72,7 +72,7 @@ export default class Identity {
      * @return {boolean} True if both are equal
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Identity} = require('futils');
      *
      * let one = Identity.of(1);
      * let one_b = Identity.of(1);
@@ -91,10 +91,10 @@ export default class Identity {
      * @method map
      * @memberof module:futils/monads/identity.Identity
      * @param {function} f Function to map with
-     * @return {Functor} New instance of the Functor
+     * @return {Identity} New instance of the Functor
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Identity} = require('futils');
      *
      * let one = Identity.of(1);
      *
@@ -119,7 +119,7 @@ export default class Identity {
      * @return {Identity} New instance of the Applicative
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Identity} = require('futils');
      *
      * let one = Identity.of(1);
      *
@@ -134,10 +134,10 @@ export default class Identity {
      * @method ap
      * @memberof module:futils/monads/identity.Identity
      * @param {Functor} m Functor to apply the Applicative to
-     * @return {Functor} New instance of the Functor
+     * @return {Identity} New instance of the Functor
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Identity} = require('futils');
      *
      * let one = Identity.of(1);
      *
@@ -157,10 +157,10 @@ export default class Identity {
      * @method flatMap
      * @memberof module:futils/monads/identity.Identity
      * @param {function} f Function returning a monad
-     * @return {Monad} New instance of the calling monads type
+     * @return {Identity} New instance of the calling monads type
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Identity} = require('futils');
      *
      * let one = Identity.of(1);
      *
@@ -180,10 +180,10 @@ export default class Identity {
      *     the inner value
      * @method flatten
      * @memberof module:futils/monads/identity.Identity
-     * @return {Monad} New instance of the monad
+     * @return {Identity} New instance of the monad
      *
      * @example
-     * const {Identity} = require('futils').monads;
+     * const {Identity} = require('futils');
      *
      * let one = Identity.of(Identity.of(1));
      *

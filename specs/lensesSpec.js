@@ -1,7 +1,5 @@
 const _ = require('../futils');
 describe('futils/lenses module', function () {
-    const {combinators, lenses} = _;
-
     const struct = {
         name: 'John Doe',
         age: 39,
@@ -9,46 +7,46 @@ describe('futils/lenses module', function () {
     };
 
     it('testing makeLenses :: ss -> o', function () {
-        let L = lenses.makeLenses('emails');
+        let L = _.makeLenses('emails');
 
-        let getMail = combinators.compose(L.emails, L.index(1));
+        let getMail = _.compose(L.emails, L.index(1));
 
-        expect(lenses.view(getMail, struct)).toBe('doejohn@company.com');
+        expect(_.view(getMail, struct)).toBe('doejohn@company.com');
     });
 
     it('testing view :: l -> o -> a', function () {
-        let L = lenses.makeLenses('name', 'age');
+        let L = _.makeLenses('name', 'age');
 
-        let name = lenses.view(L.name);
+        let name = _.view(L.name);
         expect(name(struct)).toBe('John Doe');
-        expect(lenses.view(L.age, struct)).toBe(39);
+        expect(_.view(L.age, struct)).toBe(39);
     });
 
     it('testing over :: l -> f -> o -> o', function () {
-        let L = lenses.makeLenses('age');
+        let L = _.makeLenses('age');
 
-        let inc = lenses.over(L.age, (n) => n + 1);
+        let inc = _.over(L.age, (n) => n + 1);
 
         expect(inc(struct).age).toBe(40);
         expect(struct.age).toBe(39);
     });
 
     it('testing set :: l -> a -> o -> o', function () {
-        let L = lenses.makeLenses('age');
+        let L = _.makeLenses('age');
 
-        let op = lenses.set(L.age, 50);
+        let op = _.set(L.age, 50);
 
         expect(op(struct).age).toBe(50);
         expect(struct.age).toBe(39);
     });
 
     it('testing mappedLens :: f -> xs -> lens', function () {
-        let L = combinators.compose(lenses.mappedLens, lenses.mappedLens);
+        let L = _.compose(_.mappedLens, _.mappedLens);
         let s = [[1, 2, 3]];
 
         let f = (n) => n + 1;
 
-        expect(lenses.over(L, f, s)).toEqual([[2, 3, 4]]);
+        expect(_.over(L, f, s)).toEqual([[2, 3, 4]]);
     });
 
 });

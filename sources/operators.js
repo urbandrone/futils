@@ -31,12 +31,12 @@ const _owns = Object.prototype.hasOwnProperty;
  * @return {function} Function awaiting a instance
  *
  * @example
- * const {operators} = require('futils');
+ * const {call} = require('futils');
  *
- * const upper = operators.call('toUpperCase');
+ * const upper = call('toUpperCase');
  * upper('hello world'); // -> 'HELLO WORLD'
  *
- * const firstHalf = operators.call('slice', 0, 5);
+ * const firstHalf = call('slice', 0, 5);
  * firstHalf([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // -> [1, 2, 3, 4, 5]
  */
 const call = (method, ...partials) => (provider, ...rest) => {
@@ -61,12 +61,12 @@ const call = (method, ...partials) => (provider, ...rest) => {
  * @return {boolean} True if the field is present
  *
  * @example
- * const {operators} = require('futils');
+ * const {has} = require('futils');
  *
  * let testee = {foo: 'bar'};
  *
- * operators.has('foo', testee); // -> true
- * operators.has('missing', testee); // -> false
+ * has('foo', testee); // -> true
+ * has('missing', testee); // -> false
  */
 const has = arity.dyadic((key, x) => _owns.call(x, key));
 
@@ -79,12 +79,12 @@ const has = arity.dyadic((key, x) => _owns.call(x, key));
  * @return {any|null} Either the value of the key or null
  *
  * @example
- * const {operators} = require('futils');
+ * const {field} = require('futils');
  *
- * const getName = operators.field('name');
+ * const getName = field('name');
  * getName({name: 'John Doe'}); // -> 'John Doe'
  *
- * const firstName = operators.field('name.first');
+ * const firstName = field('name.first');
  * firstName({name: {first: 'John', last: 'Doe'}}); // -> 'John'
  */
 const field = arity.dyadic((key, x) => {
@@ -109,11 +109,11 @@ const field = arity.dyadic((key, x) => {
  * @return {array|object|*} New array or object or the given thing
  *
  * @example
- * const {operators} = require('futils');
+ * const {assoc} = require('futils');
  *
  * let p = { name: 'John Doe', accounts: [{name: 'jdoe'}] };
  *
- * const setAccountCount = operators.assoc('accountCount');
+ * const setAccountCount = assoc('accountCount');
  * setAccountCount(p.accounts.length, p);
  * // -> {name: 'John Doe', ..., accountCount: 1}
  *
@@ -148,12 +148,12 @@ const assoc = arity.triadic((k, v, x) => {
  * @return {object} The extended copy of the base object
  *
  * @example
- * const {operators} = require('futils');
+ * const {merge} = require('futils');
  *
  * var customer = {name: 'John Doe', id: 00000001},
  *     basket = {items: [ ... number of items ... ]};
  *
- * var customerWithBasket = operators.merge(customer, basket);
+ * var customerWithBasket = merge(customer, basket);
  * 
  * customerWithBasket; // -> {name: '...', id: ..., items: [ ... ]}
  *
@@ -170,9 +170,9 @@ const merge = (...xs) => Object.assign({}, ...xs);
  * @return {object} Immutable object
  *
  * @example
- * const {operators} = require('futils');
+ * const {immutable} = require('futils');
  *
- * var money = operators.immutable({dollar: 5, cents: 50});
+ * var money = immutable({dollar: 5, cents: 50});
  *
  * money.dollar; // -> 5
  *
@@ -190,9 +190,9 @@ const immutable = (x) => Object.freeze(merge(x));
  * @return {array} Array of pairs [ [pair], [pair], ... ]
  *
  * @example
- * const {operators} = require('futils');
+ * const {pairs} = require('futils');
  *
- * operators.pairs({foo: 1, bar: 0}); // -> [['foo', 1], ['bar', 0]]
+ * pairs({foo: 1, bar: 0}); // -> [['foo', 1], ['bar', 0]]
  */
 const pairs = (xs) => Object.keys(xs).map((k) => [k, xs[k]]);
 
@@ -207,11 +207,11 @@ const pairs = (xs) => Object.keys(xs).map((k) => [k, xs[k]]);
  * @return {*} Whatever the first item is
  *
  * @example
- * const {operators} = require('futils');
+ * const {first} = require('futils');
  *
- * operators.first([1, 2, 3]); // -> 1
+ * first([1, 2, 3]); // -> 1
  *
- * operators.first(document.querySelectorAll('a')); // -> <a></a>
+ * first(document.querySelectorAll('a')); // -> <a></a>
  */
 const first = (xs) => xs[0];
 
@@ -223,11 +223,11 @@ const first = (xs) => xs[0];
  * @return {array} Whatever the head item is
  *
  * @example
- * const {operators} = require('futils');
+ * const {head} = require('futils');
  *
- * operators.head([1, 2, 3]); // -> [1]
+ * head([1, 2, 3]); // -> [1]
  *
- * operators.head(document.querySelectorAll('a')); // -> [<a></a>]
+ * head(document.querySelectorAll('a')); // -> [<a></a>]
  */
 const head = (xs) => [first(xs)];
 
@@ -240,11 +240,11 @@ const head = (xs) => [first(xs)];
  * @return {array} Whatever the initial items are
  *
  * @example
- * const {operators} = require('futils');
+ * const {initial} = require('futils');
  *
- * operators.initial([1, 2, 3]); // -> [1, 2]
+ * initial([1, 2, 3]); // -> [1, 2]
  *
- * operators.initial(
+ * initial(
  *     document.querySelectorAll('a')
  * ); // -> [<a></a>, <a></a>, ...]
  */
@@ -262,11 +262,11 @@ const initial = (xs) => type.isArray(xs) ?
  * @return {*} Whatever the last item is
  *
  * @example
- * const {operators} = require('futils');
+ * const {last} = require('futils');
  *
- * operators.last([1, 2, 3]); // -> 3
+ * last([1, 2, 3]); // -> 3
  *
- * operators.last(document.querySelectorAll('a')); // -> <a></a>
+ * last(document.querySelectorAll('a')); // -> <a></a>
  */
 const last = (xs) => xs[xs.length - 1];
 
@@ -278,11 +278,11 @@ const last = (xs) => xs[xs.length - 1];
  * @return {array} Whatever the tail item is
  *
  * @example
- * const {operators} = require('futils');
+ * const {tail} = require('futils');
  *
- * operators.tail([1, 2, 3]); // -> [3]
+ * tail([1, 2, 3]); // -> [3]
  *
- * operators.tail(document.querySelectorAll('a')); // -> [<a></a>]
+ * tail(document.querySelectorAll('a')); // -> [<a></a>]
  */
 const tail = (xs) => [last(xs)];
 
@@ -294,11 +294,11 @@ const tail = (xs) => [last(xs)];
  * @return {array} Whatever the rest items are
  *
  * @example
- * const {operators} = require('futils');
+ * const {rest} = require('futils');
  *
- * operators.rest([1, 2, 3]); // -> [2, 3]
+ * rest([1, 2, 3]); // -> [2, 3]
  *
- * operators.rest(document.querySelectorAll('a')); // -> [..., <a></a>, <a></a>]
+ * rest(document.querySelectorAll('a')); // -> [..., <a></a>, <a></a>]
  */
 const rest = (xs) => type.isArray(xs) ?
                      xs.slice(1) :
@@ -314,9 +314,9 @@ const rest = (xs) => type.isArray(xs) ?
  * @return {array} Only unique items
  *
  * @example
- * const {operators} = require('futils');
+ * const {unique} = require('futils');
  *
- * operators.unique([2, 1, 2, 3, 3, 1]); // -> [2, 1, 3]
+ * unique([2, 1, 2, 3, 3, 1]); // -> [2, 1, 3]
  */
 const unique = (xs) => xs.reduce((acc, x) => {
     return acc.lastIndexOf(x) < 0 ? [...acc, x] : acc;
@@ -331,9 +331,9 @@ const unique = (xs) => xs.reduce((acc, x) => {
  * @return {array} The union of xs and ys
  *
  * @example
- * const {operators} = require('futils');
+ * const {union} = require('futils');
  *
- * operators.union([2, 1, 2], [3, 3, 1]); // -> [2, 1, 3]
+ * union([2, 1, 2], [3, 3, 1]); // -> [2, 1, 3]
  */
 const union = arity.dyadic((xs, ys) => unique([...xs, ...ys]));
 
@@ -346,9 +346,9 @@ const union = arity.dyadic((xs, ys) => unique([...xs, ...ys]));
  * @return {array} The intersection of xs and ys
  *
  * @example
- * const {operators} = require('futils');
+ * const {intersect} = require('futils');
  *
- * operators.intersect([2, 1, 2], [3, 3, 1]); // -> [1]
+ * intersect([2, 1, 2], [3, 3, 1]); // -> [1]
  */
 const intersect = arity.dyadic((xs, ys) => {
     return union(xs, ys).filter((a) => {
@@ -366,9 +366,9 @@ const intersect = arity.dyadic((xs, ys) => {
  * @return {array} The difference of xs and ys
  *
  * @example
- * const {operators} = require('futils');
+ * const {differ} = require('futils');
  *
- * operators.differ([2, 1, 2], [3, 3, 1]); // -> [2, 3]
+ * differ([2, 1, 2], [3, 3, 1]); // -> [2, 3]
  */
 const differ = arity.dyadic((xs, ys) => {
     return union(xs, ys).filter((a) => {
@@ -390,13 +390,13 @@ const differ = arity.dyadic((xs, ys) => {
  * @return {boolean} True if both are equal
  *
  * @example
- * const {monads, operators} = require('futils');
+ * const {Maybe, equals} = require('futils');
  *
- * let m = monads.Some(1);
- * let n = monads.Some(1);
+ * let m = Maybe.of(1);
+ * let n = Maybe.of(1);
  *
- * operators.equals(m, n); // -> true
- * operators.equals(1, 1); // -> true
+ * equals(m, n); // -> true
+ * equals(1, 1); // -> true
  */
 const equals = arity.dyadic((a, b) => {
     return type.isSetoid(b) ? b.equals(a) : a === b;
@@ -414,13 +414,13 @@ const equals = arity.dyadic((a, b) => {
  * @return {object|array|Functor} New instance of the functor
  *
  * @example
- * const {operators} = require('futils');
+ * const {map} = require('futils');
  *
  * const addOne = (n) => n + 1;
- * operators.map(addOne, [1, 2, 3]); // -> [2, 3, 4]
+ * map(addOne, [1, 2, 3]); // -> [2, 3, 4]
  *
- * let mapAddOne = operators.map(addOne);
- * operators.map(mapAddOne, [[1, 2], [3]]); // -> [[2, 3], [4]]
+ * let mapAddOne = map(addOne);
+ * map(mapAddOne, [[1, 2], [3]]); // -> [[2, 3], [4]]
  */
 const map = arity.dyadic((f, m) => {
     if (type.isFunc(f)) {
@@ -449,7 +449,7 @@ const map = arity.dyadic((f, m) => {
  * @return {array|Functor|*} Depending on the given input
  *
  * @example
- * const {monads, operators} = require('futils');
+ * const {Identity, ap} = require('futils');
  *
  * let as = [1, 3, 5];
  * let inc = (n) => n + 1;
@@ -457,7 +457,7 @@ const map = arity.dyadic((f, m) => {
  * ap(inc, as); // -> [2, 4, 6]
  * ap(inc)(as); // -> [2, 4, 6]
  *
- * let minc = monads.Identity(inc);
+ * let minc = Identity.of(inc);
  * 
  * ap(minc, as); // -> [2, 4, 6]
  * ap(minc)(as); // -> [2, 4, 6]
@@ -489,9 +489,9 @@ const ap = arity.dyadic((mf, ma) => {
  * @return {array|Monad} New instance of given
  *
  * @example
- * const {operators} = require('futils');
+ * const {flatten} = require('futils');
  *
- * operators.flatten([[1, 2], 3, [[4, 5]]]); // -> [1, 2, 3, 4, 5]
+ * flatten([[1, 2], 3, [[4, 5]]]); // -> [1, 2, 3, 4, 5]
  */
 const flatten = (m) => {
     if (type.isFunc(m.flatten)) {
@@ -522,7 +522,7 @@ function flattenTCO (xs, ys) {
 /**
  * Generic flatMap method, works on anything which implements a `map` and a
  *     `flatten` method as well as on arrays. If given a object as data,
- *     the result will be mapped and merged via `operators.merge`
+ *     the result will be mapped and merged via `merge`
  * @method
  * @version 0.2.0
  * @param {function} f Transformation function
@@ -530,10 +530,10 @@ function flattenTCO (xs, ys) {
  * @return {object|array|Monad} New instance of given Monad, array or object
  *
  * @example
- * const {operators} = require('futils');
+ * const {flatMap} = require('futils');
  *
  * const split = (s) => s.split(' ');
- * operators.flatMap(split, ['Hello world']); // -> ['Hello', 'world']
+ * flatMap(split, ['Hello world']); // -> ['Hello', 'world']
  */
 const flatMap = arity.dyadic((f, m) => {
     if (type.isFunc(f)) {

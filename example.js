@@ -1,14 +1,7 @@
-const {combinators, decorators, operators} = require('futils');
-const {given, not} = decorators;
-const {pipe, identity} = combinators;
-const {map, call} = operators;
-
-
+const {pipe, id, given, not, map, call} = require('futils');
 const log = console.log.bind(console);
 
 
-
-// example 1
 // ----------
 let greeting = 'hello futils user!';
 
@@ -19,9 +12,10 @@ const isLibName = (s) => /futils/ig.test(s);
 const firstUpper = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 // format1 :: string -> string
-const format1 = given(not(isLibName), firstUpper, identity);
+const format = given(not(isLibName), firstUpper, id);
 
-const prog = pipe(call('split', ' '), map(format1), call('join', ' '));
+// prog :: string -> string
+const prog = pipe(call('split', ' '), map(format), call('join', ' '));
 
 let result = prog(greeting);
 log(result);

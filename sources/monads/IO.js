@@ -40,7 +40,7 @@ export default class IO {
      * @return {string} String representation of the calling instance
      *
      * @example
-     * const {IO} = require('futils').monads;
+     * const {IO} = require('futils');
      *
      * let one = IO.of(() => 1);
      *
@@ -57,7 +57,7 @@ export default class IO {
      * @return {boolean} True if instance of the class
      *
      * @example
-     * const {IO} = require('futils').monads;
+     * const {IO} = require('futils');
      *
      * let one = IO.of(() => 1);
      *
@@ -74,7 +74,7 @@ export default class IO {
      * @return {boolean} True if both are equal
      *
      * @example
-     * const {IO} = require('futils').monads;
+     * const {IO} = require('futils');
      *
      * let one = IO.of(() => 1);
      * let one_b = IO.of(() => 1);
@@ -93,10 +93,10 @@ export default class IO {
      * @method map
      * @memberof module:futils/monads/io.IO
      * @param {function} f Function to map with
-     * @return {Functor} New instance of the Functor
+     * @return {IO} New instance of the Functor
      *
      * @example
-     * const {IO} = require('futils').monads;
+     * const {IO} = require('futils');
      *
      * let one = IO.of(() => 1);
      *
@@ -121,7 +121,7 @@ export default class IO {
      * @return {IO} New instance of the Applicative
      *
      * @example
-     * const {IO} = require('futils').monads;
+     * const {IO} = require('futils');
      *
      * let one = IO.of(() => 1);
      *
@@ -136,10 +136,10 @@ export default class IO {
      * @method ap
      * @memberof module:futils/monads/io.IO
      * @param {Functor} m Functor to apply the Applicative to
-     * @return {Functor} New instance of the Functor
+     * @return {IO} New instance of the Functor
      *
      * @example
-     * const {IO} = require('futils').monads;
+     * const {IO} = require('futils');
      *
      * let one = IO.of(() => 1);
      *
@@ -159,10 +159,10 @@ export default class IO {
      * @method flatMap
      * @memberof module:futils/monads/io.IO
      * @param {function} f Function returning a monad
-     * @return {Monad} New instance of the calling monads type
+     * @return {IO} New instance of the calling monads type
      *
      * @example
-     * const {IO} = require('futils').monads;
+     * const {IO} = require('futils');
      *
      * let one = IO.of(() => 1);
      *
@@ -182,10 +182,10 @@ export default class IO {
      *     the inner value
      * @method flatten
      * @memberof module:futils/monads/io.IO
-     * @return {Monad} New instance of the monad
+     * @return {IO} New instance of the monad
      *
      * @example
-     * const {IO} = require('futils').monads;
+     * const {IO} = require('futils');
      *
      * let one = IO.of(() => IO.of(() => 1));
      *

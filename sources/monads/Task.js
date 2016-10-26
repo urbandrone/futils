@@ -50,7 +50,7 @@ export default class Task {
      * @return {string} String representation of the calling instance
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      *
@@ -67,7 +67,7 @@ export default class Task {
      * @return {boolean} True if instance of the class
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      *
@@ -84,7 +84,7 @@ export default class Task {
      * @return {Task} A new Task
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      *
@@ -106,7 +106,7 @@ export default class Task {
      * @return {Task} A new Task
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.reject(1);
      *
@@ -128,7 +128,7 @@ export default class Task {
      * @return {boolean} True if both are equal
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      * let one_b = Task.resolve(1);
@@ -148,10 +148,10 @@ export default class Task {
      * @method map
      * @memberof module:futils/monads/task.Task
      * @param {function} f Function to map with
-     * @return {Functor} New instance of the Functor
+     * @return {Task} New instance of the Functor
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      *
@@ -185,7 +185,7 @@ export default class Task {
      * @return {Task} New instance of the Applicative
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.of((rej, res) => res(1));
      *
@@ -205,10 +205,10 @@ export default class Task {
      * @method ap
      * @memberof module:futils/monads/task.Task
      * @param {Functor} m Functor to apply the Applicative to
-     * @return {Functor} New instance of the Functor
+     * @return {Task} New instance of the Functor
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      *
@@ -273,10 +273,10 @@ export default class Task {
      * @method flatMap
      * @memberof module:futils/monads/task.Task
      * @param {function} f Function returning a monad
-     * @return {Monad} New instance of the calling monads type
+     * @return {Task} New instance of the calling monads type
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      *
@@ -301,10 +301,10 @@ export default class Task {
      *     the inner value
      * @method flatten
      * @memberof module:futils/monads/task.Task
-     * @return {Monad} New instance of the monad
+     * @return {Task} New instance of the monad
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(Task.resolve(1));
      *
@@ -334,7 +334,7 @@ export default class Task {
      * @return {any} Whatever f or g return
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      * let nothing = Task.reject(null);
@@ -377,7 +377,7 @@ export default class Task {
      * @return {any} Result of applying the functions to the current value
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      * let nothing = Task.reject(null);
@@ -416,10 +416,10 @@ export default class Task {
      * @memberof module:futils/monads/task.Task 
      * @param {function} f Function to map if None
      * @param {function} g Function to map if Some
-     * @return {Bifunctor} Result in a new container
+     * @return {Task} Result in a new container
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      * let nothing = Task.reject(null);
@@ -460,7 +460,7 @@ export default class Task {
      * @return {Task} A new Task
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      * let none = Task.reject(null);
@@ -492,7 +492,7 @@ export default class Task {
      * @return {Task} A new Task
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      * let none = Task.reject(null);
@@ -526,10 +526,10 @@ export default class Task {
      * @method empty
      * @memberof module:futils/monads/task.Task
      * @static
-     * @return {Monoid} A monoid of the same type
+     * @return {Task} A monoid of the same type
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * Task.empty(); // -> Task which never does anything
      */
@@ -545,7 +545,7 @@ export default class Task {
      * @return {Task} A new Task
      *
      * @example
-     * const {Task} = require('futils').monads;
+     * const {Task} = require('futils');
      *
      * let one = Task.resolve(1);
      * let idle = Task.empty();

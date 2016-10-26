@@ -1,14 +1,14 @@
-const {decorators, type} = require('../futils');
+const _ = require('../futils');
 describe('futils/decorators module', function () {
     it('testing once :: f -> f', function () {
-        var a = decorators.once((s) => s.toUpperCase());
+        var a = _.once((s) => s.toUpperCase());
 
         expect(a('a')).toBe('A');
         expect(a('b')).toBe(null);
     });
 
     it('testing not :: f -> f', function () {
-        var a = decorators.not(type.isString);
+        var a = _.not(_.isString);
 
         expect(a('a')).toBe(false);
         expect(a(null)).toBe(true);
@@ -16,7 +16,7 @@ describe('futils/decorators module', function () {
 
     it('testing flip :: f -> f', function () {
         var a = (x, y) => x - y;
-        var b = decorators.flip(a);
+        var b = _.flip(a);
 
         expect(a(2, 1)).toBe(1);
         expect(b(2, 1)).toBe(-1);
@@ -24,7 +24,7 @@ describe('futils/decorators module', function () {
 
     it('testing curry :: f -> f', function () {
         var a = (x, y) => x + y;
-        var b = decorators.curry(a);
+        var b = _.curry(a);
 
         expect(a(2, 1)).toBe(3);
         expect(b(2)(1)).toBe(3);
@@ -32,7 +32,7 @@ describe('futils/decorators module', function () {
 
     it('testing curryRight :: f -> f', function () {
         var a = (x, y) => x + y;
-        var b = decorators.curryRight(a);
+        var b = _.curryRight(a);
 
         expect(a(2, 1)).toBe(3);
         expect(b(2)(1)).toBe(3);
@@ -40,7 +40,7 @@ describe('futils/decorators module', function () {
 
     it('testing partial :: f -> f', function () {
         var a = (x, y) => x + y;
-        var b = decorators.partial(a, 2);
+        var b = _.partial(a, 2);
 
         expect(a(2, 1)).toBe(3);
         expect(b(1)).toBe(3);
@@ -48,14 +48,14 @@ describe('futils/decorators module', function () {
 
     it('testing partialRight :: f -> f', function () {
         var a = (x, y) => x + y;
-        var b = decorators.partialRight(a, undefined, 2);
+        var b = _.partialRight(a, undefined, 2);
 
         expect(a(2, 1)).toBe(3);
         expect(b(1)).toBe(3);
     });
 
     it('testing given :: p, t, f -> f', function () {
-        var a = decorators.given(type.isString, (s) => s + '!', () => 'not string!');
+        var a = _.given(_.isString, (s) => s + '!', () => 'not string!');
 
         expect(a('a string')).toBe('a string!');
         expect(a(null)).toBe('not string!');
@@ -63,7 +63,7 @@ describe('futils/decorators module', function () {
 
     it('testing memoize :: f -> f', function () {
         var n = 0;
-        var a = decorators.memoize((m) => {
+        var a = _.memoize((m) => {
             n += 1;
             return m;
         });

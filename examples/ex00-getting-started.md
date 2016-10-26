@@ -26,7 +26,7 @@ Depending on your OS, you might have to run the command as `sudo`.
 ## Step 3: Using the package
 As written above, futils is a collection of utility functions for various aspects of functional programming. To help you get a better understanding of what futils provides you, here is a first quick look:
 ```javascript
-const {map, pipe, exec, given, isString} = require('futils');
+const {map, pipe, call, given, isString} = require('futils');
 
 let messages = [
     {from: 'Marc', text: 'nice match yesterday!'},
@@ -36,7 +36,7 @@ let messages = [
 const format = (msg) => `${msg.from} has written: ${msg.text}`;
 const printOut = given(isString, console.log.bind(console));
 
-const formatPrint = pipe(map(format), exec('join', '\n'), printOut);
+const formatPrint = pipe(map(format), call('join', '\n'), printOut);
 
 formatPrint(messages);
 ```

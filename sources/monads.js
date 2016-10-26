@@ -84,14 +84,14 @@ import Task from './monads/task';
  * @return {Applicative} Result of the last computation as an applicative
  *
  * @example
- * const {monads, decorators} = require('futils');
+ * const {Identity, liftA2, curry} = require('futils');
  *
- * let m1 = monads.Identity.of(1);
- * let m2 = monads.Identity.of(1);
+ * let m1 = Identity.of(1);
+ * let m2 = Identity.of(1);
  *
- * const add = decorators.curry((a, b) => a + b);
+ * const add = curry((a, b) => a + b);
  *
- * monads.liftA2(add, m1, m2); // -> Identity(2)
+ * liftA2(add, m1, m2); // -> Identity(2)
  */
 const liftA2 = decorators.curry((f, M1, M2) => {
     return M1.map(f).ap(M2);
@@ -109,15 +109,15 @@ const liftA2 = decorators.curry((f, M1, M2) => {
  * @return {Applicative} Result of the last computation as an applicative
  *
  * @example
- * const {monads, decorators} = require('futils');
+ * const {Identity, liftA3, curry} = require('futils');
  *
- * let m1 = monads.Identity.of(1);
- * let m2 = monads.Identity.of(1);
- * let m3 = monads.Identity.of(1);
+ * let m1 = Identity.of(1);
+ * let m2 = Identity.of(1);
+ * let m3 = Identity.of(1);
  *
- * const add = decorators.curry((a, b, c) => a + b + c);
+ * const add = curry((a, b, c) => a + b + c);
  *
- * monads.liftA3(add, m1, m2, m3); // -> Identity(3)
+ * liftA3(add, m1, m2, m3); // -> Identity(3)
  */
 const liftA3 = decorators.curry((f, M1, M2, M3) => {
     return M1.map(f).ap(M2).ap(M3);
@@ -136,16 +136,16 @@ const liftA3 = decorators.curry((f, M1, M2, M3) => {
  * @return {Applicative} Result of the last computation as an applicative
  *
  * @example
- * const {monads, decorators} = require('futils');
+ * const {Identity, liftA4, curry} = require('futils');
  *
- * let m1 = monads.Identity.of(1);
- * let m2 = monads.Identity.of(1);
- * let m3 = monads.Identity.of(1);
- * let m4 = monads.Identity.of(1);
+ * let m1 = Identity.of(1);
+ * let m2 = Identity.of(1);
+ * let m3 = Identity.of(1);
+ * let m4 = Identity.of(1);
  *
- * const add = decorators.curry((a, b, c, d) => a + b + c + d);
+ * const add = curry((a, b, c, d) => a + b + c + d);
  *
- * monads.liftA4(add, m1, m2, m3, m4); // -> Identity(4)
+ * liftA4(add, m1, m2, m3, m4); // -> Identity(4)
  */
 const liftA4 = decorators.curry((f, M1, M2, M3, M4) => {
     return M1.map(f).ap(M2).ap(M3).ap(M4);
@@ -165,17 +165,17 @@ const liftA4 = decorators.curry((f, M1, M2, M3, M4) => {
  * @return {Applicative} Result of the last computation as an applicative
  *
  * @example
- * const {monads, decorators} = require('futils');
+ * const {Identity, liftA5, curry} = require('futils');
  *
- * let m1 = monads.Identity.of(1);
- * let m2 = monads.Identity.of(1);
- * let m3 = monads.Identity.of(1);
- * let m4 = monads.Identity.of(1);
- * let m5 = monads.Identity.of(1);
+ * let m1 = Identity.of(1);
+ * let m2 = Identity.of(1);
+ * let m3 = Identity.of(1);
+ * let m4 = Identity.of(1);
+ * let m5 = Identity.of(1);
  *
- * const add = decorators.curry((a, b, c, d, e) => a + b + c + d + e);
+ * const add = curry((a, b, c, d, e) => a + b + c + d + e);
  *
- * monads.liftA5(add, m1, m2, m3, m4, m5); // -> Identity(5)
+ * liftA5(add, m1, m2, m3, m4, m5); // -> Identity(5)
  */
 const liftA5 = decorators.curry((f, M1, M2, M3, M4, M5) => {
     return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5);

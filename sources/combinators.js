@@ -19,13 +19,13 @@ import arity from './arity';
  */
 
 /**
- * The identity or I combinator (idiot in smullians "how to mock a mockingbird")
+ * The identity, id or I combinator
  * @method
  * @version 0.4.0
  * @param {any} x Anything
  * @return {any} Returns x
  */
-const identity = (x) => x;
+const id = (x) => x;
 
 /**
  * The getter or K combinator (kestrel in smullians "how to mock a mockingbird")
@@ -44,13 +44,13 @@ const getter = (x) => () => x;
  * @return {function} Function awaiting a function to tap with
  *
  * @example
- * const {combinators, type} = require('futils');
+ * const {tap, isNumber} = require('futils');
  * 
  * const sqr = (n) => n * n;
  * 
- * const saveSqr = combinators.tap(sqr)((op) => {
+ * const saveSqr = tap(sqr)((op) => {
  *     return (_n) => {
- *         return type.isNumber(_n) ? op(_n) : _n;
+ *         return isNumber(_n) ? op(_n) : _n;
  *     }
  * });
  */
@@ -66,12 +66,12 @@ const tap = (x) => (y) => y(x);
  * @return {function} Composition of the given functions
  *
  * @example
- * const {combinators} = require('futils');
+ * const {pipe} = require('futils');
  *
  * const add1 = (n) => n + 1;
  * const mult2 = (n) => n * 2;
  *
- * const mult2Add1 = combinators.pipe(mult2, add1);
+ * const mult2Add1 = pipe(mult2, add1);
  *
  * add1(mult2(2)) === mult2Add1(2);
  * // -> true
@@ -96,12 +96,12 @@ const pipe = (f, ...fs) => {
  * @return {function} Composition of the given functions
  *
  * @example
- * const {combinators} = require('futils');
+ * const {compose} = require('futils');
  *
  * const add1 = (n) => n + 1;
  * const mult2 = (n) => n * 2;
  *
- * const mult2Add1 = combinators.compose(add1, mult2);
+ * const mult2Add1 = compose(add1, mult2);
  *
  * add1(mult2(2)) === mult2Add1(2);
  * // -> true
@@ -122,12 +122,12 @@ const compose = (...fs) => {
  * @return {function} Composed predicate function
  *
  * @example
- * const {combinators} = require('futils');
+ * const {and} = require('futils');
  *
  * const isStr = (s) => typeof s === 'string';
  * const hasAt = (s) => s.includes('@');
  *
- * const smellsLikeMail = combinators.and(isStr, hasAt);
+ * const smellsLikeMail = and(isStr, hasAt);
  */
 const and = (...fs) => {
     if (type.isArrayOf(type.isFunc, fs)) {
@@ -147,12 +147,12 @@ const and = (...fs) => {
  * @return {function} Composed predicate function
  *
  * @example
- * const {combinators} = require('futils');
+ * const {or} = require('futils');
  *
  * const isStr = (s) => typeof s === 'string';
  * const isNum = (n) => !isNaN(n);
  *
- * const strOrNum = combinators.or(isStr, isNum);
+ * const strOrNum = or(isStr, isNum);
  */
 const or = (...fs) => {
     if (type.isArrayOf(type.isFunc, fs)) {
@@ -166,5 +166,5 @@ const or = (...fs) => {
 
 
 export default { 
-    compose, pipe, identity, tap, getter, and, or
+    compose, pipe, id, tap, getter, and, or
 };
