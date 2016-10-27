@@ -23,8 +23,8 @@ const RUN_PROG = Symbol('MonadicFork');
 const CLEANUP = Symbol('MonadicCleanUp')
 
 
-const delay = type.isFunc(setImmediate) ? (f) => setImmediate(f) :
-              !type.isVoid(process) ? (f) => process.nextTick(f) :
+const delay = typeof setImmediate !== 'undefined' ? (f) => setImmediate(f) :
+              typeof process !== 'undefined' ? (f) => process.nextTick(f) :
               (f) => setTimeout(f, 0);
 
 const ofVoid = () => void 0;
