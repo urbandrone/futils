@@ -28,14 +28,14 @@ const MV = Symbol('MonadicValue');
  * @version 2.0.0
  */
 export class Some {
-    constructor (a) { this.mvalue = a; }
-    set mvalue (a) {
+    constructor (a) { this.value = a; }
+    set value (a) {
         if (type.isNil(a)) {
-            throw 'Some::of cannot create from null or undefined but saw ' + a;
+            return None.of(a);
         }
         this[MV] = a;
     }
-    get mvalue () { return this[MV]; }
+    get value () { return this[MV]; }
 
     /**
      * Returns a string representation of the instance
@@ -52,7 +52,7 @@ export class Some {
      * one.toString(); // -> "Some(1)"
      * nothing.toString(); // -> "None"
      */
-    toString () { return `Some(${this.mvalue})`; }
+    toString () { return `Some(${this.value})`; }
 
     /**
      * Returns true if given a instance of the class
@@ -99,7 +99,7 @@ export class Some {
      */
     equals (b) {
         return Some.prototype.isPrototypeOf(b) &&
-               b.mvalue === this.mvalue;
+               b.value === this.value;
     }
     // -- Functor
     /**
@@ -120,7 +120,7 @@ export class Some {
      */
     map (f) {
         if (type.isFunc(f)) {
-            return Maybe.of(f(this.mvalue));
+            return Maybe.of(f(this.value));
         }
         throw 'Some::map expects argument to be function but saw ' + f;
     }
@@ -139,7 +139,7 @@ export class Some {
      *
      * let one = Maybe.of(1);
      *
-     * one.mvalue; // -> 1
+     * one.value; // -> 1
      */
     static of (a) { return new Some(a); }
     of (a) { return Some.of(a); }
@@ -163,7 +163,7 @@ export class Some {
      */
     ap (m) {
         if (type.isFunc(m.map)) {
-            return m.map(this.mvalue);
+            return m.map(this.value);
         }
         throw 'Some::ap expects argument to be Functor but saw ' + m;
     }
@@ -186,7 +186,7 @@ export class Some {
      */
     flatMap (f) {
         if (type.isFunc(f)) {
-            return this.map(f).flatten();
+            return this.map(f).value;
         }
         throw 'Some::flatMap expects argument to be function but saw ' + f;
     }
@@ -206,11 +206,11 @@ export class Some {
      * one.flatten(); // -> Some(1)
      */
     flatten () {
-        return Maybe.of(this.mvalue.mvalue);
+        return this.value;
     }
     // -- Recovering
-    orElse () { return this.mvalue; }
-    orSome () { return this; }
+    orGet () { return this.value; }
+    orElse () { return this; }
     // -- Foldable
     // reduce
     
@@ -238,7 +238,7 @@ export class Some {
      */
     fold (_, g) {
         if (type.isFunc(g)) {
-            return g(this.mvalue);
+            return g(this.value);
         }
         throw 'Some::fold expects argument 2 to be function but saw ' + g;
     }
@@ -306,7 +306,6 @@ export class Some {
         }
         throw 'Some::biMap expects argument 2 to be function but saw ' + g;
     }
-    // -- Traversable
 }
 
 
@@ -318,9 +317,9 @@ export class Some {
  * @version 2.0.0
  */
 export class None {
-    constructor () { this.mvalue = null; }
-    set mvalue (a) { this[MV] = a; }
-    get mvalue () { return this[MV]; }
+    constructor () { this.value = null; }
+    set value (a) { this[MV] = a; }
+    get value () { return this[MV]; }
     toString () { return 'None'; }
     static is (a) { return None.prototype.isPrototypeOf(a); }
     isSome () { return false; }
@@ -333,28 +332,26 @@ export class None {
     // -- Functor
     map () { return this; }
     // -- Applicative
-    static of () { return new None(); }
-    of () { return None.of(); }
+    static of () { return new None(null); }
+    of () { return None.of(null); }
     ap (m) { return m; }
     // -- Monad
     flatMap () { return this; }
     flatten () { return this; }
     // -- Recovering
-    orElse (a) { return a; }
-    orSome (a) { return Maybe.of(a); }
+    orGet (a) { return a; }
+    orElse (a) { return Maybe.of(a); }
     // -- Foldable
-    // reduce
-    
-    // -- ?
     fold (f) {
         if (type.isFunc(f)) {
-            return f();
+            return f(null);
         }
         throw 'None::fold expects argument 1 to be function but saw ' + f;
     }
+    // -- Catamorphism
     cata (o) {
         if (type.isFunc(o.None)) {
-            return this.fold(o.None);
+            return o.None(null);
         }
         throw 'None::cata expected Object of {None: fn}, but saw ' + o; 
     }
@@ -362,11 +359,10 @@ export class None {
     // -- Bifunctor
     biMap (f) {
         if (type.isFunc(f)) {
-            return Maybe.of(this.fold(f));
+            return this;
         }
         throw 'None::biMap expects argument 1 to be function but saw ' + f;
     }
-    // -- Traversable
 }
 
 
@@ -411,7 +407,7 @@ export default class Maybe {
      * let nothing = Maybe.of(null);
      */
     static of (a) {
-        return type.isNil(a) ? None.of() : Some.of(a);
+        return type.isNil(a) ? None.of(a) : Some.of(a);
     }
 
     /**

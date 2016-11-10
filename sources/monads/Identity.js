@@ -27,9 +27,9 @@ const MV = Symbol('MonadicValue');
  * @version 2.0.0
  */
 export default class Identity {
-    constructor (a) { this.mvalue = a; }
-    set mvalue (a) { this[MV] = a; }
-    get mvalue () { return this[MV]; }
+    constructor (a) { this.value = a; }
+    set value (a) { this[MV] = a; }
+    get value () { return this[MV]; }
 
     /**
      * Returns a string representation of the instance
@@ -44,7 +44,7 @@ export default class Identity {
      *
      * one.toString(); // -> "Identity(1)"
      */
-    toString () { return `Identity(${this.mvalue})`; }
+    toString () { return `Identity(${this.value})`; }
 
     /**
      * Returns true if given a instance of the class
@@ -83,7 +83,7 @@ export default class Identity {
      */
     equals (b) {
         return Identity.prototype.isPrototypeOf(b) &&
-               b.mvalue === this.mvalue;
+               b.value === this.value;
     }
     // -- Functor
     /**
@@ -104,7 +104,7 @@ export default class Identity {
      */
     map (f) {
         if (type.isFunc(f)) {
-            return Identity.of(f(this.mvalue));
+            return new Identity(f(this.value));
         }
         throw 'Identity::map expects argument to be function but saw ' + f;
     }
@@ -123,7 +123,7 @@ export default class Identity {
      *
      * let one = Identity.of(1);
      *
-     * one.mvalue; // -> 1
+     * one.value; // -> 1
      */
     static of (a) { return new Identity(a); }
     of (a) { return Identity.of(a); }
@@ -147,7 +147,7 @@ export default class Identity {
      */
     ap (m) {
         if (type.isFunc(m.map)) {
-            return m.map(this.mvalue);
+            return m.map(this.value);
         }
         throw 'Identity::ap expects argument to be Functor but saw ' + m;
     }
@@ -170,7 +170,7 @@ export default class Identity {
      */
     flatMap (f) {
         if (type.isFunc(f)) {
-            return this.map(f).flatten();
+            return this.map(f).value;
         }
         throw 'Identity::flatMap expects argument to be function but saw ' + f;
     }
@@ -190,10 +190,13 @@ export default class Identity {
      * one.flatten(); // -> Identity(1)
      */
     flatten () {
-        return Identity.of(this.mvalue.mvalue);
+        return this.value;
     }
     // -- Foldable
     // reduce
+    fold (f) {
+        return f(this.value);
+    }
     // -- Bifunctor
     // biMap, Functor
     // -- Profunctor
@@ -204,4 +207,13 @@ export default class Identity {
     // traverse, Functor, Foldable
     // -- Semigroup
     // concat
+    // 
+    doT (...fs) {
+        // const op = (m) => m.doT((a) => Maybe.of(isInt(a) ? a : null),
+        //                         (ma) => ma.map((n) => n + 1),
+        //                         (ma) => ma.map((n) => n % 2 === 0),
+        //                         (ma) => ma.orElse(false));
+        //                         
+        return fs.reduce((x, g) => x.map(g), this).flatMap(Identity.of);
+    }
 }

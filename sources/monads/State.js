@@ -27,11 +27,11 @@ const OV = Symbol('OldMonadicValue');
  * @version 2.0.0
  */
 export default class State {
-    constructor (a, b) { this.mvalue = a; this.mbefore = b; }
-    set mvalue (a) { this[MV] = a; }
-    get mvalue () { return this[MV]; }
-    set mbefore (a) { this[OV] = a; }
-    get mbefore () { return this[OV] || null; }
+    constructor (a, b) { this.value = a; this.previous = b; }
+    set value (a) { this[MV] = a; }
+    get value () { return this[MV]; }
+    set previous (a) { this[OV] = a; }
+    get previous () { return this[OV] || null; }
 
     /**
      * Returns a string representation of the instance
@@ -44,9 +44,9 @@ export default class State {
      *
      * let one = State.of(1);
      *
-     * one.toString(); // -> "State(1, null)"
+     * one.toString(); // -> "State(1)"
      */
-    toString () { return `State(${this.mvalue}, ${this.mbefore})`; }
+    toString () { return `State(${this.value})`; }
 
     /**
      * Returns true if given a instance of the class
@@ -85,8 +85,7 @@ export default class State {
      */
     equals (b) {
         return State.prototype.isPrototypeOf(b) &&
-               b.mvalue === this.mvalue &&
-               b.mbefore === this.mbefore;
+               b.value === this.value;
     }
     // -- Functor
     /**
@@ -104,11 +103,10 @@ export default class State {
      * const inc = (a) => a + 1;
      *
      * one.map(inc); // -> State(2)
-     * one.map(inc).toString(); // -> State(2, 1)
      */
     map (f) {
         if (type.isFunc(f)) {
-            return State.of(f(this.mvalue), this.mvalue);
+            return new State(f(this.value), this.value);
         }
         throw 'State::map expects argument to be function but saw ' + f;
     }
@@ -127,10 +125,10 @@ export default class State {
      *
      * let one = State.of(1);
      *
-     * one.mvalue; // -> 1
+     * one.value; // -> 1
      */
-    static of (a, b) { return new State(a, b); }
-    of (a, b) { return State.of(a, b); }
+    static of (a) { return new State(a, null); }
+    of (a) { return State.of(a); }
 
     /**
      * Applies a wrapped function to a given Functor and returns a new instance
@@ -151,7 +149,7 @@ export default class State {
      */
     ap (m) {
         if (type.isFunc(m.map)) {
-            return m.map(this.mvalue);
+            return m.map(this.value);
         }
         throw 'State::ap expects argument to be Functor but saw ' + m;
     }
@@ -168,13 +166,13 @@ export default class State {
      *
      * let one = State.of(1);
      *
-     * const mInc = (n) => State.of(1).map((m) => n + m);
+     * const mInc = (n) => State.of(n + 1);
      *
      * one.flatMap(mInc); // -> State(2);
      */
     flatMap (f) {
         if (type.isFunc(f)) {
-            return this.map(f).flatten();
+            return this.map(f).value;
         }
         throw 'State::flatMap expects argument to be function but saw ' + f;
     }
@@ -194,8 +192,63 @@ export default class State {
      * one.flatten(); // -> State(1)
      */
     flatten () {
-        return State.of(this.mvalue.mvalue, this.mvalue.mbefore);
+        return this.value;
     }
-    // -- Foldable
-    // reduce
+
+    /**
+     * Given a function, folds the instance with it
+     * @method fold
+     * @param {function} f Function handling the value
+     * @return {any} Whatever f returns
+     *
+     * @example
+     * const {State} = require('futils');
+     *
+     * let one = State.of(1);
+     *
+     * one.fold((v) => v); // -> 1
+     * 
+     */
+    fold (f) {
+        return f(this.value);
+    }
+
+    /**
+     * Returns the unit of a State
+     * @method empty
+     * @return {State} A new empty State
+     *
+     * @example
+     * const {State, id} = require('futils');
+     *
+     * State.of(1).concat(State.empty()).fold(id); // -> 1
+     * State.empty().concat(State.of(1)).fold(id); // -> 1
+     */
+    static empty () {
+        return new State(null, null);
+    }
+
+    // -- Semigroup
+    /**
+     * Concatenates this State with another State
+     * @method concat
+     * @memberof module:futils/monads/state.State
+     * @param {State} semi Other State
+     * @return {State} A new State
+     *
+     * @example
+     * const {State, id} = require('futils');
+     *
+     * let current = State.of(1280);
+     *
+     * const winSize = () => current.concat(State.of(1600));
+     *
+     * let state = winSize();
+     * state.fold(id); // -> 1600
+     * state.previous.fold(id); // -> 1280
+     */
+    concat (semi) {
+        let s = semi.value === null ? [this.value, semi] : [semi.value, this];
+        return new State(...s);
+    }
 }

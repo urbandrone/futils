@@ -29,9 +29,9 @@ const comp = (f, g) => (...args) => f(g(...args));
  * @version 2.0.0
  */
 export default class IO {
-    constructor (a) { this.performIO = a; }
-    set performIO (a) { this[MV] = a; }
-    get performIO () { return this[MV]; }
+    constructor (a) { this.run = a; }
+    set run (a) { this[MV] = a; }
+    get run () { return this[MV]; }
 
     /**
      * Returns a string representation of the instance
@@ -42,11 +42,11 @@ export default class IO {
      * @example
      * const {IO} = require('futils');
      *
-     * let one = IO.of(() => 1);
+     * let one = IO.of(1);
      *
-     * one.toString(); // -> "IO(function () { return 1; })"
+     * one.toString(); // -> "IO"
      */
-    toString () { return `IO(${this.performIO})`; }
+    toString () { return `IO`; }
 
     /**
      * Returns true if given a instance of the class
@@ -59,7 +59,7 @@ export default class IO {
      * @example
      * const {IO} = require('futils');
      *
-     * let one = IO.of(() => 1);
+     * let one = IO.of(1);
      *
      * IO.is(one); // -> true
      */
@@ -76,16 +76,16 @@ export default class IO {
      * @example
      * const {IO} = require('futils');
      *
-     * let one = IO.of(() => 1);
-     * let one_b = IO.of(() => 1);
-     * let two = IO.of(() => 2);
+     * let one = IO.of(1);
+     * let one_b = IO.of(1);
+     * let two = IO.of(2);
      *
      * one.equals(one_b); // -> true
      * one.equals(two); // -> false
      */
     equals (b) {
         return IO.prototype.isPrototypeOf(b) &&
-               b.performIO === b.performIO;
+               this.run === b.run;
     }
     // -- Functor
     /**
@@ -98,7 +98,7 @@ export default class IO {
      * @example
      * const {IO} = require('futils');
      *
-     * let one = IO.of(() => 1);
+     * let one = IO.of(1);
      *
      * const inc = (a) => a + 1;
      *
@@ -106,7 +106,7 @@ export default class IO {
      */
     map (f) {
         if (type.isFunc(f)) {
-            return IO.of(comp(f, this.performIO));
+            return new IO(comp(f, this.run));
         }
         throw 'IO::map expects argument to be function but saw ' + f;
     }
@@ -123,11 +123,11 @@ export default class IO {
      * @example
      * const {IO} = require('futils');
      *
-     * let one = IO.of(() => 1);
+     * let one = IO.of(1);
      *
-     * one.performIO(); // -> 1
+     * one.run(); // -> 1
      */
-    static of (a) { return new IO(a); }
+    static of (a) { return new IO(() => a); }
     of (a) { return IO.of(a); }
 
     /**
@@ -141,15 +141,15 @@ export default class IO {
      * @example
      * const {IO} = require('futils');
      *
-     * let one = IO.of(() => 1);
+     * let one = IO.of(1);
      *
      * const aInc = IO.of((a) => a + 1);
      *
-     * aInc.ap(one); // -> IO(function () { return 2; })
+     * aInc.ap(one); // -> IO(2)
      */
     ap (m) {
         if (type.isFunc(m.map)) {
-            return m.map(this.performIO);
+            return m.map(this.run);
         }
         throw 'IO::ap expects argument to be Functor but saw ' + m;
     }
@@ -164,15 +164,15 @@ export default class IO {
      * @example
      * const {IO} = require('futils');
      *
-     * let one = IO.of(() => 1);
+     * let one = IO.of(1);
      *
-     * const mInc = (n) => IO.of(() => 1).map((m) => n + m);
+     * const mInc = (n) => IO.of(n + 1);
      *
-     * one.flatMap(mInc); // -> IO(function () { return 2; });
+     * one.flatMap(mInc); // -> IO(2);
      */
     flatMap (f) {
         if (type.isFunc(f)) {
-            return this.map(f).flatten();
+            return this.map(f).run();
         }
         throw 'IO::flatMap expects argument to be function but saw ' + f;
     }
@@ -187,12 +187,16 @@ export default class IO {
      * @example
      * const {IO} = require('futils');
      *
-     * let one = IO.of(() => IO.of(() => 1));
+     * let one = IO.of(IO.of(1));
      *
      * one.flatten(); // -> IO(1)
      */
     flatten () {
-        return IO.of(this.performIO().performIO);
+        return this.run();
+    }
+
+    fold (f) {
+        return f(this.run());
     }
 
     // -- Semigroup
@@ -200,6 +204,4 @@ export default class IO {
 
     // -- Monoid
     // empty
-    // -- Foldable
-    // reduce
 }

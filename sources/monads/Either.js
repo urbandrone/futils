@@ -27,9 +27,9 @@ const MV = Symbol('MonadicValue');
  * @version 2.0.0
  */
 export class Right {
-    constructor (a) { this.mvalue = a; }
-    set mvalue (a) { this[MV] = a; }
-    get mvalue () { return this[MV]; }
+    constructor (a) { this.value = a; }
+    set value (a) { this[MV] = a; }
+    get value () { return this[MV]; }
 
     /**
      * Returns a string representation of the instance
@@ -44,7 +44,7 @@ export class Right {
      *
      * right.toString(); // -> "Right(1)"
      */
-    toString () { return `Right(${this.mvalue})`; }
+    toString () { return `Right(${this.value})`; }
 
     /**
      * Returns true if given a instance of the class
@@ -91,7 +91,7 @@ export class Right {
      */
     equals (b) {
         return Right.prototype.isPrototypeOf(b) &&
-               b.mvalue === this.mvalue;
+               b.value === this.value;
     }
 
     // -- Functor
@@ -113,7 +113,7 @@ export class Right {
      */
     map (f) {
         if (type.isFunc(f)) {
-            return Right.of(f(this.mvalue));
+            return Right.of(f(this.value));
         }
         throw 'Right::map expects argument to be function but saw ' + f;
     }
@@ -133,7 +133,7 @@ export class Right {
      *
      * let one = Right.of(1);
      *
-     * one.mvalue; // -> 1
+     * one.value; // -> 1
      */
     static of (a) { return new Right(a); }
     of (a) { return Right.of(a); }
@@ -157,7 +157,7 @@ export class Right {
      */
     ap (m) {
         if (type.isFunc(m.map)) {
-            return m.map(this.mvalue);
+            return m.map(this.value);
         }
         throw 'Right::ap expects argument to be Functor but saw ' + m;
     }
@@ -181,7 +181,7 @@ export class Right {
      */
     flatMap (f) {
         if (type.isFunc(f)) {
-            return this.map(f).flatten();
+            return this.map(f).value;
         }
         throw 'Right::flatMap expects argument to be function but saw ' + f;
     }
@@ -201,12 +201,12 @@ export class Right {
      * one.flatten(); // -> Right(1)
      */
     flatten () {
-        return Right.of(this.mvalue.mvalue);
+        return this.value;
     }
 
     // -- Recovering
-    orElse () { return this.mvalue; }
-    orRight () { return this; }
+    orGet () { return this.value; }
+    orElse () { return this; }
 
     // -- Foldable
     // reduce
@@ -235,7 +235,7 @@ export class Right {
      */
     fold (_, g) {
         if (type.isFunc(g)) {
-            return g(this.mvalue);
+            return g(this.value);
         }
         throw 'Right::fold expects argument 2 to be function but saw ' + g;
     }
@@ -269,7 +269,7 @@ export class Right {
      */
     cata (o) {
         if (type.isFunc(o.Right)) {
-            return o.Right(this.mvalue);
+            return o.Right(this.value);
         }
         throw 'Right::cata expected Object of {Right: fn}, but saw ' + o; 
     }
@@ -299,7 +299,7 @@ export class Right {
      */
     biMap (_, g) {
         if (type.isFunc(g)) {
-            return Right.of(g(this.mvalue));
+            return Right.of(g(this.value));
         }
         throw 'Right::biMap expects argument 2 to be function but saw ' + g;
     }
@@ -320,7 +320,7 @@ export class Right {
      * nan.swap(); // -> Right(NaN)
      */
     swap () {
-        return Left.of(this.mvalue);
+        return Left.of(this.value);
     }
 
     /**
@@ -356,9 +356,9 @@ export class Right {
  * @version 2.0.0
  */
 export class Left {
-    constructor (a) { this.mvalue = a; }
-    set mvalue (a) { this[MV] = a; }
-    get mvalue () { return this[MV]; }
+    constructor (a) { this.value = a; }
+    set value (a) { this[MV] = a; }
+    get value () { return this[MV]; }
 
     /**
      * Returns a string representation of the instance
@@ -373,7 +373,7 @@ export class Left {
      *
      * left.toString(); // -> "Left(1)"
      */
-    toString () { return `Left(${this.mvalue})`; }
+    toString () { return `Left(${this.value})`; }
 
     /**
      * Returns true if given a instance of the class
@@ -420,7 +420,7 @@ export class Left {
      */
     equals (b) {
         return Left.prototype.isPrototypeOf(b) &&
-               b.mvalue === this.mvalue;
+               b.value === this.value;
     }
     // -- Functor
     /**
@@ -456,7 +456,7 @@ export class Left {
      *
      * let one = Left.of(1);
      *
-     * one.mvalue; // -> 1
+     * one.value; // -> 1
      */
     static of (a) { return new Left(a); }
     of (a) { return Left.of(a); }
@@ -515,8 +515,8 @@ export class Left {
      */
     flatten () { return this; }
     // -- Recovering
-    orElse (a) { return a; }
-    orRight (a) { return Right.of(a); }
+    orGet (a) { return a; }
+    orElse (a) { return Right.of(a); }
     // -- Foldable
     // reduce
     // -- ?
@@ -541,7 +541,7 @@ export class Left {
      */
     fold (f) {
         if (type.isFunc(f)) {
-            return f(this.mvalue);
+            return f(this.value);
         }
         throw 'Left::fold expects argument 1 to be function but saw ' + f;
     }
@@ -568,7 +568,7 @@ export class Left {
      */
     cata (o) {
         if (type.isFunc(o.Left)) {
-            return o.Left(this.mvalue);
+            return o.Left(this.value);
         }
         throw 'Left::cata expected Object of {Left: fn}, but saw ' + o; 
     }
@@ -595,7 +595,7 @@ export class Left {
      */
     biMap (f) {
         if (type.isFunc(f)) {
-            return Left.of(f(this.mvalue));
+            return Left.of(f(this.value));
         }
         throw 'Left::biMap expects argument 1 to be function but saw ' + f;
     }
@@ -616,7 +616,7 @@ export class Left {
      * nan.swap(); // -> Right(NaN)
      */
     swap () {
-        return Right.of(this.mvalue);
+        return Right.of(this.value);
     }
 
     /**
@@ -675,6 +675,21 @@ export default class Either {
     static is (a) { return Left.is(a) || Right.is(a); }
 
     /**
+     * Creates a new Right of the given value
+     * @method of
+     * @memberof module:futils/monads/either.Either
+     * @static
+     * @param {any} a Value to wrap
+     * @return {Right} A Right holding the value
+     *
+     * @example
+     * const {Either} = require('futils');
+     *
+     * let one = Either.of(1);
+     */
+    static of (a) { return Right.of(a); }
+
+    /**
      * Given a fallback and the value to create from, returns a Left with the
      *     fallback value if the actual value has been null or undefined and
      *     a Right if the value has any other value
@@ -731,14 +746,14 @@ export default class Either {
      * @example
      * const {Either, IO} = require('futils');
      *
-     * let location = IO.of(() => window.location.href);
-     * let fails = IO.of(() => window.local.href);
+     * let location = IO.of(window.location.href);
+     * let fails = IO.of(window.local.href);
      *
      * Either.fromIO(location); // -> Right('...')
      * Either.fromIO(fails); // -> Left('TypeError: ...')
      */
     static fromIO (m) {
-        return Either.try(m.performIO);
+        return Either.try(m.run);
     }
 
     /**
@@ -749,7 +764,7 @@ export default class Either {
      * @memberof module:futils/monads/either.Either
      * @static
      * @param {function} f Function to execute
-     * @param {any} [partials] Any number of arguments to partially apply
+     * @param {any} [partials] Any number of arguments to partially apply left
      * @return {function|Left|Right} Depending on the input
      */
     static try (f, ...partials) {

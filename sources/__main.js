@@ -6,6 +6,7 @@ import operators from './operators';
 import lenses from './lenses';
 import transducers from './transducers';
 import monads from './monads';
+import UnionType from './uniontypes';
 
 export default {
     aritize: arity.aritize,
@@ -64,6 +65,8 @@ export default {
     partialRight: decorators.partialRight,
     given: decorators.given,
     memoize: decorators.memoize,
+
+    Type: UnionType,
 
     Identity: monads.Identity,
     IO: monads.IO,

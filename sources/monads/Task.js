@@ -37,9 +37,9 @@ const ofVoid = () => void 0;
  * @version 2.0.0
  */
 export default class Task {
-    constructor (a, b) { this.fork = a; this.cleanUp = b; }
-    set fork (a) { this[RUN_PROG] = a; }
-    get fork () { return this[RUN_PROG]; }
+    constructor (a, b) { this.run = a; this.cleanUp = b; }
+    set run (a) { this[RUN_PROG] = a; }
+    get run () { return this[RUN_PROG]; }
     set cleanUp (a) { this[CLEANUP] = a || ofVoid }
     get cleanUp () { return this[CLEANUP]; }
 
@@ -88,14 +88,14 @@ export default class Task {
      *
      * let one = Task.resolve(1);
      *
-     * one.fork(
+     * one.run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
      *
      * // logs "Resolved: 1"
      */
-    static resolve (a) { return Task.of((rej, res) => res(a)); }
+    static resolve (a) { return new Task((_, res) => res(a)); }
 
     /**
      * Returns a Task which rejects the given value
@@ -110,14 +110,14 @@ export default class Task {
      *
      * let one = Task.reject(1);
      *
-     * one.fork(
+     * one.run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
      *
      * // logs "Rejected: 1"
      */
-    static reject (a) { return Task.of((rej) => rej(a)); }
+    static reject (a) { return new Task((rej) => rej(a)); }
 
     // -- Setoid 
     /**
@@ -138,9 +138,7 @@ export default class Task {
      * one.equals(two); // -> false
      */
     equals (b) {
-        return Task.prototype.isPrototypeOf(b) &&
-               b.fork === this.fork &&
-               b.cleanUp === this.cleanUp;
+        return Task.prototype.isPrototypeOf(b);
     }
     // -- Functor
     /**
@@ -157,7 +155,7 @@ export default class Task {
      *
      * const inc = (a) => a + 1;
      *
-     * one.map(inc).fork(
+     * one.map(inc).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
@@ -165,8 +163,8 @@ export default class Task {
      */
     map (f) {
         if (type.isFunc(f)) {
-            return Task.of(
-                (rej, res) => this.fork(
+            return new Task(
+                (rej, res) => this.run(
                     (mv) => rej(mv),
                     (mv) => res(f(mv))
                 ),
@@ -189,15 +187,15 @@ export default class Task {
      *
      * let one = Task.of((rej, res) => res(1));
      *
-     * one.fork(
+     * one.run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
      *
      * // logs "Resolved: 1"
      */
-    static of (a, b) { return new Task(a, b); }
-    of (a) { return Task.of(a, this.cleanUp); }
+    static of (a) { return new Task((rej, res) => res(a)); }
+    of (a) { return Task.of(a); }
 
     /**
      * Applies a wrapped function to a given Functor and returns a new instance
@@ -214,7 +212,7 @@ export default class Task {
      *
      * const aInc = Task.resolve((a) => a + 1);
      *
-     * aInc.ap(one).fork(
+     * aInc.ap(one).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolve: ' + n)
      * );
@@ -222,7 +220,7 @@ export default class Task {
      * // logs "Resolved: 2"
      */
     ap (m) {
-        let meFork = this.fork, themFork = m.fork,
+        let meFork = this.run, themFork = m.run,
             meClean = this.cleanUp, themClean = m.cleanUp;
 
         const cleanBoth = ([a, b]) => {
@@ -230,7 +228,7 @@ export default class Task {
             themClean(b);
         }
 
-        return Task.of(
+        return new Task(
             (rej, res) => {
                 let f = false, fload = false, v = false, vload = false;
                 let states = [], rejected = false;
@@ -282,7 +280,7 @@ export default class Task {
      *
      * const mInc = (n) => Task.resolve(1).map((m) => n + m);
      *
-     * one.flatMap(mInc).fork(
+     * one.flatMap(mInc).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
@@ -291,7 +289,12 @@ export default class Task {
      */
     flatMap (f) {
         if (type.isFunc(f)) {
-            return this.map(f).flatten();
+            return new Task((rej, res) => {
+                return this.run(
+                    (a) => rej(a),
+                    (b) => f(b).run(rej, res)
+                );
+            }, this.cleanUp);
         }
         throw 'Task::flatMap expects argument to be function but saw ' + f;
     }
@@ -308,7 +311,7 @@ export default class Task {
      *
      * let one = Task.resolve(Task.resolve(1));
      *
-     * one.flatten().fork(
+     * one.flatten().run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
@@ -316,9 +319,7 @@ export default class Task {
      * // logs "Resolved: 1"
      */
     flatten () {
-        return Task.of((rej, res) => {
-            return this.fork.fork(rej, res);
-        }, this.cleanUp);
+        return new Task((rej, res) => this.run().run(rej, res), this.cleanUp);
     }
     // -- Foldable
     // reduce
@@ -329,8 +330,8 @@ export default class Task {
      *     Task and the second over the instance if it resolves the Task
      * @method fold
      * @memberof module:futils/monads/task.Task
-     * @param {function} f Function handling the None case
-     * @param {function} g Function handling the Some case
+     * @param {function} f Function handling the a Failure case
+     * @param {function} g Function handling the Success case
      * @return {any} Whatever f or g return
      *
      * @example
@@ -342,13 +343,13 @@ export default class Task {
      * const fail = () => 'No int';
      * const success = (n) => `Given ${n}!`;
      *
-     * one.fold(fail, success).fork(
+     * one.fold(fail, success).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
      * // logs "Resolved: Given 1!"
      * 
-     * none.fold(fail, success).fork(
+     * none.fold(fail, success).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
@@ -356,13 +357,7 @@ export default class Task {
      */
     fold (f, g) {
         if (type.isFunc(g) && type.isFunc(f)) {
-            return Task.of(
-                (rej, res) => this.fork(
-                    (r) => rej(f(r)),
-                    (v) => res(g(v))
-                ),
-                this.cleanUp
-            );
+            return this.run(f, g);
         }
         throw 'Task::fold expects arguments to be functions but saw ' + [f, g];
     }
@@ -385,7 +380,7 @@ export default class Task {
      * one.cata({
      *     Reject: () => 'Nothing found',
      *     Resolve: (n) => 'Found number of ' + n
-     * }).fork(
+     * }).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
@@ -394,7 +389,7 @@ export default class Task {
      * nothing.cata({
      *     Reject: () => 'Nothing found',
      *     Resolve: (n) => 'Found number of ' + n
-     * }).fork(
+     * }).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
@@ -409,13 +404,13 @@ export default class Task {
 
     // -- Bifunctor
     /**
-     * Given two functions, maps the first over the instance if it reflects None
-     *     and the second if it reflects Some. Wraps the result into a new
-     *     Bifunctor of the same type before returning
+     * Given two functions, maps the first over the instance if it reflects a
+     *     Failure and the second if it reflects Success. Wraps the result into
+     *     a new Bifunctor of the same type before returning
      * @method biMap   
      * @memberof module:futils/monads/task.Task 
-     * @param {function} f Function to map if None
-     * @param {function} g Function to map if Some
+     * @param {function} f Function to map if a Failure
+     * @param {function} g Function to map if Success
      * @return {Task} Result in a new container
      *
      * @example
@@ -427,7 +422,7 @@ export default class Task {
      * one.biMap(
      *     () => 'Nothing found',
      *     (n) => 'Found number of ' + n
-     * ).fork(
+     * ).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
@@ -436,7 +431,7 @@ export default class Task {
      * nothing.biMap(
      *     () => 'Nothing found',
      *     (n) => 'Found number of ' + n
-     * ).fork(
+     * ).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
@@ -444,7 +439,7 @@ export default class Task {
      */
     biMap (f, g) {
         if (type.isFunc(g) && type.isFunc(f)) {
-            return Task.of(
+            return new Task(
                 (rej, res) => this.fold(rej, res),
                 this.cleanUp
             );
@@ -465,21 +460,21 @@ export default class Task {
      * let one = Task.resolve(1);
      * let none = Task.reject(null);
      *
-     * one.swap().fork(
+     * one.swap().run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
      * // logs "Rejected: 1"
      * 
-     * none.swap().fork(
+     * none.swap().run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
      * // logs "Resolved: null"
      */
     swap () {
-        return Task.of(
-            (rej, res) => this.fork(res, rej),
+        return new Task(
+            (rej, res) => this.run(res, rej),
             this.cleanUp
         );
     }
@@ -499,13 +494,13 @@ export default class Task {
      *
      * const nullToZero = (x) => typeof x !== 'number' ? 0 : x;
      *
-     * one.mapRejected(nullToZero).fork(
+     * one.mapRejected(nullToZero).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
      * // logs "Resolved: 1"
      * 
-     * none.mapRejected(nullToZero).fork(
+     * none.mapRejected(nullToZero).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
@@ -513,8 +508,8 @@ export default class Task {
      */
     mapRejected (f) {
         if (type.isFunc(f)) {
-            return Task.of(
-                (rej, res) => this.fork((a) => rej(f(a)), res),
+            return new Task(
+                (rej, res) => this.run((a) => rej(f(a)), res),
                 this.cleanUp
             );
         }
@@ -533,7 +528,7 @@ export default class Task {
      *
      * Task.empty(); // -> Task which never does anything
      */
-    static empty () { return Task.of(() => void 0); }
+    static empty () { return new Task(() => void 0); }
 
     // -- Semigroup
     /**
@@ -550,7 +545,7 @@ export default class Task {
      * let one = Task.resolve(1);
      * let idle = Task.empty();
      *
-     * one.concat(idle).fork(
+     * one.concat(idle).run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
@@ -558,7 +553,7 @@ export default class Task {
      */
     concat (m) {
         if (Task.is(m)) {
-            let meFork = this.fork, themFork = m.fork,
+            let meFork = this.run, themFork = m.run,
                 meClean = this.cleanUp, themClean = m.cleanUp;
 
             const cleanBoth = ([a, b]) => {
@@ -566,7 +561,7 @@ export default class Task {
                 themClean(b);
             }
 
-            return Task.of(
+            return new Task(
                 (rej, res) => {
                     let states, done = false;
                     let state, mstate;
@@ -592,8 +587,8 @@ export default class Task {
     // -- Recovering
     orElse (f) {
         if (type.isFunc(f)) {
-            return Task.of(
-                (rej, res) => this.fork((a) => f(a).fork(rej, res), res),
+            return new Task(
+                (rej, res) => this.run((a) => f(a).run(rej, res), res),
                 this.cleanUp
             );            
         }

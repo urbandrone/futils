@@ -36,10 +36,9 @@
     "jasmine-node": "^1.14.5",
     "jsdoc": "^3.4.0",
     "minami": "^1.1.1",
+    "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.6.1",
     "rollup-plugin-uglify": "^1.0.1"
   },
-  "dependencies": {
-    "rollup": "^0.34.7"
-  }
+  "dependencies": {}
 }
