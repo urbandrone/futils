@@ -6,3 +6,4 @@ A growing set of **How to** examples for solving some common programming problem
 * [Currying and partial application](./ex01-currypartial.md)
 * [Use with reactive streams](./ex02-reactive.md)
 * [Working with transducers](./ex03-transducers.md)
+* [Monads are welcome!](./ex04-monads.md)
