@@ -5,7 +5,7 @@ set of standard monads out of the box.
 ## First things first
 Before we start to use the monadic classes shipping with `futils`, here is a quick recap on monads:
 
-A monad is just a container which implements either a `chain, flatMap` or `bind` operation which allows to chain it with functions which return values of the same monadic type.
+A monad is just a container which implements either a `chain, flatMap` or `bind` operation which allows to chain it with functions which return values of the same monadic type. It must also implement the functor interface, which means it must implement a `.map` method. We are going to use the native `Array` as a base and extend it further because it already is a monoid and it is half of a monad already.
 
 Here is some code to digest:
 ```javascript
