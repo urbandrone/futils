@@ -283,44 +283,45 @@ describe('futils/monads module', function () {
     describe('State monad', () => {
         const m = State.of(1);
         const f = (n) => n + 1;
-        const mf = (n) => new State(n + 1, 1);
-
+        const mf = (n) => State.get().map((a) => n + a);
 
         it('is pointed M::of', () => {
-            expect(m.value).toBe(1);
-            expect(m.previous).toBe(null);
+            expect(m.run()).toBe(1);
         });
+
+        it('can grab the current state M::get', () => {
+            let op = State.get();
+            expect(op.run(1)).toBe(1);
+        });
+
+        it('can put the current state M::put', () => {
+            let op = State.get().flatMap((n) => State.put(n + 1));
+            expect(op.exec(1)).toBe(2);
+        });
+
+        it('can modify the current state M::modify', () => {
+            let op = State.modify(f);
+            expect(op.exec(1)).toBe(2);
+        })
 
         it('is printable .toString', () => {
-            expect(m.toString()).toBe('State(1)');
-        });
-
-        it('is a setoid .equals', () => {
-            expect(m.equals(State.of(1))).toBe(true);
+            expect(m.toString()).toBe('State');
         });
 
         it('is a functor .map', () => {
-            expect(m.map(f).value).toBe(2);
-            expect(m.map(f).previous).toBe(1);
+            expect(m.map(f).run()).toBe(2);
         });
 
-        it('implements a way to fold .fold', () => {
-            expect(m.fold(id)).toBe(1);
+        it('implements a way to fold .run', () => {
+            expect(m.run()).toBe(1);
         });
 
         it('is a monad .flatMap', () => {
-            expect(m.flatMap(mf).value).toBe(2);
-            expect(m.flatMap(mf).previous).toBe(1);
+            expect(m.flatMap(mf).run(1)).toBe(2)
         });
 
         it('is applicative .ap', () => {
-            expect(State.of(f).ap(m).value).toBe(2);
-            expect(State.of(f).ap(m).previous).toBe(1);
-        });
-
-        it('forms a monoid M::empty & .concat', () => {
-            expect(m.concat(State.empty()).fold(id)).toBe(1);
-            expect(State.empty().concat(m).fold(id)).toBe(1);
+            expect(State.of(f).ap(m).run()).toBe(2);
         });
     });
 

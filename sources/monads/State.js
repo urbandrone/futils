@@ -9,6 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import type from '../types';
+import operators from '../operators';
 
 /**
  * Implementation of the State monad
@@ -18,24 +19,80 @@ import type from '../types';
 
 
 const MV = Symbol('MonadicValue');
-const OV = Symbol('OldMonadicValue');
 
 
 /**
  * The State monad class
  * @class module:futils/monads/state.State
- * @version 2.0.0
+ * @version 2.2.0
  */
 export default class State {
-    constructor (a, b) { this.value = a; this.previous = b; }
-    set value (a) { this[MV] = a; }
-    get value () { return this[MV]; }
-    set previous (a) { this[OV] = a; }
-    get previous () { return this[OV] || null; }
+    constructor (a) {
+        this.compute = a;
+    }
+    
+    set compute (a) { this[MV] = a; }
+    get compute () { return this[MV]; }
+
+    /**
+     * Returns a new State which grabs whatever is the current state
+     * @method get 
+     * @memberof module:futils/monads/state.State
+     * @static
+     * @version 2.2.0
+     * @return {State} New empty State
+     *
+     * @example
+     * const {State} = require('futils');
+     *
+     * const prog = State.get().map((n) => n + 1).
+     *                          map((n) => `The final value is: ${n}`);
+     *
+     * prog.run(2); // -> 'The final value is: 3'
+     */
+    static get () { return new State((s) => [s, s]); }
+
+    /**
+     * Returns a completely new State without a value
+     * @method put
+     * @memberof module:futils/monads/state.State
+     * @static
+     * @version 2.2.0
+     * @param {any} s The initial state
+     * @return {State} A new State
+     *
+     * @example
+     * const {State} = require('futils');
+     *
+     * const prog = State.get().flatMap((s) => State.put(n + 1));
+     *
+     * prog.exec(1); // -> 2
+     */
+    static put (s) { return new State(() => [null, s]); }
+
+    /**
+     * Given a function, manipulates the current state and returns a new
+     *     state without a value
+     * @method modify
+     * @memberof module:futils/monads/state.State
+     * @static
+     * @version 2.2.0
+     * @param {function} f Function to manipulate the state with
+     * @return {State} A new State
+     *
+     * @example
+     * const {State} = require('futils');
+     *
+     * const prog = State.modify((s) => s + 1);
+     *
+     * prog.exec(1); // -> 2
+     */
+    static modify (f) { return State.get().flatMap((s) => State.put(f(s))); }
 
     /**
      * Returns a string representation of the instance
      * @method toString
+     * @version 2.2.0
      * @memberof module:futils/monads/state.State
      * @return {string} String representation of the calling instance
      *
@@ -44,15 +101,16 @@ export default class State {
      *
      * let one = State.of(1);
      *
-     * one.toString(); // -> "State(1)"
+     * one.toString(); // -> "State"
      */
-    toString () { return `State(${this.value})`; }
+    toString () { return `State`; }
 
     /**
      * Returns true if given a instance of the class
      * @method is
      * @memberof module:futils/monads/state.State
      * @static
+     * @version 2.2.0
      * @param {any} a Value to check
      * @return {boolean} True if instance of the class
      *
@@ -66,32 +124,12 @@ export default class State {
     static is (a) { return State.prototype.isPrototypeOf(a); }
 
     // -- Setoid 
-    /**
-     * Given another Setoid, checks if they are equal
-     * @method equals
-     * @memberof module:futils/monads/state.State
-     * @param {Setoid} b Setoid to compare against
-     * @return {boolean} True if both are equal
-     *
-     * @example
-     * const {State} = require('futils');
-     *
-     * let one = State.of(1);
-     * let one_b = State.of(1);
-     * let two = State.of(2);
-     *
-     * one.equals(one_b); // -> true
-     * one.equals(two); // -> false
-     */
-    equals (b) {
-        return State.prototype.isPrototypeOf(b) &&
-               b.value === this.value;
-    }
     // -- Functor
     /**
      * Maps a function `f` over the value inside the Functor
      * @method map
      * @memberof module:futils/monads/state.State
+     * @version 2.2.0
      * @param {function} f Function to map with
      * @return {State} New instance of the Functor
      *
@@ -106,10 +144,14 @@ export default class State {
      */
     map (f) {
         if (type.isFunc(f)) {
-            return new State(f(this.value), this.value);
+            return new State((b) => {
+                let r = this.compute(b);
+                return [f(r[0]), r[1]];
+            });
         }
         throw 'State::map expects argument to be function but saw ' + f;
     }
+
     // -- Applicative
     /**
      * Creates a new instance of a State wrapping the given value `a`. Use
@@ -117,6 +159,7 @@ export default class State {
      * @method of
      * @memberof module:futils/monads/state.State
      * @static
+     * @version 2.2.0
      * @param {any} a Any value
      * @return {State} New instance of the Applicative
      *
@@ -127,7 +170,7 @@ export default class State {
      *
      * one.value; // -> 1
      */
-    static of (a) { return new State(a, null); }
+    static of (a) { return new State((b) => [a, b]); }
     of (a) { return State.of(a); }
 
     /**
@@ -135,21 +178,22 @@ export default class State {
      *     of the Functor
      * @method ap
      * @memberof module:futils/monads/state.State
+     * @version 2.2.0
      * @param {Functor} m Functor to apply the Applicative to
      * @return {State} New instance of the Functor
      *
      * @example
      * const {State, Identity} = require('futils');
      *
-     * let one = State.of(1);
+     * let one = Identity.of(1);
      *
-     * const aInc = Identity.of((a) => a + 1);
+     * const aInc = State.of((a) => a + 1);
      *
-     * aInc.ap(one); // -> State(2)
+     * aInc.ap(one); // -> Identity(2)
      */
     ap (m) {
         if (type.isFunc(m.map)) {
-            return m.map(this.value);
+            return m.map((a) => this.run()(a));
         }
         throw 'State::ap expects argument to be Functor but saw ' + m;
     }
@@ -158,6 +202,7 @@ export default class State {
      * Chains function calls which return monads into a single monad
      * @method flatMap
      * @memberof module:futils/monads/state.State
+     * @version 2.2.0
      * @param {function} f Function returning a monad
      * @return {State} New instance of the calling monads type
      *
@@ -172,16 +217,20 @@ export default class State {
      */
     flatMap (f) {
         if (type.isFunc(f)) {
-            return this.map(f).value;
+            return new State((b) => {
+                let r = this.compute(b);
+                return f(r[0]).compute(r[1]);
+            });
         }
         throw 'State::flatMap expects argument to be function but saw ' + f;
     }
 
     /**
      * Flattens down a nested monad one level and returns a new monad containing
-     *     the inner value
+     *     the inner run
      * @method flatten
      * @memberof module:futils/monads/state.State
+     * @version 2.2.0
      * @return {State} New instance of the monad
      *
      * @example
@@ -192,63 +241,67 @@ export default class State {
      * one.flatten(); // -> State(1)
      */
     flatten () {
-        return this.value;
+        return new State((b) => {
+            let r = this.compute(b);
+            return r[0].compute(r[1]);
+        });
+    }
+
+    fold (f, x) {
+        return f(this.run(x));
     }
 
     /**
-     * Given a function, folds the instance with it
-     * @method fold
-     * @param {function} f Function handling the value
-     * @return {any} Whatever f returns
+     * Runs the computation and returns the final value
+     * @method run
+     * @memberof module:futils/monads/state.State
+     * @version 2.2.0
+     * @param {any} s Initial value
+     * @return {any} Value of the final computation
      *
      * @example
      * const {State} = require('futils');
      *
-     * let one = State.of(1);
+     * const nums = [1, 2, 3, 4, 5];
      *
-     * one.fold((v) => v); // -> 1
-     * 
+     * const add = (xs) => {
+     *     if (xs.length < 1) { return State.get().flatMap(State.of); }
+     *     return State.get().flatMap((sum) => {
+     *         return State.put(sum + xs[0]).flatMap(() => add(xs.slice(1)));
+     *     });
+     * }
+     *
+     * add(nums).run(0); // -> 15
      */
-    fold (f) {
-        return f(this.value);
+    run (s) {
+        return this.compute(s)[0];
     }
 
     /**
-     * Returns the unit of a State
-     * @method empty
-     * @return {State} A new empty State
-     *
-     * @example
-     * const {State, id} = require('futils');
-     *
-     * State.of(1).concat(State.empty()).fold(id); // -> 1
-     * State.empty().concat(State.of(1)).fold(id); // -> 1
-     */
-    static empty () {
-        return new State(null, null);
-    }
-
-    // -- Semigroup
-    /**
-     * Concatenates this State with another State
-     * @method concat
+     * Runs the computation and returns the final state. Usually one uses 'run'
+     *     and discards the intermediate state but in some cases it is useful
+     *     to return the final state instead of the final value
+     * @method exec
      * @memberof module:futils/monads/state.State
-     * @param {State} semi Other State
-     * @return {State} A new State
+     * @version 2.2.0
+     * @param {any} s Initial value
+     * @return {any} Final state of the computation
      *
      * @example
-     * const {State, id} = require('futils');
+     * const {State} = require('futils');
      *
-     * let current = State.of(1280);
+     * const nums = [1, 2, 3, 4, 5];
      *
-     * const winSize = () => current.concat(State.of(1600));
+     * const add = (xs) => {
+     *     if (xs.length < 1) { return State.get().flatMap(State.of); }
+     *     return State.get().flatMap((sum) => {
+     *         return State.put(sum + xs[0]).flatMap(() => add(xs.slice(1)));
+     *     });
+     * }
      *
-     * let state = winSize();
-     * state.fold(id); // -> 1600
-     * state.previous.fold(id); // -> 1280
+     * add(nums).exec(0); // -> 15
      */
-    concat (semi) {
-        let s = semi.value === null ? [this.value, semi] : [semi.value, this];
-        return new State(...s);
+    exec (s) {
+        return this.compute(s)[1];
     }
 }

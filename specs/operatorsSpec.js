@@ -45,6 +45,19 @@ describe('futils/operators module', function () {
         expect(o).toEqual([['foo', 1], ['bar', 0]]);
     });
 
+    it('testing concat :: [a] -> [a] -> [a, a]', function () {
+        expect(_.concat([1], [2])).toEqual([1, 2]);
+        expect(_.concat([1], 2)).toEqual([1, 2]);
+        expect(_.concat(1, [2])).toEqual([2, 1]);
+    });
+
+    it('testing instance :: a -> Ctor -> a', function () {
+        function F () {
+            return _.instance(F, this);
+        }
+        expect(F() instanceof F).toBe(true);
+    });
+
     it('testing first :: xs -> x', function () {
         expect(_.first([1, 2, 3])).toBe(1);
     });
@@ -83,6 +96,50 @@ describe('futils/operators module', function () {
 
     it('testing differ :: xs -> ys -> [xs | ys]', function () {
         expect(_.differ([1, 2], [3, 2])).toEqual([1, 3]);
+    });
+
+    it('testing fold :: Function -> a -> Array -> a', function () {
+        expect(_.fold(_.concat, [], [[1], [2, 3], 4])).toEqual([1, 2, 3, 4]);
+    });
+
+    it('testing unfold :: Function -> a -> [a]', function () {
+        expect(_.unfold((n) => n < 3 ? [n, n + 1] : null, 1)).toEqual([1, 2]);
+    });
+
+    it('testing range :: Number -> Number -> [Number]', function () {
+        expect(_.range(2, 5)).toEqual([2, 3, 4, 5]);
+    });
+
+    it('testing filter :: Function -> [a] -> [a]', function () {
+        expect(_.filter((n) => n < 3, [1, 2, 3])).toEqual([1, 2]);
+    });
+
+    it('testing keep :: [a] -> [a]', function () {
+        expect(_.keep([1, null, 3])).toEqual([1, 3]);
+    });
+
+    it('testing drop :: Number -> [a] -> [a]', function () {
+        expect(_.drop(2, [1, 2, 3])).toEqual([3]);
+    });
+
+    it('testing dropWhile :: Function -> [a] -> [a]', function () {
+        expect(_.dropWhile((n) => n < 3, [1, 2, 3])).toEqual([3]);
+    });
+
+    it('testing take :: Number -> [a] -> [a]', function () {
+        expect(_.take(2, [1, 2, 3])).toEqual([1, 2]);
+    });
+
+    it('testing takeWhile :: Function -> [a] -> [a]', function () {
+        expect(_.takeWhile((n) => n < 3, [1, 2, 3])).toEqual([1, 2]);
+    });
+
+    it('testing find :: Function -> [a] -> a', function () {
+        expect(_.find((n) => n % 2 === 0, [1, 2, 3, 4])).toBe(2);
+    });
+
+    it('testing findRight :: Function -> [a] -> a', function () {
+        expect(_.findRight((n) => n % 2 === 0, [1, 2, 3, 4])).toBe(4);
     });
 
     it('testing equals :: Setoid -> Setoid -> Bool', function () {

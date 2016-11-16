@@ -9,6 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import type from '../types';
+import operators from '../operators';
 
 /**
  * Implementation of the Identity monad
@@ -27,7 +28,9 @@ const MV = Symbol('MonadicValue');
  * @version 2.0.0
  */
 export default class Identity {
-    constructor (a) { this.value = a; }
+    constructor (a) {
+        this.value = a;
+    }
     set value (a) { this[MV] = a; }
     get value () { return this[MV]; }
 
@@ -207,13 +210,4 @@ export default class Identity {
     // traverse, Functor, Foldable
     // -- Semigroup
     // concat
-    // 
-    doT (...fs) {
-        // const op = (m) => m.doT((a) => Maybe.of(isInt(a) ? a : null),
-        //                         (ma) => ma.map((n) => n + 1),
-        //                         (ma) => ma.map((n) => n % 2 === 0),
-        //                         (ma) => ma.orElse(false));
-        //                         
-        return fs.reduce((x, g) => x.map(g), this).flatMap(Identity.of);
-    }
 }

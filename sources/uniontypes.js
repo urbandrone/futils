@@ -10,12 +10,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 import type from './types';
 import decorators from './decorators';
+import operators from './operators';
 
 /**
  * Implementation of a Union type factory
  * @module futils/uniontypes
  * @requires futils/types
  * @requires futils/decorators
+ * @requires futils/operators
  */
 
 const VAL = Symbol('TypeValue');
@@ -23,18 +25,16 @@ const TYPE = Symbol('TypeName');
 
 
 
-const getSelf = (c, F) => c instanceof F ? c : Object.create(F.prototype);
-
 const makeType = (name, def) => {
     function TypeCtor (x) {
-        let self = getSelf(this, TypeCtor);
+        let self = operators.instance(TypeCtor, this);
         if (TypeCtor.typeOf(x)) {
             self[VAL] = x;
             self[TYPE] = name;
             return self;
         }
         throw new TypeError(`${name} constructor matched invalid ${x}`);
-    };
+    }
 
     TypeCtor.prototype.toString = function () {
         return `${name}(${this[VAL]})`;

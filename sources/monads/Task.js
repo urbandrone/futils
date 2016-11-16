@@ -10,6 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 /* globals setImmediate, process, setTimeout */
 import type from '../types';
+import operators from '../operators';
 
 /**
  * Implementation of the Task monad
@@ -37,7 +38,10 @@ const ofVoid = () => void 0;
  * @version 2.0.0
  */
 export default class Task {
-    constructor (a, b) { this.run = a; this.cleanUp = b; }
+    constructor (a, b) {
+        this.run = a;
+        this.cleanUp = b;
+    }
     set run (a) { this[RUN_PROG] = a; }
     get run () { return this[RUN_PROG]; }
     set cleanUp (a) { this[CLEANUP] = a || ofVoid }

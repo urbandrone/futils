@@ -1,23 +1,27 @@
 # futils
-**A collection of functions and tools to use functional programming paradigms in JavaScript** 
-
+**A collection of tools to use functional programming paradigms in JavaScript** 
+[![NPM](https://nodei.co/npm/futils.png)](https://nodei.co/npm/futils/)
 [![Build Status](https://travis-ci.org/urbandrone/futils.svg?branch=master)](https://travis-ci.org/urbandrone/futils)
+[![dependencies](https://david-dm.org/urbandrone/futils.svg)](https://david-dm.org/urbandrone/futils)
 
 ## About
-`futils` is a collection of monads, lenses, transducers and small utility functions composed of helpers from these categories:
+`futils` (spoken "f-utils") is a collection composed of helpers from these categories:
 
 1. Type checking
-2. Arity modifier
+2. Arity modifications
 3. Function combinators and decorators
-4. Comparators
-5. Collection iterators
+4. Trampolining
+5. Collection operations
 6. Lenses
 7. Transducers
-8. Monads (Identity, Maybe, Either, State, IO, Task)
+8. Monoids (Additive, Multiple, Fn, All, Any, Min, Max, Dict)
+9. Monads (Identity, Maybe, Either, State, IO, Task)
+10. Uniontypes
 
-One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with reactive streams and can be compared with the excellent `allong.es` library written by [Mr. Braithwaite](http://raganwald.com/) to a certain extend.
+One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with a lot of other stuff too: jQuery, Reactive Streams, React/Preact and virtual-dom, JSPM, Electron...
 
 Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the invocation until all needed parameters are given. Below is some code for demonstration purposes:
+
 ```
 const {pipe, field, and, equals, isString, isObject} = require('futils');
 
@@ -79,6 +83,9 @@ import {pipe, isString, call} from 'futils';
 // your code
 ```
 
+### Note:
+If you want to use `futils` in conjunction with a bundler which supports tree shaking (like `rollup`), only those functions which you already use from `futils` will be included in the final build, which may significantly lower the file size of your scripts after bundling.
+
 ## Install for browsers
 Download the `futils.js` file and include it with a script tag which allows you to get access to the global `futils` namespace:
 ```
@@ -91,6 +98,9 @@ var _ = futils;
 
 // your code
 ```
+
+### Note:
+If you want to use `futils` in non ES2015-ready browsers, make sure you include a ES2015 environment polyfill like [core-js](https://github.com/zloirock/core-js). It's fine if you only use the native shim without ES7 proposels.
 
 ## Install for AMD
 If you want to use `futils` with a AMD powered development workflow, you can do that too. Just like using it in the browser, all you have to do is download the file `futils.js` and use it in your code:

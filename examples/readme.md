@@ -1,9 +1,9 @@
 # futils Examples
-A growing set of **How to** examples for solving some common programming problems with the help of this package.
+A growing set of **How to** examples for solving some common programming problems with the help of the `futils` package.
 
 ## Available examples
 * [Getting started](./ex00-getting-started.md)
 * [Currying and partial application](./ex01-currypartial.md)
 * [Use with reactive streams](./ex02-reactive.md)
 * [Working with transducers](./ex03-transducers.md)
-* [Monads are welcome!](./ex04-monads.md)
+* [Monads!](./ex04-monads.md)

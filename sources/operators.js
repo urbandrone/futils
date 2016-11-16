@@ -10,6 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 import type from './types';
 import arity from './arity';
+import rec from './trampolines';
 
 /**
  * A collection of operator functions to work on data structures
@@ -196,9 +197,62 @@ const immutable = (x) => Object.freeze(merge(x));
  */
 const pairs = (xs) => Object.keys(xs).map((k) => [k, xs[k]]);
 
+/**
+ * Given a constructor function and a context (usually `this`) returns either
+ *     the context if it is a instance of the constructor or a new object
+ *     created from the constructor.prototype
+ * @method 
+ * @version 2.2.0
+ * @param {function} F The constructor function
+ * @param {any} ctx The context to check against
+ * @return {object} Either the context or a new F
+ *
+ * @example
+ * const {instance} = require('futils');
+ *
+ * // we use instance here to create a constructor which can be used without
+ * //   needing the "new" keyword
+ * function Unit (x, y) {
+ *     let self = instance(Unit, this);
+ *     self.x = x;
+ *     self.y = y;
+ *     return self;
+ * }
+ *
+ * let newUnit = new Unit(1, 2);
+ * let unit = Unit(1, 2);
+ *
+ * newUnit.x && newUnit.x === 1; // -> true
+ * unit.x && unit.x === 1; // -> true
+ */
+const instance = (F, ctx) => {
+    return ctx instanceof F ? ctx : Object.create(F.prototype);
+}
+
 
 
 // -- Arrays --------------------
+/**
+ * Concatenates two things which are members of a semigroup
+ * @method 
+ * @param {any|array|semigroup} a First member
+ * @param {any|array|semigroup} b Second member
+ * @return {array|semigroup} A new member
+ *
+ * @example
+ * const {concat} = require('futils');
+ *
+ * const toNs = concat([1, 2]);
+ *
+ * toNs(3); // -> [1, 2, 3]
+ * toNs([3]); // -> [1, 2, 3]
+ */
+const concat = arity.dyadic((a, b) => {
+    if (a && type.isFunc(a.concat)) { return a.concat(b); }
+    if (b && type.isFunc(b.concat)) { return b.concat(a); }
+    throw 'concat :: Unable to concatenate items ' + [a, b];
+});
+
 /**
  * Given a iterable collection, returns the first item
  * @method
@@ -377,11 +431,265 @@ const differ = arity.dyadic((xs, ys) => {
 });
 
 
+/** NOTE ===================
+
+Functions in the following sections are implemented in foresight of
+tail call optimization, which now finally seems to arrive.
+
+========================= */
+
+/**
+ * Given a function, a seed value and a iterable collection, return the
+ *     iterable folded down into the seed value
+ * @method 
+ * @version 2.2.0
+ * @param {function} f Function to call on each iteration
+ * @param {any} x The seed value to fold into
+ * @param {array} xs The collection to fold down
+ * @return {any} Depends on the seed value
+ *
+ * @example
+ * const {fold} = require('futils');
+ *
+ * const add = (a, b) => a + b;
+ *
+ * fold(add, 0, [1, 2, 3]); // -> 6
+ * fold(add, '', ['hello,', ' ', 'world']); // -> 'hello world'
+ */
+const fold = arity.triadic((f, x, xs) => {
+    const go = rec.trampoline((g, acc, as) => {
+        if (as.length < 1) { return acc; }
+        return rec.suspend(go, g, g(acc, first(as)), rest(as));
+    });
+    return go(f, x, Array.from(xs));
+});
+
+/**
+ * Given a function and a initial value, accumulates values into an array until
+ *     the function returns either null or undefined. This function can be used
+ *     to implement `while` loops.
+ * @method 
+ * @version 2.2.0
+ * @param {function} f Function to call on each iteration
+ * @return {array} Collection of accumulated values
+ *
+ * @example
+ * const {unfold} = require('futils');
+ *
+ * const fifthUntil = (n) => unfold((x) => x <= n ? [x, x + 5] : null, 5);
+ *
+ * fifthUntil(25); // -> [5, 10, 15, 20, 25]
+ */
+const unfold = arity.dyadic((f, x) => {
+    const go = rec.trampoline((g, y, ys) => {
+        let r = g(y);
+        if (r == null) { return ys; }
+        return rec.suspend(go, g, r[1], [...ys, r[0]]);
+    });
+    return go(f, x, []);
+});
+
+/**
+ * Given a start and end index, returns a array from start to end containing
+ *     all indices in between
+ * @method 
+ * @version 2.2.0
+ * @param {integer} start Starting index
+ * @param {integer} stop Final index
+ * @return {array} List of all integers from start through end
+ *
+ * @example
+ * const {range} = require('futils');
+ *
+ * range(2, 8); // -> [2, 3, 4, 5, 6, 7, 8]
+ */
+const range = arity.dyadic((start, stop) => {
+    return unfold((n) => n <= stop ? [n, n + 1] : null, start);
+});
+
+/**
+ * Given a function and a list, filters the list with the given function and
+ *     returns a list that only contains values for which the function returned
+ *     a truthy value
+ * @method 
+ * @version 2.2.0
+ * @param {function} f Filter function
+ * @param {array} xs List to filter
+ * @return {array} New list
+ *
+ * @example
+ * const {filter} = require('futils');
+ *
+ * const evens = (n) => n % 2 === 0;
+ *
+ * filter(evens, [1, 2, 3, 4, 5, 6]); // -> [2, 4, 6]
+ */
+const filter = arity.dyadic((f, xs) => {
+    return fold((ys, x) => !!f(x) ? [...ys, x] : ys, [], Array.from(xs));
+});
+
+/**
+ * Given a list, returns a new list with all `null` and `undefined` values
+ *     removed
+ * @method 
+ * @version 2.2.0
+ * @param {array} xs List to transform
+ * @return {array} A new list
+ *
+ * @example
+ * const {keep} = require('futils');
+ *
+ * keep([1, null, 3]); // -> [1, 3]
+ */
+const keep = (xs) => filter((x) => x != null, Array.from(xs));
+
+/**
+ * Given a number `n` and a list, drops the first n items from the list
+ * @method 
+ * @version 2.2.0
+ * @param {number} n Number of items to drop
+ * @param {array} xs List to drop items from
+ * @return {array} New list
+ *
+ * @example
+ * const {drop} = require('futils');
+ *
+ * drop(2, [1, 2, 3, 4]); // -> [3, 4]
+ */
+const drop = arity.dyadic((n, xs) => {
+    let i = Math.round(Math.abs(n));
+    return fold((ys, x) => {
+        if (i > 0) {
+            i -= 1;
+            return ys;
+        }
+        return [...ys, x];
+    }, [], Array.from(xs));
+});
+
+/**
+ * Given a predicate function and a list, drops items from the list until the
+ *     function returns a falsy value for the first time
+ * @method 
+ * @version 2.2.0 
+ * @param {function} f Predicate function
+ * @param {array} xs List to drop items from
+ * @return {array} New list
+ *
+ * @example
+ * const {dropWhile} = require('futils');
+ *
+ * const lt3 = (n) => n < 3;
+ *
+ * dropWhile(lt3, [1, 2, 3, 4, 5]); // -> [4, 5]
+ */
+const dropWhile = arity.dyadic((f, xs) => {
+    let drop = true;
+    return fold((ys, x) => {
+        drop = drop && !!f(x);
+        if (drop) {
+            return ys;
+        }
+        return [...ys, x];
+    }, [], Array.from(xs));
+});
+
+/**
+ * Given a number `n` and a list, takes n items from the beginning of the list
+ *     and drops the rest
+ * @method 
+ * @version 2.2.0 
+ * @param {number} n Number of items to take
+ * @param {array} xs List to take items from
+ * @return {array} New list
+ *
+ * @example
+ * const {take} = require('futils');
+ *
+ * take(2, [1, 2, 3, 4, 5]); // -> [1, 2];
+ */
+const take = arity.dyadic((n, xs) => {
+    let i = 0;
+    return fold((ys, x) => {
+        if (i < n) {
+            i += 1;
+            return [...ys, x];
+        }
+        return ys;
+    }, [], Array.from(xs));
+});
+
+/**
+ * Given a predicate function and a list, takes items from the beginning of the
+ *     list until the function returns a falsy value for the first time
+ * @method 
+ * @version 2.2.0 
+ * @param {function} f Predicate function
+ * @param {array} xs List to take items from
+ * @return {array} New list
+ *
+ * @example
+ * const {takeWhile} = require('futils');
+ *
+ * const lt3 = (n) => n < 3;
+ *
+ * takeWhile(lt3, [1, 2, 3, 4, 5]); // -> [1, 2]
+ */
+const takeWhile = arity.dyadic((f, xs) => {
+    let take = true;
+    return fold((ys, x) => {
+        if (take && (take = !!f(x))) {
+            return [...ys, x];
+        }
+        return ys;
+    }, [], Array.from(xs));
+});
+
+/**
+ * Given a function and a list, returns the first item for which the function
+ *     returns a truthy value
+ * @method 
+ * @version 2.2.0 
+ * @param {function} f Function to match with
+ * @param {array} xs List to find item from
+ * @return {any|null} Either a match or null
+ *
+ * @example
+ * const {find} = require('futils');
+ *
+ * const divBy = (n) => (m) => n % m === 0;
+ *
+ * find(divBy(2), [1, 2, 3, 4, 5]); // -> 2
+ */
+const find = arity.dyadic((f, xs) => {
+    return fold((ys, x) => ys == null && !!f(x) ? x : ys, null, Array.from(xs));
+});
+
+/**
+ * Given a function and a list, returns the first item for which the function
+ *     returns a truthy value. Matches items from the right
+ * @method 
+ * @version 2.2.0 
+ * @param {function} f Function to match with
+ * @param {array} xs List to find item from
+ * @return {any|null} Either a match or null
+ *
+ * @example
+ * const {findRight} = require('futils');
+ *
+ * const divBy = (n) => (m) => n % m === 0;
+ *
+ * findRight(divBy(2), [1, 2, 3, 4, 5]); // -> 4
+ */
+const findRight = arity.dyadic((f, xs) => find(f, Array.from(xs).reverse()));
+
+
+
 
 // -- Setoid --------------------
 /**
  * Generic setoid method, works on anything that implements a `equals` method. If
- *     no `equals` is found it matches on the value directly via strict
+ *     no `equals` is found it matches on the values directly via strict
  *     comparison (===)
  * @method
  * @version 2.0.0 
@@ -426,6 +734,9 @@ const map = arity.dyadic((f, m) => {
     if (type.isFunc(f)) {
         if (type.isFunctor(m)) {
             return m.map(f);
+        }
+        if (type.isIterable(m)) {
+            return Array.from(m).map(f);
         }
         if (type.isObject(m)) {
             return Object.keys(m).reduce((acc, k) => {
@@ -494,35 +805,28 @@ const ap = arity.dyadic((mf, ma) => {
  * flatten([[1, 2], 3, [[4, 5]]]); // -> [1, 2, 3, 4, 5]
  */
 const flatten = (m) => {
+    if (type.isObject(m)) {
+        return m;
+    }
     if (type.isFunc(m.flatten)) {
         return m.flatten();
     }
     if (type.isArray(m)) {
-        let xs = flattenTCO(m, []);
-        while (xs instanceof Function) {
-            xs = xs();
-        }
-        return xs;
+        const go = rec.trampoline((xs, ys) => {
+            if (ys.length < 1) { return xs; }
+            if (type.isArray(ys[0])) {
+                return rec.suspend(go, xs, [...ys[0], ...ys.slice(1)]);
+            }
+            return rec.suspend(go, [...xs, ys[0]], ys.slice(1));
+        });
+        return go([], m);
     }
     throw 'operators::flatten awaits Monad or array but saw ' + m;
 }
 
-function flattenTCO (xs, ys) {
-    if (xs.length <= 0) {
-        return ys;
-    }
-    return function () {
-        if (type.isArray(xs[0])) {
-            return flattenTCO([...xs[0], ...xs.slice(1)], ys);
-        }
-        return flattenTCO(xs.slice(1), [...ys, xs[0]]);
-    }
-}
-
 /**
  * Generic flatMap method, works on anything which implements a `map` and a
- *     `flatten` method as well as on arrays. If given a object as data,
- *     the result will be mapped and merged via `merge`
+ *     `flatten` method as well as on arrays and objects
  * @method
  * @version 0.2.0
  * @param {function} f Transformation function
@@ -537,7 +841,7 @@ function flattenTCO (xs, ys) {
  */
 const flatMap = arity.dyadic((f, m) => {
     if (type.isFunc(f)) {
-        return type.isObject(m) ? merge(m, map(f, m)) : flatten(map(f, m));
+        return flatten(map(f, m));
     }
     throw 'operators::flatMap awaits a function as first argument but saw ' + f;
 });
@@ -545,7 +849,8 @@ const flatMap = arity.dyadic((f, m) => {
 
 
 export default {
-    field, has, call, merge, immutable, first, last, head, tail,
+    field, has, call, merge, immutable, first, last, head, tail, concat,
     initial, rest, unique, union, map, flatten, flatMap, assoc, equals,
-    ap, intersect, differ, pairs
+    ap, intersect, differ, pairs, instance, fold, unfold, range, take, takeWhile,
+    filter, drop, dropWhile, keep, find, findRight
 };

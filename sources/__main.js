@@ -1,14 +1,19 @@
 import arity from './arity';
 import type from './types';
+import trampolines from './trampolines';
 import combinators from './combinators';
 import decorators from './decorators';
 import operators from './operators';
 import lenses from './lenses';
 import transducers from './transducers';
 import monads from './monads';
+import monoids from './monoids';
 import UnionType from './uniontypes';
 
 export default {
+    trampoline: trampolines.trampoline,
+    suspend: trampolines.suspend,
+
     aritize: arity.aritize,
     monadic: arity.monadic,
     dyadic: arity.dyadic,
@@ -68,6 +73,15 @@ export default {
 
     Type: UnionType,
 
+    Additive: monoids.Additive,
+    Multiple: monoids.Multiple,
+    Min: monoids.Min,
+    Max: monoids.Max,
+    Dict: monoids.Dict,
+    Fn: monoids.Fn,
+    All: monoids.All,
+    Any: monoids.Any,
+
     Identity: monads.Identity,
     IO: monads.IO,
     Maybe: monads.Maybe,
@@ -95,6 +109,7 @@ export default {
     has: operators.has,
     merge: operators.merge,
     immutable: operators.immutable,
+    instance: operators.instance,
     first: operators.first,
     last: operators.last,
     head: operators.head,
@@ -112,6 +127,20 @@ export default {
     intersect: operators.intersect,
     differ: operators.differ,
     pairs: operators.pairs,
+    fold: operators.fold,
+    unfold: operators.unfold,
+    concat: operators.concat,
+    range: operators.range,
+    filter: operators.filter,
+    keep: operators.keep,
+    drop: operators.drop,
+    dropWhile: operators.dropWhile,
+    take: operators.take,
+    takeWhile: operators.takeWhile,
+    partition: operators.partition,
+    partitionWith: operators.partitionWith,
+    find: operators.find,
+    findRight: operators.findRight,
 
     transducers
 };
