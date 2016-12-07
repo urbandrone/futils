@@ -206,4 +206,12 @@ export default class IO {
 
     // -- Monoid
     // empty
+    
+    try () {
+        try {
+            return this.fold((v) => v);
+        } catch (exc) {
+            return exc.message;
+        }
+    }
 }
