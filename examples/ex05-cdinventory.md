@@ -66,11 +66,11 @@ Here is a preview of the data structure the application handles:
 
 ```json
 [{
-    'name': 'Pink Floyd',
-    'lps': [
-        {'title': 'Dark side of the moon'},
-        {'title': 'Another brick in the wall'},
-        {'title': 'The division bell'}
+    "name": "Pink Floyd",
+    "lps": [
+        {"title": "Dark side of the moon"},
+        {"title": "Another brick in the wall"},
+        {"title": "The division bell"}
     ]
 }]
 ```
