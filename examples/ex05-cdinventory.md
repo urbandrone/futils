@@ -94,7 +94,7 @@ module.exports = Action;
 ### Let's make a Controller
 A controller (or modifier) describes a function which takes in a state and some action, and returns a new state from the data send by the action and the given state.
 
-If that sound's familiar, you might already seen or used `redux` which uses things called a `reducer` function for the same purpose. The controller itself is a reducer function.
+If that sound's familiar, you might have already seen or used `redux` which uses things called a `reducer` function for the same purpose. The controller itself is a reducer function.
 
 ```javascript
 const { Maybe, pipe, find, map, curry, filter } = require('futils');
@@ -141,7 +141,7 @@ module.exports = controller;
 ```
 
 ### A View
-The last thing our component needs is a way to view the state. To communicate with the controller, the view emits signals (→ Actions) about what to do.
+The last thing our component needs is a way to view the state. To communicate with the controller, the view can emit signals (→ Actions) about what to do.
 
 Normally you would break this up into smaller functions but it's easer to grasp what happens if you can see the big picture.
 
@@ -163,19 +163,20 @@ const foldNames = fold((a, x) => merge(a, {[x.name]: x.value}), {});
 
 
 // takes a state to render and a emitter function and sends signals
-// through the emitter to the controller
+// through the emitter to the controller. all signals which of type
+// Ignore are placeholders
 const view = (state, emit) => {
     return h('div.app', [
         h('div.app_head', [
-            h(  'input.textinput',
+            h('input.textinput',
                 {   on: {input: [emit, signal(Ignore, ['x', null])]},
                     props: {type: 'text', name: 'artist', placeholder: 'Name'}
                 }, []),
-            h(  'input.textinput',
+            h('input.textinput',
                 {   on: {input: [emit, signal(Ignore, ['x', null])]},
                     props: {type: 'text', name: 'lp', placeholder: 'LP'}
                 }, []),
-            h(  'button.btn.submit',
+            h('button.btn.submit',
                 {   on: {click: compose(emit, signal(Add), foldNames, inputs)}
                 }, 'Save')
         ]),
