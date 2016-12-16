@@ -1,9 +1,5 @@
-# A small DVC application to manage your Compact Discs
--- Draft
-This time we are going to create a small DataViewController application. I call this style of writing applications Data- instead of ModelViewController, because there is no explicit model in the code. All data always has the "current" state and permutations occur one by one via signals which send actions to the controller. The controller then modifies the state and returns a new one which will be the next state rendered. Another way to call it would be DataViewModify, choose the one you think sounds best.
-
-**Please note:**
-The example shows a simplified version of the engine currently in development. It is shown here for educational reasons and cannot handle things like async processes or side-effects.
+# A small DVC application to manage Compact Discs
+This time we are going to create a small Data-View-Controller application. I call this style of writing applications Data- instead of Model-View-Controller, because there is no explicit model in the code. All data always has the "current" state and permutations occur one by one via signals which send actions to the controller. The controller then modifies the state and returns a new one which will be the next state rendered. Another way to call it would be Data-View-Modify, choose the one you think is most appropriate.
 
 ## Prerequisites
 To start, do the usual directory creation and `$ cd` things, then init npm and install `futils` along `snabbdom`:
@@ -53,13 +49,15 @@ module.exports = { render, signal };
 
 Never mind: Even if you don't understand exactly how it works, you will see how a nice and simple architecture which scales well arises from this.
 
-## Our App component
-We're ready now to create a first component! A component is some object, which provides a `view` and a `controller` function which must satisfy these signatures:
+## The App component
+We're ready now to create a component! A component is some object, which provides a `view` and a `controller` function which must satisfy these signatures:
 
 #### Signatures
 
 - view(State, Function) → Virtual Node/VNode
 - controller(State, Action) → State
+
+Like in `React`, components can be nested to create more complex components. To do this, top level components have to pass the state, the emitter function and all actions which occur into the subcomponent's view and controller functions.
 
 ### Data
 Here is a preview of the data structure the application handles:
@@ -78,13 +76,13 @@ Here is a preview of the data structure the application handles:
 It will be a collection of artists, each with a collection of LPs they produced, each with a title under which they are produced. In the end we will be able to view the artists in the list, as well as adding and removing them to and from it. Let's start!
 
 ### We need Actions
-First off, we need a set of actions to perform on the data. That's what actions (or signals) are used for.
+First off, we need a set of actions to perform on the data. The whole reason we have signals is to instruct the controller what to do to create a new state to render.
 
 ```javascript
 const Action = {
-    Ignore: Symbol('Ignore'),
     Add: Symbol('AddArtist'),
-    Remove: Symbol('RemoveArtist')
+    Remove: Symbol('RemoveArtist'),
+    Update: Symbol('UpdateArtist')
 };
 
 module.exports = Action;
@@ -97,39 +95,49 @@ A controller (or modifier) describes a function which takes in a state and some 
 If that sound's familiar, you might have already seen or used `redux` which uses things called a `reducer` function for the same purpose. The controller itself is a reducer function.
 
 ```javascript
-const { Maybe, pipe, find, map, curry, filter } = require('futils');
+const {Maybe, pipe, find, map, curry, filter, field} = require('futils');
 const {Add, Remove} = require('./actions');
 
-
-// these create new information from passed in data
-const newLP = (title) => ({title});
-const newArtist = ({name, lp}) => ({name, lps: [newLP(lp)]});
-
-// these help to update the data
+// these are general tools which are normally placed in their own file
 const findBy = curry((x, y, xs) => find((a) => a[x] === y, xs));
 const swapBy = curry((x, y, xs) => map((a) => a[x] === y[x] ? y : a, xs));
 const remove = curry((x, xs) => filter((a) => a !== x, xs));
 
-// returns a Maybe Applicative f from a given name which
-// when applied to an array returns the first item with the
-// same name
-const getByName = (name) => Maybe.of(name).map(findBy('name'));
+// these create new information from passed in data
+const newLP = (lp) => ({title: lp});
+const newArtist = ({name, lp}) => ({name, lps: [newLP(lp)]});
 
+// these help to update the data
+const swapByName = swapBy('name');
+const findByName = (a) => Maybe.of(a).map(findBy('name'));
 
 // takes in a state (array) and a action and returns a new altered state
 // from both
-const controller = (state, action) => {
-    switch (action.type) {
+const controller = (state, {type, data}) => {
+    switch (type) {
         case Add:
-            return getByName(action.data.name).
+            return findByName(data.name).
                 ap(Maybe.of(state)).
-                map((a) => merge(a, {lps: [...a.lps, newLP(action.data.lp)]})).
+                map((a) => merge(a, {lps: [...a.lps, newLP(data.lp)]})).
                 cata({
-                    None: () => [...state, newArtist(action.data)],
-                    Some: (a) => swapBy('name', a, state)
+                    None: () => [...state, newArtist(data)],
+                    Some: (a) => swapByName(a, state)
                 });
         case Remove:
-            return remove(action.data, state);
+            return findByName(data.name).
+                ap(Maybe.of(state)).
+                cata({
+                    None: () => state,
+                    Some: (a) => remove(a, state);
+                });
+        case Update:
+            return findByName(data.oldName).
+                ap(Maybe.of(state)).
+                map((a) => merge(a, {name: data.name})).
+                cata({
+                    None: () => state,
+                    Some: (a) => swapByName(a, state)
+                });
         default:
             return state;
     }
@@ -141,54 +149,58 @@ module.exports = controller;
 ```
 
 ### A View
-The last thing our component needs is a way to view the state. To communicate with the controller, the view can emit signals (→ Actions) about what to do.
+The last thing our component needs to have is a way to view the state. To communicate with the controller, the view can emit signals (Data → Action) about what to do.
 
 Normally you would break this up into smaller functions but it's easer to grasp what happens if you can see the big picture.
 
 ```javascript
-const {compose, fold, merge} = require('futils');
+const {compose, pipe, fold, merge, call, field} = require('futils');
 const h = require('snabbdom/h');
 const {signal} = require('./dvc-app');
-const {Add, Remove, Update, Ignore} = require('./actions');
+const {Add, Remove, Update} = require('./actions');
 
 
 // handles clicks on the save button, returns a array of <input> elements
-const inputs = (e) => {
-    e.preventDefault();
-    return Array.from(e.target.parentNode.querySelectorAll('input'));
-}
+const inputs = pipe(
+    call('preventDefault'),
+    field('target.parentNode'),
+    call('querySelectorAll', 'input[type="text"]')
+);
 
 // folds all <input> elements into a hashmap, creating name:value pairs
-const foldNames = fold((a, x) => merge(a, {[x.name]: x.value}), {});
+const namedValues = fold((a, x) => merge(a, {[x.name]: x.value}), {});
+const artist = compose(namedValues, Array.from, inputs);
+
+const addArtist = compose(signal(Add), artist);
+const updateArtist = (a) => pipe(artist, merge({oldName: a}), signal(Update));
 
 
 // takes a state to render and a emitter function and sends signals
-// through the emitter to the controller. all signals which of type
-// Ignore are placeholders
+// through the emitter to the controller
 const view = (state, emit) => {
+    const type = 'text';
     return h('div.app', [
         h('div.app_head', [
             h('input.textinput',
-                {   on: {input: [emit, signal(Ignore, ['x', null])]},
-                    props: {type: 'text', name: 'artist', placeholder: 'Name'}
-                }, []),
+                {props: {type, name: 'name', placeholder: 'Name'}},
+                []),
             h('input.textinput',
-                {   on: {input: [emit, signal(Ignore, ['x', null])]},
-                    props: {type: 'text', name: 'lp', placeholder: 'LP'}
-                }, []),
+                {props: {type, name: 'lp', placeholder: 'LP'}},
+                []),
             h('button.btn.submit',
-                {   on: {click: compose(emit, signal(Add), foldNames, inputs)}
-                }, 'Save')
+                {on: {click: compose(emit, addArtist)}},
+                'Save')
         ]),
         h('div.app_body', state.map((a) => {
             return h('div.artist', [
                 h('div.artist_meta', [
-                    h('p.artist_meta_name', [
-                        h('strong', a.name),
-                        h('button.btn', 
-                            {on: {click: [emit, signal(Remove, a)]}
-                            }, 'Delete');
-                    ])
+                    h('input.textinput',
+                        {on: {blur: compose(emit, updateArtist(a.name))},
+                        props: {type, name: 'name', value: a.name}},
+                        []),
+                    h('button.btn', 
+                        {on: {click: [emit, signal(Remove, a.name)]}},
+                        'Delete')
                 ]),
                 h('div.aritst_lps', a.lps.map((lp) => {
                     return h('div.lp', lp.title);
