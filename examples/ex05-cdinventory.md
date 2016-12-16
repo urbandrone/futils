@@ -26,13 +26,13 @@ function which passes actions to the controller.
 ```javascript
 // dvc-app.js
 const {curry} = require('futils');
-const $ = require('snabbdom');
+const snabbdom = require('snabbdom');
 const classes = require('snabbdom/modules/class');
 const props = require('snabbdom/modules/props');
 const style = require('snabbdom/modules/style');
 const on = require('snabbdom/modules/eventlisteners');
 
-const patch = $.init([classes, props, style, on]);
+const patch = snabbdom.init([classes, props, style, on]);
 
 const render = (state, node, cmp) => {
     const vNode = cmp.view(state, (action) => {

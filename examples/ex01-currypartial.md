@@ -99,6 +99,76 @@ johnsMsgTo('Steven');
 // -> 'John said "Partial application is awesome!" to Steven'
 ```
 
+## Other basic tools
+There are some other basic tools in `futils` you should know about. Apart from curry and partial, the ones used most often are:
+
+- pipe & compose → Function domain
+- map, filter & fold → Array domain
+- field, merge & call → Object domain
+
+Here are some examples from each to wet your appetite. Each example shows a simple application from the functions in each domain.
+
+### Function composition (pipe/compose)
+We will start with `pipe`. It takes two up to N functions and pipes the result from calling the first function to the second function and so on and returns the result of calling the last function. It is **the** basic building block in functional programming and can be found everywhere.
+
+Next to pipe is `compose`, which works exactly the same way (it clues functions together) but it does so by doing right composition of functions. 
+
+```javascript
+const {pipe} = require('futils');
+
+const upper = (s) => s.toUpperCase();
+const trim = (s) => s.trim();
+
+// trimUpper: String → trim → upper → String
+const trimUpper = pipe(trim, upper);
+
+trimUpper('   shout! '); // -> 'SHOUT!'
+```
+
+### Array mutation
+Now that you know that much about functions, let's move on to arrays and what we can do with them.
+
+```javascript
+const {pipe, map, filter, fold} = require('futils');
+
+const isSome = (a) => a != null;
+const add = (a, b) => a + b;
+const inc = add(1);
+
+// sum: Array → filter(!!) → map(+1) → fold (+) 0
+const sum = pipe(filter(isSome), map(inc), fold(add, 0));
+
+sum([1, 2, 3, 4, 5]); // -> 15
+sum([1, null, undefined, 4, 5]); // -> 10
+```
+
+Isn't that great? We packed three operations into a single function which works on a list of numbers and/or `null` and/or `undefined` values and returns the sum of all of the numbers or zero. All in one line!
+
+Imagine there exists a world, where for each value `A` a corresponding `B` exists, and our functions are just mappings in the form `A` → `B`. Then you'd be able to construct all programs you will ever build with this set of functions you already have. The good news is: In programming the possibility exists to create everything, even from nothing. Therefor you can build all needed mappings yourself if they do not exist. `futils` helps you with that.
+
+### Object interaction
+Sooner or later, everyone needs to interact with some object's API. Here are some helpers from `futils` to interface them:
+
+```javascript
+const {pipe, merge, field, call} = require('futils');
+
+// you can merge objects together, which creates a new object
+merge({a: 1}, {b: 2}); // -> {a: 1, b: 2}
+
+// or call methods and access fields
+const handleEvent = pipe(
+    call('preventDefault'),
+    field('target.value')
+);
+```
+
+These are some of the many basic building blocks provided by the library.
+
+## Next parts
+In the next tutorials you will see how to use `futils` in other, more advanced situations. You will be introduced to other concepts and aspects like reactive streams and monads. After that, we are going to build a simple application mainly from `futils` itself as well as a little library called `snabbdom` which does the virtual DOM rendering stuff. Stay tuned!
+
+
+
 ---
 [Index](./readme.md)
 
