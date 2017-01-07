@@ -61,7 +61,7 @@ const tap = (x) => (y) => y(x);
  *     second function over each parameter and calls the first function with
  *     the result
  * @method
- * @version 2.2.1
+ * @version 2.3.0
  * @param {function} x Function which returns the final result
  * @param {function} y Function to map over
  * @param {any} ...zs Parameters
@@ -194,7 +194,7 @@ const or = (...fs) => {
  *     returns a function `g` which represents the fixed-point of `f`. Allows to
  *     implement recursive anonymous functions without recursion or iteration
  * @method
- * @version 2.2.1
+ * @version 2.3.0
  * @param {function} f The function to calculate the fixed-point of
  * @return {function} The fixed-point of f
  *
