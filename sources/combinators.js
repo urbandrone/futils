@@ -57,6 +57,32 @@ const getter = (x) => () => x;
 const tap = (x) => (y) => y(x);
 
 /**
+ * Takes 2 functions and an arbitrary number of parameters, then calls the
+ *     second function over each parameter and calls the first function with
+ *     the result
+ * @method
+ * @version 2.2.1
+ * @param {function} x Function which returns the final result
+ * @param {function} y Function to map over
+ * @param {any} ...zs Parameters
+ * @return {any} Final result
+ *
+ * @example
+ * const {by, equals, field} = require('futils');
+ *
+ * const eqLength = by(equals, field('length'));
+ *
+ * eqLength('hi', 'cu'); // -> true
+ * eqLength('hi', 'bye'); // -> false
+ */
+const by = (x, y, ...zs) => {
+    if (y === void 0) {
+        return (y, ..._zs) => by(x, y, ..._zs);
+    }
+    return zs.length > 0 ? x(...zs.map(y)) : (..._zs) => x(..._zs.map(y));
+}
+
+/**
  * Composes 2 up to N function together into one. `pipe` allows function
  *     composition from left to right instead of right to left. Use the `compose`
  *     function if you want the opposite behaviour
@@ -163,8 +189,31 @@ const or = (...fs) => {
     throw 'combinators::or awaits functions but saw ' + fs;
 }
 
+/**
+ * Also known as the Y combinator from lambda calculus. Takes a function `f` and
+ *     returns a function `g` which represents the fixed-point of `f`. Allows to
+ *     implement recursive anonymous functions without recursion or iteration
+ * @method
+ * @version 2.2.1
+ * @param {function} f The function to calculate the fixed-point of
+ * @return {function} The fixed-point of f
+ *
+ * @example
+ * const {fixed} = require('futils');
+ *
+ * const factorial = fixed((fact) => (n) => n < 1 ? 1 : n * fact(n - 1));
+ *
+ * factorial(6); // -> 720 (6 * 5 * 4 * 3 * 2 * 1)
+ */
+const fixed = (f) => {
+    if (type.isFunc(f)) {
+        return ((g) => g(g))((h) => f((...xs) => h(h)(...xs)));
+    }
+    throw 'combinators::fixed awaits function but saw ' + f;
+}
+
 
 
 export default { 
-    compose, pipe, id, tap, getter, and, or
+    compose, pipe, id, tap, getter, and, or, by, fixed
 };

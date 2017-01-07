@@ -60,6 +60,8 @@ export default {
     compose: combinators.compose,
     and: combinators.and,
     or: combinators.or,
+    by: combinators.by,
+    fixed: combinators.fixed,
 
     once: decorators.once,
     not: decorators.not,

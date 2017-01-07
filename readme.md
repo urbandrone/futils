@@ -1,6 +1,7 @@
 # futils
 **A collection of tools to use functional programming paradigms in JavaScript** 
 [![NPM](https://nodei.co/npm/futils.png)](https://nodei.co/npm/futils/)
+
 [![Build Status](https://travis-ci.org/urbandrone/futils.svg?branch=master)](https://travis-ci.org/urbandrone/futils)
 [![dependencies](https://david-dm.org/urbandrone/futils.svg)](https://david-dm.org/urbandrone/futils)
 
@@ -20,36 +21,22 @@
 
 One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with a lot of other stuff too: jQuery, Reactive Streams, React/Preact and virtual-dom, JSPM, Electron...
 
-Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the invocation until all needed parameters are given. Below is some code for demonstration purposes:
+Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the invocation until all needed parameters are given.
 
-```
-const {pipe, field, and, equals, isString, isObject} = require('futils');
+Below is some code for demonstration purposes:
+```javascript
+const {Task, call, map} = require('futils');
+const fetch = require('node-fetch');
 
-let data = {
-    "name": "Harrison Ford",
-    "dayOfBirth": "1942-07-13",
-    "url": "https://en.wikipedia.org/wiki/Harrison_Ford"
-}
+const getXHR = (url) => new Task((fail, done) => fetch(url).then(done, fail));
+const success = (msg) => console.log(msg);
+const error = (exc) => console.error(exc);
 
-const hasHarrisonFordsName = pipe(
-    field('name'),
-    and(isString, equals('Harrison Ford'))
-);
-
-const hasHarrisonFordsBirthday = pipe(
-    field('dayOfBirth'),
-    and(isString, equals('1942-07-13'))
-);
-
-const isHarrisonFord = and(
-    isObject,
-    hasHarrisonFordsName,
-    hasHarrisonFordsBirthday
-);
-
-if (isHarrisonFord(data)) {
-    console.log('Hey, it\'s Harrison_Ford!');
-}
+getXHR('https://api.github.com/users/octocat/repos').
+    map(call('json')).
+    map(map((repo) => `${repo.name}: ${repo.html_url}`)).
+    map(call('join', '\n')).
+    run(error, success);
 ```
 
 ## More information

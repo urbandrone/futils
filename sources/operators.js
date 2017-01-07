@@ -160,7 +160,9 @@ const assoc = arity.triadic((k, v, x) => {
  *
  * customer === customerWithBasket; // -> false
  */
-const merge = (...xs) => Object.assign({}, ...xs);
+const merge = (...xs) => xs.length > 1 ? Object.assign({}, ...xs) : (...ys) => {
+    return merge(...xs, ...ys);
+};
 
 /**
  * Takes a object and prevents its pairs from being changed or removed, as well
@@ -181,7 +183,7 @@ const merge = (...xs) => Object.assign({}, ...xs);
  *
  * money.dollar; // -> 5
  */
-const immutable = (x) => Object.freeze(merge(x));
+const immutable = (x) => Object.freeze(Object.assign({}, x));
 
 /**
  * Returns pairs of [key, value] from a given object

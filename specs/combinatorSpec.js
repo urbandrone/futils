@@ -18,6 +18,12 @@ describe('futils/combinators module', function () {
         expect(a(1)).toBe(2);
     });
 
+    it('testing by :: f -> g -> a, a -> f(g(a), g(a))', function () {
+        var a = 'hi', b = 'me';
+        var f = _.by(_.equals, _.field('length'));
+        expect(f(a, b)).toBe(true);
+    });
+
     it('testing compose :: fs -> f', function () {
         var a = (s) => s.toUpperCase();
         var b = (s) => s.replace('-', ' ');
@@ -51,5 +57,11 @@ describe('futils/combinators module', function () {
         expect(b('t')).toBe(true);
         expect(b([1, 2, 3])).toBe(true);
         expect(b(null)).toBe(false);
+    });
+
+    it('testing fixed :: f -> f', function () {
+        var f = _.fixed((g) => (n) => n < 1 ? 1 : n * g(n - 1));
+        expect(f(5)).toBe(120);
+        expect(f(6)).toBe(720);
     });
 });   
