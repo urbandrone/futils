@@ -33,7 +33,7 @@ const makeType = (name, def) => {
             self[TYPE] = name;
             return self;
         }
-        throw new TypeError(`${name} constructor matched invalid ${x}`);
+        throw `Constructor ${name} got invalid value ${JSON.stringify(x)}`;
     }
 
     TypeCtor.prototype.toString = function () {
@@ -46,6 +46,10 @@ const makeType = (name, def) => {
 
     TypeCtor.prototype.fold = function (f) {
         return f(this[VAL]);
+    }
+
+    TypeCtor.of = function (x) {
+        return new TypeCtor(x);
     }
 
     TypeCtor.typeOf = function (x) {
@@ -78,26 +82,56 @@ const makeType = (name, def) => {
  * @return {SubType} A new Type constructor
  *
  * @example
- * const {Type, compose, isArray} = require('futils');
+ * const {Type, field, isArray, isDate, isString} = require('futils');
  *
  * const List = Type('List', isArray);
- *
+ * 
  * List.fold = Type.cata({
  *     List: (xs) => xs,
  *     orElse: () => []
  * });
  *
  * 
- * const ns = List([1, 2, 3]);
+ * const ns = List([1, 2, 3]); // or List.of([1, 2, 3])
  *
  * Type.isType(ns); // -> true
  * 
- * List.fold(ns); // -> [2, 3, 4]
+ * List.fold(ns); // -> [1, 2, 3]
+ * ns.fold((xs) => xs); // -> [1, 2, 3]
+ *
  * List.fold(null); // -> []
+ *
+ *
+ *
+ *
+ * 
+ * const Page = Type('DiaryPage', {
+ *     date: isDate,
+ *     title: isString,
+ *     text: isString
+ * });
+ * 
+ * const Chapter = Type('DiaryChapter', {
+ *     title: isString,
+ *     pages: isArray
+ * });
+ *
+ * const title = field('title');
+ * const format = Type.cata({
+ *     Page: (e) => `${e.title} written on ${e.date.toISOString()}: ${e.text}`,
+ *     Chapter: (c) => `- ${c.title} -\n ` + c.pages.map(title).join('\n'),
+ *     orElse: () => ''
+ * });
+ *
+ * 
+ * let page = {title: 'A page', date: new Date(), text: 'A test page.'};
+ * let chapter = {title: 'Chapter 1', pages: [page]};
+ *
+ * format(page); // -> 'A page written on 2017-01-19: A test page.'
+ * format(chapter); // -> '- Chapter 1 -\n A page\n'
+ * format(null); // -> ''
  */
-const Type = decorators.curry((name, def) => {
-    return makeType(name, def);
-});
+const Type = decorators.curry(makeType);
 
 
 Type.isType = (a) => type.isObject(a) &&
@@ -106,7 +140,7 @@ Type.isType = (a) => type.isObject(a) &&
 
 
 Type.cata = decorators.curry((cases, tval) => {
-    if (type.isFunc(cases.orElse)) { // no orElse clause?
+    if (type.isFunc(cases.orElse)) { // has orElse clause?
         if (Type.isType(tval)) { // is tval a Type?
             if (type.isFunc(cases[tval[TYPE]])) { // is there a case for tval?
                 return cases[tval[TYPE]](tval[VAL]);

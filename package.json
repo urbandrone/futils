@@ -3,7 +3,7 @@
   "version": "2.3.0",
   "description": "Functional programming utility toolkit",
   "main": "futils.js",
-  "jsnext:main": "sources/__main.js",
+  "module": "sources/__main.js",
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node ./specs/",
     "docs": "./node_modules/.bin/jsdoc -c ./conf.json --verbose",

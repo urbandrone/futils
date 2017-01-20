@@ -17,12 +17,36 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  */
 
 const VAL = Symbol('MonoidalValue');
-const id = (a) => a;
+const id = (a) => a || null;
+
+
+/**
+ * Creates new instances of the Unit monoid. In vanilla JavaScript, the only
+ *     members of the Unit category are null and undefined.
+ * @class module:futils/monoids.Unit
+ * @member Unit
+ * @version 2.4.0
+ *
+ * @example
+ * const {Unit, id} = require('futils');
+ *
+ * let one = Unit.of(1) or new Unit(1)
+ * one.fold(id); // -> null
+ * one.concat(one).fold(id); // -> null
+ * Unit.empty().concat(one).fold(id); // -> null
+ * one.concat(Unit.empty()).fold(id); // -> null
+ */
+class Unit {
+    constructor() { this[VAL] = null; }
+    static empty() { return new Unit(); }
+    static of() { return new Unit(); }
+    concat(monoid) { return monoid; }
+    fold(f) { return f(); }
+}
 
 /**
  * Creates new instances of the Additive monoid. In vanilla JavaScript, values
- *     which are members of the Additive category are numbers and strings. The
- *     Additive constructor can be used savely without the `new` keyword
+ *     which are members of the Additive category are numbers and strings.
  * @class module:futils/monoids.Additive
  * @member Additive
  * @version 2.2.0
@@ -33,7 +57,6 @@ const id = (a) => a;
  * let one = Additive.of(1) or new Additive(1)
  * one.fold(id); // -> 1
  * one.concat(one).fold(id); // -> 2
- * one.isEmpty(); // -> false
  * Additive.empty().concat(one).fold(id); // -> 1
  * one.concat(Additive.empty()).fold(id); // -> 1
  */
@@ -49,8 +72,7 @@ class Additive {
 
 /**
  * Creates new instances of the Multiple monoid. In vanilla JavaScript, values
- *     which are members of the Multiple category are numbers. The
- *     Multiple constructor can be used savely without the `new` keyword
+ *     which are members of the Multiple category are numbers.
  * @class module:futils/monoids.Multiple
  * @member Multiple
  * @version 2.2.0
@@ -76,8 +98,7 @@ class Multiple {
 
 /**
  * Creates new instances of the All monoid. In vanilla JavaScript, values
- *     which are members of the All category are booleans. The
- *     All constructor can be used savely without the `new` keyword
+ *     which are members of the All category are booleans.
  * @class module:futils/monoids.All
  * @member All
  * @version 2.2.0
@@ -103,8 +124,7 @@ class All {
 
 /**
  * Creates new instances of the Any monoid. In vanilla JavaScript, values
- *     which are members of the Any category are booleans. The
- *     Any constructor can be used savely without the `new` keyword
+ *     which are members of the Any category are booleans.
  * @class module:futils/monoids.Any
  * @member Any
  * @version 2.2.0
@@ -130,8 +150,7 @@ class Any {
 
 /**
  * Creates new instances of the Fn monoid. In vanilla JavaScript, values
- *     which are members of the Fn category are functions. The
- *     Fn constructor can be used savely without the `new` keyword
+ *     which are members of the Fn category are functions.
  * @class module:futils/monoids.Fn
  * @member Fn
  * @version 2.2.0
@@ -157,8 +176,7 @@ class Fn {
 
 /**
  * Creates new instances of the Min monoid. In vanilla JavaScript, values
- *     which are members of the Min category are numbers. The
- *     Min constructor can be used savely without the `new` keyword
+ *     which are members of the Min category are numbers.
  * @class module:futils/monoids.Min
  * @member Min
  * @version 2.2.0
@@ -184,8 +202,7 @@ class Min {
 
 /**
  * Creates new instances of the Max monoid. In vanilla JavaScript, values
- *     which are members of the Max category are numbers. The
- *     Max constructor can be used savely without the `new` keyword
+ *     which are members of the Max category are numbers. 
  * @class module:futils/monoids.Max
  * @member Max
  * @version 2.2.0
@@ -211,8 +228,7 @@ class Max {
 
 /**
  * Creates new instances of the Dict monoid. In vanilla JavaScript, values
- *     which are members of the Dict category are objects and prototypes. The
- *     Dict constructor can be used savely without the `new` keyword
+ *     which are members of the Dict category are objects and prototypes.
  * @class module:futils/monoids.Dict
  * @member Dict
  * @version 2.2.0
@@ -239,5 +255,5 @@ class Dict {
 
 
 export default {
-    Additive, Multiple, All, Any, Min, Max, Dict, Fn
+    Unit, Additive, Multiple, All, Any, Min, Max, Dict, Fn
 }

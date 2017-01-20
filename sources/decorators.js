@@ -10,6 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 import type from './types';
 import arity from './arity';
+
 /**
  * A collection of function decorator functions. Please note that these are not
  *     the same as the proposed ES7 object and method decorators

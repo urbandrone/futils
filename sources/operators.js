@@ -432,6 +432,32 @@ const differ = arity.dyadic((xs, ys) => {
     });
 });
 
+/**
+ * Takes to arrays and produces a new array of arrays where each inner array
+ *     contains the items of both lists
+ * @method 
+ * @version 2.3.2
+ * @param {array} xs First array
+ * @param {array} ys Second array
+ * @return {array} A array of arrays
+ *
+ * @example
+ * const {zip} = require('futils');
+ *
+ * zip([1, 2], ['one', 'two']); // -> [[1, 'one'], [2, 'two']]
+ * zip([1, 2], ['one']); // -> [[1, 'one']]
+ * zip([1], ['one', 'two']); // -> [[1, 'one']]
+ */
+const zip = arity.dyadic((xs, ys) => {
+    if (type.isArray(xs) && type.isArray(ys)) {
+        return xs.length > ys.length ?
+                ys.map((y, i) => [xs[i], y]) :
+                xs.map((x, i) => [x, ys[i]]);
+    }
+    return [xs, ys];
+});
+
+
 
 /** NOTE ===================
 
@@ -851,7 +877,7 @@ const flatMap = arity.dyadic((f, m) => {
 
 
 export default {
-    field, has, call, merge, immutable, first, last, head, tail, concat,
+    field, has, call, merge, immutable, first, last, head, tail, concat, zip,
     initial, rest, unique, union, map, flatten, flatMap, assoc, equals,
     ap, intersect, differ, pairs, instance, fold, unfold, range, take, takeWhile,
     filter, drop, dropWhile, keep, find, findRight

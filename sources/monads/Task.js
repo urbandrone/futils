@@ -10,7 +10,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 /* globals setImmediate, process, setTimeout */
 import type from '../types';
-import operators from '../operators';
 
 /**
  * Implementation of the Task monad

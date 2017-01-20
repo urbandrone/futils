@@ -171,6 +171,12 @@ describe('futils/operators module', function () {
         expect(_.flatMap(op, xs)).toEqual(['a', 'b']);
     });
 
+    it('testing zip :: as -> as -> as', function () {
+        expect(_.zip([1, 2, 3], [3, 2, 1])).toEqual([[1, 3], [2, 2], [3, 1]]);
+        expect(_.zip([1], [3, 2, 1])).toEqual([[1, 3]]);
+        expect(_.zip([1, 2, 3], [3])).toEqual([[1, 3]]);
+    });
+
 });
 
     
