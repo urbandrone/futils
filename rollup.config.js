@@ -14,6 +14,6 @@ export default {
         format: 'umd',
         moduleName: 'futils',
         sourceMap: false,
-        banner: `// futils -- `
+        banner: `// futils -- https://www.npmjs.com/package/futils`
     }]
 };

@@ -3,7 +3,7 @@
   "version": "2.3.0",
   "description": "Functional programming utility toolkit",
   "main": "futils.js",
-  "module": "sources/__main.js",
+  "module": "sources/__main.es6.js",
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node ./specs/",
     "docs": "./node_modules/.bin/jsdoc -c ./conf.json --verbose",
@@ -14,14 +14,16 @@
     "url": "https://github.com/urbandrone/futils.git"
   },
   "keywords": [
-    "javascript",
-    "js",
-    "functional",
+    "functional programming",
     "toolkit",
     "lenses",
     "transducers",
     "utilities",
-    "futils"
+    "union type",
+    "monads",
+    "monoids",
+    "ES2015",
+    "ES6"
   ],
   "author": "David Hofmann <the.urban.drone@example.com> (https://github.com/urbandrone/)",
   "license": "MIT",
