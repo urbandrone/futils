@@ -102,6 +102,11 @@ describe('futils/operators module', function () {
         expect(_.fold(_.concat, [], [[1], [2, 3], 4])).toEqual([1, 2, 3, 4]);
     });
 
+    it('testing foldMap :: Monoid -> as -> Monoid', function () {
+        expect(_.foldMap(_.All, [true, true]).fold(_.id)).toBe(true);
+        expect(_.foldMap(_.All, [true, false]).fold(_.id)).toBe(false);
+    });
+
     it('testing unfold :: Function -> a -> [a]', function () {
         expect(_.unfold((n) => n < 3 ? [n, n + 1] : null, 1)).toEqual([1, 2]);
     });

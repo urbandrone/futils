@@ -13,6 +13,7 @@ export default {
         dest: 'futils.js',
         format: 'umd',
         moduleName: 'futils',
-        sourceMap: false
+        sourceMap: false,
+        banner: `// futils -- `
     }]
 };

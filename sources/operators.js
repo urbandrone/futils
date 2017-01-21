@@ -711,6 +711,25 @@ const find = arity.dyadic((f, xs) => {
  */
 const findRight = arity.dyadic((f, xs) => find(f, Array.from(xs).reverse()));
 
+/**
+ * Given a Monoid TypeConstructor and a list, folds all values in the list into
+ *     the Monoid Type
+ * @method 
+ * @version 2.4.0
+ * @param {Monoid Constructor} M Constructor of the monoid typeclass
+ * @param {array} xs A list of values
+ * @return {Monoid} Unit of the monoid concatenated with all xs
+ *
+ * @example
+ * const {foldMap, All, Any} = require('futils');
+ *
+ * foldMap(All, [true, false, true, true]); // -> All(false)
+ * foldMap(Any, [true, false, true, true]); // -> Any(true)
+ */
+const foldMap = arity.dyadic((M, xs) => {
+    return fold((m, x) => m.concat(M.of(x)), M.empty(), xs);
+});
+
 
 
 
@@ -880,5 +899,5 @@ export default {
     field, has, call, merge, immutable, first, last, head, tail, concat, zip,
     initial, rest, unique, union, map, flatten, flatMap, assoc, equals,
     ap, intersect, differ, pairs, instance, fold, unfold, range, take, takeWhile,
-    filter, drop, dropWhile, keep, find, findRight
+    filter, drop, dropWhile, keep, find, findRight, foldMap
 };

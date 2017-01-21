@@ -1,4 +1,4 @@
-const {id, isFunc, isString, isNumber, and, Type} = require('../futils');
+const {id, isFunc, isString, isNumber, Type} = require('../futils');
 describe('futils/Type module', function () {
     const name = 'No mans land';
 
@@ -28,7 +28,7 @@ describe('futils/Type module', function () {
         try {
             Street(1);
         } catch (exc) {
-            expect(exc.message).toBe('Street constructor matched invalid 1');
+            expect(exc).toBe('Constructor Street got invalid value 1');
         }
     });
 

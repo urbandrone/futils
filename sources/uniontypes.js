@@ -28,10 +28,16 @@ const TYPE = Symbol('TypeName');
 const makeType = (name, def) => {
     function TypeCtor (x) {
         let self = operators.instance(TypeCtor, this);
-        if (TypeCtor.typeOf(x)) {
+        self[TYPE] = name;
+        if (type.isFunc(def) && def(x)) {
             self[VAL] = x;
-            self[TYPE] = name;
             return self;
+        }
+        if (type.isObject(def)) {
+            if (Object.keys(def).reduce((b, k) => b && !!def[k](x[k]), true)) {
+                self[VAL] = x;
+                return self;
+            }
         }
         throw `Constructor ${name} got invalid value ${JSON.stringify(x)}`;
     }
@@ -50,19 +56,6 @@ const makeType = (name, def) => {
 
     TypeCtor.of = function (x) {
         return new TypeCtor(x);
-    }
-
-    TypeCtor.typeOf = function (x) {
-        if (type.isFunc(def)) {
-            return !!def(x);
-        }
-        if (type.isObject(def)) {
-            return Object.keys(def).reduce(
-                (b, k) => b && !!def[k](x[k]),
-                true
-            );
-        }
-        return false;
     }
 
     return TypeCtor;
@@ -124,11 +117,16 @@ const makeType = (name, def) => {
  * });
  *
  * 
- * let page = {title: 'A page', date: new Date(), text: 'A test page.'};
- * let chapter = {title: 'Chapter 1', pages: [page]};
+ * let page = Page({
+ *     title: 'First page',
+ *     date: new Date(),
+ *     text: 'A text page.'
+ * });
+ * 
+ * let chapter = Chapter({title: 'Chapter 1', pages: [page]});
  *
- * format(page); // -> 'A page written on 2017-01-19: A test page.'
- * format(chapter); // -> '- Chapter 1 -\n A page\n'
+ * format(page); // -> 'First page written on 2017-01-19: A text page.'
+ * format(chapter); // -> '- Chapter 1 -\n First page\n'
  * format(null); // -> ''
  */
 const Type = decorators.curry(makeType);
