@@ -8,3 +8,4 @@ A growing set of **How to** examples for solving some common programming problem
 * [Working with transducers](./ex03-transducers.md)
 * [Monads!](./ex04-monads.md)
 * [Small Application](./ex05-cdinventory.md)
+* [Using Monoids](./ex06-monoids.md)
