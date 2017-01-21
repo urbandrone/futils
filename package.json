@@ -4,6 +4,7 @@
   "description": "futils Docs",
   "main": "index.js",
   "scripts": {
+    "docma": ""
   },
   "repository": {
     "type": "git",
