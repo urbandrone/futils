@@ -1,8 +1,9 @@
-# futils
+![futils Logo](/logo.svg?raw=true, 'futils Logo');
 **A collection of tools to use functional programming paradigms in JavaScript** 
 [![NPM](https://nodei.co/npm/futils.png)](https://nodei.co/npm/futils/)
 
 [![Build Status](https://travis-ci.org/urbandrone/futils.svg?branch=master)](https://travis-ci.org/urbandrone/futils)
+
 [![dependencies](https://david-dm.org/urbandrone/futils.svg)](https://david-dm.org/urbandrone/futils)
 
 ## About
