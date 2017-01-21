@@ -1,4 +1,5 @@
-![futils Logo](/logo.png?raw=true, 'futils Logo');
+![futils Logo](/logo.png?raw=true, 'futils Logo')
+
 **A collection of tools to use functional programming paradigms in JavaScript** 
 [![NPM](https://nodei.co/npm/futils.png)](https://nodei.co/npm/futils/)
 
