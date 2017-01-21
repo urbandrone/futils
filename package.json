@@ -1,17 +1,13 @@
 {
-  "name": "futils",
-  "version": "2.4.0",
-  "description": "Functional programming utility toolkit",
-  "main": "futils.js",
-  "module": "sources/__main.es6.js",
+  "name": "futils-web",
+  "version": "1.0.0",
+  "description": "futils Docs",
+  "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/jasmine-node ./specs/",
-    "docs": "./node_modules/.bin/jsdoc -c ./conf.json --verbose",
-    "bundle": "rollup -c"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/urbandrone/futils.git"
+    "url": "https://urbandrone.github.io/futils.git"
   },
   "keywords": [
     "functional programming",
@@ -25,22 +21,14 @@
     "ES2015",
     "ES6"
   ],
-  "author": "David Hofmann <the.urban.drone@example.com> (https://github.com/urbandrone/)",
+  "author": "David Hofmann <the.urban.drone@gmail.com>)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/urbandrone/futils/issues"
   },
   "homepage": "https://github.com/urbandrone/futils#readme",
-  "tonicExampleFilename": "example.js",
   "devDependencies": {
-    "babel-cli": "^6.11.4",
-    "babel-preset-es2015-rollup": "^1.2.0",
-    "jasmine-node": "^1.14.5",
-    "jsdoc": "^3.4.0",
-    "minami": "^1.1.1",
-    "rollup": "^0.36.3",
-    "rollup-plugin-babel": "^2.6.1",
-    "rollup-plugin-uglify": "^1.0.1"
+    
   },
   "dependencies": {}
 }
