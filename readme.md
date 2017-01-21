@@ -30,7 +30,9 @@ Below is some code for demonstration purposes:
 const {Task, call, map} = require('futils');
 const fetch = require('node-fetch');
 
-const getXHR = (url) => new Task((fail, done) => fetch(url).then(done, fail));
+const getXHR = (url) => new Task((reject, resolve) => {
+    fetch(url).then(resolve).catch(reject);
+});
 const success = (msg) => console.log(msg);
 const error = (exc) => console.error(exc);
 
