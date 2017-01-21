@@ -716,7 +716,7 @@ const findRight = arity.dyadic((f, xs) => find(f, Array.from(xs).reverse()));
  *     the Monoid Type
  * @method 
  * @version 2.4.0
- * @param {Monoid Constructor} M Constructor of the monoid typeclass
+ * @param {Monoid} M Constructor of the monoid typeclass
  * @param {array} xs A list of values
  * @return {Monoid} Unit of the monoid concatenated with all xs
  *
