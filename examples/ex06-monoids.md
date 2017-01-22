@@ -117,6 +117,8 @@ It takes a predicate function from DOM to Bool, and returns a function from Stri
 
 ![Function nodesValid](./assets/06-monoids-nodesvalid.png?raw=true "nodesValid")
 
+Notice that I have drawn the box for `nodesValid` in red, because it is a impure action by definition (it touches the DOM). Normally you would end up putting this into the `IO` monad but doing so is beyond the scope of this tutorial.
+
 
 ### Combining monoids
 Now for the fun part: `nodesValid` returns us a list of booleans. From the tabel of monoidal values written above, we can see that boolean values form a monoidal semigroup, and that we can use the `All` and `Any` monoid with them.
