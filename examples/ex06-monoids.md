@@ -80,6 +80,9 @@ const query = pipe(document.querySelectorAll.bind(document), Array.from);
 
 `query` takes a selector a queries all matching nodes into a array
 
+Here is the graphical form:
+![Type transformations](./assets/06-monoids-mappings.png?raw=true "Mappings")
+
 
 ### Validator functions
 For evaluations sake, we need some validator functions, which should have the signature `(a -> Bool)`. Most of them will read from DOM nodes.
@@ -97,6 +100,8 @@ const isEmail = bool((v) => EMAIL.test(v.trim())); // <- EMAIL :: Regex
 const mailValid = and(hasVal, pipe(field('value'), isEmail));
 ```
 
+![Validation functions](./assets/06-monoids-predicates.png?raw=true "Predicates")
+
 
 ### Querying and validating the DOM
 Nearly done. Now we need to define a function which actually queries the DOM for elements, filters only those which are `required`, and maps the validator over it. Here is how it looks like:
@@ -109,6 +114,8 @@ const nodesValid = curry((vf, selector) => query(selector)).
 ```
 
 It takes a predicate function from DOM to Bool, and returns a function from String to a list of Bools.
+
+![Function nodesValid](./assets/06-monoids-nodesvalid.png?raw=true "nodesValid")
 
 
 ### Combining monoids
@@ -132,6 +139,8 @@ const foldMapInto = curry((M, f, hash) => Object.keys(hash).
 
 It works in three steps:
 
+![foldMapInto](./assets/06-monoids-foldmapinto.png?raw=true "foldMapInto")
+
 1. It takes 3 arguments: A monoidal constructor, a function with the signature `(a -> [b])` and a Hashmap/Object. And it returns a monoid of `b`. When given all arguments, it maps over the keys of the Object and reduces/folds into a single value.
 2. By mapping over the keys, it passes the value of the Objects key and the key into the validation function and foldMaps the whole result list (the signature of the validation function passed in was `(a -> [b])`) into the given Monoid.
 3. The result is a list of Monoids. It can fold this list into a single Monoid again by concatting each item with the next one, starting with the unit/empty element. The result is a single Monoid.
@@ -152,6 +161,8 @@ const prog = foldMapInto(All, nodesValid);
 const result = prog(config).fold(id);
 // -> Bool
 ```
+
+![Program shape](./assets/06-monoids-prog.png?raw=true "Progam shape")
 
 If you are like me and want a better overview, here is the complete code in one file. Typically you'd split the application apart from the definitions of the validators and foldMapInto. Please also note the call to `require` at the top of the file which imports all futils needed:
 
