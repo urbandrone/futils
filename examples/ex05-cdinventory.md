@@ -1,6 +1,10 @@
 # A small DVC application to manage Compact Discs
 This time we are going to create a small Data-View-Controller application. I call this style of writing applications Data- instead of Model-View-Controller, because there is no explicit model in the code. All data always has the "current" state and permutations occur one by one via signals which send actions to the controller. The controller then modifies the state and returns a new one which will be the next state rendered. Another way to call it would be Data-View-Modify, choose the one you think is most appropriate.
 
+This picture tries to visualize whats going on:
+
+![Lifecycle](./assets/05-cdinventory-lifecycle.png?raw=true, "Lifecycle")
+
 ## Prerequisites
 To start, do the usual directory creation and `$ cd` things, then init npm and install `futils` along `snabbdom`:
 

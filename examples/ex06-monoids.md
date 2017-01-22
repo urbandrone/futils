@@ -89,13 +89,13 @@ For evaluations sake, we need some validator functions, which should have the si
 
 ```javascript
 // required :: DOM -> Bool
-const required = bool((e) => e && e.required);
+const required = bool(field('required'));
 // hasVal :: DOM -> Bool
-const hasVal = bool((e) => e && e.value && e.value.trim());
+const hasVal = bool(pipe(field('value'), call('trim')));
 // isChecked :: DOM -> Bool
-const isChecked = bool((e) => e && e.checked);
+const isChecked = bool(field('checked'));
 // isEmail :: String -> Bool
-const isEmail = bool((v) => EMAIL.test(v.trim())); // <- EMAIL :: Regex
+const isEmail = bool(pipe(call('trim'), EMAIL.test.bind(EMAIL)));
 // mailValid :: DOM -> Bool
 const mailValid = and(hasVal, pipe(field('value'), isEmail));
 ```
@@ -169,7 +169,7 @@ const result = prog(config).fold(id);
 If you are like me and want a better overview, here is the complete code in one file. Typically you'd split the application apart from the definitions of the validators and foldMapInto. Please also note the call to `require` at the top of the file which imports all futils needed:
 
 ```javascript
-const {foldMap, All, id, pipe, not, and, curry, field} = require('futils');
+const {foldMap, All, id, pipe, not, and, curry, field, call} = require('futils');
 
 // EMAIL :: Regex
 const EMAIL = /^[a-z0-9]{1,}@[a-z0-9]{3,}\.\w{2,8}$/i
