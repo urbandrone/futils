@@ -92,43 +92,49 @@ const hasVal = bool((e) => e && e.value && e.value.trim());
 // isChecked :: DOM -> Bool
 const isChecked = bool((e) => e && e.checked);
 // isEmail :: String -> Bool
-const isEmail = bool((v) => EMAIL.test(v)); // <- EMAIL :: Regex
+const isEmail = bool((v) => EMAIL.test(v.trim())); // <- EMAIL :: Regex
 // mailValid :: DOM -> Bool
-const mailValid = and(hasVal, pipe(hasVal, isEmail));
+const mailValid = and(hasVal, pipe(field('value'), isEmail));
 ```
 
 
 ### Querying and validating the DOM
-Nearly done. Now we need to define a function which actually queries the DOM for elements, filters only those which are `required`, and maps the validator over it. Here is how one could have defined it:
+Nearly done. Now we need to define a function which actually queries the DOM for elements, filters only those which are `required`, and maps the validator over it. Here is how it looks like:
 
 ```javascript
-// nodesValid :: (DOM -> Bool) -> String -> [Bool]
-const nodesValid = curry((vf, css) => query(css)).
+// nodesValid :: (DOM -> Bool) -> Selector -> [Bool]
+const nodesValid = curry((vf, selector) => query(selector)).
     filter(required).
     map(vf));
 ```
 
-It takes a predicate function from DOM to Bool, and returns a functions from String to a list of Bools.
+It takes a predicate function from DOM to Bool, and returns a function from String to a list of Bools.
 
 
 ### Combining monoids
-Now for the fun part: `nodesValid` returns us a list of booleans. From the list written above, we can see that boolean values form a monoidal semigroup and that we can use the `All` monoid as well as the `Any` monoid with them.
+Now for the fun part: `nodesValid` returns us a list of booleans. From the tabel of monoidal values written above, we can see that boolean values form a monoidal semigroup, and that we can use the `All` and `Any` monoid with them.
 
-What we want is a function which takes a monoid constructor, a function from String to list of Bool which returns a function which takes a hashmap of CSS selectors : validators pairs and returns a monoid with the final result.
+What we want is a function which takes a monoid constructor, a function from String to list of Bool which returns a function which takes a hashmap of selector:validator pairs and returns a monoid with the final result.
 
 In other words:
 ```javascript
 // foldMapInto :: Monoid -> (String -> [Bool]) -> {} -> Monoid Bool
 ```
 
-We can make the signature more generic by saying the given function has the signature `(a -> [b])` instead of `(String -> [Bool])`. This is how it looks right now:
+We can make the signature more generic by saying the given function has the signature `(a -> [b])` instead of `(String -> [Bool])`. This is it:
 
 ```javascript
 // foldMapInto :: Monoid -> (a -> [b]) -> {} -> Monoid b
 const foldMapInto = curry((M, f, hash) => Object.keys(hash).
     map((k) => foldMap(M, f(hash[k], k))).
-    reduce((a, b) => a.concat(M.of(b)), M.empty()));
+    reduce((a, b) => a.concat(b), M.empty()));
 ```
+
+It works in three steps:
+
+1. It takes 3 arguments: A monoidal constructor, a function with the signature `(a -> [b])` and a Hashmap/Object. And it returns a monoid of `b`. When given all arguments, it maps over the keys of the Object and reduces/folds into a single value.
+2. By mapping over the keys, it passes the value of the Objects key and the key into the validation function and foldMaps the whole result list (the signature of the validation function passed in was `(a -> [b])`) into the given Monoid.
+3. The result is a list of Monoids. It can fold this list into a single Monoid again by concatting each item with the next one, starting with the unit/empty element. The result is a single Monoid.
 
 
 ### Using it
@@ -147,10 +153,10 @@ const result = prog(config).fold(id);
 // -> Bool
 ```
 
-If you are like me and want a better overview, here is the complete code in one file. Typically you'd split the application apart from the definitions of the validators and foldMapInto. Please also note the call to `require` at the top of the file which imports all utils needed:
+If you are like me and want a better overview, here is the complete code in one file. Typically you'd split the application apart from the definitions of the validators and foldMapInto. Please also note the call to `require` at the top of the file which imports all futils needed:
 
 ```javascript
-const {foldMap, All, id, pipe, not, and, curry} = require('futils');
+const {foldMap, All, id, pipe, not, and, curry, field} = require('futils');
 
 // EMAIL :: Regex
 const EMAIL = /^[a-z0-9]{1,}@[a-z0-9]{3,}\.\w{2,8}$/i
@@ -169,7 +175,7 @@ const isChecked = bool((e) => e && e.checked);
 // isEmail :: String -> Bool
 const isEmail = bool((v) => EMAIL.test(v));
 // mailValid :: DOM -> Bool
-const mailValid = and(hasVal, pipe(hasVal, isEmail));
+const mailValid = and(hasVal, pipe(field('value'), isEmail));
 
 // nodesValid :: (DOM -> Bool) -> String -> [Bool]
 const nodesValid = curry((vf, css) => query(css)).
@@ -179,7 +185,7 @@ const nodesValid = curry((vf, css) => query(css)).
 // foldMapInto :: Monoid -> (a -> [b]) -> {} -> Monoid b
 const foldMapInto = curry((M, f, hash) => Object.keys(hash).
     map((k) => foldMap(M, f(hash[k], k))).
-    reduce((a, b) => a.concat(M.of(b)), M.empty()));
+    reduce((a, b) => a.concat(b), M.empty()));
 
 
 // -- Application
