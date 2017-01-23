@@ -51,6 +51,9 @@ list.map(monadicOperation).
 Before we see `Monad`, there are two other type classes we must see first.
 
 ### Functor
+
+![Functor map](./assets/04-monads-functors.png?raw=true "map")
+
 The most simple explanation states that a `Functor` is just a container or box for a value which implements a `map` method. The `map` method must satisfy some laws:
 ```
 forall Functor F
@@ -59,7 +62,14 @@ F{a} .map f .map g :: F .map f >> g
 ```
 
 ### Applicative
-Building upon a `Functor`, an `Applicative` is a container for curried (when using multiple arguments) functions, which knows how to apply the function to the value in another container. You can put values into the box with the static `of` method on the container (this is called Pointed) and apply (hence it's name) functions which are inside a container to values inside another container:
+
+![Applicative ap](./assets/04-monads-applicative.png?raw=true "ap")
+
+Building upon a `Functor`, an `Applicative` is a container for curried (when using multiple arguments) functions, which knows how to apply the function to the value in another container.
+
+![Applicative of](./assets/04-monads-of.png?raw=true "of")
+
+You can put values into the box with the static `of` method on the container (this is called Pointed) and apply (hence it's name) functions which are inside a container to values inside another container:
 ```
 forall Functor F => Applicative A
 A .of a :: F{a} // <- Gives back a Functor
@@ -68,9 +78,16 @@ A .of (a → b) :: A{(a → b)} // <- Gives back an Applicative
 A{(a → b)} .ap F{a} :: F{a} .map (a → b)
 ```
 
-The container or box thing doesn't really fit, but it helps a lot to understand what it does. Normally we'd call all `Functor`s and `Applicative`s a *context*, because it usually has some behaviour attached to it (for example: A list has the attached behaviour to map over each value it contains, while a `Maybe` just doesn't map when it is `None`). We will see more of it soon. Let's just call all boxes a context.
+The container or box thing doesn't really fit, but it helps a lot to understand what it does. Normally we'd call all `Functor`s and `Applicative`s a *context*, because it usually has some behaviour attached to it (for example: A list has the attached behaviour to map over each value it contains, while a `Maybe` just doesn't map when it is `None`).
+
+![Generic context](./assets/04-monads-context.png?raw=true "Generic context")
+
+We will see more of it soon. Let's just call all boxes a context.
 
 ### Monads
+
+![Monadic flatMap](./assets/04-monads-monad.png?raw=true "flatMap")
+
 A `Monad` is a context, which can sequence calls with `flatMap` and therefor allows you to chain functions which return a context, so you don't end up with nested contexts. All `Monad`s in `futils` implement `flatMap` (sometimes called `bind` or `chain` in other libraries) and `flatten` (most often called `join` or `mjoin`), which takes a nested context and flattens it one level.
 ```
 forall Applicative A => Monad M
