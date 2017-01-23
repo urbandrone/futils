@@ -126,7 +126,7 @@ Maybe.of(null); // -> None;
 And here is our code to render a profile (userInfo.js):
 
 ```javascript
-const {Maybe, curry, id} = require('futils');
+const {Maybe, curry, id, getter} = require('futils');
 
 // default values
 // AVATAR_DIR :: String
@@ -136,29 +136,38 @@ let AVATAR_DEF = AVATAR_DIR + 'anonymous.jpg';
 // NICKNAME :: String
 let NICKNAME = 'Anonymous';
 
-// getName :: JSON -> String
-const getName = (json) => Maybe.of(json).
+// nickname :: JSON -> String
+const nickname = (json) => Maybe.of(json).
         flatMap((o) => Maybe.of(o.name)).
-        fold(() => NICKNAME, id);
+        cata({
+            None: getter(NICKNAME),
+            Some: id
+        });
 
-// getAvatar :: JSON -> String
-const getAvatar = (json) => Maybe.of(json).
+// avatar :: JSON -> String
+const avatar = (json) => Maybe.of(json).
         flatMap((o) => Maybe.of(o.avatar)).
-        fold(() => AVATAR_DEF), (url) => AVATAR_DIR + url);
+        cata({
+            None: getter(AVATAR_DEF),
+            Some: (url) => `${AVATAR_DIR}/${url}`
+        });
 
-// getRegDate :: JSON -> String
-const getRegDate = (json) => Maybe.of(json).
+// registeredSince :: JSON -> String
+const registeredSince = (json) => Maybe.of(json).
         flatMap((o) => Maybe.of(o.since)).
         map((iso) => new Date(Date.parse(iso))).
         map((date) => date.toLocaleDateString()).
-        fold(() => '', id);
+        cata({
+            None: getter('Guest'),
+            Some: id
+        });
 
 // userInfo :: JSON -> User HTML
 const userInfo = (json) => {
     return `<div class="user">
-        <img class="user_avatar" src="${getAvatar(json)}" alt=""> 
-        <span class="user_nickname">${getName(json)}</span>
-        <span class="user_registered_since">${getRegDate(json)}</span>
+        <img class="user_avatar" src="${avatar(json)}" alt=""> 
+        <span class="user_nickname">${nickname(json)}</span>
+        <span class="user_registered_since">${registeredSince(json)}</span>
     </div>`;
 }
 
@@ -243,7 +252,7 @@ ajax(`${URL}/login/user`, {pw: ... }).
 
 // send request, then flatMap over the response
 ajax(`${URL}/login/user`, {pw: ... }).
-    then((user) => ({id: user.uid})).
+    then((user) => ({id: user.uid})). // <- concrete repetition
     then((user) => ajax(`${URL}/avatar/${user.id}`)).
     then((avatar) => ... );
 ```
@@ -271,7 +280,7 @@ const logsInUser = ajax(`${URL}/login/user`, {pw: ... }).
     map((user) => ({id: user.uid, name: `${user.fname user.lname}`}))
 
 // send request, then flatMap over the response
-const getsUserAvatar = logsInUser.
+const getsUserAvatar = logsInUser. // <- concrete reuse
     flatMap((user) => ajax(`${URL}/avatar/${user.id}`)).
     map((avatar) => ... );
 ```
