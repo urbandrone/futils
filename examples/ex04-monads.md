@@ -1,23 +1,26 @@
 # Monads!
-This is not a complete explanation of what Monads and Monoids are but rather how the `futils` package can support you in gettings things done with a nice
-set of standard monads out of the box.
+Welcome to a tutorial of scary words! After this example, you will be able to use `Functor`s and `Applicative`s as well as the scary M word: `Monad`s. Better than that, we will see some practical examples of how these things can be used to build programs which are more robust, more terse and more self-explaining than usual code.
 
 ## First things first
-Before we start to use the monadic classes shipping with `futils`, here is a quick recap on monads:
+Before we start using the monadic classes shipping with `futils`, here is a quick recap on monads:
 
-A monad is just a container which implements either a `chain, flatMap` or `bind` operation which allows to chain it with functions which return values of the same monadic type. It must also implement the functor interface, which means it must implement a `.map` method. We are going to use the native `Array` as a base and extend it further because it is a monoid and it is half of a monad already.
+A monad is just a container which implements either a `chain, flatMap` or `bind` operation which allows to chain it with functions which return values of the same monadic type. It must also implement the functor interface. We are going to use the native `Array` as a base and extend it further because it is a monoid and it is half of a monad already.
 
 Here is some code to digest:
 ```javascript
 class MyArray extends Array {
+    constructor (...args) {
+        super();
+        args.forEach((a, i) => this[i] = a);
+    }
     flatten () {
         return this.reduce((a, v) => a.concat(v), []);
     }
     flatMap (f) {
         return this.map(f).flatten();
     }
-    fold (f) {
-        return this.reduce(f, null);
+    fold (f, a) {
+        return this.reduce(f, a);
     }
 }
 ```
@@ -31,6 +34,50 @@ const monadicOperation = (n, i) => new MyArray(n, i);
 list.map(monadicOperation); // -> MyArray([[1, 0], [2, 1], [3, 2], [4, 3]])
 list.flatMap(monadicOperation); // -> MyArray([1, 0, 2, 1, 3, 2, 4, 3])
 ```
+
+We could have done the same with:
+
+```javascript
+const list = [1, 2, 3, 4];
+
+const monadicOperation = (n, i) => [n, i];
+
+list.map(monadicOperation); // -> [[1, 0], [2, 1], [3, 2], [4, 3]]
+
+list.map(monadicOperation).
+    reduce((a, b) => a.concat(b), []); // -> [1, 0, 2, 1, 3, 2, 4, 3]
+```
+
+Before we see `Monad`, there are two other type classes we must see first.
+
+### Functor
+The most simple explanation states that a `Functor` is just a container or box for a value which implements a `map` method. The `map` method must satisfy some laws:
+```
+forall Functor F
+F{a} .map id :: id;
+F{a} .map f .map g :: F .map f >> g
+```
+
+### Applicative
+Building upon a `Functor`, an `Applicative` is a container for curried (when using multiple arguments) functions, which knows how to apply the function to the value in another container. You can put values into the box with the static `of` method on the container (this is called Pointed) and apply (hence it's name) functions which are inside a container to values inside another container:
+```
+forall Functor F => Applicative A
+A .of a :: F{a} // <- Gives back a Functor
+A .of (a → b) :: A{(a → b)} // <- Gives back an Applicative
+
+A{(a → b)} .ap F{a} :: F{a} .map (a → b)
+```
+
+The container or box thing doesn't really fit, but it helps a lot to understand what it does. Normally we'd call all `Functor`s and `Applicative`s a *context*, because it usually has some behaviour attached to it (for example: A list has the attached behaviour to map over each value it contains, while a `Maybe` just doesn't map when it is `None`). We will see more of it soon. Let's just call all boxes a context.
+
+### Monads
+A `Monad` is a context, which can sequence calls with `flatMap` and therefor allows you to chain functions which return a context, so you don't end up with nested contexts. All `Monad`s in `futils` implement `flatMap` (sometimes called `bind` or `chain` in other libraries) and `flatten` (most often called `join` or `mjoin`), which takes a nested context and flattens it one level.
+```
+forall Applicative A => Monad M
+M{M{a}} .flatten () :: M{a}
+M{a} .flatMap (a → M{b}) :: M{a} .map (a → M{b}) .flatten :: M{b}
+```
+
 
 ### Ah – yes.
 Just in case that was not enough, here are some more explanations you might find useful to understand monads:
@@ -102,11 +149,11 @@ const userInfo = (json) => {
 module.exports = { userInfo };
 ```
 
-As you can see, everything moves along nicely in something like a chain of events. We "branch" the case after each operation and either return the actual data or a default value.
+As you can see, everything moves along nicely in some data chains. We "branch" the chains after each operation and either return the actual data or a default value. It all reads top to bottom, no more jumping-around-the-editor and searching-that-damn-variable anymore – it's right there. Just where you were looking for it. Niceeeee.
 
 In our bootstrap code we are going to use jQuery as a XHR and DOM helper library. You certainly don't need jQuery to use `futils`, but it takes out some of the hassles.
 
-The nice thing of our userInfo function is though, that we can even pass it a `null` value and it still works, returning the default values wrapped up in a DOM structure:
+The nice thing of our userInfo function is though, that we can even pass it a `null` value and it still works, returning the default values wrapped up in a DOM structure. In case you don't believe me:
 
 ```javascript
 const $ = require('jquery');
@@ -117,7 +164,7 @@ const $body = $(document.body);
 $body.html(userInfo(null));
 ```
 
-Here is the code (boot.js):
+Here is the usual bootscript one comes up with (boot.js):
 
 ```javascript
 const $ = require('jquery');
@@ -125,112 +172,98 @@ const {userInfo} = require('./userInfo');
 
 const $body = $(document.body);
 
-$.getJSON('./userInfo.json').then(userInfo).
-                             then($body.html.bind($body),
-                                  () => $body.html('No information :-('));
+$.getJSON('./userInfo.json').
+    then(userInfo).
+    done($body.html.bind($body)).
+    fail() => $body.html('Error occurred'));
 ```
 
 This will render the user information onto the screen after it has loaded it asynchronous. Yay!
 
-But: Have your recognized the somehow weird looking syntax? In our monadic code we used `.fold` with a function to extract the final value from the `Maybe`, but from the promise we have to use `.then` calls, where the last call to `.then` also does (from the perspective of `.fold`) line up the types the other way around: The extraction function comes first while the failure function comes last. This makes it easy to oversee to add a failure function in case the operation failed. And one last thing: The Promise returned from `$.getJSON` runs immediatly.
 
-## First attempt
-Usually when encountering these problems, one solves it by introducing state. Let's do that. Here is some example code:
+## Getting async with Tasks
+Apart from all the great things `Promise` as a native will give us, the most critical thing about it is it's inability to stop once it's running. With `futils` you can wrap each `Promise` up in a `Task` (greatly inspired by the [Folktale](http://folktalejs.org/) library). Why on earth should I do that and how insane is it? Because a `Task` is lazy and `Promises` are not. Oh, and it's reasonable insane:
 
 ```javascript
+const {Task} = require('futils');
 const $ = require('jquery');
 const {userInfo} = require('./userInfo');
 
 const $body = $(document.body);
 
-const xhr = () => $.getJSON('./userInfo.json').then(userInfo);
+const json = new Task((rej, res) => {
+    $.getJSON('./userInfo.json').done(res).fail(rej);
+});
 
-const renderUser = (user) => {
-    if (user) {
-        return { then(f) { return f(userInfo(user)); } }
-    }
-    return xhr();
-}
-
-renderUser({}).then($body.html.bind($body),
-                    () => $body.html('No information :-('));
+json.map(userInfo).
+    run(() => $body.html('Error occurred'),
+        $body.html.bind($body));
 ```
 
-Nice, this seems to work for now. Ahem, except for the weird syntax mix. We wrapped up everything into a function and there it is: Code which works as expected. Let's raise the difficulty.
+Instead of calling `then` we `map` functions in the form `(a → b)` over the `Task`. This has the additional benefit of unifying the codebase, since all tasks share their interface with the other monadic types in `futils`.
 
-## More difficult
-Say you'd have two choices from where to get the data if it is not already existent. To solve this, we will have to introduce some code into our precious little program.
+You might have already noticed it, but if not please note that the `json` task does not run until we tell it to do so by calling `run`. If we map over it, the task knows you want to chain your functions on the value so it does function composition instead of mapping and returns a new `Task`. So you can map and map and map ... Regardless of what you do, `json` just sits there and waits until you say `run`. This takes an error function and a success function and runs the task. 
 
+### Examples
+Can you do common `Promise` operations with tasks? Of course:
+
+**Common AJAX via jQuery Promise**
 ```javascript
-const $ = require('jquery');
-const {userInfo} = require('./userInfo');
+const URL = 'https://example.tld'
 
-const id = 12345;
-const $body = $(document.body);
+const ajax = (url, data) => $.ajax({
+    method: data ? 'POST' : 'GET',
+    dataType: 'json',
+    url,
+    data
+});
 
-// xhr :: String, Object -> Promise
-const xhr = (url, data) => $.get(url, data).then(userInfo);
+// FROM HERE, EVERYTHING LAUNCHES THE MISSILES
 
-// renderUser :: Object -> Promise
-const renderUser = (user) => {
-    if (user) {
-        return { then(f) { return f(userInfo(user)); } }
-    }
-    return Promise.race([
-        xhr('./userInfo.json', null),
-        xhr2('./user/info.php', {id})
-    ]);
-}
+// send request, then map over response
+ajax(`${URL}/login/user`, {pw: ... }).
+    then((user) => ({id: user.uid, name: `${user.fname user.lname}`}))
 
-renderUser(null).then($body.html.bind($body),
-                      () => $body.html('No information :-('));
+// send request, then flatMap over the response
+ajax(`${URL}/login/user`, {pw: ... }).
+    then((user) => ({id: user.uid})).
+    then((user) => ajax(`${URL}/avatar/${user.id}`)).
+    then((avatar) => ... );
 ```
 
-I won't show you the code necessary in case you cannot use `Promise.race` because it's insane.
+Here is the `futils` version of it:
 
-## With Task
-OK, that wasn't too bad. This time we are going to solve the problem with the help of a monad called `Task`. You may also have heard of it under the term of a `Future`.
-
-The most substancial difference between a `Task` and a `Promise` is that a Task is lazy. It won't run until you call it's `.run` method with a error and a success callback. That's pretty sweet because now missing out on the error handler is quite hard.
-
-Because of it's lazyness, the call to `Promise.race` becomes completely unnessecary because we are able to `.concat` Tasks together and retrieve another Task which selects the fastest of the concatenated Tasks. Take a look for youself:
-
+**Common AJAX via Task**
 ```javascript
-const $ = require('jquery');
-const {userInfo} = require('./userInfo');
-const {Task, Maybe} = require('futils');
+const URL = 'https://example.tld'
 
-// ID :: Number
-const ID = 12345; // ID of current user
+const ajax = (url, data) => new Task((rej, res) => {
+    $.ajax({
+        method: data ? 'POST' : 'GET',
+        dataType: 'json',
+        url,
+        data
+    }).done(res).fail(rej);
+});
 
-// $body :: jQuery(body)
-const $body = $(document.body);
+// this does not launch the missiles. remember: it
+// won't run until you tell it
 
-// print :: String -> jQuery(body)
-const print = $body.html.bind($body);
+// send request, then map over response
+const logsInUser = ajax(`${URL}/login/user`, {pw: ... }).
+    map((user) => ({id: user.uid, name: `${user.fname user.lname}`}))
 
-// xhr :: String, Object -> Task(JSON)
-const xhr = (url, data) => new Task((fail, done) => $.getJSON(url, data).
-                                                         then(done, fail));
-
-// renderUser :: JSON -> Task(DOMString)
-const renderUser = (json) => new Task((rej, res) => json ? res(json) : void 0).
-        concat(xhr('./userInfo.json')).
-        concat(xhr('./userinfo.php', {ID})).
-        map(userInfo);
-
-// this line runs the computation and either prints "No info" or
-//   renders the created DOM with all available userinformation
-//   into the body of the document
-renderUser(null).run(() => print('No info'), print);
+// send request, then flatMap over the response
+const getsUserAvatar = logsInUser.
+    flatMap((user) => ajax(`${URL}/avatar/${user.id}`)).
+    map((avatar) => ... );
 ```
 
-That's it. Can you how all the hard stuff suddenly dissapeared? Calling for one or for many alternatives does not change the code, plus everything is in a nice chain of things to happen. You can read it top to bottom: First do this, then concat it with that, then...
+Both work nearly identical and it's hard to grasp the difference, so I made it obvious: The `Promise` based version runs immediatly - no way to stop it once it's running.
 
-The last line has changed by a small amount. Instead of calling  `.then` we call the `.run` method of the Task. Notice the change in how that sounds. Calling `.run` actually runs the Task, while the Promise might have beend finished before the function passed to `.then` has been encountered.
+The `Task` based version works equally, but it doesnt run. This allows to store it in a constant and reuse it immediatly.  
 
-Also notice the rearrangement of the arguments passed to `.run`: First the failure handler is called, then the success function. This makes it a lot harder to forget the error handler.
-
+Make sure to get yourself familiar with `Functor`s, `Applicative`s and `Monad`s, we are going to use them in the next tutorial a lot.
 
 ---
 [Index](./readme.md)

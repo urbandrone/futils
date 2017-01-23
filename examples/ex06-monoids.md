@@ -33,7 +33,7 @@ All.of(true).concat(All.empty()); // -> All(true)
 All.empty().concat(All.of(true)); // -> All(true)
 ```
 
-`futils` comes with a bunch of Monoids from these categories which you can use in you day to day programming:
+`futils` comes with a bunch of Monoids from these categories which you can use in your day-to-day programming:
 
 - Unit (Empty group)
 - Additive (Numbers, String)

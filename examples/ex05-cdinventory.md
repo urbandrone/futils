@@ -51,7 +51,7 @@ const signal = curry((type, data) => ({type, data}));
 module.exports = { render, signal };
 ```
 
-Never mind: Even if you don't understand exactly how it works, you will see how a nice and simple architecture which scales well arises from this.
+Never mind: Even if you don't understand exactly how it works, you will see how a nice and simple architecture which scales well arises from this. It is especially suited if you want to build your UI with composable components.
 
 ## The App component
 We're ready now to create a component! A component is some object, which provides a `view` and a `controller` function which must satisfy these signatures:
