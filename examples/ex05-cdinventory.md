@@ -90,6 +90,10 @@ It will be a collection of artists, each with a collection of LPs they produced,
 ### We need Actions
 First off, we need a set of actions to perform on the data. The whole reason we have signals is to instruct the controller what to do to create a new state to render.
 
+This is what actions are:
+
+![Action visual](./05-cdinventory-action.png?raw=true "Action")
+
 ```javascript
 const Action = {
     Add: Symbol('AddArtist'),
@@ -100,11 +104,15 @@ const Action = {
 module.exports = Action;
 ```
 
+Remember the signalize function? It received a action as argument which itself has a type (the Symbol) and some data attached to it.
+
 
 ### Let's make a Controller
 A controller (or modifier) describes a function which takes in a state and some action, and returns a new state from the data send by the action and the given state.
 
-If that sound's familiar, you might have already seen or used `Redux` which uses things called `reducer` functions for the same purpose. The controller itself is a reducer function.
+![View function](./assets/05-cdinventory-view.png?raw=true "view")
+
+To separate our code a bit better, we push some functions into their own file as they could be useful somewhere else.
 
 #### General utilities
 ```javascript
@@ -122,6 +130,8 @@ const remove = curry((x, xs) => filter((a) => a !== x, xs));
 
 module.exports = {findBy, swapBy, remove};
 ```
+
+If that sound's familiar, you might have already seen or used `Redux` which uses things called `reducer` functions for the same purpose. The controller itself is a reducer function. This is the controller logic:
 
 ```javascript
 const {Maybe, pipe, find, map, curry, filter, field} = require('futils');
@@ -202,6 +212,8 @@ module.exports = controller;
 
 ### A View
 The last thing our component needs to have is a way to view the state. To communicate with the controller, the view can emit signals (Data → Action) about what to do.
+
+![View function](./assets/05-cdinventory-view.png?raw=true "view")
 
 Normally you would break this up into smaller functions but it's easer to grasp what happens if you can see the big picture.
 
