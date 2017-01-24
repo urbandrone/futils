@@ -110,8 +110,6 @@ Remember the signalize function? It received a action as argument which itself h
 ### Let's make a Controller
 A controller (or modifier) describes a function which takes in a state and some action, and returns a new state from the data send by the action and the given state.
 
-![View function](./assets/05-cdinventory-view.png?raw=true "view")
-
 To separate our code a bit better, we push some functions into their own file as they could be useful somewhere else.
 
 #### General utilities
@@ -131,7 +129,9 @@ const remove = curry((x, xs) => filter((a) => a !== x, xs));
 module.exports = {findBy, swapBy, remove};
 ```
 
-If that sound's familiar, you might have already seen or used `Redux` which uses things called `reducer` functions for the same purpose. The controller itself is a reducer function. This is the controller logic:
+![View function](./assets/05-cdinventory-view.png?raw=true "view")
+
+If that looks familiar, you might have already seen or used `Redux` which uses things called `reducer` functions for the same purpose. The controller itself is a reducer function. This is the logic:
 
 ```javascript
 const {Maybe, pipe, find, map, curry, filter, field} = require('futils');
@@ -298,7 +298,7 @@ const controller = require('./controller');
 // The initial state for demo purposes. You have to add
 // a way to load in data from memory or from the network
 // at startup as well as a way to persist it if you want
-// such features.
+// such features. we handle that in upcoming examples
 const APP_STATE = [{
     'name': 'Pink Floyd',
     'lps': [
