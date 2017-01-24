@@ -38,14 +38,22 @@ const on = require('snabbdom/modules/eventlisteners');
 
 const patch = snabbdom.init([classes, props, style, on]);
 
+// render :: State → DOM → Component → ()
 const render = (state, node, cmp) => {
+    // vNode is new visual representation of state produced by the view
+    //   function. when designing it, we have access to a state and emit
+    //   argument, where emit is a function with signature (Action → ())
     const vNode = cmp.view(state, (action) => {
+        // next is the new state produced when the lambda (Action → ())
+        //   is called – the controller constructs a new state and we
+        //   recursivly call render again
         const next = cmp.controller(state, action);
         render(next, vNode, cmp);
     });
     patch(node, vNode);
 }
 
+// signal :: Symbol → a → Action{Type: Symbol, Data: a}
 const signal = curry((type, data) => ({type, data}));
 
 module.exports = { render, signal };
@@ -96,53 +104,93 @@ module.exports = Action;
 ### Let's make a Controller
 A controller (or modifier) describes a function which takes in a state and some action, and returns a new state from the data send by the action and the given state.
 
-If that sound's familiar, you might have already seen or used `redux` which uses things called a `reducer` function for the same purpose. The controller itself is a reducer function.
+If that sound's familiar, you might have already seen or used `Redux` which uses things called `reducer` functions for the same purpose. The controller itself is a reducer function.
+
+#### General utilities
+```javascript
+// file: ./helpers.js
+const {find, map, curry, filter} = require('futils');
+
+// findBy :: a → a → bs → b
+const findBy = curry((x, y, xs) => find((a) => a[x] === y, xs));
+
+// swapBy :: a → b → bs → bs
+const swapBy = curry((x, y, xs) => map((a) => a[x] === y[x] ? y : a, xs));
+
+// remove :: a → as → as
+const remove = curry((x, xs) => filter((a) => a !== x, xs));
+
+module.exports = {findBy, swapBy, remove};
+```
 
 ```javascript
 const {Maybe, pipe, find, map, curry, filter, field} = require('futils');
-const {Add, Remove} = require('./actions');
-
-// these are general tools which are normally placed in their own file
-const findBy = curry((x, y, xs) => find((a) => a[x] === y, xs));
-const swapBy = curry((x, y, xs) => map((a) => a[x] === y[x] ? y : a, xs));
-const remove = curry((x, xs) => filter((a) => a !== x, xs));
+const {Add, Remove, Update} = require('./actions');
+const {findBy, swapBy, remove} = require('./helpers');
 
 // these create new information from passed in data
+ 
+// newLP :: String → LP
 const newLP = (lp) => ({title: lp});
+
+// newArtist :: Object → Artist
 const newArtist = ({name, lp}) => ({name, lps: [newLP(lp)]});
 
-// these help to update the data
-const swapByName = swapBy('name');
-const findByName = (a) => Maybe.of(a).map(findBy('name'));
 
-// takes in a state (array) and a action and returns a new altered state
-// from both
+// these help to update the state
+
+// swapByName :: Artist → [Artist] → [Artist] 
+const swapByName = swapBy('name');
+
+// findByName :: Some (a → bs → b)
+const findByName = Maybe.of(findBy('name'));
+
+// takes in a state (array) and a action and returns a new state
+
+// controller :: State Action → State
 const controller = (state, {type, data}) => {
     switch (type) {
         case Add:
-            return findByName(data.name).
+            // adding serves two purposes at once. it adds
+            //   new artists with their first LP, or it updates
+            //   the LPs of a already existing artist. if you
+            //   understand this one, the others will look very
+            //   familiar
+            return findByName.ap(Maybe.of(data.name)).
                 ap(Maybe.of(state)).
+                // simply pretending there is a match, we extend the list
+                //   of LPs of that matched artist with a new LP. this
+                //   produces a new artist
                 map((a) => merge(a, {lps: [...a.lps, newLP(data.lp)]})).
                 cata({
+                    // if None returned, we consider that there is no
+                    //   artist and the given one was a new band
                     None: () => [...state, newArtist(data)],
+                    // if Some returns, it is the concrete artist so
+                    //   we swap it with the one currently in state
                     Some: (a) => swapByName(a, state)
                 });
+
         case Remove:
-            return findByName(data.name).
+            return findByName.ap(Maybe.of(data.name)).
                 ap(Maybe.of(state)).
                 cata({
                     None: () => state,
                     Some: (a) => remove(a, state);
                 });
+
         case Update:
-            return findByName(data.oldName).
+            return findByName.ap(Maybe.of(data.oldName)).
                 ap(Maybe.of(state)).
                 map((a) => merge(a, {name: data.name})).
                 cata({
                     None: () => state,
                     Some: (a) => swapByName(a, state)
                 });
+
         default:
+            // this one is actually important! if no case matched, we
+            //   have to ensure we return the untouched state
             return state;
     }
 }
