@@ -129,7 +129,7 @@ const remove = curry((x, xs) => filter((a) => a !== x, xs));
 module.exports = {findBy, swapBy, remove};
 ```
 
-![View function](./assets/05-cdinventory-view.png?raw=true "view")
+![controller](./assets/05-cdinventory-controller.png?raw=true "controller")
 
 If that looks familiar, you might have already seen or used `Redux` which uses things called `reducer` functions for the same purpose. The controller itself is a reducer function. This is the logic:
 
@@ -213,7 +213,7 @@ module.exports = controller;
 ### A View
 The last thing our component needs to have is a way to view the state. To communicate with the controller, the view can emit signals (Data → Action) about what to do.
 
-![View function](./assets/05-cdinventory-view.png?raw=true "view")
+![view](./assets/05-cdinventory-view.png?raw=true "view")
 
 Normally you would break this up into smaller functions but it's easer to grasp what happens if you can see the big picture.
 
