@@ -92,7 +92,7 @@ First off, we need a set of actions to perform on the data. The whole reason we 
 
 This is what actions are:
 
-![Action visual](./05-cdinventory-action.png?raw=true "Action")
+![Action visual](./05-cdinventory-actions.png?raw=true "Action")
 
 ```javascript
 const Action = {
