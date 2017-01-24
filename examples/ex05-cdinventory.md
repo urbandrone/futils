@@ -17,10 +17,11 @@ $ npm i -S futils snabbdom
 
 Let's build a small utility engine from both. This helps keeping our code base simple and makes it easier to focus on the real stuff we'd like to do: Writing components!
 
-The utility engine provides two functions:
+The utility engine provides one function: render.
+
+#### Signature
 
 - render([], DOM, component) → void
-- signal(type, payload) → Action
 
 The `render` function takes a array, a DOM node and a component and renders the state into the DOM by replacing the given node with a new one.
 

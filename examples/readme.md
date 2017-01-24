@@ -1,5 +1,5 @@
 # futils Examples
-A growing set of **How to** examples for solving some common programming problems with the help of the `futils` package.
+A growing set of **How to** examples for working with the `futils` package.
 
 ## Available examples
 * [Getting started](./ex00-getting-started.md)
