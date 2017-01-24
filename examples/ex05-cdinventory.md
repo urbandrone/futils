@@ -208,7 +208,6 @@ Normally you would break this up into smaller functions but it's easer to grasp 
 ```javascript
 const {compose, pipe, fold, merge, call, field} = require('futils');
 const h = require('snabbdom/h');
-const {signal} = require('./dvc-app');
 const {Add, Remove, Update} = require('./actions');
 
 
@@ -220,18 +219,24 @@ const inputs = pipe(
 );
 
 // folds all <input> elements into a hashmap, creating name:value pairs
-const namedValues = fold((a, x) => merge(a, {[x.name]: x.value}), {});
-const artist = compose(namedValues, Array.from, inputs);
+// keyVals :: {} → [a{name: String, value: *}] → {}
+const keyVals = fold((a, x) => merge(a, {[x.name]: x.value}), {});
 
-const addArtist = compose(signal(Add), artist);
-const updateArtist = (a) => pipe(artist, merge({oldName: a}), signal(Update));
+// artist :: Event → {}
+const artist = compose(keyVals, Array.from, inputs);
+
+// xfArtist :: a → {}
+const xfArtist = (a) => pipe(artist, merge({oldName: a}));
 
 
 // takes a state to render and a emitter function and sends signals
 // through the emitter to the controller
+
+// view :: State, (Event → Action Intent) → vNode
 const view = (state, emit) => {
     const type = 'text';
     return h('div.app', [
+        // the head contains the form elements to add a artist
         h('div.app_head', [
             h('input.textinput',
                 {props: {type, name: 'name', placeholder: 'Name'}},
@@ -240,20 +245,25 @@ const view = (state, emit) => {
                 {props: {type, name: 'lp', placeholder: 'LP'}},
                 []),
             h('button.btn.submit',
-                {on: {click: compose(emit, addArtist)}},
+                {on: {click: compose(emit(Add), artist)}},
                 'Save')
         ]),
+        // the body is just a wrapper for the artists (pure
+        //   state representation)
         h('div.app_body', state.map((a) => {
             return h('div.artist', [
                 h('div.artist_meta', [
+                    // meta of the artist allows to update the artist
                     h('input.textinput',
-                        {on: {blur: compose(emit, updateArtist(a.name))},
+                        {on: {blur: compose(emit(Update), xfArtist(a.name))},
                         props: {type, name: 'name', value: a.name}},
                         []),
+                    // a button to remove the artist
                     h('button.btn', 
-                        {on: {click: [emit, signal(Remove, a.name)]}},
+                        {on: {click: [emit(Remove), a.name]}},
                         'Delete')
                 ]),
+                // list all the LPs attached to the artist
                 h('div.aritst_lps', a.lps.map((lp) => {
                     return h('div.lp', lp.title);
                 }))
