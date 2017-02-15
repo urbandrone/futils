@@ -90,6 +90,9 @@ var _ = futils;
 // your code
 ```
 
+### Via CDN (unpkg.com)
+Grab the latest version of `futils` from the [unpkg](https://unpkg.com/futils@latest/futils.js) CDN.
+
 ### Note:
 If you want to use `futils` in non ES2015-ready browsers, make sure you include a ES2015 environment polyfill like [core-js](https://github.com/zloirock/core-js). It's fine if you only use the native shim without ES7 proposels.
 

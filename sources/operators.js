@@ -473,7 +473,7 @@ tail call optimization, which now finally seems to arrive.
  * @version 2.2.0
  * @param {function} f Function to call on each iteration
  * @param {any} x The seed value to fold into
- * @param {array} xs The collection to fold down
+ * @param {array|Monad|Monoid} xs The collection to fold down
  * @return {any} Depends on the seed value
  *
  * @example
@@ -485,6 +485,9 @@ tail call optimization, which now finally seems to arrive.
  * fold(add, '', ['hello,', ' ', 'world']); // -> 'hello world'
  */
 const fold = arity.triadic((f, x, xs) => {
+    if (type.isFunc(xs.fold)) {
+        return xs.fold(f, x);
+    }
     const go = rec.trampoline((g, acc, as) => {
         if (as.length < 1) { return acc; }
         return rec.suspend(go, g, g(acc, first(as)), rest(as));
@@ -531,7 +534,7 @@ const unfold = arity.dyadic((f, x) => {
  *
  * range(2, 8); // -> [2, 3, 4, 5, 6, 7, 8]
  */
-const range = arity.dyadic((start, stop) => {
+const range = arity.tetradic((start, stop) => {
     return unfold((n) => n <= stop ? [n, n + 1] : null, start);
 });
 
@@ -888,10 +891,15 @@ const flatten = (m) => {
  */
 const flatMap = arity.dyadic((f, m) => {
     if (type.isFunc(f)) {
+        if (type.isFunc(m.flatMap)) {
+            return m.flatMap(f);
+        }
         return flatten(map(f, m));
     }
     throw 'operators::flatMap awaits a function as first argument but saw ' + f;
 });
+
+
 
 
 

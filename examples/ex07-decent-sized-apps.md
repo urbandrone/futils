@@ -1,14 +1,42 @@
-# A pattern for medium to decent sized applications
+# Contacts list
 
 ![John Doe](https://api.adorable.io/avatars/285/doe%40example.com "John Doe")
 
 
+## Folder structure
+This is the folder structure used:
 
+```
+<root>
+    |- source
+    |   |- components
+    |   |   |- component_a
+    |   |   |   |- component.css
+    |   |   |   |- actions.js
+    |   |   |   |- controller.js
+    |   |   |   |- view.js
+    |   |   |   |- helpers.js
+    |   ...
+    |   |- helpers
+    |   |   |- dvc.js
+    |   |   |- db.js
+    |   |   |- dom.js
+    |   |- App.js
+    |   |- boot.js
+    |- tests
+    |   |- unit tests
+    |- docs
+    |   |- documentations
+    |- builds
+    |   |- build stuff
+    |- index.html
+    |- index.js
+```
 
-
+## DVC Utility extended
 ```javascript
-// dvc-app.js
-const {Task, curry} = require('futils');
+// <root>/source/helpers/dvc.js
+const {Task, curry, pipe, fold, given} = require('futils');
 const snabbdom = require('snabbdom');
 const classes = require('snabbdom/modules/class');
 const props = require('snabbdom/modules/props');
@@ -18,7 +46,7 @@ const on = require('snabbdom/modules/eventlisteners');
 const patch = snabbdom.init([classes, props, style, on]);
 
 // async :: a → Task a
-const async = (v) => Task.is(v) ? v : Task.of(v);
+const async = given(Task.is, id, Task.of):
 
 // signalize :: (Action → State) → ActionType → a → ()
 const signalize = curry((f, type, data) => f({type, data}));
@@ -28,22 +56,392 @@ const render = curry((state, node, cmp) => {
     // vNode is a new virtual representation of the state
     // as a virtual DOM node
     const vNode = cmp.view(state, signalize((action) => {
-        // next contains the new state produced by the controller.
+        // creates the new state produced by the controller.
         // by wrapping it in a Task, we are free to do async
         //   actions in the controller and return them which
-        //   will resolve the automatically
-        // run executes the computation and fails silently or
+        //   will resolve them automatically
+        // fold executes the computation and fails silently or
         //   produces a new state and calls render with it
-        const next = async(cmp.controller(state, action));
-        next.run(() => null, // <- place (Error → ()) here like log
-                 (nstate) => render(nstate, vNode, cmp));
+        async(cmp.controller(state, action)).
+            fold(() => null, // <- place (Error → ()) here, like logging
+                (nstate) => render(nstate, vNode, cmp));
     }));
     patch(node, vNode);
 });
 
-module.exports = { render };
+// foldController :: [(State → Action → State)] → (State → Action → State)
+const foldControllers = (...cs) => (state, action) => {
+    return fold((s, c) => c(s, action), s, cs);
+}
+
+module.exports = { render, foldControllers };
 ```
 
+## The initial state
+The initial state appears to be a Object `{}` with two field:
+
+* A user field
+* A contacts field
+
+The user field itself will be a object with this shape:
+
+```javascript
+{
+    name: String,
+    id: String,
+    email: String
+}
+```
+
+Our contact will be stored in an array `[]`:
+
+```javascript
+[{
+    name: String,
+    email: String
+}, {
+    name: String,
+    email: String
+}]
+```
+
+## DB component
+This handles the saving of data for us. We are going to use [Sequelize](http://docs.sequelizejs.com/en/v3/) for database interaction.
+
+```javascript
+// <root>/source/helpers/db.js
+const {Task, curry} = require('futils');
+const Sequelize = require('sequelize');
+
+// seq :: Conn
+const seq = new Sequelize('dbname', 'username', 'userpass');
+
+// User :: Table
+const User = seq.define('user', {
+    id: Sequelize.INTEGER,
+    name: Sequelize.STRING,
+    email: Sequelize.STRING
+});
+
+// Contacts :: Table
+const Contacts = seq.define('contacts', {
+    id: Sequelize.INTEGER,
+    uid: Sequelize.INTEGER,
+    cid: Sequelize.INTEGER
+});
+
+...
+```
+
+This defines us a connection to the database and two tables. If the tables don't exist, they are created on the fly for us. This happens later when we call a `Task` named `sync`, which will synchronize to the database. Let's define it:
+
+```javascript
+// <root>/source/helpers/db.js
+...
+
+// sync :: Task Error Conn
+const sync = new Task((rej, res) => {
+    seq.sync().
+        then(res).
+        catch(rej);
+});
+
+// create :: Table → {} → Task Error Record
+const create = curry((Tbl, attrs) => new Task((rej, res) => {
+    Tbl.create(attrs).
+        then(res).
+        catch(rej);
+}));
+
+// query :: Table → {} → Task Error [Record]
+const query = curry((Tbl, qry) => new Task((rej, res) => {
+    Tbl.findAll(qry).
+        then(res).
+        catch(rej);
+}));
+
+
+module.exports = {create, query, sync, User, Contacts};
+```
+
+Alongside `sync` two functions can be defined, one for creating records and one for querying records in the database. `create` takes a table and a record to insert and returns a new `Task` with a record, while `query` takes a table and some query conditions and returns a array of all records which matched the given conditions.
+
+## A login component
+This component serves as a starting point for the application. There are no needs for a security check or something because there is no sensible data stored. A login just identifies a certain user.
+
+### Login actions
+```javascript
+// <root>/source/components/login/actions.js
+
+module.exports = {
+    Login: Symbol('LoginAction')
+};
+```
+
+### Login controller
+The controller takes a hint from [example 05](./ex05-cdinventory.md), where the controller handled new artists by searching for an existing artist by name. If no artist matched the given name, it would be treated as new artist with a single LP. Here, we simply pretend a user which has no login wants to register a new account.
+
+```javascript
+// <root>/source/components/login/controller.js
+const {Task, Left, Right, curry, first, getter} = require('futils');
+const {Login} = require('./actions');
+const {sync, query, create, User, Contacts} = require('../../helpers/db');
+
+// queryUser :: Query → Task Error User
+const queryUser = query(User);
+// queryContacts :: Query → Task Error [Contact]
+const queryContacts = query(Contacts);
+// createUser :: Attributes → Task Error _
+const createUser = create(User);
+
+// findUser :: {} → Task Error User
+const findUser = (u) => queryUser({where: {name: u.uname, email: u.umail}}).
+    map(first).
+    map((x) => !x ? Left.of({name: u.uname, email: u.umail}) : Right.of(x));
+
+// cidToA :: {cid: Number} → {a: Number}
+const cidToA = (c) => ({a: c.cid});
+
+// findUserContacts :: [ContactRecord] → [Contact]
+const findUserContacts = (cs) => queryUser({where:{id:{$or:cs.map(cidToA)}}});
+
+// processLogin :: Login → Task Error State
+const processLogin = (u) => findUser(u).
+    flatMap((x) => x.fold(
+        (newUser) => createUser(newUser). // <- pretends a new user
+                        flatMap((_) => Task.of({user: newUser, contacts: []})),
+        (user) => queryContacts({where: {uid: user.id}}). // <- gets Records
+                    flatMap(findUserContacts). // <- gets Users from Records
+                    map((cs) => ({user: user, contacts: cs}))));
+
+// postLoginData :: data → Task Error State
+const postLoginData = (data) => sync.
+    map(getter(data)).
+    flatMap(processLogin)
+
+// controller :: State → Action → State
+const controller = curry((state, action) => {
+    switch (action.type) {
+        case Login:
+            // post action.data to the server. here, we use explicitly
+            //   the added freedom to return a Task of the new state.
+            //   The async function now handles this edge case and
+            //   lets all incoming Tasks pass. each time the Login
+            //   action arrives, a blank new state is constructed from
+            //   scratch.
+            return postLoginData(action.data);
+        default:
+            return state;
+    }
+});
+
+module.exports = { controller };
+```
+
+### Login view
+We need some small helpers for the views which we place in the `helpers/dom.js` file below. But first, here is the code for the login `view` function:
+
+```javascript
+// <root>/source/components/login/view.js
+const {curry, pipe} = require('futils');
+const h = require('snabbdom/h');
+const {Login} = require('./actions');
+const {readFormTextInputs} = require('../../helpers/dom');
+
+const FORM_ATTRS = {
+    props: {
+        action: '#', // no action
+        enctype: 'application/x-www-form-urlencoded',
+        method: 'post'
+    }
+};
+
+// labeledInput :: String, String, String → VNode
+const labeledInput = (label, id, name) => {
+    return h('div.input', [
+        h('label.label', {htmlFor: id}, label),
+        h('input.textinput', {type: 'text', id, name}, [])
+    ]);
+}
+
+// view :: State → (ActionType → Data → Action) → VNode
+const view = curry((state, emit) => {
+    const emitLogin = pipe(readFormTextInputs, emit(Login));
+
+    return h('form.form', FORM_ATTRS, [
+        labeledInput('Name', 'uname', 'uname'),
+        labeledInput('E-Mail', 'umail', 'umail'),
+
+        h('button.button', {on: {click: emitLogin}}, 'Login!')
+    ]);
+});
+
+module.exports = { view };
+```
+
+And these are the implementations of the helper functions:
+
+```javascript
+// <root>/source/helpers/dom.js
+const {curry, pipe, call, field, fold, merge} = require('futils');
+
+// stopDefault :: Event -> Event
+const stopDefault = call('preventDefault');
+
+// query :: String -> DOM -> [DOM]
+const query = curry((s, d) => Array.from(d.querySelectorAll(s)));
+
+// readFormFields :: [DOM{name: String, value: *}] → {}
+const readFormFields = fold((a, x) => merge(a, {[x.name]: x.value}), {});
+
+// readFormTextInputs :: Event -> {}
+const readFormTextInputs = pipe(
+    stopDefault,
+    field('target.parentNode'),
+    query('input[type="text"]'),
+    readFormFields
+);
+
+
+module.exports = {
+    stopDefault, query, readFormFields, readFormTextInputs
+};
+```
+
+
+## App component – A first look
+Now that we have the login component, we can make a first guess about how the `App` component might look like. It's controller will be an aggregat of all other controllers while its view is a aggregat of all views. It does not have any actions itself, but it passes all incoming actions into the controllers of the components it hosts. If you think this sounds complicated, don't panic! We have done most of the work already with `foldControllers`. The rest is merely the view part, so we stick them into one file. This reduces the complexity of
+the boot file a lot.
+
+This is how App look like:
+
+```javascript
+// <root>/source/App.js
+const {foldControllers} = require('./../helpers/dvc');
+const LoginC = require('./login/controller').controller;
+const LoginV = require('./login/view').view;
+// we import more controllers here
+
+
+// for now, there is just one component.
+// this makes it easy:
+const controller = LoginC;
+
+
+// however, we will use this later:
+// 
+// const controller = foldControllers(
+//     Login.controller, ...
+// )
+
+
+const view = (state, emit) => {
+    if (!state) {
+        // no state? then we give back the login!
+        return LoginV(null, emit);
+    }
+
+    // rest will go here
+}
+
+
+module.exports = { view, controller };
+```
+
+
+## Bootscripts
+Ok, fine. Let's move on to the boot script. This is where we launch the missiles (so to speak).
+
+```javascript
+// <root>/source/boot.js
+const {render} = require('./helpers/dvc');
+const App = require('./App')
+
+window.addEventListener('DOMContentLoaded', () => {
+    const $appNode = document.querySelector('#app');
+    if ($appNode) { render(null, $appNode, App); } // <- run!
+});
+```
+
+
+## Parts of the App component
+The application GUI will contain two parts, one for adding contacts and one for listing them. When the user adds a contact, it will be added to the registered users automatically if it is not already registered.
+
+## Listing the contacts of a user
+```javascript
+// <root>/source/components/contactlist/actions.js
+module.exports = {
+    SortAlpha: Symbol('SortAlphabetical')
+}
+```
+
+```javascript
+// <root>/source/components/contactlist/controller.js
+const {} = require('futils');
+
+module.exports = { controller };
+```
+
+```javascript
+// <root>/source/components/contactlist/view.js
+const {} = require('futils');
+
+module.exports = { view };
+```
+
+## Adding contacts
+One of the clues about adding a contact is that: Every time a contact is added, whenever this contact logs in, it already has at least one contact in the list – the one who added him/her. If the user hasn't been added by someone else already, the list is of course empty.
+
+We start with the usual stuff: Defining some actions.
+```javascript
+// <root>/source/components/contactlist/actions.js
+module.exports = {
+    SortAlpha: Symbol('SortAlphabetical')
+}
+```
+
+```javascript
+// <root>/source/components/contactlist/controller.js
+const {curry} = require('futils');
+const {SortAlpha} = require('./actions');
+
+
+
+const constroller = curry((state, action) => {
+    switch (action.type) {
+        case SortAlpha:
+            return state;
+        default:
+            return state;
+    }
+});
+
+module.exports = { controller };
+```
+
+```javascript
+// <root>/source/components/contactlist/view.js
+const {curry, pipe} = require('futils');
+const h = require('snabbdom/h');
+const {SortAlpha} = require('./actions');
+
+
+
+const view = curry((state, emit) => {
+    const sortAlpha = emit(SortAlpha);
+
+    return h('div.contacts', [
+        h('div.contacts_head', [
+            h('button.btn',
+                {props: {type: 'button'},
+                 on: {click: sortAlpha}}, 'A-Z!')
+        ]),
+        h('div.contacts_body', state.concacts.map(viewContact))
+    ]);
+});
+
+module.exports = { view };
+```
 
 
 

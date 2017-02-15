@@ -9,6 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import type from '../types';
+import combine from '../combinators';
 
 /**
  * Implementation of the Identity monad
@@ -206,7 +207,53 @@ export default class Identity {
     // -- Monoid
     // empty, Semigroup
     // -- Traversable
-    // traverse, Functor, Foldable
+    
+
+    /**
+     * Takes a function from some value to a Functor and an Applicative and
+     *     returns a instance of the Applicative either with a Some or a None
+     * @method traverse
+     * @memberof module:futils/monads/identity.Identity 
+     * @param {function} f Function from a to Applicative(a)
+     * @param {Applicative} A Applicative constructor
+     * @return {Applicative} A(Identity(a))
+     *
+     * @example
+     * const {Maybe, Identity} = require('futils');
+     *
+     * const one = Identity.of(Maybe.of(1));
+     *
+     * // Note: ::traverse doesn't need it's second parameter but
+     * //   the type signature stays the same
+     * 
+     * one.traverse(Maybe.of, Maybe);
+     * // -> Some(Identity(1))
+     */
+    traverse (f, A) {
+        if (type.isFunc(f)) {
+            return this.fold((x) => f(x).map(A.of))
+        }
+        throw 'Identity::traverse expects function but saw ' + f;
+    }
+
+    /**
+     * Takes an Applicative and returns a instance of the Applicative
+     *     either with a Some or a None
+     * @method sequence
+     * @memberof module:futils/monads/identity.Identity 
+     * @param {Applicative} A Applicative constructor
+     * @return {Applicative} A(Identity(a))
+     *
+     * @example
+     * const {Maybe, Identity} = require('futils');
+     *
+     * const one = Identity.of(Maybe.of(1));
+     *
+     * one.sequence(Maybe); // -> Some(Identity(1));
+     */
+    sequence (A) {
+        return this.traverse(combine.id, A);
+    }
     // -- Semigroup
     // concat
 }

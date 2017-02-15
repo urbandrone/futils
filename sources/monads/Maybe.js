@@ -9,6 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import type from '../types';
+import combine from '../combinators';
 
 /**
  * Implementation of the Maybe monad
@@ -250,7 +251,7 @@ class Maybe {
      * let one = Maybe.of(1);
      * let nothing = Maybe.of(null);
      *
-     * const fail = () => 'No int :(';
+     * const fail = () => 'No int!';
      * const success = (n) => `Given ${n}!`;
      *
      * one.fold(fail, success); // -> 'Given 2!';
@@ -294,7 +295,55 @@ class Maybe {
         if (type.isFunc(o.Some) && type.isFunc(o.None)) {
             return this.fold(o.None, o.Some);
         }
-        throw 'Maybe::cata expected Object of {Some: fn}, but saw ' + o; 
+        throw 'Maybe::cata expected Object of {None: fn, Some: fn} but saw ' + o; 
+    }
+
+    /**
+     * Takes a function from some value to a Functor and an Applicative and
+     *     returns a instance of the Applicative either with a Some or a None
+     * @method traverse
+     * @memberof module:futils/monads/maybe.Maybe 
+     * @param {function} f Function from a to Applicative(a)
+     * @param {Applicative} A Applicative constructor
+     * @return {Applicative} Either A(Some(x)) or A(None)
+     *
+     * @example
+     * const {Maybe, Identity} = require('futils');
+     *
+     * const one = Maybe.of(Identity.of(1));
+     *
+     * // Note: ::traverse needs it's second parameter, because the Maybe
+     * //   type may-be None so leaving the second argument blank results
+     * //   in the instance not knowing where to traverse to in a None case
+     * 
+     * one.traverse(Identity.of, Identity);
+     * // -> Identity(Some(1))
+     */
+    traverse (f, A) {
+        if (type.isFunc(f) && type.isApplicative(A)) {
+            return this.fold(() => A.of(new None()),
+                             (x) => f(x).map(A.of))
+        }
+        throw 'Maybe::traverse expects function & Applicative but saw ' + [f, A];
+    }
+
+    /**
+     * Takes an Applicative and returns a instance of the Applicative
+     *     either with a Some or a None
+     * @method sequence
+     * @memberof module:futils/monads/maybe.Maybe 
+     * @param {Applicative} A Applicative constructor
+     * @return {Applicative} Either A(Some(x)) or A(None)
+     *
+     * @example
+     * const {Maybe, Identity} = require('futils');
+     *
+     * const one = Maybe.of(Identity.of(1));
+     *
+     * one.sequence(Identity); // -> Identity(Some(1));
+     */
+    sequence (A) {
+        return this.traverse(combine.id, A);
     }
     
     // -- Bifunctor

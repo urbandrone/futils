@@ -9,6 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import type from '../types';
+import combine from '../combinators';
 
 /**
  * Implementation of the Either monad
@@ -276,6 +277,50 @@ export class Right {
             return o.Right(this.value);
         }
         throw 'Right::cata expected Object of {Right: fn}, but saw ' + o; 
+    }
+
+    /**
+     * Takes a function from some value to a Functor and an
+     *     Applicative and returns a instance of the Applicative
+     *     either with a Left or a Right
+     * @method traverse
+     * @memberof module:futils/monads/either.Right
+     * @param {function} f Function from a to Applicative(a)
+     * @param {Applicative} A Applicative constructor
+     * @return {Applicative} Either A(Right(x)) or A(Left(x))
+     *
+     * @example
+     * const {Right, Identity} = require('futils');
+     *
+     * const one = Right.of(Identity.of(1));
+     * 
+     * one.traverse(Identity.of, Identity);
+     * // -> Identity(Right(1))
+     */
+    traverse (f, A) {
+        if (type.isFunc(f) && type.isApplicative(A)) {
+            return this.fold(null, (x) => f(x).map(A.of))
+        }
+        throw 'Right::traverse expects function & Applicative but saw ' + [f, A];
+    }
+
+    /**
+     * Takes an Applicative and returns a instance of the Applicative
+     *     either with a Left or a Right
+     * @method sequence
+     * @memberof module:futils/monads/either.Right
+     * @param {Applicative} A Applicative constructor
+     * @return {Applicative} Either A(Right(x)) or A(Left(x))
+     *
+     * @example
+     * const {Right, Identity} = require('futils');
+     *
+     * const one = Right.of(Identity.of(1));
+     *
+     * one.sequence(Identity); // -> Identity(Right(1));
+     */
+    sequence (A) {
+        return this.traverse(combine.id, A);
     }
 
     // -- Bifunctor
@@ -578,6 +623,51 @@ export class Left {
         }
         throw 'Left::cata expected Object of {Left: fn}, but saw ' + o; 
     }
+
+    /**
+     * Takes a function from some value to a Functor and an
+     *     Applicative and returns a instance of the Applicative
+     *     either with a Left or a Right
+     * @method traverse
+     * @memberof module:futils/monads/either.Left
+     * @param {function} f Function from a to Applicative(a)
+     * @param {Applicative} A Applicative constructor
+     * @return {Applicative} Either A(Right(x)) or A(Left(x))
+     *
+     * @example
+     * const {Left, Identity} = require('futils');
+     *
+     * const one = Left.of(Identity.of(1));
+     * 
+     * one.traverse(Identity.of, Identity);
+     * // -> Identity(Left(1))
+     */
+    traverse (f, A) {
+        if (type.isFunc(f) && type.isApplicative(A)) {
+            return this.fold((x) => A.of(x).map(A.of))
+        }
+        throw 'Left::traverse expects function & Applicative but saw ' + [f, A];
+    }
+
+    /**
+     * Takes an Applicative and returns a instance of the Applicative
+     *     either with a Left or a Right
+     * @method sequence
+     * @memberof module:futils/monads/either.Left
+     * @param {Applicative} A Applicative constructor
+     * @return {Applicative} Either A(Right(x)) or A(Left(x))
+     *
+     * @example
+     * const {Left, Identity} = require('futils');
+     *
+     * const one = Left.of(Identity.of(1));
+     *
+     * one.sequence(Identity); // -> Identity(Left(1));
+     */
+    sequence (A) {
+        return this.traverse(combine.id, A);
+    }
+
     // -- Bifunctor
     /**
      * Given two functions, maps the first over the instance if it is a Left

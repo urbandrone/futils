@@ -137,11 +137,13 @@ export default class Task {
      * let one_b = Task.resolve(1);
      * let two = Task.resolve(2);
      *
-     * one.equals(one_b); // -> true
+     * one.equals(one); // -> true
+     * one.equals(one_b); // -> false
      * one.equals(two); // -> false
      */
     equals (b) {
-        return Task.prototype.isPrototypeOf(b);
+        return Task.prototype.isPrototypeOf(b) &&
+                b === this;
     }
     // -- Functor
     /**
@@ -343,20 +345,17 @@ export default class Task {
      * let one = Task.resolve(1);
      * let nothing = Task.reject(null);
      *
-     * const fail = () => 'No int';
-     * const success = (n) => `Given ${n}!`;
-     *
-     * one.fold(fail, success).run(
+     * one.fold(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
-     * // logs "Resolved: Given 1!"
+     * // logs "Resolved: 1"
      * 
-     * none.fold(fail, success).run(
+     * none.fold(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
-     * // logs "Rejected: No int"
+     * // logs "Rejected: null"
      */
     fold (f, g) {
         if (type.isFunc(g) && type.isFunc(f)) {
@@ -383,20 +382,14 @@ export default class Task {
      * one.cata({
      *     Reject: () => 'Nothing found',
      *     Resolve: (n) => 'Found number of ' + n
-     * }).run(
-     *     (x) => console.error('Rejected: ' + x),
-     *     (n) => console.log('Resolved: ' + n)
-     * );
-     * // logs "Resolved: Found number of 1"
+     * });
+     * // "Found number of 1"
      *
      * nothing.cata({
      *     Reject: () => 'Nothing found',
      *     Resolve: (n) => 'Found number of ' + n
-     * }).run(
-     *     (x) => console.error('Rejected: ' + x),
-     *     (n) => console.log('Resolved: ' + n)
-     * );
-     * // logs "Rejected: Nothing found"
+     * });
+     * // "Nothing found"
      */
     cata ({Reject, Resolve}) {
         if (type.isFunc(Resolve) && type.isFunc(Reject)) {

@@ -1,7 +1,7 @@
 # futils Examples
-A growing set of **How to** examples for working with the `futils` package.
+A growing set of **How to** tutorials for working with the `futils` package.
 
-## Available examples
+## Available tutorials
 * [Getting started](./ex00-getting-started.md)
 * [Currying and partial application](./ex01-currypartial.md)
 * [Use with reactive streams](./ex02-reactive.md)

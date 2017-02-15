@@ -9,6 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import type from '../types';
+import combine from '../combinators';
 
 /**
  * Implementation of the IO monad
@@ -19,7 +20,7 @@ import type from '../types';
 
 
 const MV = Symbol('MonadicValue');
-const comp = (f, g) => (...args) => f(g(...args));
+const comp = combine.compose;
 
 
 /**
@@ -196,21 +197,105 @@ export default class IO {
         return this.run();
     }
 
-    fold (f) {
-        return f(this.run());
+    fold (f, x) {
+        return f(this.run(x));
+    }
+
+    /**
+     * Takes a function from some value to a Functor and an 
+     *     Applicative and returns a instance of the Applicative
+     *     wrapping a IO
+     * @method traverse
+     * @memberof module:futils/monads/io.IO 
+     * @param {function} f Function from a to Applicative(a)
+     * @param {Applicative} A Applicative constructor
+     * @return {Applicative} A(IO(a))
+     *
+     * @example
+     * const {IO, Identity} = require('futils');
+     *
+     * const one = Identity.of(IO.of(1));
+     * 
+     * one.traverse(IO.of, IO);
+     * // -> IO(Identity(1))
+     */
+    traverse (f, A) {
+        if (type.isFunc(f)) {
+            return this.fold((x) => f(x).map(A.of))
+        }
+        throw 'IO::traverse expects function but saw ' + f;
+    }
+
+    /**
+     * Takes an Applicative and returns a instance of the Applicative
+     *      wrapping a IO
+     * @method sequence
+     * @memberof module:futils/monads/io.IO 
+     * @param {Applicative} A Applicative constructor
+     * @return {Applicative} A(IO(a))
+     *
+     * @example
+     * const {IO, Identity} = require('futils');
+     *
+     * const one = Identity.of(IO.of(1));
+     *
+     * one.sequence(IO); // -> IO(Identity(1));
+     */
+    sequence (A) {
+        return this.traverse(combine.id, A);
     }
 
     // -- Semigroup
-    // concat
+    /**
+     * Takes another member of the Semigroup and concatenates it
+     *     with the IO instance
+     * @method concat
+     * @param {Semigroup} M Other IO instance
+     * @return {Semigroup} New IO
+     *
+     * @example
+     * const {IO} = require('futils');
+     *
+     * const topScroll = new IO(() => window.scrollTop);
+     * const addWinH = new IO((n) => n + window.innerHeight);
+     *
+     * const screenBottom = topScroll.concat(addWinH);
+     *
+     * screenBottom.run(); // -> Int
+     */
+    concat (M) {
+        return new IO(comp(M.run, this.run));
+    }
 
     // -- Monoid
-    // empty
+    /**
+     * Returns the Unit instance of a IO
+     * @method empty
+     * @static
+     * @return {Monoid} The empty IO
+     *
+     * @example
+     * const {IO} = require('futils');
+     *
+     * IO.of(1).concat(IO.empty()); // -> IO(1)
+     * IO.empty().concat(IO.of(1)); // -> IO(1)
+     */
+    static empty () {
+        return new IO(combine.id);
+    }
     
-    try () {
+    /**
+     * Takes a seed value and the computation in a try-catch block and
+     *     returns the final value. Returns the error if an error occurs
+     * @method try
+     * @param {any} [x] Optional seed value to run the computation with
+     * @return {any|Error} Result of the computation
+     */
+    try (x) {
         try {
-            return this.fold((v) => v);
+            return this.fold(combine.id, x);
         } catch (exc) {
-            return exc.message;
+            return exc;
         }
     }
 }
