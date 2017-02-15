@@ -75,12 +75,13 @@ describe('futils/monads module', function () {
             expect(Identity.of(f).ap(m).value).toBe(2);
         });
 
-        it('can be traversed .traverse', () => {
-            const x = Identity.of(Some.of(1));
-            const tf = (y) => y.traverse(Some.of, Identity);
-            expect(Some.is(tf(x))).toBe(true);
-            expect(tf(x).map(Identity.is).fold(id, id)).toBe(true);
-        });
+        // uncomment on build 2.4.1
+        // it('can be traversed .traverse', () => {
+        //     const x = Identity.of(Some.of(1));
+        //     const tf = (y) => y.traverse(Some.of, Identity);
+        //     expect(Some.is(tf(x))).toBe(true);
+        //     expect(tf(x).map(Identity.is).fold(id, id)).toBe(true);
+        // });
     });
 
     describe('IO monad', () => {
@@ -119,12 +120,13 @@ describe('futils/monads module', function () {
             expect(new IO(comb('!')).ap(m).run()).toBe('test!');
         });
 
-        it('can be traversed .traverse', () => {
-            const x = IO.of(Some.of(1));
-            const tf = (y) => y.traverse(Some.of, Identity);
-            expect(Some.is(tf(x))).toBe(true);
-            expect(tf(x).map(Identity.is).fold(id, id)).toBe(true);
-        });
+        // uncomment on build 2.4.1
+        // it('can be traversed .traverse', () => {
+        //     const x = IO.of(Some.of(1));
+        //     const tf = (y) => y.traverse(Some.of, Identity);
+        //     expect(Some.is(tf(x))).toBe(true);
+        //     expect(tf(x).map(Identity.is).fold(id, id)).toBe(true);
+        // });
     });
 
     describe('Either monad', () => {
@@ -220,12 +222,13 @@ describe('futils/monads module', function () {
             expect(left.orElse(2).value).toBe(2);
         });
 
-        it('can be traversed .traverse', () => {
-            const x = Either.of(Some.of(1));
-            const tf = (y) => y.traverse(Some.of, Right);
-            expect(Some.is(tf(x))).toBe(true);
-            expect(tf(x).map(Right.is).fold(id, id)).toBe(true);
-        });
+        // uncomment on build 2.4.1
+        // it('can be traversed .traverse', () => {
+        //     const x = Either.of(Some.of(1));
+        //     const tf = (y) => y.traverse(Some.of, Right);
+        //     expect(Some.is(tf(x))).toBe(true);
+        //     expect(tf(x).map(Right.is).fold(id, id)).toBe(true);
+        // });
     });
 
     describe('Maybe monad', () => {
