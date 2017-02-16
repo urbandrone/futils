@@ -63,16 +63,16 @@ const render = curry((state, node, cmp) => {
         // fold executes the computation and fails silently or
         //   produces a new state and calls render with it
         async(cmp.controller(state, action)).
-            fold(() => null, // <- place (Error → ()) here, like logging
+            fold(() => null, // <- place (Error → ()) here (logging, etc.)
                 (nstate) => render(nstate, vNode, cmp));
     }));
     patch(node, vNode);
 });
 
 // foldController :: [(State → Action → State)] → (State → Action → State)
-const foldControllers = (...cs) => (state, action) => {
+const foldControllers = (...cs) => curry((state, action) => {
     return fold((s, c) => c(s, action), s, cs);
-}
+});
 
 module.exports = { render, foldControllers };
 ```
@@ -87,19 +87,21 @@ The user field itself will be a object with this shape:
 
 ```javascript
 {
+    id: Number,
     name: String,
-    id: String,
     email: String
 }
 ```
 
-Our contact will be stored in an array `[]`:
+Our contacts will be stored in an array `[]` and have the same shape as the user:
 
 ```javascript
 [{
+    id: Number,
     name: String,
     email: String
 }, {
+    id: Number,
     name: String,
     email: String
 }]
@@ -313,7 +315,7 @@ module.exports = {
 Now that we have the login component, we can make a first guess about how the `App` component might look like. It's controller will be an aggregat of all other controllers while its view is a aggregat of all views. It does not have any actions itself, but it passes all incoming actions into the controllers of the components it hosts. If you think this sounds complicated, don't panic! We have done most of the work already with `foldControllers`. The rest is merely the view part, so we stick them into one file. This reduces the complexity of
 the boot file a lot.
 
-This is how App look like:
+This is how App looks like:
 
 ```javascript
 // <root>/source/App.js
@@ -365,26 +367,96 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 ## Parts of the App component
-The application GUI will contain two parts, one for adding contacts and one for listing them. When the user adds a contact, it will be added to the registered users automatically if it is not already registered.
+The application GUI will contain two parts, one for adding contacts and one for listing them. When the user adds a contact, it will be added to the registered users automatically if it is not present.
 
 ## Listing the contacts of a user
+Let's start with the simpler of the two parts and see, if we can implement a way to list all the contacts a user has. You can use the same trick shown here to implement filters too.
+
+But first things first, we start with a definition of all the actions. For now, we are going to implement a way to sort the results in certain ways: One button allows to disable sorting, such that all contacts become sorted like they are given by the database or in alphabetical order.
+
 ```javascript
 // <root>/source/components/contactlist/actions.js
 module.exports = {
-    SortAlpha: Symbol('SortAlphabetical')
+    SortAlpha: Symbol('SortAlphabetical'),
+    SortAny: Symbol('SortAnyOrder')
 }
 ```
 
+Next step: The controller. Here all what's left to do is setting a flag, which indicates how the user wants the result to be sorted. The actual sorting is performed in the view because sorting as well as filtering (for example) do not depend on the data itself but are merely ways to view a piece of data. Because of that, the controller itself is trivial:
+
 ```javascript
 // <root>/source/components/contactlist/controller.js
-const {} = require('futils');
+const {curry, merge} = require('futils');
+const {SortAlpha, SortAny} = require('./actions');
+
+// controller :: State → Action → State
+const constroller = curry((state, action) => {
+    switch (action.type) {
+        case SortAny:
+            return merge(state, {sorting: SortAny});
+        case SortAlpha:
+            return merge(state, {sorting: SortAlpha});
+        default:
+            return state;
+    }
+});
 
 module.exports = { controller };
 ```
 
+Finally there is a view for the list.
+
 ```javascript
 // <root>/source/components/contactlist/view.js
-const {} = require('futils');
+const {curry, pipe} = require('futils');
+const h = require('snabbdom/h');
+const {SortAlpha, SortAny} = require('./actions');
+
+// AVATAR_URL :: String
+const AVATAR_URL = 'https://api.adorable.io/avatars/285/';
+
+// viewContact :: User → VNode
+const viewContact = (c) => {
+    return h('div.contact', [
+        h('div.contact_pic', [
+            h('img.fleximg',
+                {props: {src: AVATAR_URL + c.email, alt: c.name}},
+                [])
+        ]),
+        h('div.contact_info', [
+            h('h3.contact_name', c.name),
+            h('p.contact_email', c.email)
+        ])
+    ]);
+}
+
+// sorted :: State → [VNode]
+const sorted = ({sorting, contacts}) => {
+    if (sorting === SortAlpha) {
+        return contacts.
+            slice(). // <- this is essential, sort has a side effect
+            sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return contacts;
+}
+
+// view :: State → (Event → Action) → VNode
+const view = curry((state, emit) => {
+    const sortAlpha = emit(SortAlpha);
+    const sortAny = emit(SortAny);
+
+    return h('div.contacts', [
+        h('div.contacts_head', [
+            h('button.btn',
+                {props: {type: 'button'},
+                 on: {click: sortAny}}, 'Any'),
+            h('button.btn',
+                {props: {type: 'button'},
+                 on: {click: sortAlpha}}, 'A-Z!')
+        ]),
+        h('div.contacts_body', sorted(state).map(viewContact));
+    ]);
+});
 
 module.exports = { view };
 ```
@@ -394,22 +466,23 @@ One of the clues about adding a contact is that: Every time a contact is added, 
 
 We start with the usual stuff: Defining some actions.
 ```javascript
-// <root>/source/components/contactlist/actions.js
+// <root>/source/components/contactform/actions.js
 module.exports = {
-    SortAlpha: Symbol('SortAlphabetical')
+    Save: Symbol('SaveContact')
 }
 ```
 
 ```javascript
-// <root>/source/components/contactlist/controller.js
-const {curry} = require('futils');
-const {SortAlpha} = require('./actions');
+// <root>/source/components/contactform/controller.js
+const {Task, curry} = require('futils');
+const {Save} = require('./actions');
+const {query, create, User, Contacts} = require('../../helpers/db');
 
 
 
-const constroller = curry((state, action) => {
+const controller = curry((state, action) => {
     switch (action.type) {
-        case SortAlpha:
+        case Save:
             return state;
         default:
             return state;
@@ -420,30 +493,43 @@ module.exports = { controller };
 ```
 
 ```javascript
-// <root>/source/components/contactlist/view.js
-const {curry, pipe} = require('futils');
-const h = require('snabbdom/h');
-const {SortAlpha} = require('./actions');
-
-
-
-const view = curry((state, emit) => {
-    const sortAlpha = emit(SortAlpha);
-
-    return h('div.contacts', [
-        h('div.contacts_head', [
-            h('button.btn',
-                {props: {type: 'button'},
-                 on: {click: sortAlpha}}, 'A-Z!')
-        ]),
-        h('div.contacts_body', state.concacts.map(viewContact))
-    ]);
-});
+// <root>/source/components/contactform/view.js
+const {} = require('futils');
 
 module.exports = { view };
 ```
 
 
+## Final adjustments
+This is the last thing we need to do to wire everything up: Import the ContactsList and ContactForm `view` and `controller` functions into the App component and use them. The code in `App.js` should look like this when you are done:
+
+```javascript
+// <root>/source/App.js
+const {foldControllers} = require('./../helpers/dvc');
+const loginC = require('./login/controller').controller;
+const listC = require('./contactlist/controller').controller;
+const formC = require('./contactform/controller').controller;
+const loginV = require('./login/view').view;
+const listV = require('./contactlist/view').view;
+const formV = require('./contactform/view').view;
+
+// controller :: State → Action → State
+const controller = foldControllers(loginC, listC, formC);
+
+// view :: State, (Event → Action) → VNode
+const view = (state, emit) => {
+    if (!state) {
+        return loginV(null, emit);
+    }
+    return h('div.app', [
+        formV(state, emit),
+        listV(state, emit)
+    ]);
+}
+
+
+module.exports = { view, controller };
+```
 
 
 ---
