@@ -8,7 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import type from '../types';
+import {isFunc} from '../types';
 
 /**
  * Implementation of the State monad
@@ -25,7 +25,7 @@ const MV = Symbol('MonadicValue');
  * @class module:futils/monads/state.State
  * @version 2.2.0
  */
-export default class State {
+export class State {
     constructor (a) {
         this.compute = a;
     }
@@ -142,7 +142,7 @@ export default class State {
      * one.map(inc); // -> State(2)
      */
     map (f) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return new State((b) => {
                 let r = this.compute(b);
                 return [f(r[0]), r[1]];
@@ -191,7 +191,7 @@ export default class State {
      * aInc.ap(one); // -> Identity(2)
      */
     ap (m) {
-        if (type.isFunc(m.map)) {
+        if (isFunc(m.map)) {
             return m.map((a) => this.run()(a));
         }
         throw 'State::ap expects argument to be Functor but saw ' + m;
@@ -215,7 +215,7 @@ export default class State {
      * one.flatMap(mInc); // -> State(2);
      */
     flatMap (f) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return new State((b) => {
                 let r = this.compute(b);
                 return f(r[0]).compute(r[1]);

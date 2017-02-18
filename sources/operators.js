@@ -8,9 +8,10 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import type from './types';
-import arity from './arity';
-import rec from './trampolines';
+import {isAny, isFunc, isArray, isString, isSetoid, isFunctor,
+        isNumber, isObject, isIterable, isApply} from './types';
+import {dyadic, triadic, tetradic} from './arity';
+import {trampoline, suspend} from './trampolines';
 
 /**
  * A collection of operator functions to work on data structures
@@ -40,10 +41,10 @@ const _owns = Object.prototype.hasOwnProperty;
  * const firstHalf = call('slice', 0, 5);
  * firstHalf([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // -> [1, 2, 3, 4, 5]
  */
-const call = (method, ...partials) => (provider, ...rest) => {
-    let res = type.isString(method) && type.isFunc(provider[method]) ?
+export const call = (method, ...partials) => (provider, ...rest) => {
+    let res = isString(method) && isFunc(provider[method]) ?
               provider[method](...partials, ...rest) :
-              type.isFunc(method) ?
+              isFunc(method) ?
               method.call(provider, ...partials, ...rest) :
               null;
     if (res == null) {
@@ -69,7 +70,7 @@ const call = (method, ...partials) => (provider, ...rest) => {
  * has('foo', testee); // -> true
  * has('missing', testee); // -> false
  */
-const has = arity.dyadic((key, x) => _owns.call(x, key));
+export const has = dyadic((key, x) => _owns.call(x, key));
 
 /**
  * Accesses a given object by a chain of keys
@@ -88,11 +89,11 @@ const has = arity.dyadic((key, x) => _owns.call(x, key));
  * const firstName = field('name.first');
  * firstName({name: {first: 'John', last: 'Doe'}}); // -> 'John'
  */
-const field = arity.dyadic((key, x) => {
-    let ks = type.isString(key) && /\./.test(key) ?
+export const field = dyadic((key, x) => {
+    let ks = isString(key) && /\./.test(key) ?
              key.split('.') :
              [key];
-    return ks.reduce((a, b) => type.isAny(a) && type.isAny(a[b]) ?
+    return ks.reduce((a, b) => isAny(a) && isAny(a[b]) ?
                                a[b] :
                                null,
                      x
@@ -120,17 +121,17 @@ const field = arity.dyadic((key, x) => {
  *
  * console.log(p); // -> {name: 'John Doe', accounts: [...]};
  */
-const assoc = arity.triadic((k, v, x) => {
+export const assoc = triadic((k, v, x) => {
     let key = k, receiver = x;
-    if (type.isArray(x)) {
+    if (isArray(x)) {
         receiver = [...x];
         key = parseInt(key, 10);
-        if (type.isNumber(key) && key < x.length && key >= 0) {
+        if (isNumber(key) && key < x.length && key >= 0) {
             receiver[key] = v;
         }
-    } else if (type.isObject(x)) {
+    } else if (isObject(x)) {
         receiver = Object.assign({}, x);
-        if (type.isString(key)) {
+        if (isString(key)) {
             receiver[key] = v;
         }
     }
@@ -160,7 +161,7 @@ const assoc = arity.triadic((k, v, x) => {
  *
  * customer === customerWithBasket; // -> false
  */
-const merge = (...xs) => xs.length > 1 ? Object.assign({}, ...xs) : (...ys) => {
+export const merge = (...xs) => xs.length > 1 ? Object.assign({}, ...xs) : (...ys) => {
     return merge(...xs, ...ys);
 };
 
@@ -183,7 +184,7 @@ const merge = (...xs) => xs.length > 1 ? Object.assign({}, ...xs) : (...ys) => {
  *
  * money.dollar; // -> 5
  */
-const immutable = (x) => Object.freeze(Object.assign({}, x));
+export const immutable = (x) => Object.freeze(Object.assign({}, x));
 
 /**
  * Returns pairs of [key, value] from a given object
@@ -197,7 +198,7 @@ const immutable = (x) => Object.freeze(Object.assign({}, x));
  *
  * pairs({foo: 1, bar: 0}); // -> [['foo', 1], ['bar', 0]]
  */
-const pairs = (xs) => Object.keys(xs).map((k) => [k, xs[k]]);
+export const pairs = (xs) => Object.keys(xs).map((k) => [k, xs[k]]);
 
 /**
  * Given a constructor function and a context (usually `this`) returns either
@@ -227,7 +228,7 @@ const pairs = (xs) => Object.keys(xs).map((k) => [k, xs[k]]);
  * newUnit.x && newUnit.x === 1; // -> true
  * unit.x && unit.x === 1; // -> true
  */
-const instance = (F, ctx) => {
+export const instance = (F, ctx) => {
     return ctx instanceof F ? ctx : Object.create(F.prototype);
 }
 
@@ -249,9 +250,10 @@ const instance = (F, ctx) => {
  * toNs(3); // -> [1, 2, 3]
  * toNs([3]); // -> [1, 2, 3]
  */
-const concat = arity.dyadic((a, b) => {
-    if (a && type.isFunc(a.concat)) { return a.concat(b); }
-    if (b && type.isFunc(b.concat)) { return b.concat(a); }
+export const concat = dyadic((a, b) => {
+    if (isNumber(a) && isNumber(b)) { return a + b; }
+    if (isFunc(a) && isFunc(b)) { return (...x) => b(a(...x)); }
+    if (isAny(a) && isFunc(a.concat)) { return a.concat(b); }
     throw 'concat :: Unable to concatenate items ' + [a, b];
 });
 
@@ -269,7 +271,7 @@ const concat = arity.dyadic((a, b) => {
  *
  * first(document.querySelectorAll('a')); // -> <a></a>
  */
-const first = (xs) => xs[0];
+export const first = (xs) => xs[0];
 
 /**
  * Given a iterable collection, returns the head of it
@@ -285,7 +287,7 @@ const first = (xs) => xs[0];
  *
  * head(document.querySelectorAll('a')); // -> [<a></a>]
  */
-const head = (xs) => [first(xs)];
+export const head = (xs) => [first(xs)];
 
 
 /**
@@ -304,9 +306,9 @@ const head = (xs) => [first(xs)];
  *     document.querySelectorAll('a')
  * ); // -> [<a></a>, <a></a>, ...]
  */
-const initial = (xs) => type.isArray(xs) ?
+export const initial = (xs) => isArray(xs) ?
                         xs.slice(0, xs.length - 1) :
-                        type.isIterable(xs) ?
+                        isIterable(xs) ?
                         Array.from(xs).slice(0, xs.length - 1) :
                         [];
 
@@ -324,7 +326,7 @@ const initial = (xs) => type.isArray(xs) ?
  *
  * last(document.querySelectorAll('a')); // -> <a></a>
  */
-const last = (xs) => xs[xs.length - 1];
+export const last = (xs) => xs[xs.length - 1];
 
 /**
  * Given a iterable collection, returns the tail of it
@@ -340,7 +342,7 @@ const last = (xs) => xs[xs.length - 1];
  *
  * tail(document.querySelectorAll('a')); // -> [<a></a>]
  */
-const tail = (xs) => [last(xs)];
+export const tail = (xs) => [last(xs)];
 
 /**
  * Given a iterable collection, returns all items but the first of it
@@ -356,9 +358,9 @@ const tail = (xs) => [last(xs)];
  *
  * rest(document.querySelectorAll('a')); // -> [..., <a></a>, <a></a>]
  */
-const rest = (xs) => type.isArray(xs) ?
+export const rest = (xs) => isArray(xs) ?
                      xs.slice(1) :
-                     type.isIterable(xs) ?
+                     isIterable(xs) ?
                      Array.from(xs).slice(1) :
                      [];
 
@@ -374,7 +376,7 @@ const rest = (xs) => type.isArray(xs) ?
  *
  * unique([2, 1, 2, 3, 3, 1]); // -> [2, 1, 3]
  */
-const unique = (xs) => xs.reduce((acc, x) => {
+export const unique = (xs) => xs.reduce((acc, x) => {
     return acc.lastIndexOf(x) < 0 ? [...acc, x] : acc;
 }, []);
 
@@ -391,7 +393,7 @@ const unique = (xs) => xs.reduce((acc, x) => {
  *
  * union([2, 1, 2], [3, 3, 1]); // -> [2, 1, 3]
  */
-const union = arity.dyadic((xs, ys) => unique([...xs, ...ys]));
+export const union = dyadic((xs, ys) => unique([...xs, ...ys]));
 
 /**
  * Given two iterable collections, returns the intersection of them
@@ -406,7 +408,7 @@ const union = arity.dyadic((xs, ys) => unique([...xs, ...ys]));
  *
  * intersect([2, 1, 2], [3, 3, 1]); // -> [1]
  */
-const intersect = arity.dyadic((xs, ys) => {
+export const intersect = dyadic((xs, ys) => {
     return union(xs, ys).filter((a) => {
         return xs.indexOf(a) > -1 && ys.indexOf(a) > -1;
     });
@@ -426,7 +428,7 @@ const intersect = arity.dyadic((xs, ys) => {
  *
  * differ([2, 1, 2], [3, 3, 1]); // -> [2, 3]
  */
-const differ = arity.dyadic((xs, ys) => {
+export const differ = dyadic((xs, ys) => {
     return union(xs, ys).filter((a) => {
         return xs.indexOf(a) < 0 || ys.indexOf(a) < 0;
     });
@@ -448,8 +450,8 @@ const differ = arity.dyadic((xs, ys) => {
  * zip([1, 2], ['one']); // -> [[1, 'one']]
  * zip([1], ['one', 'two']); // -> [[1, 'one']]
  */
-const zip = arity.dyadic((xs, ys) => {
-    if (type.isArray(xs) && type.isArray(ys)) {
+export const zip = dyadic((xs, ys) => {
+    if (isArray(xs) && isArray(ys)) {
         return xs.length > ys.length ?
                 ys.map((y, i) => [xs[i], y]) :
                 xs.map((x, i) => [x, ys[i]]);
@@ -484,13 +486,13 @@ tail call optimization, which now finally seems to arrive.
  * fold(add, 0, [1, 2, 3]); // -> 6
  * fold(add, '', ['hello,', ' ', 'world']); // -> 'hello world'
  */
-const fold = arity.triadic((f, x, xs) => {
-    if (type.isFunc(xs.fold)) {
+export const fold = triadic((f, x, xs) => {
+    if (isFunc(xs.fold)) {
         return xs.fold(f, x);
     }
-    const go = rec.trampoline((g, acc, as) => {
+    const go = trampoline((g, acc, as) => {
         if (as.length < 1) { return acc; }
-        return rec.suspend(go, g, g(acc, first(as)), rest(as));
+        return suspend(go, g, g(acc, first(as)), rest(as));
     });
     return go(f, x, Array.from(xs));
 });
@@ -511,11 +513,11 @@ const fold = arity.triadic((f, x, xs) => {
  *
  * fifthUntil(25); // -> [5, 10, 15, 20, 25]
  */
-const unfold = arity.dyadic((f, x) => {
-    const go = rec.trampoline((g, y, ys) => {
+export const unfold = dyadic((f, x) => {
+    const go = trampoline((g, y, ys) => {
         let r = g(y);
         if (r == null) { return ys; }
-        return rec.suspend(go, g, r[1], [...ys, r[0]]);
+        return suspend(go, g, r[1], [...ys, r[0]]);
     });
     return go(f, x, []);
 });
@@ -534,7 +536,7 @@ const unfold = arity.dyadic((f, x) => {
  *
  * range(2, 8); // -> [2, 3, 4, 5, 6, 7, 8]
  */
-const range = arity.tetradic((start, stop) => {
+export const range = tetradic((start, stop) => {
     return unfold((n) => n <= stop ? [n, n + 1] : null, start);
 });
 
@@ -555,7 +557,7 @@ const range = arity.tetradic((start, stop) => {
  *
  * filter(evens, [1, 2, 3, 4, 5, 6]); // -> [2, 4, 6]
  */
-const filter = arity.dyadic((f, xs) => {
+export const filter = dyadic((f, xs) => {
     return fold((ys, x) => !!f(x) ? [...ys, x] : ys, [], Array.from(xs));
 });
 
@@ -572,7 +574,7 @@ const filter = arity.dyadic((f, xs) => {
  *
  * keep([1, null, 3]); // -> [1, 3]
  */
-const keep = (xs) => filter((x) => x != null, Array.from(xs));
+export const keep = (xs) => filter((x) => x != null, Array.from(xs));
 
 /**
  * Given a number `n` and a list, drops the first n items from the list
@@ -587,7 +589,7 @@ const keep = (xs) => filter((x) => x != null, Array.from(xs));
  *
  * drop(2, [1, 2, 3, 4]); // -> [3, 4]
  */
-const drop = arity.dyadic((n, xs) => {
+export const drop = dyadic((n, xs) => {
     let i = Math.round(Math.abs(n));
     return fold((ys, x) => {
         if (i > 0) {
@@ -614,7 +616,7 @@ const drop = arity.dyadic((n, xs) => {
  *
  * dropWhile(lt3, [1, 2, 3, 4, 5]); // -> [4, 5]
  */
-const dropWhile = arity.dyadic((f, xs) => {
+export const dropWhile = dyadic((f, xs) => {
     let drop = true;
     return fold((ys, x) => {
         drop = drop && !!f(x);
@@ -639,7 +641,7 @@ const dropWhile = arity.dyadic((f, xs) => {
  *
  * take(2, [1, 2, 3, 4, 5]); // -> [1, 2];
  */
-const take = arity.dyadic((n, xs) => {
+export const take = dyadic((n, xs) => {
     let i = 0;
     return fold((ys, x) => {
         if (i < n) {
@@ -666,7 +668,7 @@ const take = arity.dyadic((n, xs) => {
  *
  * takeWhile(lt3, [1, 2, 3, 4, 5]); // -> [1, 2]
  */
-const takeWhile = arity.dyadic((f, xs) => {
+export const takeWhile = dyadic((f, xs) => {
     let take = true;
     return fold((ys, x) => {
         if (take && (take = !!f(x))) {
@@ -692,7 +694,7 @@ const takeWhile = arity.dyadic((f, xs) => {
  *
  * find(divBy(2), [1, 2, 3, 4, 5]); // -> 2
  */
-const find = arity.dyadic((f, xs) => {
+export const find = dyadic((f, xs) => {
     return fold((ys, x) => ys == null && !!f(x) ? x : ys, null, Array.from(xs));
 });
 
@@ -712,7 +714,7 @@ const find = arity.dyadic((f, xs) => {
  *
  * findRight(divBy(2), [1, 2, 3, 4, 5]); // -> 4
  */
-const findRight = arity.dyadic((f, xs) => find(f, Array.from(xs).reverse()));
+export const findRight = dyadic((f, xs) => find(f, Array.from(xs).reverse()));
 
 /**
  * Given a Monoid TypeConstructor and a list, folds all values in the list into
@@ -729,8 +731,8 @@ const findRight = arity.dyadic((f, xs) => find(f, Array.from(xs).reverse()));
  * foldMap(All, [true, false, true, true]); // -> All(false)
  * foldMap(Any, [true, false, true, true]); // -> Any(true)
  */
-const foldMap = arity.dyadic((M, xs) => {
-    return fold((m, x) => m.concat(M.of(x)), M.empty(), xs);
+export const foldMap = dyadic((M, xs) => {
+    return fold((m, x) => m.concat(x), xs.map(M.of));
 });
 
 
@@ -756,8 +758,8 @@ const foldMap = arity.dyadic((M, xs) => {
  * equals(m, n); // -> true
  * equals(1, 1); // -> true
  */
-const equals = arity.dyadic((a, b) => {
-    return type.isSetoid(b) ? b.equals(a) : a === b;
+export const equals = dyadic((a, b) => {
+    return isSetoid(b) ? b.equals(a) : a === b;
 });
 
 
@@ -780,15 +782,15 @@ const equals = arity.dyadic((a, b) => {
  * let mapAddOne = map(addOne);
  * map(mapAddOne, [[1, 2], [3]]); // -> [[2, 3], [4]]
  */
-const map = arity.dyadic((f, m) => {
-    if (type.isFunc(f)) {
-        if (type.isFunctor(m)) {
+export const map = dyadic((f, m) => {
+    if (isFunc(f)) {
+        if (isFunctor(m)) {
             return m.map(f);
         }
-        if (type.isIterable(m)) {
+        if (isIterable(m)) {
             return Array.from(m).map(f);
         }
-        if (type.isObject(m)) {
+        if (isObject(m)) {
             return Object.keys(m).reduce((acc, k) => {
                 acc[k] = f(m[k], k, m);
                 return acc;
@@ -823,15 +825,15 @@ const map = arity.dyadic((f, m) => {
  * ap(minc, as); // -> [2, 4, 6]
  * ap(minc)(as); // -> [2, 4, 6]
  */
-const ap = arity.dyadic((mf, ma) => {
-    if (type.isFunc(mf)) {
-        return type.isFunctor(ma) ? ma.map(mf) :
-               type.isObject(ma) ? map(mf, ma) :
+export const ap = dyadic((mf, ma) => {
+    if (isFunc(mf)) {
+        return isFunctor(ma) ? ma.map(mf) :
+               isObject(ma) ? map(mf, ma) :
                mf(ma);
     }
-    if (type.isApply(mf)) {
-        return type.isFunctor(ma) ? mf.ap(ma) : 
-               type.isObject(ma) ? mf.ap({map: (f) => map(f, ma)}) :
+    if (isApply(mf)) {
+        return isFunctor(ma) ? mf.ap(ma) : 
+               isObject(ma) ? mf.ap({map: (f) => map(f, ma)}) :
                mf.ap([ma])[0];
     }
     throw 'operators::ap awaits apply/function as first argument but saw ' + mf;
@@ -847,27 +849,32 @@ const ap = arity.dyadic((mf, ma) => {
  * @method
  * @version 0.2.0
  * @param {array|Monad} m The thing to flatten
+ * @param {boolean} [deep=false] Optional flag to flatten nested arrays
  * @return {array|Monad} New instance of given
  *
  * @example
  * const {flatten} = require('futils');
  *
- * flatten([[1, 2], 3, [[4, 5]]]); // -> [1, 2, 3, 4, 5]
+ * flatten([[1, 2], 3, [[4, 5]]]); // -> [1, 2, 3, [4, 5]]
+ * flatten([[1, 2], 3, [[4, 5]]], true); // -> [1, 2, 3, 4, 5]
  */
-const flatten = (m) => {
-    if (type.isObject(m)) {
+export const flatten = (m, deep = false) => {
+    if (isObject(m)) {
         return m;
     }
-    if (type.isFunc(m.flatten)) {
+    if (isFunc(m.flatten)) {
         return m.flatten();
     }
-    if (type.isArray(m)) {
-        const go = rec.trampoline((xs, ys) => {
+    if (isArray(m)) {
+        if (!deep) {
+            return m.reduce((a, b) => a.concat(b), []);
+        }
+        const go = trampoline((xs, ys) => {
             if (ys.length < 1) { return xs; }
-            if (type.isArray(ys[0])) {
-                return rec.suspend(go, xs, [...ys[0], ...ys.slice(1)]);
+            if (isArray(ys[0])) {
+                return suspend(go, xs, [...ys[0], ...ys.slice(1)]);
             }
-            return rec.suspend(go, [...xs, ys[0]], ys.slice(1));
+            return suspend(go, [...xs, ys[0]], ys.slice(1));
         });
         return go([], m);
     }
@@ -889,23 +896,35 @@ const flatten = (m) => {
  * const split = (s) => s.split(' ');
  * flatMap(split, ['Hello world']); // -> ['Hello', 'world']
  */
-const flatMap = arity.dyadic((f, m) => {
-    if (type.isFunc(f)) {
-        if (type.isFunc(m.flatMap)) {
+export const flatMap = dyadic((f, m) => {
+    if (isFunc(f)) {
+        if (isFunc(m.flatMap)) {
             return m.flatMap(f);
         }
         return flatten(map(f, m));
     }
-    throw 'operators::flatMap awaits a function as first argument but saw ' + f;
+    throw 'operators::flatMap awaits function as 1. argument but saw ' + f;
 });
 
 
-
-
-
-export default {
-    field, has, call, merge, immutable, first, last, head, tail, concat, zip,
-    initial, rest, unique, union, map, flatten, flatMap, assoc, equals,
-    ap, intersect, differ, pairs, instance, fold, unfold, range, take, takeWhile,
-    filter, drop, dropWhile, keep, find, findRight, foldMap
-};
+// xs :: [Right(1), Right(2)]
+// -> traverse (\a -> Right a) Right xs
+// --> [Right([a])]
+// --> Right([a, a])
+// 
+// xs :: Maybe Identity 1
+// -> traverse Identity.of Identity xs
+// -> Identity Maybe 1
+export const traverse = tetradic((f, A, xs) => {
+    if (isFunc(f) && isFunc(A.of)) {
+        if (isFunc(xs.traverse)) {
+            return xs.traverse(f, A);
+        }
+        if (isArray(xs)) {
+            return xs.map((a) => f(a).map(xs.constructor.of)).
+                reduce(concat);
+        }
+        throw 'operators::traverse cannot act on ' + xs;
+    }
+    throw 'operators::traverse awaits function & applicative, saw ' + [f, A];
+});

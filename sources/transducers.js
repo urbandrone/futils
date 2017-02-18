@@ -8,7 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import type from './types';
+import {isArray, isObject, isNil, isNumber, isString, isFunc} from './types';
 import decorators from './decorators';
 /**
  * A collection of transducer functions, inspired by Clojure
@@ -27,17 +27,17 @@ const RESULT = '@@transducer/result';
 // A generic transformer/transducer, not exposed
 function Transformer (f) {
     return {
-        '@@transducer/step': f,
-        '@@transducer/init': () => {
+        [STEP]: f,
+        [INIT]: () => {
             throw 'transducers/init not supported on generic transformers';
         },
-        '@@transducer/result': (v) => v
+        [RESULT]: (v) => v
     };
 }
 
 
 Transformer.isReduced = (v) => {
-    return !type.isNil(v) && v.reduced;
+    return !isNil(v) && v.reduced;
 };
 Transformer.reduce = (v) => {
     return {value: v, reduced: true}
@@ -71,11 +71,11 @@ Transformer.deref = (rv) => {
  * );
  * // -> 'a: 1 - b: 2 - c: 3'
  */
-const fold = decorators.curry((tf, seed, ls) => {
-    var xf = type.isFunc(tf) ? Transformer(tf) : tf,
+export const fold = decorators.curry((tf, seed, ls) => {
+    var xf = isFunc(tf) ? Transformer(tf) : tf,
         v = seed;
 
-    if (type.isObject(ls)) {
+    if (isObject(ls)) {
         let ks = Object.keys(ls);
         for (let k of ks) {
             v = xf[STEP](v, [ls[k], k]);
@@ -116,9 +116,9 @@ const fold = decorators.curry((tf, seed, ls) => {
  *
  * transduce(add1, sum, 0, [1, 2, 3]); // -> 9
  */
-const transduce = decorators.curry((tf, step, seed, ls) => {
+export const transduce = decorators.curry((tf, step, seed, ls) => {
     return fold(
-        tf(type.isFunc(step) ? Transformer(step) : step),
+        tf(isFunc(step) ? Transformer(step) : step),
         seed,
         ls
     );
@@ -145,8 +145,8 @@ const transduce = decorators.curry((tf, step, seed, ls) => {
  * into([], add1, [1, 2, 3]); // -> [2, 3, 4]
  * into('', add1, [1, 2, 3]); // -> '234'
  */
-const into = decorators.curry((seed, tf, ls) => {
-    if (type.isArray(seed)) {
+export const into = decorators.curry((seed, tf, ls) => {
+    if (isArray(seed)) {
         return transduce(
             tf,
             (arr, v) => [...arr, v],
@@ -154,7 +154,7 @@ const into = decorators.curry((seed, tf, ls) => {
             ls
         );
     }
-    if (type.isObject(seed)) {
+    if (isObject(seed)) {
         return transduce(
             tf,
             (obj, [v, k]) => {
@@ -166,7 +166,7 @@ const into = decorators.curry((seed, tf, ls) => {
             ls
         );
     }
-    if (type.isNumber(seed) || type.isString(seed)) {
+    if (isNumber(seed) || isString(seed)) {
         return transduce(
             tf,
             (acc, v) => acc + v,
@@ -193,12 +193,12 @@ const into = decorators.curry((seed, tf, ls) => {
  *
  * transduce(add1, sum, 0, [1, 2, 3]); // -> 9
  */
-const map = (f) => {
+export const map = (f) => {
     return (xf) => {
         return {
-            '@@transducer/init': () => xf[INIT](),
-            '@@transducer/step': (xs, v) => xf[STEP](xs, f(v)),
-            '@@transducer/result': (v) => xf[RESULT](v)
+            [INIT]: () => xf[INIT](),
+            [STEP]: (xs, v) => xf[STEP](xs, f(v)),
+            [RESULT]: (v) => xf[RESULT](v)
         };
     }
 }
@@ -219,12 +219,12 @@ const map = (f) => {
  *
  * transduce(modBy2, sum, 0, [1, 2, 3]); // -> 2
  */
-const filter = (f) => {
+export const filter = (f) => {
     return (xf) => {
         return {
-            '@@transducer/init': () => xf[INIT](),
-            '@@transducer/step': (xs, v) => !!f(v) ? xf[STEP](xs, v) : xs,
-            '@@transducer/result': (v) => xf[RESULT](v)
+            [INIT]: () => xf[INIT](),
+            [STEP]: (xs, v) => !!f(v) ? xf[STEP](xs, v) : xs,
+            [RESULT]: (v) => xf[RESULT](v)
         };
     }
 }
@@ -244,24 +244,24 @@ const filter = (f) => {
  *
  * transduce(flatten, sum, 0, [[1], [2], [3]]); // -> 6
  */
-const flatten = (xf) => {
+export const flatten = (xf) => {
     return {
-        '@@transducer/init': () => xf[INIT](),
-        '@@transducer/step': (xs, v) => fold({
-            '@@transducer/init': () => {
+        [INIT]: () => xf[INIT](),
+        [STEP]: (xs, v) => fold({
+            [INIT]: () => {
                 return xf[INIT]();
             },
-            '@@transducer/step': (_xs, __v) => {
+            [STEP]: (_xs, __v) => {
                 var _v = xf[STEP](_xs, __v);
                 return Transformer.isReduced(_v) ?
                        Transformer.deref(_v) :
                        _v;
             },
-            '@@transducer/result': (_v) => {
+            [RESULT]: (_v) => {
                 return _v;
             }
         }, xs, v),
-        '@@transducer/result': (v) => xf[RESULT](v)
+        [RESULT]: (v) => xf[RESULT](v)
     };
 }
 
@@ -281,19 +281,19 @@ const flatten = (xf) => {
  *
  * transduce(tail, sum, 0, [1, 2, 3]); // -> 5
  */
-const drop = (n = 1) => {
+export const drop = (n = 1) => {
     return (xf) => {
         var i = n;
         return {
-            '@@transducer/init': () => xf[INIT](),
-            '@@transducer/step': (xs, v) => {
+            [INIT]: () => xf[INIT](),
+            [STEP]: (xs, v) => {
                 if (i > 0) {
                     i -= 1;
                     return xs;
                 }
                 return xf[STEP](xs, v);
             },
-            '@@transducer/result': (v) => xf[RESULT](v)
+            [RESULT]: (v) => xf[RESULT](v)
         };
     }
 }
@@ -315,19 +315,19 @@ const drop = (n = 1) => {
  *
  * transduce(above2, sum, 0, [1, 2, 3]); // -> 5
  */
-const dropWhile = (f) => {
+export const dropWhile = (f) => {
     return (xf) => {
         var drop = true, stop = false;
         return {
-            '@@transducer/init': () => xf[INIT](),
-            '@@transducer/step': (xs, v) => {
+            [INIT]: () => xf[INIT](),
+            [STEP]: (xs, v) => {
                 if (!stop && (drop = !!f(v))) {
                     return xs;
                 }
                 stop = true;
                 return xf[STEP](xs, v);
             },
-            '@@transducer/result': (v) => xf[RESULT](v)
+            [RESULT]: (v) => xf[RESULT](v)
         };
     }
 }
@@ -348,19 +348,19 @@ const dropWhile = (f) => {
  *
  * transduce(initial, sum, 0, [1, 2, 3]); // -> 3
  */
-const take = (n = 1) => {
+export const take = (n = 1) => {
     return (xf) => {
         var i = 0;
         return {
-            '@@transducer/init': () => xf[INIT](),
-            '@@transducer/step': (xs, v) => {
+            [INIT]: () => xf[INIT](),
+            [STEP]: (xs, v) => {
                 if (i < n) {
                     i += 1;
                     return xf[STEP](xs, v);
                 }
                 return Transformer.reduce(xs);
             },
-            '@@transducer/result': (v) => xf[RESULT](v)
+            [RESULT]: (v) => xf[RESULT](v)
         };
     }
 }
@@ -382,19 +382,19 @@ const take = (n = 1) => {
  *
  * transduce(below3, sum, 0, [1, 2, 3]); // -> 3
  */
-const takeWhile = (f) => {
+export const takeWhile = (f) => {
     return (xf) => {
         var take = true;
         return {
-            '@@transducer/init': () => xf[INIT](),
-            '@@transducer/step': (xs, v) => {
+            [INIT]: () => xf[INIT](),
+            [STEP]: (xs, v) => {
                 take = !!f(v);
                 if (take) {
                     return xf[STEP](xs, v);
                 }
                 return Transformer.reduce(xs);
             },
-            '@@transducer/result': (v) => xf[RESULT](v)
+            [RESULT]: (v) => xf[RESULT](v)
         };
     }
 }
@@ -414,11 +414,11 @@ const takeWhile = (f) => {
  * 
  * transduce(keep, sum, 0, [1, null, 3]); // -> 4
  */
-const keep = (xf) => {
+export const keep = (xf) => {
     return {
-        '@@transducer/init': () => xf[INIT](),
-        '@@transducer/step': (xs, v) => !type.isNil(v) ? xf[STEP](xs, v) : xs,
-        '@@transducer/result': (v) => xf[RESULT](v)
+        [INIT]: () => xf[INIT](),
+        [STEP]: (xs, v) => !isNil(v) ? xf[STEP](xs, v) : xs,
+        [RESULT]: (v) => xf[RESULT](v)
     };
 }
 
@@ -436,18 +436,18 @@ const keep = (xf) => {
  *
  * transduce(unique, sum, 0, [1, 2, 1, 3, 2]); // -> 6
  */
-const unique = (xf) => {
+export const unique = (xf) => {
     var found = Object.create(null);
     return {
-        '@@transducer/init': () => xf[INIT](),
-        '@@transducer/step': (xs, v) => {
+        [INIT]: () => xf[INIT](),
+        [STEP]: (xs, v) => {
             if (!found[v]) {
                 found[v] = true;
                 return xf[STEP](xs, v);
             }
             return xs;
         },
-        '@@transducer/result': (v) => xf[RESULT](v)
+        [RESULT]: (v) => xf[RESULT](v)
     };
 }
 
@@ -466,12 +466,12 @@ const unique = (xf) => {
  *
  * transduce(partition(2), push, [], [1, 2, 3, 4]); // -> [[1, 2], [3, 4]]
  */
-const partition = (n = 1) => {
+export const partition = (n = 1) => {
     return (xf) => {
         var p = [], _xs;
         return {
-            '@@transducer/init': () => xf[INIT](),
-            '@@transducer/step': (xs, v) => {
+            [INIT]: () => xf[INIT](),
+            [STEP]: (xs, v) => {
                 if (p.length < n) {
                     p.push(v);
                     return xs;
@@ -480,7 +480,7 @@ const partition = (n = 1) => {
                 p = [v];
                 return _xs;
             },
-            '@@transducer/result': (v) => {
+            [RESULT]: (v) => {
                 if (p.length > 0) {
                     return xf[RESULT](xf[STEP](v, p));
                 }
@@ -507,12 +507,12 @@ const partition = (n = 1) => {
  *
  * transduce(modBy3, push, [], [1, 2, 3, 4, 5]); // -> [[1, 2], [3], [4, 5]]
  */
-const partitionWith = (f) => {
+export const partitionWith = (f) => {
     return (xf) => {
         var p = [], _xs, cur, last;
         return {
-            '@@transducer/init': () => xf[INIT](),
-            '@@transducer/step': (xs, v) => {
+            [INIT]: () => xf[INIT](),
+            [STEP]: (xs, v) => {
                 cur = f(v);
                 if (p.length < 1) {
                     last = cur;
@@ -528,7 +528,7 @@ const partitionWith = (f) => {
                 p = [v];
                 return _xs;
             },
-            '@@transducer/result': (v) => {
+            [RESULT]: (v) => {
                 if (p.length > 0) {
                     return xf[RESULT](xf[STEP](v, p));
                 }
@@ -537,8 +537,3 @@ const partitionWith = (f) => {
         };
     }
 }
-
-export default {
-    fold, transduce, into, map, filter, unique, keep, partition, partitionWith,
-    take, takeWhile, drop, dropWhile, flatten
-};

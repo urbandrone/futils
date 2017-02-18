@@ -28,7 +28,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * isNil(null); // -> true
  * isNil(''); // -> false
  */
-const isNil = (x) => x === null || x === void 0;
+export const isNil = (x) => x === null || x === void 0;
 
 /**
  * Returns true if given anything but `null` or `undefined`
@@ -43,7 +43,7 @@ const isNil = (x) => x === null || x === void 0;
  * isAny(null); // -> false
  * isAny(''); // -> true
  */
-const isAny = (x) => !isNil(x);
+export const isAny = (x) => !isNil(x);
 
 /**
  * Returns true if given `undefined`
@@ -58,7 +58,7 @@ const isAny = (x) => !isNil(x);
  * isVoid(null); // -> false
  * isVoid(undefined); // -> true
  */
-const isVoid = (x) => x === undefined;
+export const isVoid = (x) => x === undefined;
 
 /**
  * Returns true if given `null`
@@ -73,7 +73,7 @@ const isVoid = (x) => x === undefined;
  * isNull(null); // -> true
  * isNull(undefined); // -> false
  */
-const isNull = (x) => x === null;
+export const isNull = (x) => x === null;
 
 /**
  * Returns true if given a string
@@ -88,7 +88,7 @@ const isNull = (x) => x === null;
  * isString('Hello world'); // -> true
  * isString(null); // -> false
  */
-const isString = (x) => typeof x === 'string';
+export const isString = (x) => typeof x === 'string';
 
 /**
  * Returns true if given a number. Returns false if given `NaN` or `Infinity`
@@ -104,7 +104,7 @@ const isString = (x) => typeof x === 'string';
  * isNumber('1'); // -> false
  * isNumber(NaN); // -> false
  */
-const isNumber = (x) => typeof x === 'number' && !isNaN(x) && isFinite(x);
+export const isNumber = (x) => typeof x === 'number' && !isNaN(x) && isFinite(x);
 
 /**
  * Returns true if given a integer
@@ -119,7 +119,7 @@ const isNumber = (x) => typeof x === 'number' && !isNaN(x) && isFinite(x);
  * isInt(1); // -> true
  * isInt(1.1); // -> false
  */
-const isInt = (x) => isNumber(x) && x % 1 === 0;
+export const isInt = (x) => isNumber(x) && x % 1 === 0;
 
 /**
  * Returns true if given a floating point number
@@ -134,7 +134,7 @@ const isInt = (x) => isNumber(x) && x % 1 === 0;
  * isFloat(1); // -> false
  * isFloat(1.1); // -> true
  */
-const isFloat = (x) => isNumber(x) && x % 1 !== 0;
+export const isFloat = (x) => isNumber(x) && x % 1 !== 0;
 
 /**
  * Returns true if given a boolean value
@@ -149,7 +149,7 @@ const isFloat = (x) => isNumber(x) && x % 1 !== 0;
  * isBool(false); // -> true
  * isBool('false'); // -> false
  */
-const isBool = (x) => typeof x === 'boolean';
+export const isBool = (x) => typeof x === 'boolean';
 
 /**
  * Returns true for any value which evaluates to true
@@ -164,7 +164,7 @@ const isBool = (x) => typeof x === 'boolean';
  * isTrue(true); // -> true
  * isTrue(null); // -> false
  */
-const isTrue = (x) => !!x;
+export const isTrue = (x) => !!x;
 
 /**
  * Returns true for any value which evaluates to false
@@ -179,7 +179,7 @@ const isTrue = (x) => !!x;
  * isFalse(true); // -> false
  * isFalse(null); // -> true
  */
-const isFalse = (x) => !x;
+export const isFalse = (x) => !x;
 
 /**
  * Returns true if given functions
@@ -194,7 +194,7 @@ const isFalse = (x) => !x;
  * isFunc(() => null); // -> true
  * isFunc(null); // -> false
  */
-const isFunc = (x) => typeof x === 'function';
+export const isFunc = (x) => typeof x === 'function';
 
 /**
  * Returns true if given plain objects
@@ -209,7 +209,7 @@ const isFunc = (x) => typeof x === 'function';
  * isObject({}); // -> true
  * isObject([]); // -> false
  */
-const isObject = (x) => ({}.toString.call(x) === '[object Object]');
+export const isObject = (x) => ({}.toString.call(x) === '[object Object]');
 
 /**
  * Returns true if given a array
@@ -224,7 +224,7 @@ const isObject = (x) => ({}.toString.call(x) === '[object Object]');
  * isArray([]); // -> true
  * isArray({}); // -> false
  */
-const isArray = (x) => Array.isArray(x);
+export const isArray = (x) => Array.isArray(x);
 
 /**
  * Returns true if given a `Date` instance
@@ -239,7 +239,7 @@ const isArray = (x) => Array.isArray(x);
  * isDate(new Date()); // -> true
  * isDate('2016-05-01'); // -> false
  */
-const isDate = (x) => Date.prototype.isPrototypeOf(x);
+export const isDate = (x) => Date.prototype.isPrototypeOf(x);
 
 /**
  * Returns true if given a `RegExp` instance
@@ -254,7 +254,7 @@ const isDate = (x) => Date.prototype.isPrototypeOf(x);
  * isRegex(/.+/g); // -> true
  * isRegex('/.+/g'); // -> false
  */
-const isRegex = (x) => RegExp.prototype.isPrototypeOf(x);
+export const isRegex = (x) => RegExp.prototype.isPrototypeOf(x);
 
 /**
  * Returns true if given a single DOM node
@@ -269,7 +269,7 @@ const isRegex = (x) => RegExp.prototype.isPrototypeOf(x);
  * isNode(document.body); // -> true
  * isNode(null); // -> false
  */
-const isNode = (x) => Node.prototype.isPrototypeOf(x);
+export const isNode = (x) => Node.prototype.isPrototypeOf(x);
 
 /**
  * Returns true if given a Nodelist
@@ -284,15 +284,15 @@ const isNode = (x) => Node.prototype.isPrototypeOf(x);
  * isNodeList(document.querySelectorAll('body')); // -> true
  * isNodeList([document.body]); // -> false
  */
-const isNodeList = (x) => NodeList.prototype.isPrototypeOf(x);
+export const isNodeList = (x) => NodeList.prototype.isPrototypeOf(x);
 
-const isMap = (x) => Map.prototype.isPrototypeOf(x);
+export const isMap = (x) => Map.prototype.isPrototypeOf(x);
 
-const isWeakMap = (x) => WeakMap.prototype.isPrototypeOf(x);
+export const isSet = (x) => Set.prototype.isPrototypeOf(x);
 
-const isSet = (x) => Set.prototype.isPrototypeOf(x);
+export const isWeakSet = (x) => WeakSet.prototype.isPrototypeOf(x);
 
-const isWeakSet = (x) => WeakSet.prototype.isPrototypeOf(x);
+export const isWeakMap = (x) => WeakMap.prototype.isPrototypeOf(x);
 
 /**
  * Returns true if given a promise
@@ -308,7 +308,7 @@ const isWeakSet = (x) => WeakSet.prototype.isPrototypeOf(x);
  * isPromise({then() { ... }}); // ->true
  * isPromise({}); // -> false
  */
-const isPromise = (x) => Promise.prototype.isPrototypeOf(x) ||
+export const isPromise = (x) => Promise.prototype.isPrototypeOf(x) ||
                          x && isFunc(x.then);
 
 /**
@@ -324,7 +324,7 @@ const isPromise = (x) => Promise.prototype.isPrototypeOf(x) ||
  * var ns = [1, 2, 3];
  * isIterator(ns[Symbol.iterator]()); // -> true
  */
-const isIterator = (x) => !isNil(x) && isFunc(x.next);
+export const isIterator = (x) => !isNil(x) && isFunc(x.next);
 
 /**
  * Returns true for all iterables which implement `Symbol.iterator`
@@ -339,7 +339,7 @@ const isIterator = (x) => !isNil(x) && isFunc(x.next);
  * isIterable([1, 2, 3]); // -> true
  * isIterable({}); // -> false
  */
-const isIterable = (x) => !isNil(x) && !!(x[Symbol.iterator] || !isNaN(x.length));
+export const isIterable = (x) => !isNil(x) && !!(x[Symbol.iterator] || !isNaN(x.length));
 
 /**
  * Awaits a type predicate and a value and returns true if the value is a array
@@ -361,7 +361,7 @@ const isIterable = (x) => !isNil(x) && !!(x[Symbol.iterator] || !isNaN(x.length)
  * isStrArray(pass); // -> true
  * isStrArray(fail); // -> false
  */
-const isArrayOf = (f, x) => {
+export const isArrayOf = (f, x) => {
     if (x === void 0) {
         return (_x) => isArrayOf(f, _x);
     }
@@ -388,7 +388,7 @@ const isArrayOf = (f, x) => {
  * isStrObject(pass); // -> true
  * isStrObject(fail); // -> false
  */
-const isObjectOf = (f, x) => {
+export const isObjectOf = (f, x) => {
     if (x === void 0) {
         return (_x) => isObjectOf(f, _x);
     }
@@ -420,7 +420,7 @@ const isObjectOf = (f, x) => {
  * 
  * isSetoid(makeSetoid(10)); // -> true
  */
-const isSetoid = (x) => !!x && isFunc(x.equals);
+export const isSetoid = (x) => !!x && isFunc(x.equals);
 
 /**
  * Returns true if given a functor (something that implements `map`)
@@ -434,7 +434,7 @@ const isSetoid = (x) => !!x && isFunc(x.equals);
  * 
  * isFunctor([]); // -> true
  */
-const isFunctor = (x) => !!x && isFunc(x.map);
+export const isFunctor = (x) => !!x && isFunc(x.map);
 
 /**
  * Returns true if given a apply (something that implements `ap`)
@@ -452,7 +452,7 @@ const isFunctor = (x) => !!x && isFunc(x.map);
  * 
  * isApply(makeApply(10)); // -> true
  */
-const isApply = (x) => !!x && isFunc(x.ap);
+export const isApply = (x) => !!x && isFunc(x.ap);
 
 /**
  * Returns true if given a foldable (something that implements `fold`)
@@ -470,7 +470,7 @@ const isApply = (x) => !!x && isFunc(x.ap);
  * 
  * isFoldable(makeFoldable(10)); // -> true
  */
-const isFoldable = (x) => !!x && isFunc(x.fold);
+export const isFoldable = (x) => !!x && isFunc(x.fold);
 
 /**
  * Returns true if given a bifunctor (something that implements `biMap`)
@@ -488,7 +488,7 @@ const isFoldable = (x) => !!x && isFunc(x.fold);
  *
  * isBifunctor(makeBifunctor(1)); // -> true
  */
-const isBifunctor = (x) => !!x && isFunc(x.biMap);
+export const isBifunctor = (x) => !!x && isFunc(x.biMap);
 
 /**
  * Returns true if given a semigroup (something that implements `concat`)
@@ -502,7 +502,7 @@ const isBifunctor = (x) => !!x && isFunc(x.biMap);
  *
  * isSemigroup([]); // -> true
  */
-const isSemigroup = (x) => !!x && isFunc(x.concat);
+export const isSemigroup = (x) => !!x && isFunc(x.concat);
 
 /**
  * Returns true if given a monoid (something that implements `concat` and `empty`)
@@ -516,7 +516,7 @@ const isSemigroup = (x) => !!x && isFunc(x.concat);
  *
  * isMonoid([]); // -> true
  */
-const isMonoid = (x) => {
+export const isMonoid = (x) => {
     return isArray(x) ||
            isSemigroup(x) && (isFunc(x.empty) || isFunc(x.constructor.empty));
 }
@@ -538,7 +538,7 @@ const isMonoid = (x) => {
  * 
  * isApplicative(makeApplicative(10)); // -> true
  */
-const isApplicative = (x) => {
+export const isApplicative = (x) => {
     return isApply(x) && (isFunc(x.of) || isFunc(x.constructor.of));
 }
 
@@ -562,15 +562,5 @@ const isApplicative = (x) => {
  * 
  * isMonad(makeMonad(10)); // -> true
  */
-const isMonad = (x) => isFunctor(x) && isSetoid(x) &&
+export const isMonad = (x) => isFunctor(x) && isSetoid(x) &&
                        isFunc(x.flatten) && isFunc(x.flatMap);
-
-
-
-export default {
-    isNil, isAny, isNull, isVoid, isArray, isBool, isSet, isString, isWeakMap,
-    isWeakSet, isFalse, isTrue, isFunc, isFloat, isInt, isNumber, isNode,
-    isNodeList, isDate, isObject, isPromise, isIterable, isArrayOf, isObjectOf,
-    isMap, isRegex, isIterator, isSetoid, isFunctor, isApplicative, isApply,
-    isFoldable, isMonad, isMonoid, isBifunctor
-};

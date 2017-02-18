@@ -9,8 +9,8 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import type from './types';
-import arity from './arity';
+import {isFunc, isArrayOf} from './types';
+import {aritize} from './arity';
 /**
  * A collection of higher order helpers for functional composition
  * @module futils/combinators
@@ -25,7 +25,7 @@ import arity from './arity';
  * @param {any} x Anything
  * @return {any} Returns x
  */
-const id = (x) => x;
+export const id = (x) => x;
 
 /**
  * The getter or K combinator (kestrel in smullians "how to mock a mockingbird")
@@ -34,7 +34,7 @@ const id = (x) => x;
  * @param {anx} x Anything
  * @return {function} A getter of x
  */
-const getter = (x) => () => x;
+export const getter = (x) => () => x;
 
 /**
  * The tap or T combinator (thrush in smullians "how to mock a mockingbird")
@@ -54,7 +54,7 @@ const getter = (x) => () => x;
  *     }
  * });
  */
-const tap = (x) => (y) => y(x);
+export const tap = (x) => (y) => y(x);
 
 /**
  * Takes 2 functions and an arbitrary number of parameters, then calls the
@@ -75,7 +75,7 @@ const tap = (x) => (y) => y(x);
  * eqLength('hi', 'cu'); // -> true
  * eqLength('hi', 'bye'); // -> false
  */
-const by = (x, y, ...zs) => {
+export const by = (x, y, ...zs) => {
     if (y === void 0) {
         return (y, ..._zs) => by(x, y, ..._zs);
     }
@@ -102,9 +102,9 @@ const by = (x, y, ...zs) => {
  * add1(mult2(2)) === mult2Add1(2);
  * // -> true
  */
-const pipe = (f, ...fs) => {
-    if (type.isFunc(f) && type.isArrayOf(type.isFunc, fs)) {
-        return arity.aritize(
+export const pipe = (f, ...fs) => {
+    if (isFunc(f) && isArrayOf(isFunc, fs)) {
+        return aritize(
             f.length,
             (...args) => fs.reduce((v, g) => g(v), f(...args))
         );
@@ -132,8 +132,8 @@ const pipe = (f, ...fs) => {
  * add1(mult2(2)) === mult2Add1(2);
  * // -> true
  */
-const compose = (...fs) => {
-    if (type.isArrayOf(type.isFunc, fs)) {
+export const compose = (...fs) => {
+    if (isArrayOf(isFunc, fs)) {
         return pipe(...fs.reverse());
     }
     throw 'combinators::compose awaits functions but saw ' + fs;
@@ -155,9 +155,9 @@ const compose = (...fs) => {
  *
  * const smellsLikeMail = and(isStr, hasAt);
  */
-const and = (...fs) => {
-    if (type.isArrayOf(type.isFunc, fs)) {
-        return arity.aritize(fs[0].length, (...xs) => {
+export const and = (...fs) => {
+    if (isArrayOf(isFunc, fs)) {
+        return aritize(fs[0].length, (...xs) => {
             return !fs.some((f) => !f(...xs));
         });
     }
@@ -180,9 +180,9 @@ const and = (...fs) => {
  *
  * const strOrNum = or(isStr, isNum);
  */
-const or = (...fs) => {
-    if (type.isArrayOf(type.isFunc, fs)) {
-        return arity.aritize(fs[0].length, (...xs) => {
+export const or = (...fs) => {
+    if (isArrayOf(isFunc, fs)) {
+        return aritize(fs[0].length, (...xs) => {
             return fs.some((f) => !!f(...xs));
         });
     }
@@ -205,15 +205,9 @@ const or = (...fs) => {
  *
  * factorial(6); // -> 720 (6 * 5 * 4 * 3 * 2 * 1)
  */
-const fixed = (f) => {
-    if (type.isFunc(f)) {
+export const fixed = (f) => {
+    if (isFunc(f)) {
         return ((g) => g(g))((h) => f((...xs) => h(h)(...xs)));
     }
     throw 'combinators::fixed awaits function but saw ' + f;
 }
-
-
-
-export default { 
-    compose, pipe, id, tap, getter, and, or, by, fixed
-};

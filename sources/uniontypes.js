@@ -8,7 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import type from './types';
+import {isFunc, isObject, isString} from './types';
 import decorators from './decorators';
 import operators from './operators';
 
@@ -29,11 +29,11 @@ const makeType = (name, def) => {
     function TypeCtor (x) {
         let self = operators.instance(TypeCtor, this);
         self[TYPE] = name;
-        if (type.isFunc(def) && def(x)) {
+        if (isFunc(def) && def(x)) {
             self[VAL] = x;
             return self;
         }
-        if (type.isObject(def)) {
+        if (isObject(def)) {
             if (Object.keys(def).reduce((b, k) => b && !!def[k](x[k]), true)) {
                 self[VAL] = x;
                 return self;
@@ -132,15 +132,15 @@ const makeType = (name, def) => {
 const Type = decorators.curry(makeType);
 
 
-Type.isType = (a) => type.isObject(a) &&
-                     !type.isVoid(a[VAL]) &&
-                     type.isString(a[TYPE]);
+Type.isType = (a) => isObject(a) &&
+                     !isVoid(a[VAL]) &&
+                     isString(a[TYPE]);
 
 
 Type.cata = decorators.curry((cases, tval) => {
-    if (type.isFunc(cases.orElse)) { // has orElse clause?
+    if (isFunc(cases.orElse)) { // has orElse clause?
         if (Type.isType(tval)) { // is tval a Type?
-            if (type.isFunc(cases[tval[TYPE]])) { // is there a case for tval?
+            if (isFunc(cases[tval[TYPE]])) { // is there a case for tval?
                 return cases[tval[TYPE]](tval[VAL]);
             }
             return cases.orElse(tval[VAL]);

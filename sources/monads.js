@@ -8,13 +8,13 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import decorators from './decorators';
-import Identity from './monads/identity';
-import Maybe, {None, Some} from './monads/maybe';
-import Either, {Left, Right} from './monads/either';
-import IO from './monads/io';
-import State from './monads/state';
-import Task from './monads/task';
+import {curry} from './decorators';
+import {Identity} from './monads/identity';
+import {Maybe, None, Some} from './monads/maybe';
+import {Either, Left, Right} from './monads/either';
+import {IO} from './monads/io';
+import {State} from './monads/state';
+import {Task} from './monads/task';
 
 /**
  * A collection of monads and monad helper functions
@@ -73,6 +73,7 @@ import Task from './monads/task';
  * @member Task
  */
 
+
 /**
  * Takes a (curried!) function and two Applicatives and applies the function to
  *     both 
@@ -93,7 +94,7 @@ import Task from './monads/task';
  *
  * liftA2(add, m1, m2); // -> Identity(2)
  */
-const liftA2 = decorators.curry((f, M1, M2) => {
+const liftA2 = curry((f, M1, M2) => {
     return M1.map(f).ap(M2);
 });
 
@@ -119,7 +120,7 @@ const liftA2 = decorators.curry((f, M1, M2) => {
  *
  * liftA3(add, m1, m2, m3); // -> Identity(3)
  */
-const liftA3 = decorators.curry((f, M1, M2, M3) => {
+const liftA3 = curry((f, M1, M2, M3) => {
     return M1.map(f).ap(M2).ap(M3);
 });
 
@@ -147,7 +148,7 @@ const liftA3 = decorators.curry((f, M1, M2, M3) => {
  *
  * liftA4(add, m1, m2, m3, m4); // -> Identity(4)
  */
-const liftA4 = decorators.curry((f, M1, M2, M3, M4) => {
+const liftA4 = curry((f, M1, M2, M3, M4) => {
     return M1.map(f).ap(M2).ap(M3).ap(M4);
 });
 
@@ -177,13 +178,11 @@ const liftA4 = decorators.curry((f, M1, M2, M3, M4) => {
  *
  * liftA5(add, m1, m2, m3, m4, m5); // -> Identity(5)
  */
-const liftA5 = decorators.curry((f, M1, M2, M3, M4, M5) => {
+const liftA5 = curry((f, M1, M2, M3, M4, M5) => {
     return M1.map(f).ap(M2).ap(M3).ap(M4).ap(M5);
 });
 
 
 
-export default {
-    Identity, IO, Maybe, None, Some, State, Either, Left, Right, Task,
-    liftA2, liftA3, liftA4, liftA5
-};
+
+export default {liftA2, liftA3, liftA4, liftA5, Identity, Task, State, Maybe, Some, None, Either, Left, Right, IO};

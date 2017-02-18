@@ -1,14 +1,14 @@
-import arity from './arity';
-import type from './types';
-import trampolines from './trampolines';
-import combinators from './combinators';
-import decorators from './decorators';
-import operators from './operators';
-import lenses from './lenses';
-import Transducers from './transducers';
+import * as arity from './arity';
+import * as type from './types';
+import * as trampolines from './trampolines';
+import * as combinators from './combinators';
+import * as decorators from './decorators';
+import * as operators from './operators';
+import * as lenses from './lenses';
+import * as Transducers from './transducers';
+import * as monoids from './monoids';
+import * as UnionType from './uniontypes';
 import monads from './monads';
-import monoids from './monoids';
-import UnionType from './uniontypes';
 
 
 export const trampoline = trampolines.trampoline;
@@ -144,5 +144,6 @@ export const find = operators.find;
 export const findRight = operators.findRight;
 export const foldMap = operators.foldMap;
 export const zip = operators.zip;
+export const traverse = operators.traverse;
 
 export const transducers = Transducers;

@@ -36,7 +36,7 @@ const id = (a) => a || null;
  * Unit.empty().concat(one).fold(id); // -> null
  * one.concat(Unit.empty()).fold(id); // -> null
  */
-class Unit {
+export class Unit {
     constructor() { this[VAL] = null; }
     static empty() { return new Unit(); }
     static of() { return new Unit(); }
@@ -60,7 +60,7 @@ class Unit {
  * Additive.empty().concat(one).fold(id); // -> 1
  * one.concat(Additive.empty()).fold(id); // -> 1
  */
-class Additive {
+export class Additive {
     constructor(a) {
         this[VAL] = a;
     }
@@ -86,7 +86,7 @@ class Additive {
  * Multiple.empty().concat(two).fold(id); // -> 2
  * two.concat(Multiple.empty()).fold(id); // -> 2
  */
-class Multiple {
+export class Multiple {
     constructor(a) {
         this[VAL] = a;
     }
@@ -112,7 +112,7 @@ class Multiple {
  * All.empty().concat(truth).fold(id); // -> true
  * truth.concat(All.empty()).fold(id); // -> true
  */
-class All {
+export class All {
     constructor(a) {
         this[VAL] = a;
     }
@@ -138,7 +138,7 @@ class All {
  * Any.empty().concat(truth).fold(id); // -> true
  * truth.concat(Any.empty()).fold(id); // -> true
  */
-class Any {
+export class Any {
     constructor(a) {
         this[VAL] = a;
     }
@@ -164,7 +164,7 @@ class Any {
  * Fn.empty().concat(mf).fold(id); // -> 2
  * mf.concat(Fn.empty()).fold(id); // -> 2
  */
-class Fn {
+export class Fn {
     constructor(a) {
         this[VAL] = a;
     }
@@ -190,7 +190,7 @@ class Fn {
  * Min.empty().concat(two).fold(id); // -> 2
  * two.concat(Min.empty()).fold(id); // -> 2
  */
-class Min {
+export class Min {
     constructor(a) {
         this[VAL] = a;
     }
@@ -216,7 +216,7 @@ class Min {
  * Max.empty().concat(one).fold(id); // -> 1
  * one.concat(Max.empty()).fold(id); // -> 1
  */
-class Max {
+export class Max {
     constructor(a) {
         this[VAL] = a;
     }
@@ -242,7 +242,7 @@ class Max {
  * Dict.empty().concat(one).fold(id); // -> {price: 1}
  * one.concat(Dict.empty()).fold(id); // -> {price: 1}
  */
-class Dict {
+export class Dict {
     constructor(a) {
         this[VAL] = a;
     }
@@ -250,10 +250,4 @@ class Dict {
     static of(a) { return new Dict(a); }
     concat(monoid) { return new Dict(Object.assign({}, this[VAL], monoid[VAL])); }
     fold(f) { return f(this[VAL]); }
-}
-
-
-
-export default {
-    Unit, Additive, Multiple, All, Any, Min, Max, Dict, Fn
 }

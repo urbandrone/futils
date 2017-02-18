@@ -13,8 +13,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * Provides functional trampolines
  * @module futils/trampolines
  */
-import arity from './arity';
-import type from './types';
+import {aritize} from './arity';
+import {isObject, isFunc} from './types';
 
 
 const SUSPENDED = Symbol('SuspendedInvocation');
@@ -28,13 +28,13 @@ const SUSPENDED = Symbol('SuspendedInvocation');
  * @param {any} [args*] Optional args to partially apply on the next invocation
  * @return {Suspended} A suspended invocation
  */
-const suspend = (f, ...args) => ({
+export const suspend = (f, ...args) => ({
     [SUSPENDED]: true,
     run: () => f(...args)
 });
 
-const isSuspended = (a) => type.isObject(a) &&
-                           type.isFunc(a.run) &&
+const isSuspended = (a) => isObject(a) &&
+                           isFunc(a.run) &&
                            a[SUSPENDED];
 
 /**
@@ -60,9 +60,9 @@ const isSuspended = (a) => type.isObject(a) &&
  * // let the magic happen (oh, and you need BigInt support of course...)
  * console.log(factorial(25000));
  */
-const trampoline = (f) => {
-    if (type.isFunc(f)) {
-        return arity.aritize(f.length, (...xs) => {
+export const trampoline = (f) => {
+    if (isFunc(f)) {
+        return aritize(f.length, (...xs) => {
             let result = f(...xs);
             while (isSuspended(result)) {
                 result = result.run();
@@ -72,6 +72,3 @@ const trampoline = (f) => {
     }
     throw 'trampoline :: expected argument to be function but saw ' + f;
 };
-
-
-export default { trampoline, suspend };

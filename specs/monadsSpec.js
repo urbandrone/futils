@@ -127,6 +127,20 @@ describe('futils/monads module', function () {
         //     expect(Some.is(tf(x))).toBe(true);
         //     expect(tf(x).map(Identity.is).fold(id, id)).toBe(true);
         // });
+        // 
+        // it('is a semigroup .concat', () => {
+        //     const x = IO.of(1);
+        //     const tf = new IO((n) => n + 1);
+        //     
+        //     expect(x.concat(tf).run()).toBe(2);
+        //     expect(tf.concat(x).run()).toBe(1);
+        // });
+        // 
+        // it('is a monoid IO::empty', () => {
+        //     const x = IO.of(1);
+        //     expect(x.concat(IO.empty()).run()).toBe(1);
+        //     expect(IO.empty().concat(x).run()).toBe(1);
+        // });
     });
 
     describe('Either monad', () => {
@@ -302,6 +316,27 @@ describe('futils/monads module', function () {
             expect(some.orElse(2).value).toBe(1);
             expect(none.orElse(2).value).toBe(2);
         });
+
+        // uncomment on build 2.4.1
+        // it('is a semigroup .concat', () => {
+        //     const m = Some.of('hello ');
+        //     const n = Some.of('world');
+
+        //     expect(m.concat(n).value).toBe('hello world');
+        //     expect(none.concat(m.concat(n)).value).toBe('hello world');
+        //     expect(m.concat(none.concat(n)).value).toBe('hello world');
+        //     expect(m.concat(n.concat(none)).value).toBe('hello world');
+        // });
+
+        // it('is a monoid Maybe::empty', () => {
+        //     const m = Some.of('hello ');
+        //     const n = Maybe.empty();
+
+        //     expect(m.concat(n).value).toBe('hello ');
+        //     expect(none.concat(m.concat(n)).value).toBe('hello ');
+        //     expect(m.concat(none.concat(n)).value).toBe('hello ');
+        //     expect(m.concat(n.concat(none)).value).toBe('hello ');
+        // });
     });
 
     describe('State monad', () => {

@@ -8,8 +8,8 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import type from './types';
-import arity from './arity';
+import {isFunc, isVoid} from './types';
+import {aritize} from './arity';
 
 /**
  * A collection of function decorator functions. Please note that these are not
@@ -44,10 +44,10 @@ import arity from './arity';
  * incOnce();
  * N; // -> 4
  */
-const once = (f) => {
+export const once = (f) => {
     let called = 0;
-    if (type.isFunc(f)) {
-        return arity.aritize(f.length, (...xs) => {
+    if (isFunc(f)) {
+        return aritize(f.length, (...xs) => {
             if (called === 0) {
                 called = 1;
                 return f(...xs);
@@ -74,9 +74,9 @@ const once = (f) => {
  * lower1(0); // -> true
  * greater1(2); // -> true
  */
-const not = (f) => {
-    if (type.isFunc(f)) {
-        return arity.aritize(f.length, (...xs) => !f(...xs));
+export const not = (f) => {
+    if (isFunc(f)) {
+        return aritize(f.length, (...xs) => !f(...xs));
     }
     throw 'decorators::not awaits a function but saw ' + f;
 }
@@ -98,9 +98,9 @@ const not = (f) => {
  * divideWith(2, 4); // -> 2
  * divideWithR(2, 4); // -> 0.5
  */
-const flip = (f) => {
-    if (type.isFunc(f)) {
-        return arity.aritize(f.length, (...xs) => f(...xs.reverse()));
+export const flip = (f) => {
+    if (isFunc(f)) {
+        return aritize(f.length, (...xs) => f(...xs.reverse()));
     }
     throw 'decorators::flip awaits a function but saw ' + f;
 }
@@ -129,8 +129,8 @@ const flip = (f) => {
  * const greetHello = cGreet('Hello');
  * greetHello('World'); // -> 'Hello World!'
  */
-const curry = (f) => {
-    if (type.isFunc(f)) {
+export const curry = (f) => {
+    if (isFunc(f)) {
         if (f.length < 2) { return f; }
         return (...args) => {
             if (f.length <= args.length) {
@@ -166,8 +166,8 @@ const curry = (f) => {
  * const toTheWorld = cGreet('World');
  * toTheWorld('Hello'); // -> 'Hello World!'
  */
-const curryRight = (f) => {
-    if (type.isFunc(f)) {
+export const curryRight = (f) => {
+    if (isFunc(f)) {
         if (f.length < 2) { return f; }
         return (...args) => {
             if (f.length <= args.length) {
@@ -199,14 +199,14 @@ const curryRight = (f) => {
  * add(1, 2); // -> 3
  * pAdd(2); // -> 3
  */
-const partial = (f, ...pargs) => {
+export const partial = (f, ...pargs) => {
     var _ps = pargs;
-    if (type.isFunc(f)) {
+    if (isFunc(f)) {
         while (_ps.length < f.length) {
             _ps.push(void 0);
         }
         return (...args) => {
-            let _as = _ps.map((a) => type.isVoid(a) ? args.shift() : a);
+            let _as = _ps.map((a) => isVoid(a) ? args.shift() : a);
             if (_as.lastIndexOf(void 0) < 0) {
                 return f(..._as);
             }
@@ -236,14 +236,14 @@ const partial = (f, ...pargs) => {
  * add(1, 2); // -> 3
  * pAdd(2); // -> 3
  */
-const partialRight = (f, ...pargs) => {
+export const partialRight = (f, ...pargs) => {
     var _ps = pargs;
-    if (type.isFunc(f)) {
+    if (isFunc(f)) {
         while (_ps.length < f.length) {
             _ps.push(void 0);
         }
         return (...args) => {
-            let _as = _ps.map((a) => type.isVoid(a) ? args.shift() : a);
+            let _as = _ps.map((a) => isVoid(a) ? args.shift() : a);
             if (_as.lastIndexOf(void 0) < 0) {
                 return f(..._as.reverse());
             }
@@ -277,20 +277,20 @@ const partialRight = (f, ...pargs) => {
  * greet('World'); // -> Hello World
  * greet(null); // -> Need a string!
  */
-const given = (p, t = void 0, f = void 0) => {
+export const given = (p, t = void 0, f = void 0) => {
     if (t === void 0) {
         return (_t, _f) => {
             return given(p, _t, _f);
         };
     }
 
-    if (type.isFunc(p) && type.isFunc(t)) {
-        if (type.isFunc(f)) {
-            return arity.aritize(t.length, (...xs) => {
+    if (isFunc(p) && isFunc(t)) {
+        if (isFunc(f)) {
+            return aritize(t.length, (...xs) => {
                 return !!p(...xs) ? t(...xs) : f(...xs);
             });
         }
-        return arity.aritize(t.length, (...xs) => {
+        return aritize(t.length, (...xs) => {
             return !!p(...xs) ? t(...xs) : null;
         });
     }
@@ -312,10 +312,10 @@ const given = (p, t = void 0, f = void 0) => {
  *
  * const complexCalculation = memoize(( ... ) => { ... });
  */
-const memoize = (f) => {
+export const memoize = (f) => {
     var cached = {};
-    if (type.isFunc(f)) {
-        return arity.aritize(f.length, (...xs) => {
+    if (isFunc(f)) {
+        return aritize(f.length, (...xs) => {
             var k = JSON.stringify(xs);
             if (!cached.hasOwnProperty(k)) {
                 cached[k] = f(...xs);
@@ -325,9 +325,3 @@ const memoize = (f) => {
     }
     throw 'decorators::memoize awaits a function but saw ' + f;
 }
-
-
-export default {
-    not, flip, curry, curryRight, partial, partialRight, given,
-    memoize, once
-};

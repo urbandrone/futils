@@ -221,7 +221,7 @@ export default class IO {
      */
     traverse (f, A) {
         if (type.isFunc(f)) {
-            return this.fold((x) => f(x).map(A.of))
+            return this.fold((x) => f(x).map(IO.of))
         }
         throw 'IO::traverse expects function but saw ' + f;
     }
@@ -237,12 +237,12 @@ export default class IO {
      * @example
      * const {IO, Identity} = require('futils');
      *
-     * const one = Identity.of(IO.of(1));
+     * const one = IO.of(Identity.of(1));
      *
-     * one.sequence(IO); // -> IO(Identity(1));
+     * one.sequence(Identity); // -> Identity(IO(1));
      */
     sequence (A) {
-        return this.traverse(combine.id, A);
+        return this.traverse(A.of, A);
     }
 
     // -- Semigroup
@@ -250,6 +250,7 @@ export default class IO {
      * Takes another member of the Semigroup and concatenates it
      *     with the IO instance
      * @method concat
+     * @memberof module:futils/monads/io.IO
      * @param {Semigroup} M Other IO instance
      * @return {Semigroup} New IO
      *
@@ -271,6 +272,7 @@ export default class IO {
     /**
      * Returns the Unit instance of a IO
      * @method empty
+     * @memberof module:futils/monads/io.IO
      * @static
      * @return {Monoid} The empty IO
      *
@@ -288,6 +290,7 @@ export default class IO {
      * Takes a seed value and the computation in a try-catch block and
      *     returns the final value. Returns the error if an error occurs
      * @method try
+     * @memberof module:futils/monads/io.IO
      * @param {any} [x] Optional seed value to run the computation with
      * @return {any|Error} Result of the computation
      */

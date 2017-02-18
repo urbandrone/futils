@@ -8,7 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import type from '../types';
+import {isFunc, isNil} from '../types';
 import combine from '../combinators';
 
 /**
@@ -28,7 +28,7 @@ const MV = Symbol('MonadicValue');
  * @static
  * @version 2.0.0
  */
-class Maybe {
+export class Maybe {
     constructor (a) {
         this.value = a;
     }
@@ -98,7 +98,7 @@ class Maybe {
      * @memberof module:futils/monads/maybe.Maybe
      * @return {boolean} True
      */
-    isSome () { return this.value !== null; }
+    isSome () { return this.value != null; }
 
     // -- Setoid
     /**
@@ -140,10 +140,10 @@ class Maybe {
      * one.map(inc); // -> Some(2)
      */
     map (f) {
-        if (type.isFunc(f)) {
-            return this.isSome() ? Maybe.of(f(this.value)) : this;
-        }
-        throw 'Maybe::map expects argument to be function but saw ' + f;
+        return this.fold(
+            () => new None(),
+            (s) => Maybe.of(f(s))
+        );
     }
     // -- Applicative
     /**
@@ -162,7 +162,7 @@ class Maybe {
      *
      * one.value; // -> 1
      */
-    static of (a) { return type.isNil(a) ? new None() : new Some(a); }
+    static of (a) { return isNil(a) ? new None() : new Some(a); }
     of (a) { return Maybe.of(a); }
 
     /**
@@ -170,7 +170,7 @@ class Maybe {
      *     of the Functor
      * @method ap
      * @memberof module:futils/monads/maybe.Maybe
-     * @param {Functor} m Functor to apply the Applicative to
+     * @param {Functor} F Functor to apply the Applicative to
      * @return {Maybe} New instance of the Functor
      *
      * @example
@@ -182,11 +182,11 @@ class Maybe {
      *
      * aInc.ap(one); // -> Some(2)
      */
-    ap (m) {
-        if (type.isFunc(m.map)) {
-            return this.isSome() ? m.map(this.value) : m;
-        }
-        throw 'Maybe::ap expects argument to be Functor but saw ' + m;
+    ap (F) {
+        return this.fold(
+            () => F,
+            (s) => F.map(s)
+        );
     }
     // -- Monad
     /**
@@ -206,10 +206,7 @@ class Maybe {
      * one.flatMap(mInc); // -> Some(2);
      */
     flatMap (f) {
-        if (type.isFunc(f)) {
-            return this.isSome() ? this.map(f).value : this;
-        }
-        throw 'Maybe::flatMap expects argument to be function but saw ' + f;
+        return this.map(f).flatten();
     }
 
     /**
@@ -232,10 +229,8 @@ class Maybe {
     // -- Recovering
     orGet (a) { return this.isSome() ? this.value : a; }
     orElse (a) { return this.isSome() ? this : Maybe.of(a); }
+
     // -- Foldable
-    // reduce
-    
-    // -- ?
     /**
      * Given two functions, folds the first over the instance if it reflects
      *     None and the second over the instance if it reflects Some
@@ -258,10 +253,10 @@ class Maybe {
      * none.fold(fail, success); // -> 'No int!';
      */
     fold (f, g) {
-        if (type.isFunc(g)) {
-            return this.isSome() ? g(this.value) : f(null);
+        if (this.isSome()) {
+            return g(this.value);
         }
-        throw 'Maybe::fold expects argument 2 to be function but saw ' + g;
+        return f(this.value);
     }
     
     /**
@@ -291,11 +286,8 @@ class Maybe {
      * });
      * // -> 'Nothing found'
      */
-    cata (o) {
-        if (type.isFunc(o.Some) && type.isFunc(o.None)) {
-            return this.fold(o.None, o.Some);
-        }
-        throw 'Maybe::cata expected Object of {None: fn, Some: fn} but saw ' + o; 
+    cata ({None, Some}) {
+        return this.fold(None, Some);
     }
 
     /**
@@ -320,11 +312,9 @@ class Maybe {
      * // -> Identity(Some(1))
      */
     traverse (f, A) {
-        if (type.isFunc(f) && type.isApplicative(A)) {
-            return this.fold(() => A.of(new None()),
-                             (x) => f(x).map(A.of))
-        }
-        throw 'Maybe::traverse expects function & Applicative but saw ' + [f, A];
+        return this.fold(() => A.of(new None()),
+                         (x) => f(x).map(Maybe.of))
+        
     }
 
     /**
@@ -343,7 +333,7 @@ class Maybe {
      * one.sequence(Identity); // -> Identity(Some(1));
      */
     sequence (A) {
-        return this.traverse(combine.id, A);
+        return this.traverse(A.of, A);
     }
     
     // -- Bifunctor
@@ -370,11 +360,54 @@ class Maybe {
      * nothing.biMap(fail, success); // -> Some('No int :(')
      */
     biMap (f, g) {
-        if (type.isFunc(f) && type.isFunc(g)) {
+        if (isFunc(f) && isFunc(g)) {
             return Maybe.of(this.fold(f, g));
         }
-        throw 'Maybe::biMap expects argument 2 to be function but saw ' + g;
+        throw 'Maybe::biMap expects functions but saw ' + f + ', ' + g;
     }
+
+    // Semigroup
+    /**
+     * Concatenates this member of a semigroup with another member of
+     *     the same semigroup
+     * @method concat
+     * @memberof module:futils/monads/maybe.Maybe 
+     * @param {Maybe} S Other member of the same semigroup
+     * @return {Maybe} Both Maybes concatenated
+     *
+     * @example
+     * const {Maybe} = require('futils');
+     *
+     * const hello = Maybe.of('hello ');
+     * const world = Maybe.of('world');
+     *
+     * hello.concat(world); // -> Some('hello world')
+     */
+    concat (S) {
+        return this.fold(
+            () => S,
+            (s) => S.isSome() ?
+                    Some.of(s.concat(S.value)) :
+                    Some.of(s)
+        );
+    }
+
+    // Monoid
+    // * @memberof module:futils/monads/maybe.Maybe 
+    /**
+     * Returns the Unit instance of a Maybe
+     * @method empty
+     * @return {None} A new None
+     *
+     * @example
+     * const {Maybe} = require('futils');
+     *
+     * const str = Maybe.of('hello world');
+     *
+     * str.concat(Maybe.empty()); // -> Some('hello world')
+     * Maybe.empty().concat(str); // -> Some('hello world')
+     */
+    static empty () { return new None(); }
 }
 
 
@@ -398,7 +431,7 @@ export class Some extends Maybe {
     set value (a) { this[MV] = a; }
     get value () { return this[MV]; }
     toString () { return `Some(${this.value})`; }
-    static of (a) { return Maybe.of(a); }
+    static of (a) { return new Some(a); }
 }
 
 
@@ -415,8 +448,3 @@ export class None extends Maybe {
     toString () { return 'None'; }
     static of () { return new None(); }
 }
-
-
-
-
-export default Maybe;

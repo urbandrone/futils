@@ -36,7 +36,7 @@ const isFn = (f) => typeof f === 'function';
  * const addTwo = aritize(2, sum);
  * addTwo(1, 2, 3); // -> 3
  */
-const aritize = (n, f) => {
+export const aritize = (n, f) => {
     let len = n, args = [], wrap = null;
     if (f.length >= len) { return f; }
     while (len > 0) { args.push('arg' + len--); }
@@ -62,7 +62,7 @@ const aritize = (n, f) => {
  *
  * monadic(all)(1, 2, 3, 4); // -> [1]
  */
-const monadic = (f) => {
+export const monadic = (f) => {
     if (isFn(f)) {
         return (x = void 0) => {
             if (x === void 0) {
@@ -91,7 +91,7 @@ const monadic = (f) => {
  * const just2 = dyadic(all);
  * just2(1, 2, 3, 4); // -> [1, 2]
  */
-const dyadic = (f) => {
+export const dyadic = (f) => {
     if (isFn(f)) {
         return (x = void 0, y = void 0) => {
             if (x === void 0) {
@@ -123,7 +123,7 @@ const dyadic = (f) => {
  * const just3 = triadic(all);
  * just3(1, 2, 3, 4); // -> [1, 2, 3]
  */
-const triadic = (f) => {
+export const triadic = (f) => {
     if (isFn(f)) {
         return (x = void 0, y = void 0, z = void 0) => {
             if (x === void 0) {
@@ -158,7 +158,7 @@ const triadic = (f) => {
  * const just4 = tetradic(all);
  * just4(1, 2, 3, 4, 5); // -> [1, 2, 3, 4]
  */
-const tetradic = (f) => {
+export const tetradic = (f) => {
     if (isFn(f)) {
         return (w = void 0, x = void 0, y = void 0, z = void 0) => {
             if (w === void 0) {
@@ -178,5 +178,3 @@ const tetradic = (f) => {
     }
     throw 'decorators::tetradic awaits a function but saw ' + f;
 }
-
-export default { aritize, monadic, dyadic, tetradic, triadic };

@@ -27,7 +27,7 @@ const MV = Symbol('MonadicValue');
  * @class module:futils/monads/identity.Identity
  * @version 2.0.0
  */
-export default class Identity {
+export class Identity {
     constructor (a) {
         this.value = a;
     }
@@ -224,14 +224,15 @@ export default class Identity {
      * const one = Identity.of(Maybe.of(1));
      *
      * // Note: ::traverse doesn't need it's second parameter but
-     * //   the type signature stays the same
+     * //   the type signature stays the same (because this is the
+     * //   Identity monod)
      * 
      * one.traverse(Maybe.of, Maybe);
      * // -> Some(Identity(1))
      */
     traverse (f, A) {
         if (type.isFunc(f)) {
-            return this.fold((x) => f(x).map(A.of))
+            return this.fold((x) => f(x).map(Identity.of))
         }
         throw 'Identity::traverse expects function but saw ' + f;
     }
@@ -252,8 +253,10 @@ export default class Identity {
      * one.sequence(Maybe); // -> Some(Identity(1));
      */
     sequence (A) {
-        return this.traverse(combine.id, A);
+        return this.traverse(A.of, A);
     }
     // -- Semigroup
-    // concat
+    concat (S) {
+        return this.fold((a) => Identity.of(a.concat(S.value)));
+    }
 }
