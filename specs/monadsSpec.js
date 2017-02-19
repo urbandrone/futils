@@ -75,13 +75,25 @@ describe('futils/monads module', function () {
             expect(Identity.of(f).ap(m).value).toBe(2);
         });
 
-        // uncomment on build 2.4.1
-        // it('can be traversed .traverse', () => {
-        //     const x = Identity.of(Some.of(1));
-        //     const tf = (y) => y.traverse(Some.of, Identity);
-        //     expect(Some.is(tf(x))).toBe(true);
-        //     expect(tf(x).map(Identity.is).fold(id, id)).toBe(true);
-        // });
+        it('can be traversed .traverse', () => {
+            const x = Identity.of(1);
+            const tf = (y) => y.traverse(Some.of, Some);
+            expect(Some.is(tf(x))).toBe(true);
+            expect(tf(x).map(Identity.is).fold(id, id)).toBe(true);
+        });
+
+        it('can be sequenced .sequece', () => {
+            const x = Identity.of(Some.of(1));
+            const tf = (y) => y.sequence(Identity);
+            expect(Some.is(tf(x))).toBe(true);
+            expect(tf(x).map(Identity.is).fold(id, id)).toBe(true);
+        });
+
+        it('is a semigroup .concat', () => {
+            const x = Identity.of('a');
+            const y = Identity.of('b');
+            expect(x.concat(y).value).toBe('ab');
+        });
     });
 
     describe('IO monad', () => {
@@ -120,27 +132,31 @@ describe('futils/monads module', function () {
             expect(new IO(comb('!')).ap(m).run()).toBe('test!');
         });
 
-        // uncomment on build 2.4.1
-        // it('can be traversed .traverse', () => {
-        //     const x = IO.of(Some.of(1));
-        //     const tf = (y) => y.traverse(Some.of, Identity);
-        //     expect(Some.is(tf(x))).toBe(true);
-        //     expect(tf(x).map(Identity.is).fold(id, id)).toBe(true);
-        // });
-        // 
-        // it('is a semigroup .concat', () => {
-        //     const x = IO.of(1);
-        //     const tf = new IO((n) => n + 1);
-        //     
-        //     expect(x.concat(tf).run()).toBe(2);
-        //     expect(tf.concat(x).run()).toBe(1);
-        // });
-        // 
-        // it('is a monoid IO::empty', () => {
-        //     const x = IO.of(1);
-        //     expect(x.concat(IO.empty()).run()).toBe(1);
-        //     expect(IO.empty().concat(x).run()).toBe(1);
-        // });
+        it('can be traversed .traverse', () => {
+            const x = IO.of(1);
+            const tf = (y) => y.traverse(Some.of, Some);
+            expect(Some.is(tf(x))).toBe(true);
+            expect(tf(x).map(IO.is).fold(id, id)).toBe(true);
+        });
+
+        it('can be sequenced .sequece', () => {
+            const x = IO.of(Some.of(1));
+            const tf = (y) => y.sequence(IO);
+            expect(Some.is(tf(x))).toBe(true);
+            expect(tf(x).map(IO.is).fold(id, id)).toBe(true);
+        });
+
+        it('is a semigroup .concat', () => {
+            const x = new IO((a) => a + 'a');
+            const y = new IO((a) => a + 'b');
+            expect(x.concat(y).fold(id, '')).toBe('ab');
+        });
+        
+        it('is a monoid IO::empty', () => {
+            const x = IO.of(1);
+            expect(x.concat(IO.empty()).run()).toBe(1);
+            expect(IO.empty().concat(x).run()).toBe(1);
+        });
     });
 
     describe('Either monad', () => {
@@ -207,8 +223,8 @@ describe('futils/monads module', function () {
 
         it('can try M::try', () => {
             const h = () => { return new Error('Left'); };
-            expect(Either.try(f, 1).value).toBe(2);
-            expect(Either.try(h, 1).value).toBe('Left');
+            expect(Either.try(f)(1).value).toBe(2);
+            expect(Either.try(h)(1).value).toBe('Left');
         });
 
         it('can be derived from null M::fromNullable', () => {
@@ -236,13 +252,31 @@ describe('futils/monads module', function () {
             expect(left.orElse(2).value).toBe(2);
         });
 
-        // uncomment on build 2.4.1
-        // it('can be traversed .traverse', () => {
-        //     const x = Either.of(Some.of(1));
-        //     const tf = (y) => y.traverse(Some.of, Right);
-        //     expect(Some.is(tf(x))).toBe(true);
-        //     expect(tf(x).map(Right.is).fold(id, id)).toBe(true);
-        // });
+        it('can be traversed .traverse', () => {
+            const x = Either.of(1);
+            const tf = (y) => y.traverse(Some.of, Some);
+            expect(Some.is(tf(x))).toBe(true);
+            expect(tf(x).map(Right.is).fold(id, id)).toBe(true);
+        });
+
+        it('can be sequenced .sequece', () => {
+            const x = Either.of(Some.of(1));
+            const tf = (y) => y.sequence(Either);
+            expect(Some.is(tf(x))).toBe(true);
+            expect(tf(x).map(Either.is).fold(id, id)).toBe(true);
+        });
+
+        it('is a semigroup .concat', () => {
+            const x = Either.of('a');
+            const y = Either.of('b');
+            expect(x.concat(y).fold(id, id)).toBe('ab');
+        });
+        
+        it('is a monoid Either::empty', () => {
+            const x = Either.of(1);
+            expect(x.concat(Either.empty()).fold(id, id)).toBe(1);
+            expect(Either.empty().concat(x).fold(id, id)).toBe(1);
+        });
     });
 
     describe('Maybe monad', () => {
@@ -317,26 +351,39 @@ describe('futils/monads module', function () {
             expect(none.orElse(2).value).toBe(2);
         });
 
-        // uncomment on build 2.4.1
-        // it('is a semigroup .concat', () => {
-        //     const m = Some.of('hello ');
-        //     const n = Some.of('world');
+        it('can be traversed .traverse', () => {
+            const x = Maybe.of(1);
+            const tf = (y) => y.traverse(Identity.of, Identity);
+            expect(Identity.is(tf(x))).toBe(true);
+            expect(tf(x).map(Some.is).fold(id, id)).toBe(true);
+        });
 
-        //     expect(m.concat(n).value).toBe('hello world');
-        //     expect(none.concat(m.concat(n)).value).toBe('hello world');
-        //     expect(m.concat(none.concat(n)).value).toBe('hello world');
-        //     expect(m.concat(n.concat(none)).value).toBe('hello world');
-        // });
+        it('can be sequenced .sequece', () => {
+            const x = Maybe.of(Identity.of(1));
+            const tf = (y) => y.sequence(Maybe);
+            expect(Identity.is(tf(x))).toBe(true);
+            expect(tf(x).map(Maybe.is).fold(id, id)).toBe(true);
+        });
 
-        // it('is a monoid Maybe::empty', () => {
-        //     const m = Some.of('hello ');
-        //     const n = Maybe.empty();
+        it('is a semigroup .concat', () => {
+            const m = Some.of('hello ');
+            const n = Some.of('world');
 
-        //     expect(m.concat(n).value).toBe('hello ');
-        //     expect(none.concat(m.concat(n)).value).toBe('hello ');
-        //     expect(m.concat(none.concat(n)).value).toBe('hello ');
-        //     expect(m.concat(n.concat(none)).value).toBe('hello ');
-        // });
+            expect(m.concat(n).value).toBe('hello world');
+            expect(none.concat(m.concat(n)).value).toBe('hello world');
+            expect(m.concat(none.concat(n)).value).toBe('hello world');
+            expect(m.concat(n.concat(none)).value).toBe('hello world');
+        });
+
+        it('is a monoid Maybe::empty', () => {
+            const m = Some.of('hello ');
+            const n = Maybe.empty();
+
+            expect(m.concat(n).value).toBe('hello ');
+            expect(none.concat(m.concat(n)).value).toBe('hello ');
+            expect(m.concat(none.concat(n)).value).toBe('hello ');
+            expect(m.concat(n.concat(none)).value).toBe('hello ');
+        });
     });
 
     describe('State monad', () => {
@@ -413,7 +460,8 @@ describe('futils/monads module', function () {
         });
 
         it('is a setoid .equals', () => {
-            expect(m.equals(Task.of(1))).toBe(true);
+            expect(m.equals(m)).toBe(true);
+            expect(m.equals(Task.of(1))).toBe(false);
         });
 
         it('is a functor .map', () => {

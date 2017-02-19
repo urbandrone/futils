@@ -8,8 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import type from '../types';
-import combine from '../combinators';
+import {isFunc} from '../types';
 
 /**
  * Implementation of the Identity monad
@@ -106,7 +105,7 @@ export class Identity {
      * one.map(inc); // -> Identity(2)
      */
     map (f) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return new Identity(f(this.value));
         }
         throw 'Identity::map expects argument to be function but saw ' + f;
@@ -149,7 +148,7 @@ export class Identity {
      * aInc.ap(one); // -> Identity(2)
      */
     ap (m) {
-        if (type.isFunc(m.map)) {
+        if (isFunc(m.map)) {
             return m.map(this.value);
         }
         throw 'Identity::ap expects argument to be Functor but saw ' + m;
@@ -172,7 +171,7 @@ export class Identity {
      * one.flatMap(mInc); // -> Identity(2);
      */
     flatMap (f) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return this.map(f).value;
         }
         throw 'Identity::flatMap expects argument to be function but saw ' + f;
@@ -221,7 +220,7 @@ export class Identity {
      * @example
      * const {Maybe, Identity} = require('futils');
      *
-     * const one = Identity.of(Maybe.of(1));
+     * const one = Identity.of(1);
      *
      * // Note: ::traverse doesn't need it's second parameter but
      * //   the type signature stays the same (because this is the
@@ -231,7 +230,7 @@ export class Identity {
      * // -> Some(Identity(1))
      */
     traverse (f, A) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return this.fold((x) => f(x).map(Identity.of))
         }
         throw 'Identity::traverse expects function but saw ' + f;
@@ -253,7 +252,7 @@ export class Identity {
      * one.sequence(Maybe); // -> Some(Identity(1));
      */
     sequence (A) {
-        return this.traverse(A.of, A);
+        return this.traverse((a) => a, A);
     }
     // -- Semigroup
     concat (S) {

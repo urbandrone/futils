@@ -8,9 +8,9 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {isFunc, isObject, isString} from './types';
-import decorators from './decorators';
-import operators from './operators';
+import {isFunc, isVoid, isObject, isString} from './types';
+import {curry} from './decorators';
+import {instance} from './operators';
 
 /**
  * Implementation of a Union type factory
@@ -27,7 +27,7 @@ const TYPE = Symbol('TypeName');
 
 const makeType = (name, def) => {
     function TypeCtor (x) {
-        let self = operators.instance(TypeCtor, this);
+        let self = instance(TypeCtor, this);
         self[TYPE] = name;
         if (isFunc(def) && def(x)) {
             self[VAL] = x;
@@ -129,7 +129,7 @@ const makeType = (name, def) => {
  * format(chapter); // -> '- Chapter 1 -\n First page\n'
  * format(null); // -> ''
  */
-const Type = decorators.curry(makeType);
+const Type = curry(makeType);
 
 
 Type.isType = (a) => isObject(a) &&
@@ -137,7 +137,7 @@ Type.isType = (a) => isObject(a) &&
                      isString(a[TYPE]);
 
 
-Type.cata = decorators.curry((cases, tval) => {
+Type.cata = curry((cases, tval) => {
     if (isFunc(cases.orElse)) { // has orElse clause?
         if (Type.isType(tval)) { // is tval a Type?
             if (isFunc(cases[tval[TYPE]])) { // is there a case for tval?

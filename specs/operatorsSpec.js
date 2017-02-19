@@ -48,7 +48,6 @@ describe('futils/operators module', function () {
     it('testing concat :: [a] -> [a] -> [a, a]', function () {
         expect(_.concat([1], [2])).toEqual([1, 2]);
         expect(_.concat([1], 2)).toEqual([1, 2]);
-        expect(_.concat(1, [2])).toEqual([2, 1]);
     });
 
     it('testing instance :: a -> Ctor -> a', function () {
@@ -167,7 +166,8 @@ describe('futils/operators module', function () {
     });
 
     it('testing flatten :: Monad -> Monad', function () {
-        expect(_.flatten([[1], 2, [[3], 4]])).toEqual([1, 2, 3, 4]);
+        expect(_.flatten([[1], 2, [[3], 4]])).toEqual([1, 2, [3], 4]);
+        expect(_.flatten([[1], 2, [[3], 4]], true)).toEqual([1, 2, 3, 4]);
     });
 
     it('testing flatMap :: f -> Monad -> Monad', function () {
@@ -182,6 +182,21 @@ describe('futils/operators module', function () {
         expect(_.zip([1, 2, 3], [3])).toEqual([[1, 3]]);
     });
 
+    it('testing traverse :: f -> A -> [a] -> A [a]', () => {
+        const xs = _.traverse(_.Some.of, _.Some, ['a', 'b']);
+
+        expect(_.Some.is(xs)).toBe(true);
+        expect(xs.map(_.isArray).fold(_.id, _.id)).toBe(true);
+        expect(xs.fold(_.id, _.id)).toEqual(['a', 'b']);
+    });
+
+    it('testing sequence :: A -> [a] -> A [a]', () => {
+        const xs = _.sequence(_.Some, [_.Some.of('a'), _.Some.of('b')]);
+
+        expect(_.Some.is(xs)).toBe(true);
+        expect(xs.map(_.isArray).fold(_.id, _.id)).toBe(true);
+        expect(xs.fold(_.id, _.id)).toEqual(['a', 'b']);
+    });
 });
 
     

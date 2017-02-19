@@ -9,12 +9,12 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {curry} from './decorators';
-import {Identity} from './monads/identity';
-import {Maybe, None, Some} from './monads/maybe';
-import {Either, Left, Right} from './monads/either';
-import {IO} from './monads/io';
-import {State} from './monads/state';
-import {Task} from './monads/task';
+import {Identity} from './monads/Identity';
+import {Maybe, None, Some} from './monads/Maybe';
+import {Either, Left, Right} from './monads/Either';
+import {IO} from './monads/IO';
+import {State} from './monads/State';
+import {Task} from './monads/Task';
 
 /**
  * A collection of monads and monad helper functions

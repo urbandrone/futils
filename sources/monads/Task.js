@@ -9,7 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 /* globals setImmediate, process, setTimeout */
-import type from '../types';
+import {isFunc} from '../types';
 
 /**
  * Implementation of the Task monad
@@ -36,7 +36,7 @@ const ofVoid = () => void 0;
  * @class module:futils/monads/task.Task
  * @version 2.0.0
  */
-export default class Task {
+export class Task {
     constructor (a, b) {
         this.run = a;
         this.cleanUp = b;
@@ -142,8 +142,7 @@ export default class Task {
      * one.equals(two); // -> false
      */
     equals (b) {
-        return Task.prototype.isPrototypeOf(b) &&
-                b === this;
+        return Task.prototype.isPrototypeOf(b) && b.run === this.run;
     }
     // -- Functor
     /**
@@ -167,7 +166,7 @@ export default class Task {
      * // logs "Resolved: 2"
      */
     map (f) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return new Task(
                 (rej, res) => this.run(
                     (mv) => rej(mv),
@@ -293,7 +292,7 @@ export default class Task {
      * // logs "Resolved: 2"
      */
     flatMap (f) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return new Task((rej, res) => {
                 return this.run(
                     (a) => rej(a),
@@ -358,7 +357,7 @@ export default class Task {
      * // logs "Rejected: null"
      */
     fold (f, g) {
-        if (type.isFunc(g) && type.isFunc(f)) {
+        if (isFunc(g) && isFunc(f)) {
             return this.run(f, g);
         }
         throw 'Task::fold expects arguments to be functions but saw ' + [f, g];
@@ -392,7 +391,7 @@ export default class Task {
      * // "Nothing found"
      */
     cata ({Reject, Resolve}) {
-        if (type.isFunc(Resolve) && type.isFunc(Reject)) {
+        if (isFunc(Resolve) && isFunc(Reject)) {
             return this.fold(Reject, Resolve);
         }
         throw 'Task::cata expected Object of {Reject, Resolve}'; 
@@ -434,7 +433,7 @@ export default class Task {
      * // logs "Rejected: Nothing found"
      */
     biMap (f, g) {
-        if (type.isFunc(g) && type.isFunc(f)) {
+        if (isFunc(g) && isFunc(f)) {
             return new Task(
                 (rej, res) => this.fold(rej, res),
                 this.cleanUp
@@ -503,7 +502,7 @@ export default class Task {
      * // logs "Rejected: 0"
      */
     mapRejected (f) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return new Task(
                 (rej, res) => this.run((a) => rej(f(a)), res),
                 this.cleanUp
@@ -582,7 +581,7 @@ export default class Task {
     }
     // -- Recovering
     orElse (f) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return new Task(
                 (rej, res) => this.run((a) => f(a).run(rej, res), res),
                 this.cleanUp

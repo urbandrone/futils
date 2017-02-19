@@ -8,8 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import type from '../types';
-import combine from '../combinators';
+import {isNil, isFunc} from '../types';
 
 /**
  * Implementation of the Either monad
@@ -20,11 +19,10 @@ import combine from '../combinators';
 
 
 const MV = Symbol('MonadicValue');
-const IS_RIGHT = Symbol('@@futils:Monad.Either.Right');
+const IS_RIGHT = Symbol('Either.isRight');
 
 
-const evalsRight = (x) => !type.isNil(x) &&
-                          !Error.prototype.isPrototypeOf(x);
+const evalsRight = (x) => !isNil(x) && !Error.prototype.isPrototypeOf(x);
 
 
 
@@ -32,19 +30,11 @@ export class Either {
     constructor(l, r) {
         if (evalsRight(r)) {
             this.value = r;
-            Object.defineProperty(this, IS_RIGHT, {
-                writable: false,
-                enumerable: false,
-                value: true
-            });
+            this[IS_RIGHT] = true;
             return this;
         }
-        this.value = l;
-        Object.defineProperty(this, IS_RIGHT, {
-            writable: false,
-            enumerable: false,
-            value: false
-        });
+        this.value = l && l.message ? l.message : l;
+        this[IS_RIGHT] = false;
     }
     set value (a) { this[MV] = a; }
     get value () { return this[MV]; }
@@ -137,7 +127,7 @@ export class Either {
      * Either.try(fails)(); // -> Left('TypeError: ... ')
      */
     static try (f) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return (...args) => {
                 try {
                     let r = f(...args);
@@ -324,10 +314,12 @@ export class Either {
      * one.map(inc); // -> Right(2)
      */
     map (f) {
-        this.fold(
-            (l) => Left.of(l),
-            (r) => Right.of(f(r))
-        );
+        if (isFunc(f)) {
+            return this.fold(
+                (l) => Left.of(l),
+                (r) => Right.of(f(r))
+            );
+        }
     }
 
     /**
@@ -465,14 +457,14 @@ export class Either {
      * @example
      * const {Right, Identity} = require('futils');
      *
-     * const one = Right.of(Identity.of(1));
+     * const one = Right.of(1);
      * 
-     * one.traverse(Identity.of, Right);
+     * one.traverse(Identity.of, Identity);
      * // -> Identity(Right(1))
      */
     traverse (f, A) {
         return this.fold(
-            (l) => A.of(Left.of(l)),
+            (l) => A.of(l).map(Left.of),
             (r) => f(r).map(Right.of)
         );
     }
@@ -493,7 +485,7 @@ export class Either {
      * one.sequence(Identity); // -> Identity(Right(1));
      */
     sequence (A) {
-        return this.traverse(A.of, A);
+        return this.traverse((a) => a, A);
     }
 
     /**
@@ -565,17 +557,15 @@ export class Either {
      * none.orGet('recover!'); // -> 'recover!'
      */
     orGet (x) {
-        return this.fold(
-            () => x,
-            combine.id
-        );
+        return this.fold(() => x, (a) => a);
     }
     /**
      * Allows recovering into a new Right if the operation comes to a dead
      *     end
      * @method orElse
+     * @memberof module:futils/monads/either.Either
      * @param {any} x Recovery value if operating on a Left
-     * @return {Right} Either a Right of the recovery or of the value
+     * @return {Right} Either a Right of the recovery or the value
      *
      * @example
      * const {Either} = require('futils');
@@ -619,7 +609,7 @@ export class Right extends Either {
  * @version 2.0.0
  */
 export class Left extends Either {
-    constructor (a) { super(a); }
+    constructor (a) { super(a, null); }
     set value (a) { this[MV] = a; }
     get value () { return this[MV]; }
     toString () { return `Left(${this.value})`; }

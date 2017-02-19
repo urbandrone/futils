@@ -236,10 +236,11 @@ export const instance = (F, ctx) => {
 
 // -- Arrays --------------------
 /**
- * Concatenates two things which are members of a semigroup
+ * Concatenates two things which are members of a semigroup. Uses addition to
+ *     combine numbers. Uses composition to combine functions.
  * @method 
- * @param {any|array|semigroup} a First member
- * @param {any|array|semigroup} b Second member
+ * @param {number|function|array|semigroup} a First member
+ * @param {number|function|array|semigroup} b Second member
  * @return {array|semigroup} A new member
  *
  * @example
@@ -536,7 +537,7 @@ export const unfold = dyadic((f, x) => {
  *
  * range(2, 8); // -> [2, 3, 4, 5, 6, 7, 8]
  */
-export const range = tetradic((start, stop) => {
+export const range = dyadic((start, stop) => {
     return unfold((n) => n <= stop ? [n, n + 1] : null, start);
 });
 
@@ -732,7 +733,7 @@ export const findRight = dyadic((f, xs) => find(f, Array.from(xs).reverse()));
  * foldMap(Any, [true, false, true, true]); // -> Any(true)
  */
 export const foldMap = dyadic((M, xs) => {
-    return fold((m, x) => m.concat(x), xs.map(M.of));
+    return fold((m, x) => m.concat(x), M.empty(), xs.map(M.of));
 });
 
 
@@ -901,30 +902,58 @@ export const flatMap = dyadic((f, m) => {
         if (isFunc(m.flatMap)) {
             return m.flatMap(f);
         }
-        return flatten(map(f, m));
+        return flatten(map(f, m), false);
     }
     throw 'operators::flatMap awaits function as 1. argument but saw ' + f;
 });
 
 
-// xs :: [Right(1), Right(2)]
-// -> traverse (\a -> Right a) Right xs
-// --> [Right([a])]
-// --> Right([a, a])
-// 
-// xs :: Maybe Identity 1
-// -> traverse Identity.of Identity xs
-// -> Identity Maybe 1
-export const traverse = tetradic((f, A, xs) => {
+/**
+ * Given a function from "a" to "Structure a", a Applicative constructor *     and a Traversable, wraps the Applicative around the structure and
+ *     returns the result 
+ * @method 
+ * @version 2.4.1
+ * @param {function} f Function in the form `(a -> Applicative a)`
+ * @param {Applicative} A Applicative constructor
+ * @param {array|Applicative} xs Structure to traverse
+ * @return {Applicative} The structure wrapped in a Applicative
+ *
+ * @example
+ * const {Some, traverse} = require('futils');
+ *
+ * const xs = [1, 2, 3];
+ *
+ * traverse(Some.of, Some, xs); // -> Some([1, 2, 3])
+ */
+export const traverse = triadic((f, A, xs) => {
     if (isFunc(f) && isFunc(A.of)) {
         if (isFunc(xs.traverse)) {
             return xs.traverse(f, A);
         }
         if (isArray(xs)) {
-            return xs.map((a) => f(a).map(xs.constructor.of)).
-                reduce(concat);
+            return xs.reduceRight(
+                (a, x) => f(x).map(Array.of).concat(a),
+                A.of([])
+            );
         }
         throw 'operators::traverse cannot act on ' + xs;
     }
     throw 'operators::traverse awaits function & applicative, saw ' + [f, A];
 });
+
+/**
+ * Sequences containers, given a Applicative constructor and a structure
+ * @method 
+ * @version 2.4.1
+ * @param {Applicative} A Applicative constructor
+ * @param {array|Applicative} xs Structure to sequence
+ * @return {Applicative} The structure wrapped into a Applicative
+ *
+ * @example
+ * const {Some, sequence} = require('futils');
+ *
+ * const xs = [Some.of(1), Some.of(2), Some.of(3)];
+ *
+ * sequence(Some, xs); // -> Some([1, 2, 3])
+ */
+export const sequence = dyadic((A, xs) => traverse((a) => a, A, xs));

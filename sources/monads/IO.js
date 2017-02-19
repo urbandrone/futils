@@ -8,8 +8,8 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import type from '../types';
-import combine from '../combinators';
+import {isFunc} from '../types';
+import {id, compose} from '../combinators';
 
 /**
  * Implementation of the IO monad
@@ -20,7 +20,6 @@ import combine from '../combinators';
 
 
 const MV = Symbol('MonadicValue');
-const comp = combine.compose;
 
 
 /**
@@ -28,7 +27,7 @@ const comp = combine.compose;
  * @class module:futils/monads/io.IO
  * @version 2.0.0
  */
-export default class IO {
+export class IO {
     constructor (a) {
         this.run = a;
     }
@@ -107,8 +106,8 @@ export default class IO {
      * one.map(inc); // -> IO(2)
      */
     map (f) {
-        if (type.isFunc(f)) {
-            return new IO(comp(f, this.run));
+        if (isFunc(f)) {
+            return new IO(compose(f, this.run));
         }
         throw 'IO::map expects argument to be function but saw ' + f;
     }
@@ -129,7 +128,9 @@ export default class IO {
      *
      * one.run(); // -> 1
      */
-    static of (a) { return new IO(() => a); }
+    static of (a) {
+        return new IO(() => a);
+    }
     of (a) { return IO.of(a); }
 
     /**
@@ -150,7 +151,7 @@ export default class IO {
      * aInc.ap(one); // -> IO(2)
      */
     ap (m) {
-        if (type.isFunc(m.map)) {
+        if (isFunc(m.map)) {
             return m.map(this.run);
         }
         throw 'IO::ap expects argument to be Functor but saw ' + m;
@@ -173,7 +174,7 @@ export default class IO {
      * one.flatMap(mInc); // -> IO(2);
      */
     flatMap (f) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return this.map(f).run();
         }
         throw 'IO::flatMap expects argument to be function but saw ' + f;
@@ -214,13 +215,13 @@ export default class IO {
      * @example
      * const {IO, Identity} = require('futils');
      *
-     * const one = Identity.of(IO.of(1));
+     * const one = IO.of(1);
      * 
-     * one.traverse(IO.of, IO);
-     * // -> IO(Identity(1))
+     * one.traverse(Identity.of, Identity);
+     * // -> Identity(IO(1))
      */
     traverse (f, A) {
-        if (type.isFunc(f)) {
+        if (isFunc(f)) {
             return this.fold((x) => f(x).map(IO.of))
         }
         throw 'IO::traverse expects function but saw ' + f;
@@ -242,7 +243,7 @@ export default class IO {
      * one.sequence(Identity); // -> Identity(IO(1));
      */
     sequence (A) {
-        return this.traverse(A.of, A);
+        return this.traverse(id, A);
     }
 
     // -- Semigroup
@@ -258,14 +259,14 @@ export default class IO {
      * const {IO} = require('futils');
      *
      * const topScroll = new IO(() => window.scrollTop);
-     * const addWinH = new IO((n) => n + window.innerHeight);
+     * const winHeight = new IO((n) => n + window.innerHeight);
      *
-     * const screenBottom = topScroll.concat(addWinH);
+     * const screenBottom = topScroll.concat(winHeight);
      *
      * screenBottom.run(); // -> Int
      */
     concat (M) {
-        return new IO(comp(M.run, this.run));
+        return new IO(compose(M.run, this.run));
     }
 
     // -- Monoid
@@ -283,7 +284,7 @@ export default class IO {
      * IO.empty().concat(IO.of(1)); // -> IO(1)
      */
     static empty () {
-        return new IO(combine.id);
+        return new IO(id);
     }
     
     /**
@@ -296,7 +297,7 @@ export default class IO {
      */
     try (x) {
         try {
-            return this.fold(combine.id, x);
+            return this.fold(id, x);
         } catch (exc) {
             return exc;
         }

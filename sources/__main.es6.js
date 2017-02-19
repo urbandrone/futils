@@ -7,7 +7,7 @@ import * as operators from './operators';
 import * as lenses from './lenses';
 import * as Transducers from './transducers';
 import * as monoids from './monoids';
-import * as UnionType from './uniontypes';
+import UnionType from './uniontypes';
 import monads from './monads';
 
 
@@ -138,12 +138,11 @@ export const drop = operators.drop;
 export const dropWhile = operators.dropWhile;
 export const take = operators.take;
 export const takeWhile = operators.takeWhile;
-export const partition = operators.partition;
-export const partitionWith = operators.partitionWith;
 export const find = operators.find;
 export const findRight = operators.findRight;
 export const foldMap = operators.foldMap;
 export const zip = operators.zip;
 export const traverse = operators.traverse;
+export const sequence = operators.sequence;
 
 export const transducers = Transducers;

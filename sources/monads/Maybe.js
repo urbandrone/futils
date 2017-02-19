@@ -9,7 +9,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isFunc, isNil} from '../types';
-import combine from '../combinators';
 
 /**
  * Implementation of the Maybe monad
@@ -227,7 +226,43 @@ export class Maybe {
         return this.isSome() ? this.value : this;
     }
     // -- Recovering
+
+    /**
+     * Allows recovering into a final value if the operation comes to a dead
+     *     end
+     * @method orGet
+     * @memberof module:futils/monads/maybe.Maybe
+     * @param {any} x Recovery value if operating on a None
+     * @return {any} The recovery value on a None, the value on a Some
+     *
+     * @example
+     * const {Maybe} = require('futils');
+     *
+     * const one = Maybe.of(1);
+     * const none = Maybe.empty();
+     *
+     * one.orGet('recover!'); // -> 1
+     * none.orGet('recover!'); // -> 'recover!'
+     */
     orGet (a) { return this.isSome() ? this.value : a; }
+
+    /**
+     * Allows recovering into a new Some if the operation comes to a dead
+     *     end
+     * @method orElse
+     * @memberof module:futils/monads/maybe.Maybe
+     * @param {any} x Recovery value if operating on a Left
+     * @return {Some} Either a Some of the recovery or the value
+     *
+     * @example
+     * const {Maybe} = require('futils');
+     *
+     * const one = Maybe.of(1);
+     * const none = Maybe.empty();
+     *
+     * one.orElse('recover!'); // -> Some(1)
+     * none.orElse('recover!'); // -> Some('recover!')
+     */
     orElse (a) { return this.isSome() ? this : Maybe.of(a); }
 
     // -- Foldable
@@ -302,14 +337,14 @@ export class Maybe {
      * @example
      * const {Maybe, Identity} = require('futils');
      *
-     * const one = Maybe.of(Identity.of(1));
+     * const one = Identity.of(1);
      *
      * // Note: ::traverse needs it's second parameter, because the Maybe
      * //   type may-be None so leaving the second argument blank results
      * //   in the instance not knowing where to traverse to in a None case
      * 
-     * one.traverse(Identity.of, Identity);
-     * // -> Identity(Some(1))
+     * one.traverse(Maybe.of, Maybe);
+     * // -> Some(Identity(1))
      */
     traverse (f, A) {
         return this.fold(() => A.of(new None()),
@@ -333,7 +368,7 @@ export class Maybe {
      * one.sequence(Identity); // -> Identity(Some(1));
      */
     sequence (A) {
-        return this.traverse(A.of, A);
+        return this.traverse((a) => a, A);
     }
     
     // -- Bifunctor
