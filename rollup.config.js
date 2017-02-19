@@ -7,13 +7,21 @@ export default {
         babel({
             exclude: 'node_modules/**'
         }),
-        uglify()
+        uglify({
+            output: {
+                comments: function(_, c) {
+                    if (c.type === "comment2") {
+                        return /@banner|@cc_on/.test(c.value);
+                    }
+                }
+            }
+        })
     ],
     targets: [{
         dest: 'futils.js',
         format: 'umd',
         moduleName: 'futils',
         sourceMap: false,
-        banner: `// futils -- https://www.npmjs.com/package/futils`
+        banner: `/* @banner futils - https://www.npmjs.com/package/futils */`
     }]
 };
