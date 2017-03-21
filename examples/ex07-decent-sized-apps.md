@@ -93,7 +93,7 @@ The user field itself will be a object with this shape:
 }
 ```
 
-Our contacts will be stored in an array `[]` and have the same shape as the user:
+The contacts will be stored in an array `[]` and have the same shape the user has:
 
 ```javascript
 [{
@@ -108,7 +108,7 @@ Our contacts will be stored in an array `[]` and have the same shape as the user
 ```
 
 ## DB component
-This handles the saving of data for us. We are going to use [Sequelize](http://docs.sequelizejs.com/en/v3/) for database interaction.
+This handles the saving of data for us. We are going to use [Sequelize](http://docs.sequelizejs.com/en/v3/) for database interaction. Depending on the engine you use (MySQL, Oracle, etc.) you might need to change the arguments passed into the `Sequelize` constructor. 
 
 ```javascript
 // <root>/source/helpers/db.js
@@ -462,7 +462,7 @@ module.exports = { view };
 ```
 
 ## Adding contacts
-One of the clues about adding a contact is that: Every time a contact is added, whenever this contact logs in, it already has at least one contact in the list – the one who added him/her. If the user hasn't been added by someone else already, the list is of course empty.
+One of the clues about adding a contact is that: Every time a contact is added, whenever this contact logs in, it already has at least one contact in the list – the one who added him/her. If the user hasn't been added by someone else the list is – of course – empty.
 
 We start with the usual stuff: Defining some actions.
 ```javascript
@@ -472,6 +472,7 @@ module.exports = {
 }
 ```
 
+Let's define a controller which handles the incoming actions.
 ```javascript
 // <root>/source/components/contactform/controller.js
 const {Task, curry} = require('futils');
@@ -494,7 +495,15 @@ module.exports = { controller };
 
 ```javascript
 // <root>/source/components/contactform/view.js
-const {} = require('futils');
+const {curry, pipe} = require('futils');
+const h = require('snabbdom/h');
+const {Save} = require('./actions');
+
+
+const view = curry((state, emit) => {
+    return h();
+});
+
 
 module.exports = { view };
 ```

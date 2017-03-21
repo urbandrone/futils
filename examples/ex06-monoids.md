@@ -123,7 +123,7 @@ Notice that I have drawn the box for `nodesValid` in red, because it is a impure
 ### Combining monoids
 Now for the fun part: `nodesValid` returns us a list of booleans. From the tabel of monoidal values written above, we can see that boolean values form a monoidal semigroup, and that we can use the `All` and `Any` monoid with them.
 
-What we want is a function which takes a monoid constructor, a function from String to list of Bool which returns a function which takes a hashmap of selector:validator pairs and returns a monoid with the final result.
+What we want is a function which takes a Monoid constructor, a function from String to list of Bool which returns a function which takes a hashmap of selector:validator pairs and returns a Monoid with the final result.
 
 In other words:
 ```javascript
@@ -143,7 +143,7 @@ It works in three steps:
 
 ![foldMapInto](./assets/06-monoids-foldmapinto.png?raw=true "foldMapInto")
 
-1. It takes 3 arguments: A monoidal constructor, a function with the signature `(a -> [b])` and a Hashmap/Object. And it returns a monoid of `b`. When given all arguments, it maps over the keys of the Object and reduces/folds into a single value.
+1. It takes 3 arguments: A monoidal constructor, a function with the signature `(a -> [b])` and a Hashmap/Object. And it returns a monoid of `b`. When given all arguments, it maps over the keys of the Object and reduces/folds the object into a single value.
 2. By mapping over the keys, it passes the value of the Objects key and the key into the validation function and foldMaps the whole result list (the signature of the validation function passed in was `(a -> [b])`) into the given Monoid.
 3. The result is a list of Monoids. It can fold this list into a single Monoid again by concatting each item with the next one, starting with the unit/empty element. The result is a single Monoid.
 
@@ -166,7 +166,7 @@ const result = prog(config).fold(id);
 
 ![Program shape](./assets/06-monoids-prog.png?raw=true "Progam shape")
 
-If you are like me and want a better overview, here is the complete code in one file. Typically you'd split the application apart from the definitions of the validators and foldMapInto. Please also note the call to `require` at the top of the file which imports all futils needed:
+If you are like me and want a better overview, here is the complete code in one file. Typically you'd split the application apart from the definitions of the validators and foldMapInto. Please also note the call to `require` at the top of the file which imports all helpers needed:
 
 ```javascript
 const {foldMap, All, id, pipe, not, and, curry, field, call} = require('futils');
@@ -216,7 +216,7 @@ const result = prog(config).fold(id);
 
 
 ## The end
-This tutorial has shown you how `futils` can be used to apply operations onto monoidal datatypes with the help of `All`, `foldMap` and how this allowed us to validate a bunch of required formelements into a single value.
+This tutorial has shown you how `futils` can be used to apply operations onto monoidal datatypes with the help of `All` and `foldMap`, and how this allowed us to validate a bunch of required formelements into a single value.
 
 
 ---

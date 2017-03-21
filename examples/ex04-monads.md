@@ -57,8 +57,8 @@ Before we see `Monad`, there are two other type classes we must see first.
 The most simple explanation states that a `Functor` is just a container or box for a value which implements a `map` method. The `map` method must satisfy some laws:
 ```
 forall Functor F
-F{a} .map id :: id;
-F{a} .map f .map g :: F .map f >> g
+F{a} .map id == id;
+F{a} .map f .map g == F{a} .map f >> g
 ```
 
 ### Applicative
@@ -69,16 +69,16 @@ Building upon a `Functor`, an `Applicative` is a container for curried (when usi
 
 ![Applicative of](./assets/04-monads-of.png?raw=true "of")
 
-You can put values into the box with the static `of` method on the container (this is called Pointed) and apply (hence it's name) functions which are inside a container to values inside another container:
+You can put values into the box with the static `of` method on the container (this is called a `Pointed` interface) and apply (hence it's name) functions which are inside a container to values inside another container of the same type:
 ```
 forall Functor F => Applicative A
-A .of a :: F{a} // <- Gives back a Functor
-A .of (a → b) :: A{(a → b)} // <- Gives back an Applicative
+A .of a == F{a} // <- Gives back a Functor
+A .of (a → b) == A{(a → b)} // <- Gives back an Applicative
 
-A{(a → b)} .ap F{a} :: F{a} .map (a → b)
+A{(a → b)} .ap F{a} == F{a} .map (a → b)
 ```
 
-The container or box thing doesn't really fit, but it helps a lot to understand what it does. Normally we'd call all `Functor`s and `Applicative`s a *context*, because it usually has some behaviour attached to it (for example: A list has the attached behaviour to map over each value it contains, while a `Maybe` just doesn't map when it is `None`).
+The container or box thing doesn't really fit, but it helps a lot to understand what it does. Normally we'd call all `Functor`s and `Applicative`s a *context*, because it usually has some behaviour attached to it (for example: A list has the attached behaviour to map over each value it contains, while a `Maybe` only maps if it is a `Some` and just doesn't map when it is `None`).
 
 ![Generic context](./assets/04-monads-context.png?raw=true "Generic context")
 
@@ -91,8 +91,8 @@ We will see more of it soon. Let's just call all boxes a context.
 A `Monad` is a context, which can sequence calls with `flatMap` and therefor allows you to chain functions which return a context, so you don't end up with nested contexts. All `Monad`s in `futils` implement `flatMap` (sometimes called `bind` or `chain` in other libraries) and `flatten` (most often called `join` or `mjoin`), which takes a nested context and flattens it one level.
 ```
 forall Applicative A => Monad M
-M{M{a}} .flatten () :: M{a}
-M{a} .flatMap (a → M{b}) :: M{a} .map (a → M{b}) .flatten :: M{b}
+M{M{a}} .flatten () == M{a}
+M{a} .flatMap (a → M{b}) == M{a} .map (a → M{b}) .flatten == M{b}
 ```
 
 
@@ -175,7 +175,7 @@ const userInfo = (json) => {
 module.exports = { userInfo };
 ```
 
-As you can see, everything moves along nicely in some data chains. We "branch" the chains after each operation and either return the actual data or a default value. It all reads top to bottom, no more jumping-around-the-editor and searching-that-damn-variable anymore – it's right there. Just where you were looking for it. Niceeeee.
+As you can see, everything moves along nicely in some data chains. We "branch" the chains after each operation and either return the actual data or a default value. It all reads top to bottom, no more jumping-around-the-editor and searching-that-damn-variable anymore – it's right there. Just where you were looking for it. Nice.
 
 In our bootstrap code we are going to use jQuery as a XHR and DOM helper library. You certainly don't need jQuery to use `futils`, but it takes out some of the hassles.
 
@@ -283,6 +283,10 @@ const logsInUser = ajax(`${URL}/login/user`, {pw: ... }).
 const getsUserAvatar = logsInUser. // <- concrete reuse
     flatMap((user) => ajax(`${URL}/avatar/${user.id}`)).
     map((avatar) => ... );
+
+// getting things to "run"
+getsUserAvatar.run((error) => ...,
+                   (avatar) => ... )
 ```
 
 Both work nearly identical and it's hard to grasp the difference, so I made it obvious: The `Promise` based version runs immediatly - no way to stop it once it's running.
