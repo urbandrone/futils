@@ -1,7 +1,5 @@
 # Contacts list
-
-![John Doe](https://api.adorable.io/avatars/285/doe%40example.com "John Doe")
-
+This time we are going to build a small application which allows to manage a list of contacts. We will see how to integrate more advanced stuff like DB interaktion and asynchronous stuff. It builds mainly on the architecure we've seen in [example 5](./ex05-cdinventory.md) and shows how to split your applications into more/smaller subcomponents instead of one big. Have fun!
 
 ## Folder structure
 This is the folder structure used:
@@ -248,7 +246,7 @@ We need some small helpers for the views which we place in the `helpers/dom.js` 
 const {curry, pipe} = require('futils');
 const h = require('snabbdom/h');
 const {Login} = require('./actions');
-const {readFormTextInputs} = require('../../helpers/dom');
+const {labeledInput, inputsToPairs} = require('../../helpers/dom');
 
 const FORM_ATTRS = {
     props: {
@@ -258,17 +256,9 @@ const FORM_ATTRS = {
     }
 };
 
-// labeledInput :: String, String, String → VNode
-const labeledInput = (label, id, name) => {
-    return h('div.input', [
-        h('label.label', {htmlFor: id}, label),
-        h('input.textinput', {type: 'text', id, name}, [])
-    ]);
-}
-
-// view :: State → (ActionType → Data → Action) → VNode
+// view :: State → (Event → Action) → VNode
 const view = curry((state, emit) => {
-    const emitLogin = pipe(readFormTextInputs, emit(Login));
+    const emitLogin = pipe(inputsToPairs, emit(Login));
 
     return h('form.form', FORM_ATTRS, [
         labeledInput('Name', 'uname', 'uname'),
@@ -287,26 +277,35 @@ And these are the implementations of the helper functions:
 // <root>/source/helpers/dom.js
 const {curry, pipe, call, field, fold, merge} = require('futils');
 
-// stopDefault :: Event -> Event
+// stopDefault :: Event → Event
 const stopDefault = call('preventDefault');
 
-// query :: String -> DOM -> [DOM]
+// query :: String → DOM → [DOM]
 const query = curry((s, d) => Array.from(d.querySelectorAll(s)));
 
-// readFormFields :: [DOM{name: String, value: *}] → {}
-const readFormFields = fold((a, x) => merge(a, {[x.name]: x.value}), {});
+// readPairs :: [DOM{name: String, value: *}] → {}
+const readPairs = fold((a, x) => merge(a, {[x.name]: x.value}), {});
 
-// readFormTextInputs :: Event -> {}
-const readFormTextInputs = pipe(
+// inputsToPairs :: Event → {}
+const inputsToPairs = pipe(
     stopDefault,
     field('target.parentNode'),
     query('input[type="text"]'),
-    readFormFields
+    readPairs
 );
+
+// labeledInput :: String, String, String → VNode
+const labeledInput = (label, id, name) => {
+    return h('div.input', [
+        h('label.label', {htmlFor: id}, label),
+        h('input.textinput', {type: 'text', id, name}, [])
+    ]);
+}
 
 
 module.exports = {
-    stopDefault, query, readFormFields, readFormTextInputs
+    stopDefault, query, readPairs, inputsToPairs,
+    labeledInput
 };
 ```
 
@@ -333,7 +332,7 @@ const controller = LoginC;
 // however, we will use this later:
 // 
 // const controller = foldControllers(
-//     Login.controller, ...
+//     LoginC, ...
 // )
 
 
@@ -462,8 +461,7 @@ module.exports = { view };
 ```
 
 ## Adding contacts
-One of the clues about adding a contact is that: Every time a contact is added, whenever this contact logs in, it already has at least one contact in the list – the one who added him/her. If the user hasn't been added by someone else the list is – of course – empty.
-
+Finally the user needs the ability to add new contacts to his list of contacts. We are going to implement this last feature in the same way we build all the other stuff alreay.
 We start with the usual stuff: Defining some actions.
 ```javascript
 // <root>/source/components/contactform/actions.js
@@ -475,16 +473,31 @@ module.exports = {
 Let's define a controller which handles the incoming actions.
 ```javascript
 // <root>/source/components/contactform/controller.js
-const {Task, curry} = require('futils');
+const {Task, curry, merge} = require('futils');
 const {Save} = require('./actions');
 const {query, create, User, Contacts} = require('../../helpers/db');
 
 
 
+// isDuplicate :: Contact → State → Boolean
+const isDuplicate = curry((x, {contacts}) => contacts.
+    some((a) => a.email === x.email));
+
+
+// storeNew :: Contact → State → Task Error [Contact]
+const storeNew = curry((x, {contacts}) => create(Contacts, x).
+    flatMap(() => Task.of([...contacts, x])));
+
+
+
+// controller :: State → Action → State
 const controller = curry((state, action) => {
     switch (action.type) {
         case Save:
-            return state;
+            return isDuplicate(action.data, state) ?
+                Task.of(state) :
+                storeNew(merge({id: state.contacts.length}, action.data), state).
+                    map((cs) => merge(state, {contacts: cs}));
         default:
             return state;
     }
@@ -493,15 +506,36 @@ const controller = curry((state, action) => {
 module.exports = { controller };
 ```
 
+Alright. Let's create a `<form>` with two inputs so the user can add new contacts to the list of contacts he/she already has. This view is almost identical to the view we created for the login component. I just copied and pasted it, made some small adjustments and saved it into it's own file:
 ```javascript
 // <root>/source/components/contactform/view.js
 const {curry, pipe} = require('futils');
 const h = require('snabbdom/h');
 const {Save} = require('./actions');
+const {labeledInput, inputsToPairs} = require('../../helpers/dom');
 
 
+
+// FORM_ATTRS :: { props :: { action :: String, enctype :: String, method :: String }}
+const FORM_ATTRS = {
+    props: {
+        action: '#', // no action
+        enctype: 'application/x-www-form-urlencoded',
+        method: 'post'
+    }
+};
+
+
+// view :: State → (Event → Action) → VNode
 const view = curry((state, emit) => {
-    return h();
+    const emitSave = pipe(inputsToPairs, emit(Save));
+
+    return h('form.contactform', FORM_ATTRS, [
+        labeledInput('Name', 'name', 'name'),
+        labeledInput('E-Mail', 'email', 'email'),
+
+        h('button.button', {on: {click: emitSave}}, 'Add contact')
+    ]);
 });
 
 
