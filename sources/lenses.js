@@ -141,9 +141,9 @@ export const set = curry((l, v, data) => over(l, () => v, data));
  * const firstFriendsName = compose(L.friends, L.index(0), L.name);
  * firstFriendsName(data); // -> 'Adam Smith'
  */
-export const makeLenses = (...fields) => fields.reduce((acc, field) => {
-    if (!has(field, acc)) {
-        acc[field] = baseLens(field);
+export const makeLenses = (...fields) => fields.reduce((acc, key) => {
+    if (!has(key, acc)) {
+        acc[key] = baseLens(key);
     }
     return acc;
 }, { index: baseLens });

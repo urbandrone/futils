@@ -10,3 +10,4 @@ A growing set of **How to** tutorials for working with the `futils` package.
 * [Small Application](./ex05-cdinventory.md)
 * [Using Monoids](./ex06-monoids.md)
 * [List of contacts](./ex07-decent-sized-apps.md)
+* [Lenses](./ex08-getting-focused-with-lenses.md)

@@ -1,8 +1,9 @@
 # Getting focused
 This time we take a quick dive into some of the things you can do with lenses and how you can put them into use. `futils` shippes a kind of lenses called `van Laarhoven` lenses which are based on functors.
 
-## What is this useful for?
-What's interesting about lenses in general is their ability to open nested data structures, manipulate some stuff inside them and reconstruct an entire structure around the altered part. Read that again.
+
+## What are they useful for?
+What's interesting about lenses in general is their ability to open nested data structures, manipulate some stuff inside and reconstruct the entire structures around the altered parts. Read that again.
 
 Because all lenses are just functions in and of themself, they can be composed together like all other functions can with `compose` and `pipe`.
 
@@ -12,7 +13,7 @@ With `futils`, you can create lenses which operate on objects with the `makeLens
 const {makeLenses, view, set, over, pipe} = require('futils');
 
 // This is our state
-const JohnDoe = {name: 'John Doe', stats: {hp: {max: 550, level: 275}, level: 6}};
+const Player = {name: 'John Doe', stats: {hp: {max: 550, level: 275}, level: 6}};
 
 // these are our lenses
 const L = makeLenses('name', 'stats', 'hp', 'level');
@@ -27,7 +28,7 @@ The `view` function is useful to extract (or view, hence it's name) the part of 
 const {makeLenses, view, set, over, pipe} = require('futils');
 
 
-const JohnDoe {name: 'John Doe', stats: {hp: {max: 550, level: 275}, level: 6}};
+const Player = {name: 'John Doe', stats: {hp: {max: 550, level: 275}, level: 6}};
 
 const L = ...
 
@@ -36,8 +37,8 @@ const L = ...
 const hpLevel = pipe(L.stats, L.hp, L.level);
 
 
-view(L.name, JohnDoe); // -> 'John Doe'
-view(hpLevel, JohnDoe); // -> 275
+view(L.name, Player); // -> 'John Doe'
+view(hpLevel, Player); // -> 275
 ```
 
 ### Set
@@ -48,11 +49,12 @@ const L = ...
 const hpLevel = ...
 
 
-set(L.name, 'John Doe!', JohnDoe); // -> {name: 'John Doe!', stats: { ... }};
-set(hpLevel, 250, JohnDoe); // -> {name: 'John Doe', stats: {hp: {level: 250, ...}}};
+set(L.name, 'John Doe!', Player); // -> {name: 'John Doe!', stats: { ... }};
+set(hpLevel, 250, Player); // -> {name: 'John Doe', stats: {hp: {level: 250, ...}}};
 ```
 
-Note that `set` does not alter the `JohnDoe` constant or it's internals! instead, it always creates a new "JohnDoe" and returns it.
+Note that `set` does not alter the `Player` constant or it's internals! instead, it always creates a new "Player" and returns it.
+
 
 ### Over
 We have ways to set and to view now but we cannot manipulate any value which is inside a structure. This is what `over` is useful for. It works like mapping a function through a lens over a value and then giving the whole structure back again.
@@ -69,8 +71,8 @@ const toUpper = (s) => s.toUpperCase();
 const decrease = (n) => n - 25;
 
 
-over(L.name, toUpper, JohnDoe); // -> {name: 'JOHN DOE', stats: { ... }};
-over(hpLevel, decrease, JohnDoe); // -> {name: 'John Doe', stats: {hp: {level: 250, ...}}};
+over(L.name, toUpper, Player); // -> {name: 'JOHN DOE', stats: { ... }};
+over(hpLevel, decrease, Player); // -> {name: 'John Doe', stats: {hp: {level: 250, ...}}};
 ```
 
 Like `set` it creates a new structure and leaves the old one intact.
@@ -100,7 +102,17 @@ If you need to map over all items an array contains, `futils` provides a special
 ```javascript
 const {mappedLens, over} = require('futils');
 
-over(mappedLens, toUpper, [['a', 'b', 'c']]); // -> [['A', 'B', 'C']]
+over(mappedLens, toUpper, ['a', 'b', 'c']); // -> ['A', 'B', 'C']
+```
+
+You can compose it exactly like other lenses:
+
+```javascript
+const {mappedLens, over, pipe} = require('futils');
+
+const mapMapLens = pipe(mappedLens, mappedLens);
+
+over(mapMapLens, toUpper, [['a', 'b', 'c']]); // -> [['A', 'B', 'C']]
 ```
 
 
