@@ -60,10 +60,10 @@ The final code can be seen below:
 // <root>/source/helpers/dvc.js
 const {Task, curry, pipe, fold, given} = require('futils');
 const snabbdom = require('snabbdom');
-const classes = require('snabbdom/modules/class');
-const props = require('snabbdom/modules/props');
-const style = require('snabbdom/modules/style');
-const on = require('snabbdom/modules/eventlisteners');
+const classes = require('snabbdom/modules/class').default;
+const props = require('snabbdom/modules/props').default;
+const style = require('snabbdom/modules/style').default;
+const on = require('snabbdom/modules/eventlisteners').default;
 
 const patch = snabbdom.init([classes, props, style, on]);
 
@@ -268,7 +268,7 @@ We need some small helpers for the views which we place in the `helpers/dom.js` 
 ```javascript
 // <root>/source/components/login/view.js
 const {curry, pipe} = require('futils');
-const h = require('snabbdom/h');
+const {h} = require('snabbdom/h');
 const {Login} = require('./actions');
 const {labeledInput, inputsToPairs} = require('../../helpers/dom');
 
@@ -432,7 +432,7 @@ Finally there is a view for the list.
 ```javascript
 // <root>/source/components/contactlist/view.js
 const {curry, pipe} = require('futils');
-const h = require('snabbdom/h');
+const {h} = require('snabbdom/h');
 const {SortAlpha, SortAny} = require('./actions');
 
 // AVATAR_URL :: String
@@ -534,7 +534,7 @@ Alright. Let's create a `<form>` with two inputs so the user can add new contact
 ```javascript
 // <root>/source/components/contactform/view.js
 const {curry, pipe} = require('futils');
-const h = require('snabbdom/h');
+const {h} = require('snabbdom/h');
 const {Save} = require('./actions');
 const {labeledInput, inputsToPairs} = require('../../helpers/dom');
 

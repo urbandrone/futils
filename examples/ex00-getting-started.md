@@ -25,26 +25,54 @@ Depending on your OS, you might have to run the command as `sudo`.
 
 ## Step 3: Using the package
 As written above, futils is a collection of utility functions for various aspects of functional programming. To help you get a better understanding of what futils provides you, here is a first quick look:
+
 ```javascript
-const {map, pipe, call, given, isString} = require('futils');
+const {curry, pipe} = require('futils');
 
-let messages = [
-    {from: 'Marc', text: 'nice match yesterday!'},
-    {from: 'Jenny', text: 'hey there, how are you doing?'}
-];
+// -- Info
+// -- This file contains functions to parse a simple string as a given
+// -- pattern and then apply it against a date to get a date string from
+// -- the date for different locales
 
-const format = (msg) => `${msg.from} has written: ${msg.text}`;
-const printOut = given(isString, console.log.bind(console));
+/*
+type DateInfo = { d :: Int, m :: Int, y :: Int }
+*/
 
-const formatPrint = pipe(map(format), call('join', '\n'), printOut);
+// today :: () -> Date
+const today = () => new Date();
 
-formatPrint(messages);
+// _parseDate :: Date -> DateInfo
+const _parseDate = (date) => {
+	const d = date.getDate();
+	const m = date.getMonth() + 1;
+	const y = date.getFullYear();
+	return {d, m, y};
+}
+
+// _parsePattern :: String -> DateInfo -> String
+const _parsePattern = curry((p, date) => {
+	return p.
+		replace(/d/g, date.d < 10 ? `0${date.d}` : date.d).
+		replace(/m/g, date.d < 10 ? `0${date.m}` : date.m).
+		replace(/y/g, date.y);
+});
+
+// formatUSDates :: Date -> String
+const formatUSDates = pipe(_parseDate, _parsePattern('m/d/y'));
+const formatENDates = pipe(_parseDate, _parsePattern('d/m/y'));
+const formatDEDates = pipe(_parseDate, _parsePattern('d.m.y'));
+
+// -- demo
+console.log('US', formatUSDates(today()));
+console.log('EN', formatENDates(today()));
+console.log('DE', formatDEDates(today()));
 ```
 
 This will print the following to the console:
 ```
-Marc has written: nice match yesterday!
-Jenny has written: hey there, how are you doing?
+'US' '07/22/2017'
+'EN' '22/07/2017'
+'DE' '22.07.2017'
 ```
 
 ---
