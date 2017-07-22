@@ -9,7 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 /* globals setImmediate, process, setTimeout */
-import {isFunc} from '../types';
+import {isVoid, isFunc} from '../types';
 
 /**
  * Implementation of the Task monad
@@ -121,6 +121,223 @@ export class Task {
      * // logs "Rejected: 1"
      */
     static reject (a) { return new Task((rej) => rej(a)); }
+
+    /**
+     * Create a Task from a callback function. If the callback throws a error
+     * for any reason, that error is caught automatically and propagates along
+     * the error chain. This method is curried
+     * @method fromFunction
+     * @memberof module:futils/monads/task.Task
+     * @static
+     * @param {function} f The callback accepting function to use
+     * @param {any} [...args] Arguments to pass to the function when called
+     * @return {Task} A new Task
+     *
+     * @example
+     * const {Task, IO, pipe} = require('futils');
+     *
+     * const log = console.log.bind(console);
+     * const err = console.error.bind(console);
+     *
+     * const sidefx = (f) => (x) => { f(x); return x; }
+     *
+     * const noEvt = sidefx((e) => e.preventDefault());
+     *
+     *
+     * // -- the async stuff
+     * const delayedTick = (res, n) => setTimeout(() =>res(n), n);
+     *
+     * const get = Task.fromFunction(delayedTick, 500).
+     *    map((n) => `I appeared ${n} milliseconds later`;);
+     * 
+     *
+     * // -- usage example
+     * const emit = get.run.bind(get, err, log);
+     *
+     * const ioWriteClick = new IO(pipe(noEvt, (e) => e.target)).
+     *     map(sidefx((node) => node.innerHTML += '<hr><br>I appear on click!<br>')).
+     *     map(sidefx(emit));
+     *
+     * node.addEventListener('click', ioWriteClick.run, false);
+     *
+     * // logs "I appeared 500 milliseconds later" around 500 ms after a click
+     */
+    static fromFunction (f, ...args) {
+        if (args.length < f.length) {
+            return (..._args) => Task.fromFunction(f, ...args, ..._args);
+        }
+        return new Task((rej, res) => {
+            try {
+                f(res, ...args);
+            } catch (exc) {
+                rej(exc);
+            }
+        });
+    }
+
+    /**
+     * Create a Task from a Node JS style callback function. This method is curried
+     * @method fromNodeCPS
+     * @memberof module:futils/monads/task.Task
+     * @static
+     * @param {function} f The CPS callback function to use
+     * @param {any} [...args] Arguments to pass to the function when called
+     * @return {Task} A new Task
+     *
+     * @example
+     * const {Task} = require('futils');
+     * const fs = require('fs');
+     * 
+     * const readFile = Task.fromNodeCPS(fs.readFile.bind(fs));
+     * 
+     * readFile('path/to/file.txt', 'utf8').
+     *     map(( ... ) = > ... );
+     */
+    static fromNodeCPS (f, ...args) {
+        if (args.length < f.length) {
+            return (..._args) => Task.fromNodeCPS(f, ...args, ..._args);
+        }
+        return new Task((rej, res) => {
+            f(...args, (err, x) => {
+                if (err) { rej(err); }
+                else { res(x); }
+            });
+        });
+    }
+
+    /** 
+     * Create a Task from a given Promise
+     * @method fromPromise
+     * @memberof module:futils/monads/task.Task
+     * @static
+     * @param {Promise} p The promise object to wrap
+     * @return {Task} A new Task
+     *
+     * @example
+     * const {Task} = require('futils');
+     *
+     * const promiseReturningApi = () => ... 
+     *
+     * Task.fromPromise(promiseReturningApi()).
+     *     map(( ... ) => ... )
+     *
+     */
+    static fromPromise (p) {
+        return new Task((rej, res) => {
+            p.then(res, rej);
+        });
+    }
+
+    /**
+     * Takes a `Task` and transforms it into a promise. Optionally, a create
+     * function can be given which allows creation of different Promises from
+     * various libraries. This method is also implemented as a instance method
+     * with the same name
+     * @method toPromise
+     * @memberof module:futils/modals/task.Task
+     * @static
+     * @param {Task} a The Task to transform
+     * @param {function} [creator] Promise returning function
+     * @return {Promise} A new Promise
+     *
+     * @example
+     * const {Task, pipe} = require('futils');
+     *
+     * const randN = Task.
+     *    fromFunction((rej, res) => res(Math.floor(Math.random() * 100)));
+     *
+     * const randNPromise = randN.flatMap(Task.toPromise);
+     *
+     * // Alternative to using Task.toPromise is using the instance method:
+     * const randNPromise = randN.toPromise();
+     * 
+     * randNPromise.
+     *     then( ... ).
+     *     then( ... )
+     */
+    static toPromise (a, creator) {
+        if (isFunc(creator)) {
+            return creator((res, rej) => {
+                a.run(rej, res);
+            });
+        }
+
+        if (!isVoid(Promise) && isFunc(Promise)) {
+            // if no creator given and possible then convert into native
+            // promises
+            return new Promise((res, rej) => {
+                a.run(rej, res);
+            });
+        }
+
+        throw `Cannot create Promise from ${a}`;
+    }
+
+    /* same as above, but implemented as instance method */
+    toPromise (creator) {
+        return Task.toPromise(this, creator);
+    }
+
+    /**
+     * Takes N tasks and reduces them into a single Task which emits the
+     * result of the Task that first returns from all given tasks
+     * @method race
+     * @memberof module:futils/modals/task.Task
+     * @static
+     * @param {Task} ...tasks Two up to N Task instances
+     * @return {Task} A new Task
+     *
+     * @example
+     * const {Task} = require('futils');
+     * 
+     * const getUserAccInfo = ... // something returning a Task Error Http
+     * const getLocalUserAcc = ... // something returning a Task Error IndexedDb
+     *
+     * const userInfo = Task.race(getUserAccInfo, getLocalUserAcc);
+     *
+     * // note: user will be result of either getUserAccInfo or getLocalUserAcc
+     * //     and depends on which of both runs faster
+     * userInfo.run(console.error, (user) => ... )
+     */
+    static race (...tasks) {
+        return tasks.reduce((acc, t) => acc.concat(t), Task.empty());
+    }
+
+    /**
+     * Takes N tasks and reduces them into a single Task which emits when all
+     * given tasks are finished or either one of them fails
+     * @method all
+     * @memberof module:futils/modals/task.Task
+     * @static
+     * @param {Task} ...tasks Two up to N Task instances
+     * @return {Task} A new Task
+     *
+     * @example
+     * const {Task} = require('futils');
+     * 
+     * const getUserAccInfo = ... // something returning a Task Error Http
+     * const getLocalUserAcc = ... // something returning a Task Error IndexedDb
+     *
+     * const userInfo = Task.all(getUserAccInfo, getLocalUserAcc);
+     *
+     * // note: the success handler receives the arguments in the same order the
+     * //       tasks have been given
+     * userInfo.run(console.error, (userAcc, userLocal) => ... )
+     */
+    static all (...tasks) {
+        return new Task((rej, res) => {
+            let result = [];
+            tasks.forEach((t, i) => {
+                t.run(rej, (data) => {
+                    result.push({i, data});
+                    if (result.length >= tasks.length) {
+                        res(...result.sort((a, b) => a.i - b.i).
+                            map((x) => x.data));
+                    }
+                });
+            });
+        });
+    }
 
     // -- Setoid 
     /**

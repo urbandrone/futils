@@ -19,29 +19,11 @@
 7. Transducers
 8. Monoids (Additive, Multiple, Fn, All, Any, Min, Max, Dict)
 9. Monads (Identity, Maybe, Either, State, IO, Task)
-10. Uniontypes
+10. Uniontypes (Experimental)
 
 One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with a lot of other stuff too: jQuery, Reactive Streams, React/Preact and virtual-dom, JSPM, Electron...
 
 Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the invocation until all needed parameters are given.
-
-Below is some code for demonstration purposes:
-```javascript
-const {Task, call, map} = require('futils');
-const fetch = require('node-fetch');
-
-const getXHR = (url) => new Task((reject, resolve) => {
-    fetch(url).then(resolve).catch(reject);
-});
-const success = (msg) => console.log(msg);
-const error = (exc) => console.error(exc);
-
-getXHR('https://api.github.com/users/octocat/repos').
-    map(call('json')).
-    map(map((repo) => `${repo.name}: ${repo.html_url}`)).
-    map(call('join', '\n')).
-    run(error, success);
-```
 
 ## More information
 [API Documentation](http://www.der-davi.de/futils/docs/index.html)  

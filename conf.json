@@ -6,7 +6,7 @@
     "source": {
         "include": ["sources", "package.json", "readme_jsdoc.md"],
         "includePattern": ".js$",
-        "excludePattern": "(node_modules/|docs/)"
+        "excludePattern": "(node_modules/|specs/|docs/)"
     },
     "templates": {
         "cleverLinks": false,
@@ -17,7 +17,6 @@
         "destination": "./docs/",
         "encoding": "utf8",
         "private": true,
-        "recurse": true,
-        "template": "./docs/minami"
+        "recurse": true
     }
 }
