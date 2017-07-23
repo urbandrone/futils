@@ -668,7 +668,7 @@ export class Task {
      * Swaps the disjunction and rejects a otherwise resolving Task and
      *     vice versa
      * @method swap
-     * @memberof module:monads/either.Right
+     * @memberof module:monads/task.Task
      * @return {Task} A new Task
      *
      * @example
@@ -699,7 +699,7 @@ export class Task {
     /**
      * Given a function, maps it if the instance gets rejected
      * @method mapRejected   
-     * @memberof module:monads/either.Right
+     * @memberof module:monads/task.Task
      * @param {function} f Function to map
      * @return {Task} A new Task
      *

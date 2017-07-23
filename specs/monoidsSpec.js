@@ -1,6 +1,7 @@
 const {
     id,
     Additive,
+    Char,
     Multiple,
     Any,
     All,
@@ -13,6 +14,28 @@ const {
 describe('futils/monoids module', function () {
 
     // -- MONOIDS ///////////////////////////////
+    
+    describe('Char monoid', () => {
+        let a = Char.of('a');
+
+        it('should implement a way to fold .fold', () => {
+            expect(a.fold(id)).toBe('a');
+        })
+
+        it('should be pointed M::of', () => {
+            expect(a.fold(id)).toBe('a');
+        });
+
+        it('should be a semigroup .concat', () => {
+            expect(a.concat(a).fold(id)).toBe('aa');
+        });
+
+        it('should define a unit M::empty', () => {
+            expect(Char.empty().fold(id)).toBe('');
+            expect(a.concat(Char.empty()).fold(id)).toBe('a');
+            expect(Char.empty().concat(a).fold(id)).toBe('a');
+        });
+    });
     
     describe('Additive monoid', () => {
         let one = Additive.of(1);

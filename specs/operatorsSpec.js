@@ -102,7 +102,8 @@ describe('futils/operators module', function () {
     });
 
     it('testing foldMap :: Monoid -> as -> Monoid', function () {
-        expect(_.foldMap(_.All, [true, true]).fold(_.id)).toBe(true);
+        expect(_.foldMap((v) => v.toUpperCase(), ['a', 'b'])).toBe('AB');
+        expect(_.foldMap(_.All.of(true), [true, true]).fold(_.id)).toBe(true);
         expect(_.foldMap(_.All, [true, false]).fold(_.id)).toBe(false);
     });
 

@@ -457,8 +457,9 @@ export class Maybe {
 
 
 /**
- * The Maybe.Some monad
+ * The Maybe.Some monad. Inherits from the Maybe monad.
  * @class module:monads/maybe.Some
+ * @augments module:monads/maybe.Maybe
  * @version 2.0.0
  */
 export class Some extends Maybe {
@@ -472,8 +473,9 @@ export class Some extends Maybe {
 
 
 /**
- * The Maybe.None monad
+ * The Maybe.None monad. Inherits from the Maybe monad.
  * @class module:monads/maybe.None
+ * @augments module:monads/maybe.Maybe
  * @version 2.0.0
  */
 export class None extends Maybe {

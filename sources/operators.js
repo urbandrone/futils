@@ -9,7 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isAny, isFunc, isArray, isString, isSetoid, isFunctor,
-        isNumber, isObject, isIterable, isApply} from './types';
+        isNumber, isObject, isIterable, isApply, isMonoid} from './types';
 import {dyadic, triadic} from './arity';
 import {trampoline, suspend} from './trampolines';
 
@@ -719,21 +719,34 @@ export const findRight = dyadic((f, xs) => find(f, Array.from(xs).reverse()));
 
 /**
  * Given a Monoid TypeConstructor and a list, folds all values in the list into
- *     the Monoid Type
+ *     the Monoid Type. When used with a function instead of a Monoid, folds
+ *     into a Array and reduces intermediate nestings
  * @method 
  * @version 2.4.0
- * @param {Monoid} M Constructor of the monoid typeclass
+ * @param {Monoid|function} M Monoid or function returning a Array
  * @param {array} xs A list of values
  * @return {Monoid} Unit of the monoid concatenated with all xs
  *
  * @example
- * const {foldMap, All, Any} = require('futils');
+ * const {foldMap, Char} = require('futils');
  *
- * foldMap(All, [true, false, true, true]); // -> All(false)
- * foldMap(Any, [true, false, true, true]); // -> Any(true)
+ * // foldMap with a function
+ * foldMap((v) => v.toUpperCase(), ['a', 'b']); // -> 'AB'
+ *
+ * // foldMap with Monoids 1
+ * foldMap(Char, ['Hello', ' world']); // -> Char('Hello world')
+ *
+ * // foldMap with Monoids 2
+ * foldMap(Char.of('Hello'), [' world']); // -> Char('Hello world')
  */
 export const foldMap = dyadic((M, xs) => {
-    return fold((m, x) => m.concat(x), M.empty(), xs.map(M.of));
+    if (isFunc(M) && !isFunc(M.empty)) {
+        return fold((m, x) => m.concat(M(x)), M(xs[0]), xs.slice(1));
+    }
+    if(isMonoid(M)) {
+        return fold((m, x) => m.concat(m.of(x)), M, xs);
+    }
+    return fold((m, x) => m.concat(M.of(x)), M.empty(), xs);
 });
 
 

@@ -26,6 +26,12 @@ const evalsRight = (x) => !isNil(x) && !Error.prototype.isPrototypeOf(x);
 
 
 
+/**
+ * Implementation of the Either monad
+ * @class module:monads/either.Either
+ * @static
+ * @version 2.0.0
+ */
 export class Either {
     constructor(l, r) {
         if (evalsRight(r)) {
@@ -588,11 +594,13 @@ export class Either {
 
 
 /**
- * The Either.Right monad class
+ * The Either.Right monad class. Inherits from the Either Monad.
  * @class module:monads/either.Right
+ * @augments module:monads/either.Either
  * @version 2.0.0
  */
 export class Right extends Either {
+    /* @constructor */
     constructor (a) { super(null, a); }
     set value (a) { this[MV] = a; }
     get value () { return this[MV]; }
@@ -604,11 +612,13 @@ export class Right extends Either {
 
 
 /**
- * The Either.Left monad class
+ * The Either.Left monad class. Inherits from the Either monad.
  * @class module:monads/either.Left
+ * @augments module:monads/either.Either
  * @version 2.0.0
  */
 export class Left extends Either {
+    /* @constructor */
     constructor (a) { super(a, null); }
     set value (a) { this[MV] = a; }
     get value () { return this[MV]; }

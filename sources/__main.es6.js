@@ -76,6 +76,7 @@ export const memoize = decorators.memoize;
 export const Type = UnionType;
 
 export const Additive = monoids.Additive;
+export const Char = monoids.Char;
 export const Multiple = monoids.Multiple;
 export const Min = monoids.Min;
 export const Max = monoids.Max;

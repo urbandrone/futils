@@ -23,14 +23,15 @@ const id = (a) => a || null;
 /**
  * Creates new instances of the Unit monoid. In vanilla JavaScript, the only
  *     members of the Unit category are null and undefined.
- * @class module:monoids.Unit
+ * @module monoids/Unit
+ * @class module:monoids/monoids.Unit
  * @member Unit
  * @version 2.4.0
  *
  * @example
  * const {Unit, id} = require('futils');
  *
- * let one = Unit.of(1) or new Unit(1)
+ * let one = Unit.of(1) // or new Unit(1)
  * one.fold(id); // -> null
  * one.concat(one).fold(id); // -> null
  * Unit.empty().concat(one).fold(id); // -> null
@@ -47,14 +48,15 @@ export class Unit {
 /**
  * Creates new instances of the Additive monoid. In vanilla JavaScript, values
  *     which are members of the Additive category are numbers and strings.
- * @class module:monoids.Additive
+ * @module monoids/Additive
+ * @class module:monoids/monoids.Additive
  * @member Additive
  * @version 2.2.0
  *
  * @example
  * const {Additive, id} = require('futils');
  *
- * let one = Additive.of(1) or new Additive(1)
+ * let one = Additive.of(1) // or new Additive(1)
  * one.fold(id); // -> 1
  * one.concat(one).fold(id); // -> 2
  * Additive.empty().concat(one).fold(id); // -> 1
@@ -66,21 +68,51 @@ export class Additive {
     }
     static empty() { return new Additive(0); }
     static of(a) { return new Additive(a); }
+    of(a) { return new Additive(a); }
     concat(monoid) { return new Additive(this[VAL] + monoid[VAL]); }
+    fold(f) { return f(this[VAL]); }
+}
+
+/**
+ * Creates new instances of the Char monoid. In vanilla JavaScript, values
+ *     which are members of the Char category are numbers and strings.
+ * @module monoids/Char
+ * @class module:monoids/monoids.Char
+ * @member Char
+ * @version 2.5.0
+ *
+ * @example
+ * const {Char, id} = require('futils');
+ *
+ * let one = Char.of('a') // or new Char('a')
+ * one.fold(id); // -> 'a'
+ * one.concat(one).fold(id); // -> 'aa'
+ * Char.empty().concat(one).fold(id); // -> 'a'
+ * one.concat(Char.empty()).fold(id); // -> 'a'
+ */
+export class Char {
+    constructor(a) {
+        this[VAL] = a;
+    }
+    static empty() { return new Char(''); }
+    static of(a) { return new Char(a); }
+    of(a) { return new Char(a); }
+    concat(monoid) { return new Char(this[VAL] + monoid[VAL]); }
     fold(f) { return f(this[VAL]); }
 }
 
 /**
  * Creates new instances of the Multiple monoid. In vanilla JavaScript, values
  *     which are members of the Multiple category are numbers.
- * @class module:monoids.Multiple
+ * @module monoids/Multiple
+ * @class module:monoids/monoids.Multiple
  * @member Multiple
  * @version 2.2.0
  *
  * @example
  * const {Multiple, id} = require('futils');
  *
- * let two = Multiple.of(2) or new Multiple(2)
+ * let two = Multiple.of(2) // or new Multiple(2)
  * two.fold(id); // -> 2
  * two.concat(two).fold(id); // -> 4
  * Multiple.empty().concat(two).fold(id); // -> 2
@@ -92,6 +124,7 @@ export class Multiple {
     }
     static empty() { return new Multiple(1); }
     static of(a) { return new Multiple(a); }
+    of(a) { return new Multiple(a); }
     concat(monoid) { return new Multiple(this[VAL] * monoid[VAL]); }
     fold(f) { return f(this[VAL]); }
 }
@@ -99,14 +132,15 @@ export class Multiple {
 /**
  * Creates new instances of the All monoid. In vanilla JavaScript, values
  *     which are members of the All category are booleans.
- * @class module:monoids.All
+ * @module monoids/All
+ * @class module:monoids/monoids.All
  * @member All
  * @version 2.2.0
  *
  * @example
  * const {All, id} = require('futils');
  *
- * let truth = All.of(true) or new All(true)
+ * let truth = All.of(true) // or new All(true)
  * truth.fold(id); // -> true
  * truth.concat(truth).fold(id); // -> true
  * All.empty().concat(truth).fold(id); // -> true
@@ -118,6 +152,7 @@ export class All {
     }
     static empty() { return new All(true); }
     static of(a) { return new All(a); }
+    of(a) { return new All(a); }
     concat(monoid) { return new All(this[VAL] && monoid[VAL]); }
     fold(f) { return f(this[VAL]); }
 }
@@ -125,14 +160,15 @@ export class All {
 /**
  * Creates new instances of the Any monoid. In vanilla JavaScript, values
  *     which are members of the Any category are booleans.
- * @class module:monoids.Any
+ * @module monoids/Any
+ * @class module:monoids/monoids.Any
  * @member Any
  * @version 2.2.0
  *
  * @example
  * const {Any, id} = require('futils');
  *
- * let truth = Any.of(true) or new Any(true)
+ * let truth = Any.of(true) // or new Any(true)
  * truth.fold(id); // -> true
  * truth.concat(truth).fold(id); // -> true
  * Any.empty().concat(truth).fold(id); // -> true
@@ -144,6 +180,7 @@ export class Any {
     }
     static empty() { return new Any(false); }
     static of(a) { return new Any(a); }
+    of(a) { return new Any(a); }
     concat(monoid) { return new Any(this[VAL] || monoid[VAL]); }
     fold(f) { return f(this[VAL]); }
 }
@@ -151,14 +188,15 @@ export class Any {
 /**
  * Creates new instances of the Fn monoid. In vanilla JavaScript, values
  *     which are members of the Fn category are functions.
- * @class module:monoids.Fn
+ * @module monoids/Fn
+ * @class module:monoids/monoids.Fn
  * @member Fn
  * @version 2.2.0
  *
  * @example
  * const {Fn, id} = require('futils');
  *
- * let mf = Fn.of(2) or new Fn(() => 2)
+ * let mf = Fn.of(2) // or new Fn(() => 2)
  * mf.fold(id); // -> 2
  * mf.concat(Fn.of((n) => n * n)).fold(id); // -> 4
  * Fn.empty().concat(mf).fold(id); // -> 2
@@ -170,6 +208,7 @@ export class Fn {
     }
     static empty() { return new Fn(id); }
     static of(a) { return new Fn(() => a); }
+    of(a) { return new Fn(() => a); }
     concat(monoid) { return new Fn((a) => monoid[VAL](this[VAL](a))); }
     fold(f, a) { return f(this[VAL](a)); }
 }
@@ -177,14 +216,15 @@ export class Fn {
 /**
  * Creates new instances of the Min monoid. In vanilla JavaScript, values
  *     which are members of the Min category are numbers.
- * @class module:monoids.Min
+ * @module monoids/Min
+ * @class module:monoids/monoids.Min
  * @member Min
  * @version 2.2.0
  *
  * @example
  * const {Min, id} = require('futils');
  *
- * let two = Min.of(2) or new Min(2)
+ * let two = Min.of(2) // or new Min(2)
  * two.fold(id); // -> 2
  * two.concat(Min.of(1)).fold(id); // -> 1
  * Min.empty().concat(two).fold(id); // -> 2
@@ -196,6 +236,7 @@ export class Min {
     }
     static empty() { return new Min(Infinity); }
     static of(a) { return new Min(a); }
+    of(a) { return new Min(a); }
     concat(monoid) { return new Min(Math.min(this[VAL], monoid[VAL])); }
     fold(f) { return f(this[VAL]); }
 }
@@ -203,14 +244,15 @@ export class Min {
 /**
  * Creates new instances of the Max monoid. In vanilla JavaScript, values
  *     which are members of the Max category are numbers. 
- * @class module:monoids.Max
+ * @module monoids/Max
+ * @class module:monoids/monoids.Max
  * @member Max
  * @version 2.2.0
  *
  * @example
  * const {Max, id} = require('futils');
  *
- * let one = Max.of(1) or new Max(1)
+ * let one = Max.of(1) // or new Max(1)
  * one.fold(id); // -> 1
  * one.concat(Max.of(2)).fold(id); // -> 2
  * Max.empty().concat(one).fold(id); // -> 1
@@ -222,6 +264,7 @@ export class Max {
     }
     static empty() { return new Max(-Infinity); }
     static of(a) { return new Max(a); }
+    of(a) { return new Max(a); }
     concat(monoid) { return new Max(Math.max(this[VAL], monoid[VAL])); }
     fold(f) { return f(this[VAL]); }
 }
@@ -229,14 +272,15 @@ export class Max {
 /**
  * Creates new instances of the Dict monoid. In vanilla JavaScript, values
  *     which are members of the Dict category are objects and prototypes.
- * @class module:monoids.Dict
+ * @module monoids/Dic
+ * @class module:monoids/monoids.Dict
  * @member Dict
  * @version 2.2.0
  *
  * @example
  * const {Dict, id} = require('futils');
  *
- * let one = Dict.of({price: 1}) or new Dict({price: 1})
+ * let one = Dict.of({price: 1}) // or new Dict({price: 1})
  * one.fold(id); // -> {price: 1}
  * one.concat(Dict.of({count: 10})).fold(id); // -> {price: 1, count: 10}
  * Dict.empty().concat(one).fold(id); // -> {price: 1}
@@ -248,6 +292,7 @@ export class Dict {
     }
     static empty() { return new Dict({}); }
     static of(a) { return new Dict(a); }
+    of(a) { return new Dict(a); }
     concat(monoid) { return new Dict(Object.assign({}, this[VAL], monoid[VAL])); }
     fold(f) { return f(this[VAL]); }
 }
