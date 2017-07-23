@@ -11,7 +11,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 /**
  * Provides functional trampolines
- * @module futils/trampolines
+ * @module trampolines
  */
 import {aritize} from './arity';
 import {isObject, isFunc} from './types';

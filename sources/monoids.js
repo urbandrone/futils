@@ -13,7 +13,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 /**
  * Implementation of different monoids
- * @module futils/monoids
+ * @module monoids
  */
 
 const VAL = Symbol('MonoidalValue');
@@ -23,7 +23,7 @@ const id = (a) => a || null;
 /**
  * Creates new instances of the Unit monoid. In vanilla JavaScript, the only
  *     members of the Unit category are null and undefined.
- * @class module:futils/monoids.Unit
+ * @class module:monoids.Unit
  * @member Unit
  * @version 2.4.0
  *
@@ -47,7 +47,7 @@ export class Unit {
 /**
  * Creates new instances of the Additive monoid. In vanilla JavaScript, values
  *     which are members of the Additive category are numbers and strings.
- * @class module:futils/monoids.Additive
+ * @class module:monoids.Additive
  * @member Additive
  * @version 2.2.0
  *
@@ -73,7 +73,7 @@ export class Additive {
 /**
  * Creates new instances of the Multiple monoid. In vanilla JavaScript, values
  *     which are members of the Multiple category are numbers.
- * @class module:futils/monoids.Multiple
+ * @class module:monoids.Multiple
  * @member Multiple
  * @version 2.2.0
  *
@@ -99,7 +99,7 @@ export class Multiple {
 /**
  * Creates new instances of the All monoid. In vanilla JavaScript, values
  *     which are members of the All category are booleans.
- * @class module:futils/monoids.All
+ * @class module:monoids.All
  * @member All
  * @version 2.2.0
  *
@@ -125,7 +125,7 @@ export class All {
 /**
  * Creates new instances of the Any monoid. In vanilla JavaScript, values
  *     which are members of the Any category are booleans.
- * @class module:futils/monoids.Any
+ * @class module:monoids.Any
  * @member Any
  * @version 2.2.0
  *
@@ -151,7 +151,7 @@ export class Any {
 /**
  * Creates new instances of the Fn monoid. In vanilla JavaScript, values
  *     which are members of the Fn category are functions.
- * @class module:futils/monoids.Fn
+ * @class module:monoids.Fn
  * @member Fn
  * @version 2.2.0
  *
@@ -177,7 +177,7 @@ export class Fn {
 /**
  * Creates new instances of the Min monoid. In vanilla JavaScript, values
  *     which are members of the Min category are numbers.
- * @class module:futils/monoids.Min
+ * @class module:monoids.Min
  * @member Min
  * @version 2.2.0
  *
@@ -203,7 +203,7 @@ export class Min {
 /**
  * Creates new instances of the Max monoid. In vanilla JavaScript, values
  *     which are members of the Max category are numbers. 
- * @class module:futils/monoids.Max
+ * @class module:monoids.Max
  * @member Max
  * @version 2.2.0
  *
@@ -229,7 +229,7 @@ export class Max {
 /**
  * Creates new instances of the Dict monoid. In vanilla JavaScript, values
  *     which are members of the Dict category are objects and prototypes.
- * @class module:futils/monoids.Dict
+ * @class module:monoids.Dict
  * @member Dict
  * @version 2.2.0
  *

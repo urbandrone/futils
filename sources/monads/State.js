@@ -12,8 +12,8 @@ import {isFunc} from '../types';
 
 /**
  * Implementation of the State monad
- * @module futils/monads/state
- * @requires futils/types
+ * @module monads/State
+ * @requires types
  */
 
 
@@ -22,7 +22,7 @@ const MV = Symbol('MonadicValue');
 
 /**
  * The State monad class
- * @class module:futils/monads/state.State
+ * @class module:monads/state.State
  * @version 2.2.0
  */
 export class State {
@@ -36,7 +36,7 @@ export class State {
     /**
      * Returns a new State which grabs whatever is the current state
      * @method get 
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @static
      * @version 2.2.0
      * @return {State} New empty State
@@ -54,7 +54,7 @@ export class State {
     /**
      * Returns a completely new State without a value
      * @method put
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @static
      * @version 2.2.0
      * @param {any} s The initial state
@@ -73,7 +73,7 @@ export class State {
      * Given a function, manipulates the current state and returns a new
      *     state without a value
      * @method modify
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @static
      * @version 2.2.0
      * @param {function} f Function to manipulate the state with
@@ -92,7 +92,7 @@ export class State {
      * Returns a string representation of the instance
      * @method toString
      * @version 2.2.0
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @return {string} String representation of the calling instance
      *
      * @example
@@ -107,7 +107,7 @@ export class State {
     /**
      * Returns true if given a instance of the class
      * @method is
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @static
      * @version 2.2.0
      * @param {any} a Value to check
@@ -127,7 +127,7 @@ export class State {
     /**
      * Maps a function `f` over the value inside the Functor
      * @method map
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @version 2.2.0
      * @param {function} f Function to map with
      * @return {State} New instance of the Functor
@@ -156,7 +156,7 @@ export class State {
      * Creates a new instance of a State wrapping the given value `a`. Use
      *     `.of` instead of the constructor together with `new`
      * @method of
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @static
      * @version 2.2.0
      * @param {any} a Any value
@@ -176,7 +176,7 @@ export class State {
      * Applies a wrapped function to a given Functor and returns a new instance
      *     of the Functor
      * @method ap
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @version 2.2.0
      * @param {Functor} m Functor to apply the Applicative to
      * @return {State} New instance of the Functor
@@ -200,7 +200,7 @@ export class State {
     /**
      * Chains function calls which return monads into a single monad
      * @method flatMap
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @version 2.2.0
      * @param {function} f Function returning a monad
      * @return {State} New instance of the calling monads type
@@ -228,7 +228,7 @@ export class State {
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner run
      * @method flatten
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @version 2.2.0
      * @return {State} New instance of the monad
      *
@@ -253,7 +253,7 @@ export class State {
     /**
      * Runs the computation and returns the final value
      * @method run
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @version 2.2.0
      * @param {any} s Initial value
      * @return {any} Value of the final computation
@@ -281,7 +281,7 @@ export class State {
      *     and discards the intermediate state but in some cases it is useful
      *     to return the final state instead of the final value
      * @method exec
-     * @memberof module:futils/monads/state.State
+     * @memberof module:monads/state.State
      * @version 2.2.0
      * @param {any} s Initial value
      * @return {any} Final state of the computation

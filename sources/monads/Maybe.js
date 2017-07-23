@@ -12,8 +12,8 @@ import {isFunc, isNil} from '../types';
 
 /**
  * Implementation of the Maybe monad
- * @module futils/monads/maybe
- * @requires futils/types
+ * @module monads/maybe
+ * @requires types
  */
 
 
@@ -23,7 +23,7 @@ const MV = Symbol('MonadicValue');
 
 /**
  * Implementation of the Maybe monad
- * @class module:futils/monads/maybe.Maybe
+ * @class module:monads/maybe.Maybe
  * @static
  * @version 2.0.0
  */
@@ -35,7 +35,7 @@ export class Maybe {
     /**
      * Returns a string representation of the instance
      * @method toString
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @return {string} String representation of the calling instance
      *
      * @example
@@ -53,7 +53,7 @@ export class Maybe {
      * Creates either a Maybe.None or a Maybe.Some from a given Either.Left or
      *     a Either.Right monad
      * @method fromEither
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @static
      * @param {Left|Right} m The Either instance to transform
      * @return {None|Some} None or Some wrapper
@@ -77,7 +77,7 @@ export class Maybe {
     /**
      * Returns true if given a instance of the class
      * @method is
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @static
      * @param {any} a Value to check
      * @return {boolean} True if instance of the class
@@ -94,7 +94,7 @@ export class Maybe {
     /**
      * Returns true if called on a Some and false if called on a None
      * @method isSome
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @return {boolean} True
      */
     isSome () { return this.value != null; }
@@ -103,7 +103,7 @@ export class Maybe {
     /**
      * Given another Setoid, checks if they are equal
      * @method equals
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @param {Setoid} b Setoid to compare against
      * @return {boolean} True if both are equal
      *
@@ -125,7 +125,7 @@ export class Maybe {
     /**
      * Maps a function `f` over the value inside the Functor
      * @method map
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @param {function} f Function to map with
      * @return {Maybe} New instance of the Functor
      *
@@ -149,7 +149,7 @@ export class Maybe {
      * Creates a new instance of a Maybe wrapping the given value `a`. Use
      *     `.of` instead of the constructor together with `new`
      * @method of
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @static
      * @param {any} a Any value
      * @return {Maybe} New instance of the Applicative
@@ -168,7 +168,7 @@ export class Maybe {
      * Applies a wrapped function to a given Functor and returns a new instance
      *     of the Functor
      * @method ap
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @param {Functor} F Functor to apply the Applicative to
      * @return {Maybe} New instance of the Functor
      *
@@ -191,7 +191,7 @@ export class Maybe {
     /**
      * Chains function calls which return monads into a single monad
      * @method flatMap
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @param {function} f Function returning a monad
      * @return {Maybe} New instance of the calling monads type
      *
@@ -212,7 +212,7 @@ export class Maybe {
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
      * @method flatten
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @return {Maybe} New instance of the monad
      *
      * @example
@@ -231,7 +231,7 @@ export class Maybe {
      * Allows recovering into a final value if the operation comes to a dead
      *     end
      * @method orGet
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @param {any} x Recovery value if operating on a None
      * @return {any} The recovery value on a None, the value on a Some
      *
@@ -250,7 +250,7 @@ export class Maybe {
      * Allows recovering into a new Some if the operation comes to a dead
      *     end
      * @method orElse
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @param {any} x Recovery value if operating on a Left
      * @return {Some} Either a Some of the recovery or the value
      *
@@ -270,7 +270,7 @@ export class Maybe {
      * Given two functions, folds the first over the instance if it reflects
      *     None and the second over the instance if it reflects Some
      * @method fold
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @param {function} f Function handling the None case
      * @param {function} g Function handling the Some case
      * @return {any} Whatever f or g return
@@ -299,7 +299,7 @@ export class Maybe {
      *     fields (functions) pipes the current value through the corresponding
      *     function
      * @method cata   
-     * @memberof module:futils/monads/maybe.Maybe
+     * @memberof module:monads/maybe.Maybe
      * @param {object} o Object with `None` and `Some`
      * @return {any} Result of applying the functions to the current value
      *
@@ -329,7 +329,7 @@ export class Maybe {
      * Takes a function from some value to a Functor and an Applicative and
      *     returns a instance of the Applicative either with a Some or a None
      * @method traverse
-     * @memberof module:futils/monads/maybe.Maybe 
+     * @memberof module:monads/maybe.Maybe 
      * @param {function} f Function from a to Applicative(a)
      * @param {Applicative} A Applicative constructor
      * @return {Applicative} Either A(Some(x)) or A(None)
@@ -356,7 +356,7 @@ export class Maybe {
      * Takes an Applicative and returns a instance of the Applicative
      *     either with a Some or a None
      * @method sequence
-     * @memberof module:futils/monads/maybe.Maybe 
+     * @memberof module:monads/maybe.Maybe 
      * @param {Applicative} A Applicative constructor
      * @return {Applicative} Either A(Some(x)) or A(None)
      *
@@ -377,7 +377,7 @@ export class Maybe {
      *     and the second if it reflects Some. Wraps the result into a new
      *     Bifunctor of the same type before returning
      * @method biMap   
-     * @memberof module:futils/monads/maybe.Maybe 
+     * @memberof module:monads/maybe.Maybe 
      * @param {function} f Function to map if None
      * @param {function} g Function to map if Some
      * @return {Maybe} Result in a new container
@@ -406,7 +406,7 @@ export class Maybe {
      * Concatenates this member of a semigroup with another member of
      *     the same semigroup
      * @method concat
-     * @memberof module:futils/monads/maybe.Maybe 
+     * @memberof module:monads/maybe.Maybe 
      * @param {Maybe} S Other member of the same semigroup
      * @return {Maybe} Both Maybes concatenated
      *
@@ -428,10 +428,10 @@ export class Maybe {
     }
 
     // Monoid
-    // * @memberof module:futils/monads/maybe.Maybe 
     /**
      * Returns the Unit instance of a Maybe
      * @method empty
+     * @memberof module:monads/maybe.Maybe 
      * @return {None} A new None
      *
      * @example
@@ -458,7 +458,7 @@ export class Maybe {
 
 /**
  * The Maybe.Some monad
- * @class module:futils/monads/maybe.Some
+ * @class module:monads/maybe.Some
  * @version 2.0.0
  */
 export class Some extends Maybe {
@@ -473,7 +473,7 @@ export class Some extends Maybe {
 
 /**
  * The Maybe.None monad
- * @class module:futils/monads/maybe.None
+ * @class module:monads/maybe.None
  * @version 2.0.0
  */
 export class None extends Maybe {

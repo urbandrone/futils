@@ -12,9 +12,9 @@ import {isArray, isObject, isNil, isNumber, isString, isFunc} from './types';
 import {curry} from './decorators';
 /**
  * A collection of transducer functions, inspired by Clojure
- * @module futils/transducers
- * @requires futils/types
- * @requires futils/decorators
+ * @module transducers
+ * @requires types
+ * @requires decorators
  */
 
 

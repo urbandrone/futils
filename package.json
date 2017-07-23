@@ -5,7 +5,7 @@
   "main": "futils.js",
   "module": "sources/__main.es6.js",
   "scripts": {
-    "test": "./node_modules/.bin/jasmine-node ./specs/",
+    "test": "./node_modules/.bin/jasmine-node ./specs/ --captureExceptions",
     "docs": "./node_modules/.bin/jsdoc -c ./conf.json --verbose",
     "bundle": "rollup -c"
   },

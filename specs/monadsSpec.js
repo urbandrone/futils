@@ -559,6 +559,136 @@ describe('futils/monads module', function () {
                 expect(val).toBe(1);
             });
         });
+
+        it('can be converted to promise :: toPromise', () => {
+            let val, flag;
+            const checkout = (v) => { val = v; return v; }
+            const proceeds = () => { flag = true; }
+            const t = Task.of(1).toPromise();
+
+            runs(() => {
+                t.then(f).then(checkout).then(proceeds).catch(console.error);
+            });
+
+            waitsFor(() => {
+                return !!flag;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(2);
+            });
+        });
+
+        it('can consume a promise :: fromPromise', () => {
+            let val, flag;
+            const checkout = (v) => { val = v; return v; }
+            const proceeds = () => { flag = true; }
+            const t = Task.fromPromise(new Promise((res, _) => res(1)));
+
+            runs(() => {
+                t.map(f).map(checkout).run(id, proceeds);
+            });
+
+            waitsFor(() => {
+                return !!flag;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(2);
+            });
+        });
+
+        it('can consume a callback function :: fromFunction', () => {
+            let val, flag;
+            const checkout = (v) => val = v;
+            const t = Task.fromFunction((cb, x) => {cb(x)}, 1);
+
+            runs(() => {
+                setTimeout(() => {
+                    flag = true;
+                }, 50);
+            });
+
+            waitsFor(() => {
+                t.map(f).run(id, checkout);
+                return true;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(2);
+            });
+        });
+
+        it('can consume a Node CPS function :: fromNodeCPS', () => {
+            let val, flag;
+            const checkout = (v) => val = v;
+            const t = Task.fromNodeCPS((n, cb) => { cb(null, n); }, 1);
+
+            runs(() => {
+                setTimeout(() => {
+                    flag = true;
+                }, 50);
+            });
+
+            waitsFor(() => {
+                t.map(f).run(id, checkout);
+                return true;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(2);
+            });
+        });
+
+        it('can do parallel race operations :: race', () => {
+            let val, flag;
+            const checkout = (v) => { val = v; return v; }
+            const proceeds = () => { flag = true; }
+            const timeout = (n, x) => new Task((_, res) => {
+                setTimeout(() => { res(x) }, n);
+            });
+
+            runs(() => {
+                Task.race(timeout(50, 1), timeout(200, 2)).
+                    map(f).
+                    map(checkout).
+                    run(id, proceeds);
+            });
+
+            waitsFor(() => {
+                return !!flag;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(2);
+            });
+        });
+
+        it('can do parallel all operations :: all', () => {
+            let val, flag;
+            const checkout = ([v1, v2]) => {
+                val = v1 + v2;
+                 return val;
+             }
+            const proceeds = () => { flag = true; }
+            const timeout = (n, x) => new Task((_, res) => {
+                setTimeout(() => { res(x) }, n);
+            });
+
+            runs(() => {
+                Task.all(timeout(100, 1), timeout(50, 2)).
+                    map(checkout).
+                    run(id, proceeds);
+            });
+
+            waitsFor(() => {
+                return !!flag;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(3);
+            });
+        })
     });
 });
 

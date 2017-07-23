@@ -12,8 +12,8 @@ import {isNil, isFunc} from '../types';
 
 /**
  * Implementation of the Either monad
- * @module futils/monads/either
- * @requires futils/types
+ * @module monads/Either
+ * @requires types
  */
 
 
@@ -45,7 +45,7 @@ export class Either {
      *     fallback value if the actual value has been null or undefined and
      *     a Right if the value has any other value
      * @method fromNullable
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @static
      * @param {any} exc Fallback value
      * @param {any} a Value to wrap
@@ -68,7 +68,7 @@ export class Either {
      * Creates a Either.Left or a Either.Right from a given Maybe.None or
      *     Maybe.Some
      * @method fromMaybe
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @static
      * @param {None|Some} m The Maybe instance to transform
      * @return {Left|Right} Left or Right wrapper
@@ -89,7 +89,7 @@ export class Either {
     /**
      * Creates a Either.Left or a Either.Right from a given IO monad
      * @method fromIO
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @static
      * @param {IO} m IO monad instance
      * @return {Left|Right} Left or Right wrapper
@@ -112,7 +112,7 @@ export class Either {
      *     the given arguments are smaller than the functions arity, or executes
      *     the function and returns a Left on failure and a Right on success
      * @method try
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @static
      * @param {function} f Function to execute
      * @return {function} A function awaiting arguments to execute f
@@ -149,7 +149,7 @@ export class Either {
     /**
      * Returns a string representation of the instance
      * @method toString
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @return {string} String representation of the calling instance
      *
      * @example
@@ -168,7 +168,7 @@ export class Either {
     /**
      * Returns true if called on a Right and false if called on a Left
      * @method isRight
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @return {boolean} True
      */
     isRight () { return !!this[IS_RIGHT]; }
@@ -176,7 +176,7 @@ export class Either {
     /**
      * Returns true if given a instance of the class
      * @method is
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @static
      * @param {any} a Value to check
      * @return {boolean} True if instance of the class
@@ -194,7 +194,7 @@ export class Either {
      * Creates a new instance of a Right wrapping the given value `a`. Use
      *     `.of` instead of the constructor together with `new`
      * @method of
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @static
      * @param {any} a Any value
      * @return {Right} New instance of the Applicative
@@ -211,7 +211,7 @@ export class Either {
     /**
      * Given another Setoid, checks if they are equal
      * @method equals
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {Setoid} b Setoid to compare against
      * @return {boolean} True if both are equal
      *
@@ -233,7 +233,7 @@ export class Either {
      * Applies a wrapped function to a given Functor and returns a new instance
      *     of the Functor
      * @method ap
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {Functor} m Functor to apply the Applicative to
      * @return {Right} New instance of the Functor
      *
@@ -258,7 +258,7 @@ export class Either {
      * Concatenates this member of a semigroup with another member of the
      *     same semigroup
      * @method concat
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {Either} S Other member of the same semigroup
      * @return {Either} Both eithers concatenated
      *
@@ -282,7 +282,7 @@ export class Either {
     /**
      * Returns the Unit instance of a Either
      * @method empty
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @static
      * @return {Left} A new Left
      *
@@ -300,7 +300,7 @@ export class Either {
     /**
      * Maps a function `f` over the value inside the Functor
      * @method map
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {function} f Function to map with
      * @return {Right} New instance of the Functor
      *
@@ -326,7 +326,7 @@ export class Either {
      * Given a function, maps it if the instance is a Left and does nothing if
      *     it is a Right
      * @method mapLeft   
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {function} f Function to map
      * @return {Left|Right} A Left with updated value or a Right
      *
@@ -351,7 +351,7 @@ export class Either {
     /**
      * Chains function calls which return monads into a single monad
      * @method flatMap
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {function} f Function returning a monad
      * @return {Right} New instance of the calling monads type
      *
@@ -372,7 +372,7 @@ export class Either {
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
      * @method flatten  
-     * @memberof module:futils/monads/either.Either  
+     * @memberof module:monads/either.Either  
      * @return {Right} New instance of the monad
      *
      * @example
@@ -389,7 +389,7 @@ export class Either {
      * Given two functions, folds the first over the instance if it reflects a
      *     Left and the second over the instance if it reflects a Right
      * @method fold    
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {function} f Function handling the Left case
      * @param {function} g Function handling the Right case
      * @return {any} Whatever f or g return
@@ -418,7 +418,7 @@ export class Either {
      *     fields (functions) pipes the current value through the corresponding
      *     function
      * @method cata   
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {object} o Object with `Left` and `Right`
      * @return {any} Result of applying the functions to the current value
      *
@@ -449,7 +449,7 @@ export class Either {
      *     Applicative and returns a instance of the Applicative
      *     either with a Left or a Right
      * @method traverse
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {function} f Function from a to Applicative(a)
      * @param {Applicative} A Applicative constructor
      * @return {Applicative} Either A(Right(x)) or A(Left(x))
@@ -473,7 +473,7 @@ export class Either {
      * Takes an Applicative and returns a instance of the Applicative
      *     either with a Left or a Right
      * @method sequence
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {Applicative} A Applicative constructor
      * @return {Applicative} Either A(Right(x)) or A(Left(x))
      *
@@ -493,7 +493,7 @@ export class Either {
      *     and the second if it reflects Right. Wraps the result into a new
      *     Bifunctor of the same type before returning
      * @method biMap    
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {function} f Function to map if Left
      * @param {function} g Function to map if Right
      * @return {Right} Result in a new container
@@ -520,7 +520,7 @@ export class Either {
     /**
      * Swaps a Left into a Right and a Right into a Left (swaps the disjunction)
      * @method swap
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @return {Left|Right} A Left or Right, depending on the instance
      *
      * @example
@@ -543,7 +543,7 @@ export class Either {
      * Allows recovering into a final value if the operation comes to a dead
      *     end
      * @method orGet
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {any} x Recovery value if operating on a Left
      * @return {any} The recovery value on a Left, the value on a Right
      *
@@ -563,7 +563,7 @@ export class Either {
      * Allows recovering into a new Right if the operation comes to a dead
      *     end
      * @method orElse
-     * @memberof module:futils/monads/either.Either
+     * @memberof module:monads/either.Either
      * @param {any} x Recovery value if operating on a Left
      * @return {Right} Either a Right of the recovery or the value
      *
@@ -589,7 +589,7 @@ export class Either {
 
 /**
  * The Either.Right monad class
- * @class module:futils/monads/either.Right
+ * @class module:monads/either.Right
  * @version 2.0.0
  */
 export class Right extends Either {
@@ -605,7 +605,7 @@ export class Right extends Either {
 
 /**
  * The Either.Left monad class
- * @class module:futils/monads/either.Left
+ * @class module:monads/either.Left
  * @version 2.0.0
  */
 export class Left extends Either {

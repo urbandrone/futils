@@ -14,10 +14,10 @@ import {instance} from './operators';
 
 /**
  * Implementation of a Union type factory
- * @module futils/uniontypes
- * @requires futils/types
- * @requires futils/decorators
- * @requires futils/operators
+ * @module uniontypes
+ * @requires types
+ * @requires decorators
+ * @requires operators
  */
 
 const VAL = Symbol('TypeValue');

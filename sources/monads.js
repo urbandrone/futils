@@ -18,14 +18,14 @@ import {Task} from './monads/Task';
 
 /**
  * A collection of monads and monad helper functions
- * @module futils/monads
- * @requires futils/decorators
- * @requires futils/monads/identity
- * @requires futils/monads/maybe
- * @requires futils/monads/either
- * @requires futils/monads/io
- * @requires futils/monads/state
- * @requires futils/monads/task
+ * @module monads
+ * @requires decorators
+ * @requires monads/identity
+ * @requires monads/maybe
+ * @requires monads/either
+ * @requires monads/io
+ * @requires monads/state
+ * @requires monads/task
  */
 
 /**

@@ -13,8 +13,8 @@ import {id, compose} from '../combinators';
 
 /**
  * Implementation of the IO monad
- * @module futils/monads/io
- * @requires futils/types
+ * @module monads/IO
+ * @requires types
  */
 
 
@@ -24,7 +24,7 @@ const MV = Symbol('MonadicValue');
 
 /**
  * The IO monad class
- * @class module:futils/monads/io.IO
+ * @class module:monads/io.IO
  * @version 2.0.0
  */
 export class IO {
@@ -37,7 +37,7 @@ export class IO {
     /**
      * Returns a string representation of the instance
      * @method toString
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @return {string} String representation of the calling instance
      *
      * @example
@@ -52,7 +52,7 @@ export class IO {
     /**
      * Returns true if given a instance of the class
      * @method is
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @static
      * @param {any} a Value to check
      * @return {boolean} True if instance of the class
@@ -70,7 +70,7 @@ export class IO {
     /**
      * Given another Setoid, checks if they are equal
      * @method equals
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @param {Setoid} b Setoid to compare against
      * @return {boolean} True if both are equal
      *
@@ -92,7 +92,7 @@ export class IO {
     /**
      * Maps a function `f` over the value inside the Functor
      * @method map
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @param {function} f Function to map with
      * @return {IO} New instance of the Functor
      *
@@ -116,7 +116,7 @@ export class IO {
      * Creates a new instance of a Identity wrapping the given value `a`. Use
      *     `.of` instead of the constructor
      * @method of
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @static
      * @param {any} a Any value
      * @return {IO} New instance of the Applicative
@@ -137,7 +137,7 @@ export class IO {
      * Applies a wrapped function to a given Functor and returns a new instance
      *     of the Functor
      * @method ap
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @param {Functor} m Functor to apply the Applicative to
      * @return {IO} New instance of the Functor
      *
@@ -160,7 +160,7 @@ export class IO {
     /**
      * Chains function calls which return monads into a single monad
      * @method flatMap
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @param {function} f Function returning a monad
      * @return {IO} New instance of the calling monads type
      *
@@ -184,7 +184,7 @@ export class IO {
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
      * @method flatten
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @return {IO} New instance of the monad
      *
      * @example
@@ -207,7 +207,7 @@ export class IO {
      *     Applicative and returns a instance of the Applicative
      *     wrapping a IO
      * @method traverse
-     * @memberof module:futils/monads/io.IO 
+     * @memberof module:monads/io.IO 
      * @param {function} f Function from a to Applicative(a)
      * @param {Applicative} A Applicative constructor
      * @return {Applicative} A(IO(a))
@@ -231,7 +231,7 @@ export class IO {
      * Takes an Applicative and returns a instance of the Applicative
      *      wrapping a IO
      * @method sequence
-     * @memberof module:futils/monads/io.IO 
+     * @memberof module:monads/io.IO 
      * @param {Applicative} A Applicative constructor
      * @return {Applicative} A(IO(a))
      *
@@ -251,7 +251,7 @@ export class IO {
      * Takes another member of the Semigroup and concatenates it
      *     with the IO instance
      * @method concat
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @param {Semigroup} M Other IO instance
      * @return {Semigroup} New IO
      *
@@ -273,7 +273,7 @@ export class IO {
     /**
      * Returns the Unit instance of a IO
      * @method empty
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @static
      * @return {Monoid} The empty IO
      *
@@ -291,7 +291,7 @@ export class IO {
      * Takes a seed value and the computation in a try-catch block and
      *     returns the final value. Returns the error if an error occurs
      * @method try
-     * @memberof module:futils/monads/io.IO
+     * @memberof module:monads/io.IO
      * @param {any} [x] Optional seed value to run the computation with
      * @return {any|Error} Result of the computation
      */

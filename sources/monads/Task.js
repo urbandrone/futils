@@ -13,8 +13,8 @@ import {isVoid, isFunc} from '../types';
 
 /**
  * Implementation of the Task monad
- * @module futils/monads/task
- * @requires futils/types
+ * @module monads/Task
+ * @requires types
  */
 
 
@@ -23,9 +23,9 @@ const RUN_PROG = Symbol('MonadicFork');
 const CLEANUP = Symbol('MonadicCleanUp')
 
 
-const delay = typeof setImmediate !== 'undefined' ? (f) => setImmediate(f) :
-              typeof process !== 'undefined' ? (f) => process.nextTick(f) :
-              (f) => setTimeout(f, 0);
+const delay = (f) => typeof setImmediate !== 'undefined' ? setImmediate(f) :
+              typeof process !== 'undefined' ? process.nextTick(f) :
+              setTimeout(f, 0);
 
 const ofVoid = () => void 0;
 
@@ -33,7 +33,7 @@ const ofVoid = () => void 0;
 
 /**
  * The Task monad class
- * @class module:futils/monads/task.Task
+ * @class module:monads/task.Task
  * @version 2.0.0
  */
 export class Task {
@@ -49,7 +49,7 @@ export class Task {
     /**
      * Returns a string representation of the instance
      * @method toString
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @return {string} String representation of the calling instance
      *
      * @example
@@ -64,7 +64,7 @@ export class Task {
     /**
      * Returns true if given a instance of the class
      * @method is
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @param {any} a Value to check
      * @return {boolean} True if instance of the class
@@ -81,7 +81,7 @@ export class Task {
     /**
      * Returns a Task which resolves to the given value
      * @method resolve
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @param {any} a Value to resolve to
      * @return {Task} A new Task
@@ -103,7 +103,7 @@ export class Task {
     /**
      * Returns a Task which rejects the given value
      * @method reject
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @param {any} a Value to resolve to
      * @return {Task} A new Task
@@ -127,7 +127,7 @@ export class Task {
      * for any reason, that error is caught automatically and propagates along
      * the error chain. This method is curried
      * @method fromFunction
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @param {function} f The callback accepting function to use
      * @param {any} [...args] Arguments to pass to the function when called
@@ -163,7 +163,7 @@ export class Task {
      * // logs "I appeared 500 milliseconds later" around 500 ms after a click
      */
     static fromFunction (f, ...args) {
-        if (args.length < f.length) {
+        if (args.length < f.length - 1) {
             return (..._args) => Task.fromFunction(f, ...args, ..._args);
         }
         return new Task((rej, res) => {
@@ -178,7 +178,7 @@ export class Task {
     /**
      * Create a Task from a Node JS style callback function. This method is curried
      * @method fromNodeCPS
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @param {function} f The CPS callback function to use
      * @param {any} [...args] Arguments to pass to the function when called
@@ -194,7 +194,7 @@ export class Task {
      *     map(( ... ) = > ... );
      */
     static fromNodeCPS (f, ...args) {
-        if (args.length < f.length) {
+        if (args.length < f.length - 1) {
             return (..._args) => Task.fromNodeCPS(f, ...args, ..._args);
         }
         return new Task((rej, res) => {
@@ -208,33 +208,34 @@ export class Task {
     /** 
      * Create a Task from a given Promise
      * @method fromPromise
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @param {Promise} p The promise object to wrap
      * @return {Task} A new Task
      *
      * @example
      * const {Task} = require('futils');
+     * const fetch = require('node-fetch');
      *
-     * const promiseReturningApi = () => ... 
+     * const promiseReturningApi = (x) => fetch(`https://url?param=${x}`);
      *
-     * Task.fromPromise(promiseReturningApi()).
-     *     map(( ... ) => ... )
+     * Task.fromPromise(promiseReturningApi('superman')).
+     *     map(( supermanJson ) => ... )
      *
      */
     static fromPromise (p) {
         return new Task((rej, res) => {
-            p.then(res, rej);
+            p.then(res).catch(rej);
         });
     }
 
     /**
      * Takes a `Task` and transforms it into a promise. Optionally, a create
-     * function can be given which allows creation of different Promises from
-     * various libraries. This method is also implemented as a instance method
-     * with the same name
+     *   function can be given which allows creation of different Promises from
+     *   various libraries. This method is also implemented as a instance method
+     *   with the same name
      * @method toPromise
-     * @memberof module:futils/modals/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @param {Task} a The Task to transform
      * @param {function} [creator] Promise returning function
@@ -282,7 +283,7 @@ export class Task {
      * Takes N tasks and reduces them into a single Task which emits the
      * result of the Task that first returns from all given tasks
      * @method race
-     * @memberof module:futils/modals/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @param {Task} ...tasks Two up to N Task instances
      * @return {Task} A new Task
@@ -305,9 +306,10 @@ export class Task {
 
     /**
      * Takes N tasks and reduces them into a single Task which emits when all
-     * given tasks are finished or either one of them fails
+     * given tasks are finished or either one of them fails. Please note, this
+     * resolves into a array of all task results in order.
      * @method all
-     * @memberof module:futils/modals/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @param {Task} ...tasks Two up to N Task instances
      * @return {Task} A new Task
@@ -321,18 +323,21 @@ export class Task {
      * const userInfo = Task.all(getUserAccInfo, getLocalUserAcc);
      *
      * // note: the success handler receives the arguments in the same order the
-     * //       tasks have been given
-     * userInfo.run(console.error, (userAcc, userLocal) => ... )
+     * //       tasks have been given but packed into a array. this happens to
+     * //       each function application, regardless of run(), map(), flatMap(),
+     * //       etc.
+     * userInfo.run(console.error, ([userAcc, userLocal]) => ... )
      */
     static all (...tasks) {
         return new Task((rej, res) => {
             let result = [];
+            let missing = tasks.length;
             tasks.forEach((t, i) => {
                 t.run(rej, (data) => {
-                    result.push({i, data});
-                    if (result.length >= tasks.length) {
-                        res(...result.sort((a, b) => a.i - b.i).
-                            map((x) => x.data));
+                    result[i] = data;
+                    missing -= 1;
+                    if (missing < 1) {
+                        res(result);
                     }
                 });
             });
@@ -343,7 +348,7 @@ export class Task {
     /**
      * Given another Setoid, checks if they are equal
      * @method equals
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @param {Setoid} b Setoid to compare against
      * @return {boolean} True if both are equal
      *
@@ -365,7 +370,7 @@ export class Task {
     /**
      * Maps a function `f` over the value inside the Functor
      * @method map
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @param {function} f Function to map with
      * @return {Task} New instance of the Functor
      *
@@ -398,7 +403,7 @@ export class Task {
     /**
      * Creates a new instance of a Task. Use `.of` instead of the constructor 
      * @method of
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @param {any} a Any value
      * @return {Task} New instance of the Applicative
@@ -422,7 +427,7 @@ export class Task {
      * Applies a wrapped function to a given Functor and returns a new instance
      *     of the Functor
      * @method ap
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @param {Functor} m Functor to apply the Applicative to
      * @return {Task} New instance of the Functor
      *
@@ -444,7 +449,7 @@ export class Task {
         let meFork = this.run, themFork = m.run,
             meClean = this.cleanUp, themClean = m.cleanUp;
 
-        const cleanBoth = ([a, b]) => {
+        const cleanBoth = (a, b) => {
             meClean(a);
             themClean(b);
         }
@@ -465,7 +470,7 @@ export class Task {
                     if (rejected) { return; }
                     set(mv);
                     if (vload && fload) {
-                        delay(() => cleanBoth(states));
+                        delay(() => cleanBoth(states[0], states[1]));
                         return res(f(v));
                     } else {
                         return mv;
@@ -490,7 +495,7 @@ export class Task {
     /**
      * Chains function calls which return monads into a single monad
      * @method flatMap
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @param {function} f Function returning a monad
      * @return {Task} New instance of the calling monads type
      *
@@ -524,7 +529,7 @@ export class Task {
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
      * @method flatten
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @return {Task} New instance of the monad
      *
      * @example
@@ -550,7 +555,7 @@ export class Task {
      * Given two functions, folds the first over the instance if it rejects the
      *     Task and the second over the instance if it resolves the Task
      * @method fold
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @param {function} f Function handling the a Failure case
      * @param {function} g Function handling the Success case
      * @return {any} Whatever f or g return
@@ -585,7 +590,7 @@ export class Task {
      *     `Resolve` fields pipes the current value through the corresponding
      *     function
      * @method cata   
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @param {object} o Object with `Reject` and `Resolve`
      * @return {any} Result of applying the functions to the current value
      *
@@ -620,7 +625,7 @@ export class Task {
      *     Failure and the second if it reflects Success. Wraps the result into
      *     a new Bifunctor of the same type before returning
      * @method biMap   
-     * @memberof module:futils/monads/task.Task 
+     * @memberof module:monads/task.Task 
      * @param {function} f Function to map if a Failure
      * @param {function} g Function to map if Success
      * @return {Task} Result in a new container
@@ -663,7 +668,7 @@ export class Task {
      * Swaps the disjunction and rejects a otherwise resolving Task and
      *     vice versa
      * @method swap
-     * @memberof module:futils/monads/either.Right
+     * @memberof module:monads/either.Right
      * @return {Task} A new Task
      *
      * @example
@@ -694,7 +699,7 @@ export class Task {
     /**
      * Given a function, maps it if the instance gets rejected
      * @method mapRejected   
-     * @memberof module:futils/monads/either.Right
+     * @memberof module:monads/either.Right
      * @param {function} f Function to map
      * @return {Task} A new Task
      *
@@ -731,7 +736,7 @@ export class Task {
     /**
      * Returns a Task that never rejects and never resolves
      * @method empty
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @static
      * @return {Task} A monoid of the same type
      *
@@ -747,7 +752,7 @@ export class Task {
      * Concats the instance with another one and selects the one which first
      *     completes
      * @method concat
-     * @memberof module:futils/monads/task.Task
+     * @memberof module:monads/task.Task
      * @param {Task} m Another Task
      * @return {Task} A new Task
      *
@@ -768,7 +773,7 @@ export class Task {
             let meFork = this.run, themFork = m.run,
                 meClean = this.cleanUp, themClean = m.cleanUp;
 
-            const cleanBoth = ([a, b]) => {
+            const cleanBoth = (a, b) => {
                 meClean(a);
                 themClean(b);
             }
@@ -781,7 +786,7 @@ export class Task {
                     const guard = (f) => (mv) => {
                         if (!done) {
                             done = true;
-                            delay(() => cleanBoth(state));
+                            delay(() => cleanBoth(states[0], states[1]));
                             f(mv);
                         }
                     }

@@ -70,6 +70,7 @@ export const curryRight = decorators.curryRight;
 export const partial = decorators.partial;
 export const partialRight = decorators.partialRight;
 export const given = decorators.given;
+export const ifElse = decorators.ifElse;
 export const memoize = decorators.memoize;
 
 export const Type = UnionType;

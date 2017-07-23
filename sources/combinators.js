@@ -13,9 +13,9 @@ import {isFunc, isArrayOf} from './types';
 import {aritize} from './arity';
 /**
  * A collection of higher order helpers for functional composition
- * @module futils/combinators
- * @requires futils/types
- * @requires futils/arity
+ * @module combinators
+ * @requires types
+ * @requires arity
  */
 
 /**

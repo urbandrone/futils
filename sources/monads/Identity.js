@@ -12,8 +12,8 @@ import {isFunc} from '../types';
 
 /**
  * Implementation of the Identity monad
- * @module futils/monads/identity
- * @requires futils/types
+ * @module monads/Identity
+ * @requires types
  */
 
 
@@ -23,7 +23,7 @@ const MV = Symbol('MonadicValue');
 
 /**
  * The Identity monad class
- * @class module:futils/monads/identity.Identity
+ * @class module:monads/identity.Identity
  * @version 2.0.0
  */
 export class Identity {
@@ -36,7 +36,7 @@ export class Identity {
     /**
      * Returns a string representation of the instance
      * @method toString
-     * @memberof module:futils/monads/identity.Identity
+     * @memberof module:monads/identity.Identity
      * @return {string} String representation of the calling instance
      *
      * @example
@@ -51,7 +51,7 @@ export class Identity {
     /**
      * Returns true if given a instance of the class
      * @method is
-     * @memberof module:futils/monads/identity.Identity
+     * @memberof module:monads/identity.Identity
      * @static
      * @param {any} a Value to check
      * @return {boolean} True if instance of the class
@@ -69,7 +69,7 @@ export class Identity {
     /**
      * Given another Setoid, checks if they are equal
      * @method equals
-     * @memberof module:futils/monads/identity.Identity
+     * @memberof module:monads/identity.Identity
      * @param {Setoid} b Setoid to compare against
      * @return {boolean} True if both are equal
      *
@@ -91,7 +91,7 @@ export class Identity {
     /**
      * Maps a function `f` over the value inside the Functor
      * @method map
-     * @memberof module:futils/monads/identity.Identity
+     * @memberof module:monads/identity.Identity
      * @param {function} f Function to map with
      * @return {Identity} New instance of the Functor
      *
@@ -115,7 +115,7 @@ export class Identity {
      * Creates a new instance of a Identity wrapping the given value `a`. Use
      *     `.of` instead of the constructor together with `new`
      * @method of
-     * @memberof module:futils/monads/identity.Identity
+     * @memberof module:monads/identity.Identity
      * @static
      * @param {any} a Any value
      * @return {Identity} New instance of the Applicative
@@ -134,7 +134,7 @@ export class Identity {
      * Applies a wrapped function to a given Functor and returns a new instance
      *     of the Functor
      * @method ap
-     * @memberof module:futils/monads/identity.Identity
+     * @memberof module:monads/identity.Identity
      * @param {Functor} m Functor to apply the Applicative to
      * @return {Identity} New instance of the Functor
      *
@@ -157,7 +157,7 @@ export class Identity {
     /**
      * Chains function calls which return monads into a single monad
      * @method flatMap
-     * @memberof module:futils/monads/identity.Identity
+     * @memberof module:monads/identity.Identity
      * @param {function} f Function returning a monad
      * @return {Identity} New instance of the calling monads type
      *
@@ -181,7 +181,7 @@ export class Identity {
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
      * @method flatten
-     * @memberof module:futils/monads/identity.Identity
+     * @memberof module:monads/identity.Identity
      * @return {Identity} New instance of the monad
      *
      * @example
@@ -212,7 +212,7 @@ export class Identity {
      * Takes a function from some value to a Functor and an Applicative and
      *     returns a instance of the Applicative either with a Some or a None
      * @method traverse
-     * @memberof module:futils/monads/identity.Identity 
+     * @memberof module:monads/identity.Identity 
      * @param {function} f Function from a to Applicative(a)
      * @param {Applicative} A Applicative constructor
      * @return {Applicative} A(Identity(a))
@@ -240,7 +240,7 @@ export class Identity {
      * Takes an Applicative and returns a instance of the Applicative
      *     either with a Some or a None
      * @method sequence
-     * @memberof module:futils/monads/identity.Identity 
+     * @memberof module:monads/identity.Identity 
      * @param {Applicative} A Applicative constructor
      * @return {Applicative} A(Identity(a))
      *

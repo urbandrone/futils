@@ -14,9 +14,9 @@ import {aritize} from './arity';
 /**
  * A collection of function decorator functions. Please note that these are not
  *     the same as the proposed ES7 object and method decorators
- * @module futils/decorators
- * @requires futils/types
- * @requires futils/arity
+ * @module decorators
+ * @requires types
+ * @requires arity
  */
 
 /**
@@ -259,6 +259,7 @@ export const partialRight = (f, ...pargs) => {
  *     optional failure function, the `given` function allows to model `if` and
  *     `if-else` expressions
  * @method
+ * @deprecated Use ifElse
  * @version 0.5.0
  * @param {function} p A predicate
  * @param {function} t A continuation
@@ -296,6 +297,29 @@ export const given = (p, t = void 0, f = void 0) => {
     }
     throw 'decorators::given awaits (fn, fn fn?), but saw ' + [p, t, f];        
 }
+
+/**
+ * Alias for `given` function. Use this as it will succeed `given`.
+ * @method
+ * @version 2.4.5
+ * @param {function} p A predicate
+ * @param {function} t A continuation
+ * @param {function} [f] A failure
+ * @return {function} A wrapped function
+ *
+ * @example
+ * const {ifElse, isString} = require('futils');
+ *
+ * const greet = ifElse(
+ *     isString,
+ *     (subject) => `Hello ${subject}`,
+ *     () => 'Need a string!'
+ * );
+ *
+ * greet('World'); // -> Hello World
+ * greet(null); // -> Need a string!
+ */
+export const ifElse = given;
 
 /**
  * Takes a function and returns a variant of it, which only executes the given

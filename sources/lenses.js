@@ -13,10 +13,10 @@ import {map, field, assoc, has} from './operators';
 
 /**
  * A collection of lens creators and operation functions for composable lenses
- * @module futils/lenses
- * @requires futils/combinators
- * @requires futils/decorators
- * @requires futils/operators
+ * @module lenses
+ * @requires combinators
+ * @requires decorators
+ * @requires operators
  */
 
 

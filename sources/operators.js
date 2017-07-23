@@ -15,9 +15,9 @@ import {trampoline, suspend} from './trampolines';
 
 /**
  * A collection of operator functions to work on data structures
- * @module futils/operators
- * @requires futils/types
- * @requires futils/arity
+ * @module operators
+ * @requires types
+ * @requires arity
  */
 
 
