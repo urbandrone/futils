@@ -10,7 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 import {isAny, isFunc, isArray, isString, isSetoid, isFunctor,
         isNumber, isObject, isIterable, isApply} from './types';
-import {dyadic, triadic, tetradic} from './arity';
+import {dyadic, triadic} from './arity';
 import {trampoline, suspend} from './trampolines';
 
 /**
@@ -618,10 +618,10 @@ export const drop = dyadic((n, xs) => {
  * dropWhile(lt3, [1, 2, 3, 4, 5]); // -> [4, 5]
  */
 export const dropWhile = dyadic((f, xs) => {
-    let drop = true;
+    let drops = true;
     return fold((ys, x) => {
-        drop = drop && !!f(x);
-        if (drop) {
+        drops = drops && !!f(x);
+        if (drops) {
             return ys;
         }
         return [...ys, x];
@@ -670,9 +670,9 @@ export const take = dyadic((n, xs) => {
  * takeWhile(lt3, [1, 2, 3, 4, 5]); // -> [1, 2]
  */
 export const takeWhile = dyadic((f, xs) => {
-    let take = true;
+    let takes = true;
     return fold((ys, x) => {
-        if (take && (take = !!f(x))) {
+        if (takes && (takes = !!f(x))) {
             return [...ys, x];
         }
         return ys;
@@ -850,7 +850,7 @@ export const ap = dyadic((mf, ma) => {
  * @method
  * @version 0.2.0
  * @param {array|Monad} m The thing to flatten
- * @param {boolean} [deep=false] Optional flag to flatten nested arrays
+ * @param {boolean} [deep=false] Optional flag to flatten nested arrays completely
  * @return {array|Monad} New instance of given
  *
  * @example

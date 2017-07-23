@@ -207,6 +207,80 @@ $.getJSON('./userInfo.json').
 This will render the user information onto the screen after it has loaded it asynchronous. Yay!
 
 
+## Doing sideeffects with the IO
+A good amount of theory in functional programming is based on the fact that all functions should be pure. If your programs are pure, they have the additional benefit that they might be executed in parallel. That's a nice gimmick!
+
+Bad news: The browser is full of stateful APIs which are not pure at all. The `IO` Monad helps us facing these APIs and get purity again into our programs.
+
+It is designed specifically to contain sideeffects and all things which are impure by default. Such as DOM operations.
+
+```javascript
+const {IO, Maybe, id, curry, field, concat} = require('futils');
+
+// -- global utilities, suitable to be placed into their own file
+const sidefx = curry((f, x) => { f(x); return x; });
+const query = curry((s, n) => n.querySelector(s));
+const queryAll = curry((s, n) => Array.from(n.querySelectorAll(s)));
+const noEvt = sidefx((e) => e.preventDefault());
+
+
+// -- form reading on submission
+const FORM_FIELDS = [
+    'input[name=CustomerId]',
+    'input[name=OrderId]',
+    '.OrderItem'
+];
+
+// type OrderItem :: { quantity :: String,
+//                     articleId :: String,
+//                     articleName :: String }
+//
+// type Order :: { CustomerId :: String,
+//                 OrderId :: String,
+//                 items :: [OrderItem] }
+
+// orderItem :: DOM -> OrderItem
+const orderItem = (n) => ({
+    quantity: n.dateset.orderQuantity,
+    articleId: n.dataset.articleId,
+    articleName: n.dataset.articleName
+});
+
+// _collectFields :: [String] -> DOM -> [DOM]
+const _collectFields = curry((xs, n) => xs.
+    map((x) => queryAll(x, n)).
+    reduce(concat, []);
+
+// _toOrder :: [DOM] -> Order
+const _toOrder = (xs) => xs.reduce((acc, x) => {
+        if (x.name === 'CustomerId') { acc[x.name] = x.value; }
+        else if (x.name === 'OrderId') { acc[x.name] = x.value; }
+        else { acc.items.push(orderItem(x)); }
+        return acc;
+    }, {items: []});
+
+
+// -- these are the IO definitions. 
+const readUserInput = new IO(query('form#mediabasket')).
+    map(_collectFields(FORM_FIELDS)).
+    map(_toOrder);
+    // add more functionality here (map, flatMap, etc.)
+
+const onSubmit = new IO(noEvt).
+    flatMap(readUserInput);
+    // add more functionality here (map, flatMap, etc.)
+
+
+
+// -- here is some example application
+const view = curry((state, emit) => {
+    return h('form#mediabasket', {on: {submit: onSubmit.run}}, [
+        // ... more view stuff
+    ]);
+});
+```
+
+
 ## Getting async with Tasks
 Apart from all the great things `Promise` as a native will give us, the most critical thing about it is it's inability to stop once it's running. With `futils` you can wrap each `Promise` up in a `Task` (greatly inspired by the [Folktale](http://folktalejs.org/) library). Why on earth should I do that and how insane is it? Because a `Task` is lazy and `Promises` are not. Oh, and it's reasonable insane:
 
@@ -291,7 +365,12 @@ getsUserAvatar.run((error) => ...,
 
 Both work nearly identical and it's hard to grasp the difference, so I made it obvious: The `Promise` based version runs immediatly - no way to stop it once it's running.
 
-The `Task` based version works equally, but it doesnt run. This allows to store it in a constant and reuse it immediatly.  
+The `Task` based version works equally, but it doesnt run. This allows us to store it as a constant value and reuse it immediatly.
+
+In case you want to run different Tasks in parallel, the Tasks in `futils` have a static `all` and a static `race` function implemented. `all` takes a bunch of Tasks and returns a Task which resolves when all given Tasks are finished. The `race` method takes a bunch of Tasks and resolves as soon as one of the given Tasks resolves. They work exactly the same like the native `Promise.race` and `Promise.all` functions, but the created Task is evaluated lazily instead of eager.
+
+### Promise compatibility
+A `Task` can easily be converted into a `Promise` and vice versa, with the static `Task.fromPromise` and `Task.toPromise` methods. Each instance of a Task additionally has a `toPromise` method implemented, which makes converting a breeze. Please note that a `Task` which is converted into a `Promise` is evaluted immediatly, because that's the execution model of promises.
 
 Make sure to get yourself familiar with `Functor`s, `Applicative`s and `Monad`s, we are going to use them in the next tutorial a lot.
 
