@@ -242,12 +242,11 @@ export class Task {
      * @return {Promise} A new Promise
      *
      * @example
-     * const {Task, pipe} = require('futils');
+     * const {Task} = require('futils');
      *
-     * const randN = Task.
-     *    fromFunction((rej, res) => res(Math.floor(Math.random() * 100)));
+     * const randN = new Task((_, res) => res(Math.random()));
      *
-     * const randNPromise = randN.flatMap(Task.toPromise);
+     * const randNPromise = Task.toPromise(randN);
      *
      * // Alternative to using Task.toPromise is using the instance method:
      * const randNPromise = randN.toPromise();

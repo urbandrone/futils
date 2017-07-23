@@ -47,7 +47,7 @@ export class Unit {
 
 /**
  * Creates new instances of the Additive monoid. In vanilla JavaScript, values
- *     which are members of the Additive category are numbers and strings.
+ *     which are members of the Additive category are numbers.
  * @module monoids/Additive
  * @class module:monoids/monoids.Additive
  * @member Additive
@@ -75,7 +75,7 @@ export class Additive {
 
 /**
  * Creates new instances of the Char monoid. In vanilla JavaScript, values
- *     which are members of the Char category are numbers and strings.
+ *     which are members of the Char category are strings.
  * @module monoids/Char
  * @class module:monoids/monoids.Char
  * @member Char

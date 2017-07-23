@@ -1,5 +1,11 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
+import { version } from './package.json';
+
+console.log( `running version ${version}` );
+
+
+const BANNER = `/* @banner futils ${version}, www.npmjs.com/package/futils */`;
 
 export default {
     entry: 'sources/__main.js',
@@ -22,6 +28,6 @@ export default {
         format: 'umd',
         moduleName: 'futils',
         sourceMap: false,
-        banner: `/* @banner futils - https://www.npmjs.com/package/futils */`
+        banner: BANNER
     }]
 };
