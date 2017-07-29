@@ -1,9 +1,7 @@
 # A small DVC application to manage Compact Discs
-This time we are going to create a small Data-View-Controller application. I call this style of writing applications Data- instead of Model-View-Controller, because there is no explicit model in the code. All data always has the "current" state and permutations occur one by one via signals which send actions to the controller. The controller then modifies the state and returns a new one which will be the next state rendered. Another way to call it would be Data-View-Modify, choose the one you think is most appropriate.
+This time we are going to create a small application. There is no explicit model in the code. All data always has the "current" state and permutations occur one by one via signals which send actions to the controller. The controller then modifies the state and returns a new one which will be the next state rendered. Applications of this style usually are created with [redux](http://redux.js.org/) for data flow control/data management and [React](https://facebook.github.io/react/) for rendering the views(model) although the names differ.
 
-This picture tries to visualize whats going on:
 
-![Lifecycle](./assets/05-cdinventory-lifecycle.png?raw=true, "Lifecycle")
 
 ## Prerequisites
 To start, do the usual directory creation and `$ cd` things, then init npm and install `futils` along `snabbdom`:
@@ -15,21 +13,54 @@ $ npm init
 $ npm i -S futils snabbdom
 ```
 
-Let's build a small utility engine from both. This helps keeping our code base simple and makes it easier to focus on the real stuff we'd like to do: Writing components!
+Let's build a small utility engine for both. This helps keeping our code base simple and makes it easier to focus on the things we like to do: Writing cool stuff!
 
 The utility engine provides one function: render.
 
 #### Signature
+```text
+render(State, DOM, Component) → void
+```
 
-- render([], DOM, component) → void
 
-The `render` function takes a array, a DOM node and a component and renders the state into the DOM by replacing the given node with a new one.
+## What's a component?
+Where component itself is just a normal `{}` with two functions: `view` and `controller`. This means, you can use all the functional goodies from `futils` to build the routines you need, place them into a object and send that right back into `render`. No joke.
+
+#### Signature
+```text
+type Component :: {
+    view :: (State → (event → Action) → VNode)
+    controller :: (State → Action → State')
+}
+```
+
+The `render` function takes: State (which is the "current" state), a DOM node and a component and renders the state into the DOM by replacing the given node with a new one. It does it recursivly and advances with each interaction. 
 
 To create the new view of the state (e. g.: The new node), `render` passes the given state into the view function of the given component along with an emitter
-function which passes actions to the controller.
+function which passes actions to the controller. Once the controller function has collected the actual state and an action given through the emitter, it produces a new state. We'll focus on this in a second.
 
 ```javascript
-// dvc-app.js
+// render :: State → DOM → Component → ()
+const render = (state, node, cmp) => {
+    // vNode is new visual representation of state produced by the view
+    //   function. when designing it, we have access to a state and emit
+    //   argument, where emit is a function with signature (Action → ())
+    const vNode = cmp.view(state, (action) => {
+        // this is the body of the emitter function.
+    });
+    patch(node, vNode);
+}
+```
+
+As soon as the view function produces a new virtual DOM it is patched to the screen and the user views a new screen.
+
+Now, what happens in the emitter? The emitter is the other key thing to understand because it work "asynchronous" by waiting for user interactions. If you take a look at the `Component` definition, the emitter is just the `(event -> action)` part which will be bound later to eventhandlers.
+
+And what happens inside the body of the emitter? The current state is passed into the controller function alongside the action which occured. The component function is implemented as a reducing function (hint: a `reducer`) which constructs a new state from both. after that, it recursivly call `render` with a new state, the VNode produced by `view` and the component. And around it goes.
+
+
+```javascript
+// <root>/utils/render.js
 const {curry} = require('futils');
 const snabbdom = require('snabbdom');
 const classes = require('snabbdom/modules/class');
@@ -39,28 +70,91 @@ const on = require('snabbdom/modules/eventlisteners');
 
 const patch = snabbdom.init([classes, props, style, on]);
 
-// render :: State → DOM → Component → ()
-const render = (state, node, cmp) => {
-    // vNode is new visual representation of state produced by the view
-    //   function. when designing it, we have access to a state and emit
-    //   argument, where emit is a function with signature (Action → ())
-    const vNode = cmp.view(state, (action) => {
-        // next is the new state produced when the lambda (Action → ())
-        //   is called – the controller constructs a new state and we
-        //   recursivly call render again
-        const next = cmp.controller(state, action);
-        render(next, vNode, cmp);
-    });
-    patch(node, vNode);
-}
-
-// signal :: Symbol → a → Action{Type: Symbol, Data: a}
+// signal :: Symbol → a → Action
 const signal = curry((type, data) => ({type, data}));
+
+// render :: State → DOM → Component → ()
+const render = curry((curState, node, cmp) => {
+    const vNode = cmp.view(curState, curry((type, data) => {
+        const nextState = cmp.controller(curState, signal(type, data));
+        render(nextState, vNode, cmp);
+    }));
+    patch(node, vNode);
+});
 
 module.exports = { render, signal };
 ```
 
-Never mind: Even if you don't understand exactly how it works, you will see how a nice and simple architecture which scales well arises from this. It is especially suited if you want to build your UI with composable components.
+You will see how a nice and simple architecture which scales well arises from this. It is especially suited if you want to build your UI with composable and reusable components, as it allows for fine grained control over them while also keeping them nice, clean and small.
+
+## Async
+Our utility is fine as it is if you always ever want to work with code which never runs async, because all incoming actions have to produce a state immediatly when they occur and cannot handle the edge case of nothing coming in (like for example by using callback functions). As you can see, this problem is getting serious.
+
+Is there a tool already at our hand we can use for asynchonicity? Of course there is: A `Task`! Let's define a function `async`, which takes in any input (say `a`) and returns it as a `Task Error a` (the error here is implicit, because everything concerning asynchonicity may produce errors. Let's just say `Task a` from now on). It has to handle two different cases: If `a` already is a `Task` it just gives it back. If `a` is anything else, it puts it into a `Task`.
+
+```text
+async :: a -> Task Error a
+async :: Task Error a -> Task Error a
+```
+
+This sounds like a `if-else` statement, right? We can use `ifElse` from futils here. It takes three functions: A predicate function, a function which handles the success case and a function which handles the error case and merges all of them into a single function.
+
+We use the static `Task.is` method from the `Task` monad as predicate. The success handler is just `id` (also called the identity function). For the error handler we use `Task.of`. You can read more about the `Task` monad in [example 04](./ex04-monads.md). That's cool, because now we may return asynchronous stuff (as a `Task a`) which produces a new state and rerender the whole application when the final data arrives.
+
+We also need some way to reduce a bunch of controller functions into a single controller function. This sounds to me like a `fold` (which is what reduce does: it folds stuff down like many things into one).
+
+I think `foldControllers` sound better than `foldFolds` so let's use that. Here is it's signature:
+
+```text
+forall Controller :: (a -> b -> a')
+
+foldControllers :: (State -> Action -> State) ... -> (State -> Action -> State)
+```
+The final code can be seen below:
+
+```javascript
+// <root>/source/helpers/dvc.js
+const {Task, curry, pipe, fold, given} = require('futils');
+const snabbdom = require('snabbdom');
+const classes = require('snabbdom/modules/class').default;
+const props = require('snabbdom/modules/props').default;
+const style = require('snabbdom/modules/style').default;
+const on = require('snabbdom/modules/eventlisteners').default;
+
+const patch = snabbdom.init([classes, props, style, on]);
+
+// async :: a → Task a
+const async = given(Task.is, id, Task.of):
+
+// signalize :: (Action → State) → ActionType → a → ()
+const signalize = curry((f, type, data) => f({type, data}));
+
+// render :: State → DOM → Component → ()
+const render = curry((state, node, cmp) => {
+    // vNode is a new virtual representation of the state
+    // as a virtual DOM node
+    const vNode = cmp.view(state, signalize((action) => {
+        // creates the new state produced by the controller.
+        // by wrapping it in a Task, we are free to do async
+        //   actions in the controller and return them which
+        //   will resolve them automatically
+        // fold executes the computation and fails silently or
+        //   produces a new state and calls render with it
+        async(cmp.controller(state, action)).
+            fold(() => null, // <- place (Error → ()) here (logging, etc.)
+                (nstate) => render(nstate, vNode, cmp));
+    }));
+    patch(node, vNode);
+});
+
+// foldController :: [(State → Action → State)] → (State → Action → State)
+const foldControllers = (...cs) => curry((state, action) => {
+    return fold((s, c) => c(s, action), state, cs);
+});
+
+module.exports = { render, foldControllers };
+```
+
 
 ## The App component
 We're ready now to create a component! A component is some object, which provides a `view` and a `controller` function which must satisfy these signatures:

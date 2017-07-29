@@ -1,7 +1,7 @@
 # Basics
 Introductional words
 
-## First lesson
+## First paragraph
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -16,7 +16,7 @@ const {pipe} = require('futils');
 
 ```
 
-### Theory or subsection inside lesson
+### Subsection inside lesson
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo

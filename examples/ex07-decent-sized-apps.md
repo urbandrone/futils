@@ -1,5 +1,5 @@
 # Contacts list
-This time we are going to build a small application which allows to manage a list of contacts. We will see how to integrate more advanced stuff like DB interaktion and asynchronous stuff. It builds mainly on the architecure we've seen in [example 5](./ex05-cdinventory.md) and shows how to split your applications into more/smaller subcomponents instead of one big. Have fun!
+This time we are going to build a small application which allows to manage a list of contacts. We will see how to integrate more advanced stuff like DB interaktion and asynchronous stuff. It builds mainly on the architecure we've seen in [example 5](./ex05-cdinventory.md) and shows how to split your applications into more/smaller subcomponents instead of a single big one. Have fun!
 
 ## Folder structure
 This is the folder structure we use:
@@ -29,74 +29,6 @@ This is the folder structure we use:
     |   |- build stuff
     |- index.html
     |- index.js
-```
-
-## DVC Utility extended
-Remembering the DVC utility module we defined in [example 05](./ex05-cdinventory.md)? It is fine as it is if you always ever want to work with code which never runs async, because all incoming actions have to produce a state immediatly when they occur and cannot handle the edge case of nothing coming in (like for example by using callback functions). As you can see, this problem is getting serious.
-
-Is there a tool already at our hand we can use for asynchonicity? Of course there is: A `Task`! Let's define a function `async`, which takes in any input (say `a`) and returns it as a `Task Error a` (the error here is implicit, because everything concerning asynchonicity may produce errors. I'll say just `Task a` from now on). It has to handle two different cases: If `a` already is a `Task` it just gives it back. If `a` is anything else, it puts it into a `Task`.
-
-```text
-async :: a -> Task Error a
-async :: Task Error a -> Task Error a
-```
-
-This sounds like a `if-else` statement, right? We can use `given` from futils here. It takes three functions: A predicate function, a function which handles the success case and a function which handles the error case and merges all of them into a single function.
-
-We use the static `Task.is` method from the `Task` monad as predicate. The success handler is just `id` (also called the identity function). For the error handler we use `Task.of`. You can read more about the `Task` monad in [example 04](./ex04-monads.md). That's cool, because now we may return asynchronous stuff (as a `Task a`) which produces a new state and rerender the whole application when the final data arrives.
-
-We also need some way to reduce a bunch of controller functions into a single controller function. This sounds to me like a `fold` (which is what reduce does: it folds stuff down like many things into one).
-
-I think `foldControllers` sound better than `foldFolds` so let's use that. Here is it's signature:
-
-```text
-forall Controller :: (a -> b -> a')
-
-foldControllers :: (State -> Action -> State) ... -> (State -> Action -> State)
-```
-The final code can be seen below:
-
-```javascript
-// <root>/source/helpers/dvc.js
-const {Task, curry, pipe, fold, given} = require('futils');
-const snabbdom = require('snabbdom');
-const classes = require('snabbdom/modules/class').default;
-const props = require('snabbdom/modules/props').default;
-const style = require('snabbdom/modules/style').default;
-const on = require('snabbdom/modules/eventlisteners').default;
-
-const patch = snabbdom.init([classes, props, style, on]);
-
-// async :: a → Task a
-const async = given(Task.is, id, Task.of):
-
-// signalize :: (Action → State) → ActionType → a → ()
-const signalize = curry((f, type, data) => f({type, data}));
-
-// render :: State → DOM → Component → ()
-const render = curry((state, node, cmp) => {
-    // vNode is a new virtual representation of the state
-    // as a virtual DOM node
-    const vNode = cmp.view(state, signalize((action) => {
-        // creates the new state produced by the controller.
-        // by wrapping it in a Task, we are free to do async
-        //   actions in the controller and return them which
-        //   will resolve them automatically
-        // fold executes the computation and fails silently or
-        //   produces a new state and calls render with it
-        async(cmp.controller(state, action)).
-            fold(() => null, // <- place (Error → ()) here (logging, etc.)
-                (nstate) => render(nstate, vNode, cmp));
-    }));
-    patch(node, vNode);
-});
-
-// foldController :: [(State → Action → State)] → (State → Action → State)
-const foldControllers = (...cs) => curry((state, action) => {
-    return fold((s, c) => c(s, action), state, cs);
-});
-
-module.exports = { render, foldControllers };
 ```
 
 ## The initial state
