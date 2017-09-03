@@ -142,7 +142,8 @@ export const assoc = triadic((k, v, x) => {
  * Given a base object and some extension objects, creates a copy of the base
  *     object and extends that copy with the rest of the extension objects. The
  *     extensions are included from left to right, so that the last
- *     extension overrides the first
+ *     extension overrides the first. If given just one object it returns a
+ *     functions which awaits 1 up to N more objects to merge together.
  * @method
  * @version 0.3.0
  * @param {object} x Base object
@@ -214,7 +215,7 @@ export const pairs = (xs) => Object.keys(xs).map((k) => [k, xs[k]]);
  * const {instance} = require('futils');
  *
  * // we use instance here to create a constructor which can be used without
- * //   needing the "new" keyword
+ * //   requiring the "new" keyword
  * function Unit (x, y) {
  *     let self = instance(Unit, this);
  *     self.x = x;
@@ -734,10 +735,10 @@ export const findRight = dyadic((f, xs) => find(f, Array.from(xs).reverse()));
  * foldMap((v) => v.toUpperCase(), ['a', 'b']); // -> 'AB'
  *
  * // foldMap with Monoids 1
- * foldMap(Char, ['Hello', ' world']); // -> Char('Hello world')
+ * foldMap(Char, ['Hello', ' ', 'world']); // -> Char('Hello world')
  *
  * // foldMap with Monoids 2
- * foldMap(Char.of('Hello'), [' world']); // -> Char('Hello world')
+ * foldMap(Char.of('Hello'), [' ', 'world']); // -> Char('Hello world')
  */
 export const foldMap = dyadic((M, xs) => {
     if (isFunc(M) && !isFunc(M.empty)) {

@@ -9,6 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isNil, isFunc} from '../types';
+import {aritize} from '../arity';
 
 /**
  * Implementation of the Either monad
@@ -134,7 +135,7 @@ export class Either {
      */
     static try (f) {
         if (isFunc(f)) {
-            return (...args) => {
+            return aritize(f.length, (...args) => {
                 try {
                     let r = f(...args);
                     if (Either.is(r)) {
@@ -143,11 +144,11 @@ export class Either {
                     if (evalsRight(r)) {
                         return Right.of(r);
                     }
-                    return Left.of(r);
+                    return Left.of(r && r.message ? r.message : r);
                 } catch (exc) {
                     return Left.of(exc.message);
                 }
-            }
+            });
         }
         throw 'Either::try expects argument to be function but saw ' + f;
     }
@@ -254,7 +255,7 @@ export class Either {
      */
     ap (F) {
         return this.fold(
-            () => F,
+            () => this,
             (r) => F.map(r)
         );
     }

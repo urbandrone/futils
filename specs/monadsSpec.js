@@ -26,6 +26,7 @@ describe('futils/monads module', function () {
         let add = curry((a, c) => a + c);
 
         expect(liftA2(add, some1, some4).value).toBe(5);
+        expect(liftA2(add, new None(), some1).value).toBe(null)
     });
 
     it('testing liftA3 :: f, ...M[a] -> M[a]', () => {

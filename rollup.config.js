@@ -1,8 +1,6 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
-import { version } from './package.json';
-
-console.log( `running version ${version}` );
+const { version } = require('./package.json');
 
 
 const BANNER = `/* @banner futils ${version}, www.npmjs.com/package/futils */`;
@@ -11,7 +9,7 @@ export default {
     entry: 'sources/__main.js',
     plugins: [
         babel({
-            exclude: 'node_modules/**'
+            exclude: ['node_modules/**', '*.json']
         }),
         uglify({
             output: {
