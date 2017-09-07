@@ -2,64 +2,85 @@
 Welcome to a tutorial of scary words! After this example, you will be able to use `Functor`s and `Applicative`s as well as the scary M word: `Monad`s. Better than that, we will see some practical examples of how these things can be used to build programs which are more robust, more terse and more self-explaining than usual code.
 
 ## First things first
-Before we start using the monadic classes shipping with `futils`, here is a quick recap on monads:
+Before we start using the monadic classes shipping with `futils`, here is a quick recap on monads. We will start from the ground up so if you already know what a monad is, you can skip these sections.
 
-A monad is just a container which implements either a `chain, flatMap` or `bind` operation which allows to chain it with functions which return values of the same monadic type. It must also implement the functor interface. We are going to use the native `Array` as a base and extend it further because it is a monoid and it is half of a monad already.
-
-Here is some code to digest:
+Here is some code for demonstration purposes:
 ```javascript
-class MyArray extends Array {
-    constructor (...args) {
-        super();
-        args.forEach((a, i) => this[i] = a);
+class Container {
+    constructor (x) {
+        this.value = x;
     }
-    flatten () {
-        return this.reduce((a, v) => a.concat(v), []);
+    map (op) {
+        return new Container(op(this.value));
     }
-    flatMap (f) {
-        return this.map(f).flatten();
-    }
-    fold (f, a) {
-        return this.reduce(f, a);
+    fold (op) {
+        return op(this.value);
     }
 }
 ```
 
-And in case you want to know what you can do with it:
+This seems not very useful by now. But look how we can use it to turn this code:
 ```javascript
-const list = new MyArray(1, 2, 3, 4);
-
-const monadicOperation = (n, i) => new MyArray(n, i);
-
-list.map(monadicOperation); // -> MyArray([[1, 0], [2, 1], [3, 2], [4, 3]])
-list.flatMap(monadicOperation); // -> MyArray([1, 0, 2, 1, 3, 2, 4, 3])
+const isHtmlDoc = (url) => {
+    let parts = url.split('/');
+    let docInfo = parts[parts.length - 1];
+    let docNameType = docInfo.split('.');
+    let docType = docNameType[docNameType.length - 1];
+    return /^html/.test(docType);
+}
 ```
 
-We could have done the same with:
-
+Into this:
 ```javascript
-const list = [1, 2, 3, 4];
-
-const monadicOperation = (n, i) => [n, i];
-
-list.map(monadicOperation); // -> [[1, 0], [2, 1], [3, 2], [4, 3]]
-
-list.map(monadicOperation).
-    reduce((a, b) => a.concat(b), []); // -> [1, 0, 2, 1, 3, 2, 4, 3]
+const isHtmlDoc = (url) => new Container(url).
+    map((x) => x.split('/')).
+    map((x) => x[x.length - 1]).
+    map((x) => x.split('.')).
+    map((x) => x[x.length - 1]).
+    fold((x) => /^html/.test(x));
 ```
 
-Before we see `Monad`, there are two other type classes we must see first.
+Can you spot the difference? The ladder version works with the minimum state context on each step while the former one introduces some new state by every line.
+
+And here is the second thing: The first version also encourages you the _think about how it works_ because you have to remember every single variable it creates while reading it whereas the second one encourages you the process it _step by step_. The result is that the second version can go away with _not_ naming the intermediate state or more precisely by _naming it abstract_.
+
+Before we dive deeper into monads, we must take a look at some other containers/interfaces first.
 
 ### Functor
 
 ![Functor map](./assets/04-monads-functors.png?raw=true "map")
 
-The most simple explanation states that a `Functor` is just a container or box for a value which implements a `map` method. The `map` method must satisfy some laws:
+The most simple explanation states that a functor is just a container or box for a value which implements a `map` method that takes a function and returns a new functor.
+
+Let's say we have an integer inside a `Container` like the one we defined above. If we `map` a function over it which incements the integer by `1`, we get a new container by with the next integer. This seems fair. But `map` is more general, because it allow the function it takes to go from any type `A` to any type `B` so we can deal with _any_ value.
+
+```javascript
+const add1 = (x) => x + 1;
+
+new Container(3).map(add1).map(add1); // -> Container(5)
 ```
-forall Functor F
-F{a} .map id == id;
-F{a} .map f .map g == F{a} .map f >> g
+
+The `map` method must satisfy some laws:
 ```
+map id == id;
+map f . map g == map f . g
+```
+
+The first one says "If you map a function which returns what it is given, the result is the same as not doing anything".
+
+The second one tells us "First mapping a function f over a container and then mapping a function g over the container is the same as mapping the composition of f and g".
+
+```javascript
+const {compose} = require('futils');
+
+const identity = (x) => x; // same as futils "id" function
+const add1 = (x) => x + 1;
+
+new Container(3).map(identity); // -> Container(3)
+
+new Container(3).map(compose(add1, add1)); // -> Container(5)
+```
+
 
 ### Applicative
 
@@ -67,32 +88,83 @@ F{a} .map f .map g == F{a} .map f >> g
 
 Building upon a `Functor`, an `Applicative` is a container for curried (when using multiple arguments) functions, which knows how to apply the function to the value in another container.
 
-![Applicative of](./assets/04-monads-of.png?raw=true "of")
-
-You can put values into the box with the static `of` method on the container (this is called a `Pointed` interface) and apply (hence it's name) functions which are inside a container to values inside another container of the same type:
+What does that mean? To understand this, we have to extend our implementation of `Container`:
+```javascript
+class Container {
+    // ... skipped for readability ...
+    static of (x) {
+        return new Container(x);
+    }
+    ap (functor) {
+        return functor.map(this.value);
+    }
+    // ... skipped for readability ...
+}
 ```
-forall Functor F => Applicative A
-A .of a == F{a} // <- Gives back a Functor
-A .of (a → b) == A{(a → b)} // <- Gives back an Applicative
 
-A{(a → b)} .ap F{a} == F{a} .map (a → b)
+You can put values into the box with the static `of` method on the container (this is called a `Pointed` interface) and apply (hence it's name) functions which are inside a container to values inside another container of the same type.
+
+```javascript
+const add1 = Container.of((x) => x + 1);
+
+add1.ap(Container.of(3)); // -> Container(4)
 ```
 
-The container or box thing doesn't really fit, but it helps a lot to understand what it does. Normally we'd call all `Functor`s and `Applicative`s a *context*, because it usually has some behaviour attached to it (for example: A list has the attached behaviour to map over each value it contains, while a `Maybe` only maps if it is a `Some` and just doesn't map when it is `None`).
+What is that? OK, first things first: The `of` method _lifts_ a value into the container (or the default context - we will discuss this in more detail below). So the first line creates a `Container` which contains a _function_ instead of some integer. The question now is: How can we apply the function to a value which is in _another_ container? By using `ap`!
 
-![Generic context](./assets/04-monads-context.png?raw=true "Generic context")
+Here are the laws for applicatives:
+```
+(Applicative A)
+of a ===> A(a)
+of (a -> b) ap A(a) ===> A(b)
+```
 
-We will see more of it soon. Let's just call all boxes a context.
+By using a curried function (or some function alike), we can do this more than once:
+
+```javascript
+const mult = Container.of((x) => (y) => x * y);
+
+mult.ap(Container.of(3)).ap(Container.of(2)); // -> Container(6)
+```
+
+#### The default context
+The container or box thing doesn't really fit, but it helps a lot to understand what it does. Normally we'd call all `Functor`s and `Applicative`s a *context*, because it usually has some behaviour attached to it. For example: A list has the attached behaviour to map over each value it contains, while a `Maybe` only maps if it is a `Some` and just doesn't map when it is `None`. Don't worry if you do not know what this means by now, we will see more of it soon. Let's just call all boxes a context.
 
 ### Monads
 
 ![Monadic flatMap](./assets/04-monads-monad.png?raw=true "flatMap")
 
 A `Monad` is a context, which can sequence calls with `flatMap` and therefor allows you to chain functions which return a context, so you don't end up with nested contexts. All `Monad`s in `futils` implement `flatMap` (sometimes called `bind` or `chain` in other libraries) and `flatten` (most often called `join` or `mjoin`), which takes a nested context and flattens it one level.
+
+Again, extending the `Container` implementation should clarify things:
+```javascript
+class Container {
+    // ... skipped for readability ...
+    flatten() {
+        return new Container(this.value.value);
+    }
+    flatMap(op) {
+        return this.map(op).flatten();
+    }
+}
 ```
-forall Applicative A => Monad M
-M{M{a}} .flatten () == M{a}
-M{a} .flatMap (a → M{b}) == M{a} .map (a → M{b}) .flatten == M{b}
+
+You can see it in action here:
+```javascript
+const mult2 = (a) => Container.of(a * 2);
+
+Container.of(3).map(mult2); // -> Container(Container(6)) - this is bad!
+
+Container.of(3).map(mult2).flatten(); // -> Container(6)
+
+Container.of(3).flatMap(mult2); // -> Container(6)
+```
+
+Likewise:
+```
+(Monad M)
+M(M(a)) flatten ===> M(a)
+M(a) flatMap (a -> M(b)) ===> M(b)
 ```
 
 
@@ -249,7 +321,7 @@ const orderItem = (n) => ({
 // _collectFields :: [String] -> DOM -> [DOM]
 const _collectFields = curry((xs, n) => xs.
     map((x) => queryAll(x, n)).
-    reduce(concat, []);
+    reduce(concat, []));
 
 // _toOrder :: [DOM] -> Order
 const _toOrder = (xs) => xs.reduce((acc, x) => {

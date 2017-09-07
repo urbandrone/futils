@@ -1,9 +1,8 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
-const { version } = require('./package.json');
 
 
-const BANNER = `/* @banner futils ${version}, www.npmjs.com/package/futils */`;
+const BANNER = `/* @banner futils | www.npmjs.com/package/futils */`;
 
 export default {
     entry: 'sources/__main.js',

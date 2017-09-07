@@ -1,22 +1,25 @@
-const {pipe, id, given, not, map, call} = require('futils');
-const log = console.log.bind(console);
+const {Maybe, liftA2, curry} = require('futils');
+
+// greet :: String -> String -> String
+const greet = curry((how, who) => `${how} ${who}!`);
 
 
-// ----------
-let greeting = 'hello futils user!';
 
-// isLibName :: string -> boolean
-const isLibName = (s) => /futils/ig.test(s);
+/**
+ * Try replacing either the "greetsWith" or "greetsWho"
+ * constant with "Maybe.of(null)"
+ */
 
-// firstUpper :: string -> string
-const firstUpper = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+// greetsWith :: Maybe String
+const greetsWith = Maybe.of('Hello');
 
-// format1 :: string -> string
-const format = given(not(isLibName), firstUpper, id);
+// greetsWho :: Maybe String
+const greetsWho = Maybe.of('world');
 
-// prog :: string -> string
-const prog = pipe(call('split', ' '), map(format), call('join', ' '));
 
-let result = prog(greeting);
-log(result);
-// Should log "Hello futils User!"
+
+liftA2(greet, greetsWith, greetsWho).
+	cata({
+		None: () => 'Who shall I greet?',
+		Some: (greeting) => greeting
+	});
