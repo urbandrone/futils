@@ -287,13 +287,14 @@ Bad news: The browser is full of stateful APIs which are not pure at all. The `I
 It is designed specifically to contain sideeffects and all things which are impure by default. Such as DOM operations.
 
 ```javascript
-const {IO, Maybe, id, curry, field, concat} = require('futils');
+const {IO, id, curry, field, concat} = require('futils');
 
 // -- global utilities, suitable to be placed into their own file
 const sidefx = curry((f, x) => { f(x); return x; });
 const query = curry((s, n) => n.querySelector(s));
 const queryAll = curry((s, n) => Array.from(n.querySelectorAll(s)));
 const noEvt = sidefx((e) => e.preventDefault());
+const target = field('target');
 
 
 // -- form reading on submission
@@ -339,7 +340,8 @@ const readUserInput = new IO(query('form#mediabasket')).
     // add more functionality here (map, flatMap, etc.)
 
 const onSubmit = new IO(noEvt).
-    flatMap(readUserInput);
+    map(target).
+    map(readUserInput.run);
     // add more functionality here (map, flatMap, etc.)
 
 
