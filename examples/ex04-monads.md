@@ -286,6 +286,11 @@ Bad news: The browser is full of stateful APIs which are not pure at all. The `I
 
 It is designed specifically to contain sideeffects and all things which are impure by default. Such as DOM operations.
 
+> **Tip**
+> If you want to see some live code, take a look at this fiddle:
+> [to jsfiddle](https://jsfiddle.net/urbandrone/efrkdbqz/). You have to open
+> the browser console to see the output.
+
 ```javascript
 const {IO, id, curry, field, concat} = require('futils');
 
