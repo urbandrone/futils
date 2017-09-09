@@ -287,9 +287,9 @@ Bad news: The browser is full of stateful APIs which are not pure at all. The `I
 It is designed specifically to contain sideeffects and all things which are impure by default. Such as DOM operations.
 
 > **Tip**
-> If you want to see some live code, take a look at this fiddle:
-> [to jsfiddle](https://jsfiddle.net/urbandrone/efrkdbqz/). You have to open
-> the browser console to see the output.
+> If you want to see some live code, take a look at
+> [this jsfiddle](https://jsfiddle.net/urbandrone/efrkdbqz/).
+> You have to open the browser console to see the output.
 
 ```javascript
 const {IO, id, curry, field, concat} = require('futils');
@@ -380,6 +380,11 @@ json.map(userInfo).
 ```
 
 Instead of calling `then` we `map` functions in the form `(a → b)` over the `Task`. This has the additional benefit of unifying the codebase, since all tasks share their interface with the other monadic types in `futils`.
+
+> **Tip**
+> Like with the IO example above, you can see a working example which is
+> somewhat similiar to the shown code in
+> [this fiddle](https://jsfiddle.net/urbandrone/haL0100t/)
 
 You might have already noticed it, but if not please note that the `json` task does not run until we tell it to do so by calling `run`. If we map over it, the task knows you want to chain your functions on the value so it does function composition instead of mapping and returns a new `Task`. So you can map and map and map ... Regardless of what you do, `json` just sits there and waits until you say `run`. This takes an error function and a success function and runs the task. 
 
