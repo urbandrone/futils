@@ -9,7 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isAny, isFunc, isArray, isString, isSetoid, isFunctor,
-        isNumber, isObject, isIterable, isApply, isMonoid} from './types';
+        isNumber, isObject, isIterable, isApply, isMonoid, isRegex} from './types';
 import {dyadic, triadic} from './arity';
 import {trampoline, suspend} from './trampolines';
 
@@ -365,6 +365,103 @@ export const rest = (xs) => isArray(xs) ?
                      isIterable(xs) ?
                      Array.from(xs).slice(1) :
                      [];
+
+/**
+ * Returns the item at the given index position from either a string or array
+ * @method
+ * @version 2.5.2
+ * @param {number} index Index position of the item to get (zero based)
+ * @param {string|array} x Collection to get the item from
+ * @return {any} Item at the given position
+ *
+ * @example
+ * const {nth} = require('futils');
+ *
+ * nth(1, 'abc'); // -> 'b'
+ */
+export const nth = dyadic((i, x) => isNumber(i) && (isString(x) || isArray(x)) ?
+                                    x[Math.abs(i)] :
+                                    x)
+
+/**
+ * When given a array, joins the contents by a given separator
+ * @method
+ * @version 2.5.2
+ * @param {string} separator String to use as separator between the items
+ * @param {array} xs The collection
+ * @return {string} All items joined together
+ *
+ * @example
+ * const {join} = require('futils');
+ *
+ * join('-', [1, 2, 3]); // -> '1-2-3'
+ */
+export const join = dyadic((separator, xs) => isArray(xs) ?
+                                              xs.join(separator) :
+                                              xs);
+
+/**
+ * Splits a string into pieces with a given separator
+ * @method
+ * @version 2.5.2
+ * @param {string|regexp} splitter Value to split at
+ * @param {string} x The string to split
+ * @return {array} Array of pieces
+ *
+ * @example
+ * const {split} = require('futils');
+ *
+ * split('-', '1-2-3'); // -> ['1', '2', '3']
+ */
+export const split = dyadic((splitter, x) => isString(x) ?
+                                              x.split(splitter) :
+                                              x);
+
+/**
+ * Replaces parts of a string with other parts and returns the result
+ * @method
+ * @version 2.5.2
+ * @param {regexp} sign Identifier of things to replace
+ * @param {string|function} repl Replacement or replacer function
+ * @param {string} x The to manipulate
+ * @return {string} Result of the replacement
+ *
+ * @example
+ * const {replace} = require('futils');
+ *
+ * replace('-', ', ', '1-2-3'); // -> '1, 2, 3'
+ */
+export const replace = triadic((sign, repl, x) => isRegex(sign) && isString(x) ?
+                                                  x.replace(sign, repl) :
+                                                  x);
+
+/**
+ * Transforms a string into all uppercase
+ * @method
+ * @version 2.5.2
+ * @param {string} x The string to transform
+ * @return {string} The altered string
+ *
+ * @example
+ * const {toUpper} = require('futils');
+ *
+ * toUpper('abc'); // -> 'ABC'
+ */
+export const toUpper = (x) => isString(x) ? x.toUpperCase() : x;
+
+/**
+ * Transforms a string into all lowercase
+ * @method
+ * @version 2.5.2
+ * @param {string} x The string to transform
+ * @return {string} The altered string
+ *
+ * @example
+ * const {toLower} = require('futils');
+ *
+ * toLower('ABC'); // -> 'abc'
+ */
+export const toLower = (x) => isString(x) ? x.toLowerCase() : x;
 
 /**
  * Given a iterable collection, returns all unique items of it
