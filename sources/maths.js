@@ -89,7 +89,7 @@ export const multiply = curry((a, b) => a * b);
  * const half = divide(2);
  * half(6); // -> 3
  */
-export const divide = curry((a, b) => b / a);
+export const divide = curry((a, b) => !a ? 0 : b / a);
 
 /**
  * Takes two numbers and returns the module of the second with the first
@@ -107,7 +107,7 @@ export const divide = curry((a, b) => b / a);
  * const moduloTwo = modulo(2);
  * moduloTwo(3); // -> 1
  */
-export const modulo = curry((a, b) => b % a);
+export const modulo = curry((a, b) => !a ? 0 : b % a);
 
 /**
  * Calculates the greates common divisor of two numbers
