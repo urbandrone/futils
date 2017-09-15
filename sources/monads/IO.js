@@ -9,7 +9,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isFunc} from '../types';
-import {aritize} from '../arity';
 import {id, compose} from '../combinators';
 
 /**
@@ -24,7 +23,9 @@ const MV = Symbol('MonadicValue');
 
 
 /**
- * The IO monad class
+ * The IO monad class. This monad is useful if you do not want to perform async
+ *   IO actions. If you want to do async IO actions you have to use the
+ *   [Task monad]{@link module:monads/task.Task}
  * @class module:monads/io.IO
  * @version 2.0.0
  */
@@ -199,6 +200,21 @@ export class IO {
         return this.run();
     }
 
+    /**
+     * Runs the IO and passes the result to the given function
+     * @method fold
+     * @memberof module:monads/io.IO
+     * @param {function} f Function the result is passed into
+     * @param {any} x Optional seed value
+     * @return {any} The final result passed through the function
+     *
+     * @example
+     * const {IO} = require('futils');
+     *
+     * let one = new IO((n) => n + 1);
+     *
+     * one.fold((n) => n, 1); // -> 2
+     */
     fold (f, x) {
         return f(this.run(x));
     }

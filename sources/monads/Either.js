@@ -28,7 +28,9 @@ const evalsRight = (x) => !isNil(x) && !Error.prototype.isPrototypeOf(x);
 
 
 /**
- * Implementation of the Either monad
+ * Implementation of the Either monad which is useful for modelling any actions
+ *   that can either be an error or a success. Use the Left subclass for errors
+ *   and the Right subclass for successes.
  * @class module:monads/either.Either
  * @static
  * @version 2.0.0

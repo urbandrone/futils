@@ -9,7 +9,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isFunc} from '../types';
-import {aritize} from '../arity';
 
 /**
  * Implementation of the State monad
@@ -22,7 +21,9 @@ const MV = Symbol('MonadicValue');
 
 
 /**
- * The State monad class
+ * The State monad class allows to define operations which manipulate some state
+ *   and produce intermediate states in between operations which are the basis
+ *   for the next operation.
  * @class module:monads/state.State
  * @version 2.2.0
  */
@@ -247,6 +248,21 @@ export class State {
         });
     }
 
+    /**
+     * Runs the computation and passes the result to the given function
+     * @method fold
+     * @memberof module:monads/state.State
+     * @param {function} f Function the result is passed into
+     * @param {any} x The seed value to compute the result from
+     * @return {any} The final state passed through the function
+     *
+     * @example
+     * const {State} = require('futils');
+     *
+     * const inc = State.get().map((n) => n + 1);
+     *
+     * inc.fold((x) => x, 1); // -> 2
+     */
     fold (f, x) {
         return f(this.run(x));
     }

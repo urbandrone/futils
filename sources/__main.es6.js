@@ -9,6 +9,7 @@ import * as Transducers from './transducers';
 import * as monoids from './monoids';
 import UnionType from './uniontypes';
 import monads from './monads';
+import * as maths from './maths';
 
 
 export const trampoline = trampolines.trampoline;
@@ -19,6 +20,14 @@ export const monadic = arity.monadic;
 export const dyadic = arity.dyadic;
 export const triadic = arity.triadic;
 export const tetradic = arity.tetradic;
+
+export const add = maths.add;
+export const subtract = maths.subtract;
+export const multiply = maths.multiply;
+export const divide = maths.divide;
+export const modulo = maths.modulo;
+export const gcd = maths.gcd;
+export const lcm = maths.lcm;
 
 export const isNil = type.isNil;
 export const isAny = type.isAny;

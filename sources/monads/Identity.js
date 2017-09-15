@@ -9,7 +9,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isFunc} from '../types';
-import {aritize} from '../arity';
 
 /**
  * Implementation of the Identity monad
@@ -23,7 +22,9 @@ const MV = Symbol('MonadicValue');
 
 
 /**
- * The Identity monad class
+ * The Identity monad class. This monad is useful if you just want to apply some
+ *   operations to a value which will always succeed. Consider using one of the
+ *   other monads if this is not the case.
  * @class module:monads/identity.Identity
  * @version 2.0.0
  */
@@ -196,7 +197,22 @@ export class Identity {
         return this.value;
     }
     // -- Foldable
-    // reduce
+    
+    /**
+     * Takes a function and passes the current value into it. Returns the result
+     *   of applying the function to the value
+     * @method fold
+     * @memberof module:monads/identity.Identity
+     * @param {function} f Function to fold with
+     * @return {any} Whatever the function returns
+     *
+     * @example
+     * const {Identity} = require('futils');
+     *
+     * const one = Identity.of(1);
+     *
+     * one.fold((n) => n + 1); // -> 2
+     */
     fold (f) {
         return f(this.value);
     }
