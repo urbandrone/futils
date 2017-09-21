@@ -1,6 +1,6 @@
 ![futils Logo](/logo.png?raw=true, 'futils Logo')
 
-**A collection of tools to use functional programming paradigms in JavaScript** 
+**A collection of tools to do functional programming in JavaScript** 
 [![NPM](https://nodei.co/npm/futils.png)](https://nodei.co/npm/futils/)
 
 [![Build Status](https://travis-ci.org/urbandrone/futils.svg?branch=master)](https://travis-ci.org/urbandrone/futils)
@@ -18,7 +18,8 @@
 7. Transducers
 8. Monoids (Additive, Multiple, Fn, All, Any, Min, Max, Dict)
 9. Monads (Identity, Maybe, Either, State, IO, Task)
-10. Uniontypes (Experimental)
+10. Maths (small extensions to _Math_)
+11. Abstract types and pattern matching (Experimental)
 
 One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with a lot of other stuff too: jQuery, Reactive Streams, React/Preact and virtual-dom, JSPM, Electron...
 
@@ -32,7 +33,7 @@ Where applicable, all functions in `futils` are autocurried. This allows you to 
 Global or local installation
 ```
 npm install futils -g
-npm install futils --save-dev
+npm install futils --save
 ```
 
 After installation you can access the functions by calling require:

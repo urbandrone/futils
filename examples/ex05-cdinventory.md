@@ -1,7 +1,11 @@
-# A small DVC application to manage Compact Discs
+# A small application to manage compact discs
 This time we are going to create a small application. There is no explicit model in the code. All data always has the "current" state and permutations occur one by one via signals which send actions to the controller. The controller then modifies the state and returns a new one which will be the next state rendered. Applications of this style usually are created with [redux](http://redux.js.org/) for data flow control/data management and [React](https://facebook.github.io/react/) for rendering the views(model) although the names differ.
 
-
+> **Live code**
+> Want to see some live code? Take a look at
+> [this fiddle](https://jsfiddle.net/urbandrone/a9h5cc7n/3/)! Don't worry
+> if you do not fully understand how it works, we are going to build a
+>  comparable example in this tutorial.
 
 ## Prerequisites
 To start, do the usual directory creation and `$ cd` things, then init npm and install `futils` along `snabbdom`:
@@ -24,7 +28,7 @@ render(State, DOM, Component) → void
 
 
 ## What's a component?
-Where component itself is just a normal `{}` with two functions: `view` and `controller`. This means, you can use all the functional goodies from `futils` to build the routines you need, place them into a object and send that right back into `render`. No joke.
+A component itself is just a normal `{}` with two functions: `view` and `controller`. This means, you can use all the functional goodies from `futils` to build the routines you need, place them into a object and send that right back into `render`. No joke.
 
 #### Signature
 ```text
@@ -90,23 +94,23 @@ You will see how a nice and simple architecture which scales well arises from th
 ## Async
 Our utility is fine as it is if you always ever want to work with code which never runs async, because all incoming actions have to produce a state immediatly when they occur and cannot handle the edge case of nothing coming in (like for example by using callback functions). As you can see, this problem is getting serious.
 
-Is there a tool already at our hand we can use for asynchonicity? Of course there is: A `Task`! Let's define a function `async`, which takes in any input (say `a`) and returns it as a `Task Error a` (the error here is implicit, because everything concerning asynchonicity may produce errors. Let's just say `Task a` from now on). It has to handle two different cases: If `a` already is a `Task` it just gives it back. If `a` is anything else, it puts it into a `Task`.
+Is there a tool already at our hand we can use for asynchonicity? Of course there is: A `Task`! Let's define a function `taskify`, which takes in any input (say `a`) and returns it as a `Task Error a` (the error here is implicit, because everything concerning asynchonicity may produce errors. Let's just say `Task a` from now on). It has to handle two different cases: If `a` already is a `Task` it just gives it back. If `a` is anything else, it puts it into a `Task`.
 
 ```text
-async :: a -> Task Error a
-async :: Task Error a -> Task Error a
+taskify :: forall a. a -> Task Error a
+taskify :: Task Error a -> Task Error a
 ```
 
 This sounds like a `if-else` statement, right? We can use `ifElse` from futils here. It takes three functions: A predicate function, a function which handles the success case and a function which handles the error case and merges all of them into a single function.
 
 We use the static `Task.is` method from the `Task` monad as predicate. The success handler is just `id` (also called the identity function). For the error handler we use `Task.of`. You can read more about the `Task` monad in [example 04](./ex04-monads.md). That's cool, because now we may return asynchronous stuff (as a `Task a`) which produces a new state and rerender the whole application when the final data arrives.
 
-We also need some way to reduce a bunch of controller functions into a single controller function. This sounds to me like a `fold` (which is what reduce does: it folds stuff down like many things into one).
+We also need some way to reduce a bunch of controller functions into a single controller function. This sounds to me like a `fold` (which is what reduce does: it folds stuff down from many things into one).
 
 I think `foldControllers` sound better than `foldFolds` so let's use that. Here is it's signature:
 
 ```text
-forall Controller :: (a -> b -> a')
+Controller :: forall a b. (a -> b -> a')
 
 foldControllers :: (State -> Action -> State) ... -> (State -> Action -> State)
 ```
@@ -123,8 +127,8 @@ const on = require('snabbdom/modules/eventlisteners').default;
 
 const patch = snabbdom.init([classes, props, style, on]);
 
-// async :: a → Task a
-const async = given(Task.is, id, Task.of):
+// taskify :: a → Task a
+const taskify = given(Task.is, id, Task.of):
 
 // signalize :: (Action → State) → ActionType → a → ()
 const signalize = curry((f, type, data) => f({type, data}));
@@ -140,7 +144,7 @@ const render = curry((state, node, cmp) => {
         //   will resolve them automatically
         // fold executes the computation and fails silently or
         //   produces a new state and calls render with it
-        async(cmp.controller(state, action)).
+        taskify(cmp.controller(state, action)).
             fold(() => null, // <- place (Error → ()) here (logging, etc.)
                 (nstate) => render(nstate, vNode, cmp));
     }));
@@ -155,14 +159,20 @@ const foldControllers = (...cs) => curry((state, action) => {
 module.exports = { render, foldControllers };
 ```
 
+> **Counter**
+> Every now and then you will find a simple "counter" example for a library
+>  which demonstrates how a really simple component can be build with the
+> library. Here is the futils version: [jsfiddle](https://jsfiddle.net/urbandrone/gdt2t9gn/1/)
 
 ## The App component
-We're ready now to create a component! A component is some object, which provides a `view` and a `controller` function which must satisfy these signatures:
+We're ready now to create a component! As said before, a component is an object which provides a `view` and a `controller` function with these signatures:
 
 #### Signatures
+```text
+view(State, (a -> Action)) → VirtualDOM
 
-- view(State, Function) → Virtual Node/VNode
-- controller(State, Action) → State
+controller(State, Action) → State
+```
 
 Like in `React`, components can be nested to create more complex components. To do this, top level components have to pass the state, the emitter function and all actions which occur into the subcomponent's view and controller functions.
 
@@ -184,10 +194,6 @@ It will be a collection of artists, each with a collection of LPs they produced,
 
 ### We need Actions
 First off, we need a set of actions to perform on the data. The whole reason we have signals is to instruct the controller what to do to create a new state to render.
-
-This is what actions are:
-
-![Action visual](./assets/05-cdinventory-actions.png?raw=true "Action")
 
 ```javascript
 const Action = {
@@ -224,9 +230,7 @@ const remove = curry((x, xs) => filter((a) => a !== x, xs));
 module.exports = {findBy, swapBy, remove};
 ```
 
-![controller](./assets/05-cdinventory-controller.png?raw=true "controller")
-
-If that looks familiar, you might have already seen or used `Redux` which uses things called `reducer` functions for the same purpose. The controller itself is a reducer function. This is the logic:
+If the signature of the controller function looks familiar, you might have already seen or used `Redux` which uses things called `reducer` functions for the same purpose. The controller itself is a reducer function. This is the logic:
 
 ```javascript
 const {Maybe, pipe, find, map, curry, filter, field} = require('futils');
@@ -308,9 +312,7 @@ module.exports = controller;
 ### A View
 The last thing our component needs to have is a way to view the state. To communicate with the controller, the view can emit signals (Data → Action) about what to do.
 
-![view](./assets/05-cdinventory-view.png?raw=true "view")
-
-Normally you would break this up into smaller functions but it's easer to grasp what happens if you can see the big picture.
+Normally you would break this up into smaller functions (or subcomponents) but it's easer to grasp what happens if you can see the big picture.
 
 ```javascript
 const {compose, pipe, fold, merge, call, field} = require('futils');

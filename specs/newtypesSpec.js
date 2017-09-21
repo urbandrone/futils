@@ -1,9 +1,11 @@
 const {id, isFunc, isString, isNumber, Type} = require('../futils');
-describe('futils/Type module', function () {
+describe('futils/Type module', () => {
     const name = 'No mans land';
 
     const Street = Type('Street', isString);
     const Zip = Type('Zip', isNumber);
+    const Matrix2 = Type('Matrix2', [isNumber, isNumber]);
+    const Matrix = Type('Matrix', [isNumber]);
     const Address = Type('Address', {
         name: isString,
         city: isString,
@@ -22,6 +24,7 @@ describe('futils/Type module', function () {
 
     it('should not depend on the "new" keyword', () => {
         expect(new Street(name).fold(id)).toBe(Street(name).fold(id));
+        expect(new Street(name).fold(id)).toBe(Street.of(name).fold(id));
     });
 
     it('should not allow to create falsy types', () => {
@@ -32,10 +35,23 @@ describe('futils/Type module', function () {
         }
     });
 
+    it('should have a static "is" method', () => {
+        expect(Street.is(Street(name))).toBe(true);
+    });
+
     it('allows to check if a value of some type Type::isType', () => {
         expect(Type.isType(Zip(12345))).toBe(true);
         expect(Type.isType(Street(name))).toBe(true);
         expect(Type.isType(12345)).toBe(false);
+    });
+
+    it('should allow to use arrays', () => {
+        const m1 = Matrix([1, 2, 3]);
+        const m2 = Matrix2([1, 2]);
+        const join = (xs) => xs.join(',');
+
+        expect(m1.fold(join)).toBe('1,2,3');
+        expect(m2.fold(join)).toBe('1,2');
     });
 
     it('implements a catamorphism Type::cata', () => {

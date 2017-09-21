@@ -8,13 +8,13 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {isFunc, isVoid, isObject, isString} from './types';
+import {isFunc, isVoid, isObject, isArray, isArrayOf, isString} from './types';
 import {curry} from './decorators';
 import {instance} from './operators';
 
 /**
  * Implementation of a Union type factory
- * @module uniontypes
+ * @module newtype
  * @requires types
  * @requires decorators
  * @requires operators
@@ -23,6 +23,11 @@ import {instance} from './operators';
 const VAL = Symbol('TypeValue');
 const TYPE = Symbol('TypeName');
 
+
+
+const matchArrayT = (def, x) => {
+    return def.length === x.length &&  x.every((_x, _i) => def[_i](_x));
+}
 
 
 const makeType = (name, def) => {
@@ -35,6 +40,16 @@ const makeType = (name, def) => {
         }
         if (isObject(def)) {
             if (Object.keys(def).reduce((b, k) => b && !!def[k](x[k]), true)) {
+                self[VAL] = x;
+                return self;
+            }
+        }
+        if (isArrayOf(isFunc, def) && isArray(x)) {
+            if (def.length > 1 && matchArrayT(def, x)) {
+                self[VAL] = x;
+                return self;
+            }
+            if (x.every((_x) => def[0](_x))) {
                 self[VAL] = x;
                 return self;
             }
@@ -54,24 +69,33 @@ const makeType = (name, def) => {
         return f(this[VAL]);
     }
 
-    TypeCtor.of = function (x) {
-        return new TypeCtor(x);
-    }
+    Object.defineProperty(TypeCtor, 'of', {
+        writable: false,
+        value: function (x) {
+            return new TypeCtor(x);
+        }
+    });
+
+    Object.defineProperty(TypeCtor, 'is', {
+        writable: false,
+        value: function (x) {
+            return TypeCtor.prototype.isPrototypeOf(x);
+        }
+    });
 
     return TypeCtor;
 }
 
 /**
- * The Type function allows to create `Union-Types` from descriptors. A descriptor
- *     can either be a function of the form `a -> Boolean` or a object in the
- *     form Object(TypeName: a -> transformation(a), orElse: a -> ? ) where
- *     the `orElse` clause handle the case that no pattern key matched (this is
- *     better known as a catamorphism). Please note that you cannot omit the
- *     `orElse` clause!
+ * The Type function allows to create `Types` from descriptors. A descriptor
+ *     can either be a function of the form `a -> Boolean`, a array like
+ *     [a -> Boolean] or a object in the form {prop: a -> transformation(a),
+ *     orElse: a -> ?} where the `orElse` clause handle the case that no pattern
+ *     matched. Please note that you cannot omit the `orElse` clause!
  * @method
  * @version 2.1.0
  * @param {string} name Name of the Type to create
- * @param {function|object} def Function or descriptor
+ * @param {function|array|object} def Function or descriptor
  * @return {SubType} A new Type constructor
  *
  * @example
@@ -98,13 +122,13 @@ const makeType = (name, def) => {
  *
  *
  * 
- * const Page = Type('DiaryPage', {
+ * const Page = Type('Page', {
  *     date: isDate,
  *     title: isString,
  *     text: isString
  * });
  * 
- * const Chapter = Type('DiaryChapter', {
+ * const Chapter = Type('Chapter', {
  *     title: isString,
  *     pages: isArray
  * });

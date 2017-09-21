@@ -7,7 +7,7 @@ import * as operators from './operators';
 import * as lenses from './lenses';
 import * as Transducers from './transducers';
 import * as monoids from './monoids';
-import UnionType from './uniontypes';
+import NewType from './newtypes';
 import monads from './monads';
 import * as maths from './maths';
 
@@ -82,7 +82,7 @@ export const given = decorators.given;
 export const ifElse = decorators.ifElse;
 export const memoize = decorators.memoize;
 
-export const Type = UnionType;
+export const Type = NewType;
 
 export const Additive = monoids.Additive;
 export const Char = monoids.Char;
