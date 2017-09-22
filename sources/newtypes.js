@@ -13,7 +13,7 @@ import {curry} from './decorators';
 import {instance} from './operators';
 
 /**
- * Implementation of a Union type factory
+ * Implementation of a type factory
  * @module newtype
  * @requires types
  * @requires decorators
@@ -58,6 +58,13 @@ const makeType = (name, def) => {
     }
 
     TypeCtor.prototype.toString = function () {
+        if (isObject(this[VAL])) {
+            const xs = Object.keys(this[VAL]).
+                map((k) => this[VAL][k].toString()).
+                join(', ');
+
+            return `${name}(${xs})`;
+        }
         return `${name}(${this[VAL]})`;
     }
 
@@ -91,7 +98,8 @@ const makeType = (name, def) => {
  *     can either be a function of the form `a -> Boolean`, a array like
  *     [a -> Boolean] or a object in the form {prop: a -> transformation(a),
  *     orElse: a -> ?} where the `orElse` clause handle the case that no pattern
- *     matched. Please note that you cannot omit the `orElse` clause!
+ *     matched. Please note that you can omit the `orElse` clause which restricts
+ *     the resulting function to the types provided!
  * @method
  * @version 2.1.0
  * @param {string} name Name of the Type to create
@@ -99,29 +107,8 @@ const makeType = (name, def) => {
  * @return {SubType} A new Type constructor
  *
  * @example
- * const {Type, field, isArray, isDate, isString} = require('futils');
+ * const {Type, field, isArrayOf, isDate, isString} = require('futils');
  *
- * const List = Type('List', isArray);
- * 
- * List.fold = Type.cata({
- *     List: (xs) => xs,
- *     orElse: () => []
- * });
- *
- * 
- * const ns = List([1, 2, 3]); // or List.of([1, 2, 3])
- *
- * Type.isType(ns); // -> true
- * 
- * List.fold(ns); // -> [1, 2, 3]
- * ns.fold((xs) => xs); // -> [1, 2, 3]
- *
- * List.fold(null); // -> []
- *
- *
- *
- *
- * 
  * const Page = Type('Page', {
  *     date: isDate,
  *     title: isString,
@@ -130,7 +117,7 @@ const makeType = (name, def) => {
  * 
  * const Chapter = Type('Chapter', {
  *     title: isString,
- *     pages: isArray
+ *     pages: isArrayOf(Page.is)
  * });
  *
  * const title = field('title');
@@ -162,16 +149,13 @@ Type.isType = (a) => isObject(a) &&
 
 
 Type.cata = curry((cases, tval) => {
-    if (isFunc(cases.orElse)) { // has orElse clause?
-        if (Type.isType(tval)) { // is tval a Type?
-            if (isFunc(cases[tval[TYPE]])) { // is there a case for tval?
-                return cases[tval[TYPE]](tval[VAL]);
-            }
-            return cases.orElse(tval[VAL]);
-        }
-        return cases.orElse(tval);
+    if (Type.isType(tval) && isFunc(cases[tval[TYPE]])) {
+        return cases[tval[TYPE]](tval[VAL]);
     }
-    throw `Type.cata :: Found no "orElse" case in ${cases}`;
+    if (isFunc(cases.orElse)) { // has orElse clause?
+        return cases.orElse(Type.isType(tval) ? tval[VAL] : tval);
+    }
+    throw `Type.cata :: Unable to pattern match ${tval}`;
 });
 
 

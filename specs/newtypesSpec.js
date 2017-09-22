@@ -1,47 +1,48 @@
 const {id, isFunc, isString, isNumber, Type} = require('../futils');
 describe('futils/Type module', () => {
-    const name = 'No mans land';
-
-    const Street = Type('Street', isString);
     const Zip = Type('Zip', isNumber);
     const Matrix2 = Type('Matrix2', [isNumber, isNumber]);
     const Matrix = Type('Matrix', [isNumber]);
-    const Address = Type('Address', {
-        name: isString,
-        city: isString,
-        zip: isNumber,
-        street: isString,
-        house: isNumber
-    });
+    const Address = Type('Address', {city: isString, street: isString, zip: Zip.is});
     
-    it('creates new types via the Type constructor', () => {
-        expect(isFunc(Street)).toBe(true);
+    it('should create new Type constructors', () => {
+        expect(isFunc(Zip)).toBe(true);
+        expect(isFunc(Matrix)).toBe(true);
+        expect(isFunc(Matrix2)).toBe(true);
+        expect(isFunc(Address)).toBe(true);
     });
 
     it('should provide a proper valueOf method', () => {
         expect(Zip(12345) + Zip(200)).toBe(12545);
-    })
+    });
+
+    it('should provide a proper toString method', () => {
+        const zip = Zip(12345);
+        const addr = Address({city: 'Faketown', street: 'Fake Road', zip: zip});
+
+        expect(zip.toString()).toBe('Zip(12345)');
+        expect(/Zip\(/.test(addr.toString())).toBe(true)
+    });
 
     it('should not depend on the "new" keyword', () => {
-        expect(new Street(name).fold(id)).toBe(Street(name).fold(id));
-        expect(new Street(name).fold(id)).toBe(Street.of(name).fold(id));
+        expect(new Zip(12345).fold(id)).toBe(Zip(12345).fold(id));
+        expect(new Zip(12345).fold(id)).toBe(Zip.of(12345).fold(id));
     });
 
     it('should not allow to create falsy types', () => {
         try {
-            Street(1);
+            Zip('foo');
         } catch (exc) {
-            expect(exc).toBe('Constructor Street got invalid value 1');
+            expect(exc).toBe('Constructor Zip got invalid value "foo"');
         }
     });
 
     it('should have a static "is" method', () => {
-        expect(Street.is(Street(name))).toBe(true);
+        expect(Zip.is(Zip(12345))).toBe(true);
     });
 
     it('allows to check if a value of some type Type::isType', () => {
         expect(Type.isType(Zip(12345))).toBe(true);
-        expect(Type.isType(Street(name))).toBe(true);
         expect(Type.isType(12345)).toBe(false);
     });
 
@@ -56,21 +57,17 @@ describe('futils/Type module', () => {
 
     it('implements a catamorphism Type::cata', () => {
         const address = Address({
-            name: 'john doe',
-            city: 'berlin',
-            zip: 12345,
-            street: name,
-            house: 24
+            city: 'Faketown',
+            street: 'Fake street',
+            zip: Zip(12345)
         });
 
         const match = Type.cata({
-            Zip: (zip) => `hey, it's a Zip: ${zip}`,
-            Address: (addr) => `here is the address!`,
+            Address: () => `here is the address!`,
             orElse: () => 'Something else was given...'
         });
 
         expect(match(address)).toBe('here is the address!');
-        expect(match(Zip(12345))).toBe('hey, it\'s a Zip: 12345');
         expect(match(null)).toBe('Something else was given...');
     });
 });
