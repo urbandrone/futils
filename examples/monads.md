@@ -292,14 +292,14 @@ It is designed specifically to contain sideeffects and all things which are impu
 > You have to open the browser console to see the output.
 
 ```javascript
-const {IO, id, curry, field, concat} = require('futils');
+const {IO, id, curry, prop, concat} = require('futils');
 
 // -- global utilities, suitable to be placed into their own file
 const sidefx = curry((f, x) => { f(x); return x; });
 const query = curry((s, n) => n.querySelector(s));
 const queryAll = curry((s, n) => Array.from(n.querySelectorAll(s)));
 const noEvt = sidefx((e) => e.preventDefault());
-const target = field('target');
+const target = prop('target');
 
 
 // -- form reading on submission
@@ -419,6 +419,8 @@ Here is the `futils` version of it:
 
 **Common AJAX via Task**
 ```javascript
+const {Task} = require('futils');
+
 const URL = 'https://example.tld'
 
 const ajax = (url, data) => new Task((rej, res) => {

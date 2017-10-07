@@ -1,10 +1,12 @@
 ![futils Logo](/logo.png?raw=true, 'futils Logo')
 
 **A collection of tools to do functional programming in JavaScript** 
+
 [![NPM](https://nodei.co/npm/futils.png)](https://nodei.co/npm/futils/)
 
 [![Build Status](https://travis-ci.org/urbandrone/futils.svg?branch=master)](https://travis-ci.org/urbandrone/futils)
 [![dependencies](https://david-dm.org/urbandrone/futils.svg)](https://david-dm.org/urbandrone/futils)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## About
 `futils` (spoken "f-utils") is a collection composed of helpers from these categories:

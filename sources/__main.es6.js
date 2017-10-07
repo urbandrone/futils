@@ -118,6 +118,7 @@ export const set = lenses.set;
 
 export const call = operators.call;
 export const field = operators.field;
+export const prop = operators.prop;
 export const has = operators.has;
 export const merge = operators.merge;
 export const immutable = operators.immutable;
@@ -133,6 +134,8 @@ export const join = operators.join;
 export const split = operators.split;
 export const toUpper = operators.toUpper;
 export const toLower = operators.toLower;
+export const trim = operators.trim;
+export const reverse = operators.reverse;
 export const replace = operators.replace;
 export const unique = operators.unique;
 export const union = operators.union;

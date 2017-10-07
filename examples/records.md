@@ -56,22 +56,22 @@ const update = (state, action) => {
 Although it looks like `merge` modifies the state, it internally first creates a copy and modifies the copy then.
 
 ## Reading from a object
-There exists the `field` function which is a convenient helper when accessing objects. It takes a `{key : value}` pair and transforms it into a `[[key, value]]` structure, which can be looped/mapped/etc. easily.
+There exists the `prop` function (named `field` before version 2.7.2, `field` is now an alias) which is a convenient helper when accessing objects. It takes a `{key : value}` pair and transforms it into a `[[key, value]]` structure, which can be looped/mapped/etc. easily.
 
 #### Signature
 ```text
-field :: String -> a -> b
+prop :: String -> a -> b
 ```
 
-The nice thing is, you can given `field` a path to follow into the structure like this:
+The nice thing is, you can given `prop` a path to follow into the structure like this:
 ```javascript
-const {field} = require('futils');
+const {prop} = require('futils');
 
 const STRUCT = {foo: {type: 'img', size: {w: 160, h: 90}},
                 bar: {type: 'video', size: {w: 320, h: 180}}};
 
-const fooWidth = field('foo.size.w');
-const fooHeight = field('foo.size.h');
+const fooWidth = prop('foo.size.w');
+const fooHeight = prop('foo.size.h');
 
 fooWidth(STRUCT); // -> 160
 fooHeight(STRUCT); // -> 90
@@ -93,14 +93,14 @@ One well-known function from underscore/lodash is `pluck`: It takes an array of 
 This is how you create it with `futils`:
 
 ```javascript
-const {map, field, curry} = require('futils');
+const {map, prop, curry} = require('futils');
 
 /*
 type alias Hash :: Object
 */
 
 // pluck :: String -> [Hash] -> [a]
-const pluck = curry((prop, xs) => map(field(prop), xs));
+const pluck = curry((name, xs) => map(prop(name), xs));
 
 // getVal :: [Hash] -> [a]
 const getVal = pluck('value');

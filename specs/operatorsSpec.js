@@ -5,6 +5,11 @@ describe('futils/operators module', () => {
         expect(_.field('a', {a: 1})).toBe(1);
         expect(_.field('a.b', {a: {b: 1}})).toBe(1);
     });
+    
+    it('testing prop :: s -> o -> a', () => {
+        expect(_.prop('a', {a: 1})).toBe(1);
+        expect(_.prop('a.b', {a: {b: 1}})).toBe(1);
+    });
 
     it('testing has :: s -> o -> b', () => {
         expect(_.has('a', {a: 1})).toBe(true);
@@ -106,6 +111,15 @@ describe('futils/operators module', () => {
     it('testing replace :: s -> s -> s', () => {
         expect(_.replace(/\-/g, ', ', 'a-b-c')).toBe('a, b, c');
         expect(_.replace(/\-/g, () => ', ', 'a-b-c')).toBe('a, b, c');
+    });
+
+    it('testing trim :: s -> s', () => {
+        expect(_.trim('    abc    ')).toBe('abc');
+    });
+
+    it('testing reverse :: x -> s', () => {
+        expect(_.reverse('abc')).toBe('cba');
+        expect(_.reverse(['a', 'b', 'c'])).toEqual(['c', 'b', 'a']);
     });
 
     it('testing unique :: xs -> xs', () => {

@@ -89,5 +89,6 @@ $RECYCLE.BIN/
 *.sublime-workspace
 
 # Project stuff
+docs/_template
 docs/futils
 examples/__template.md

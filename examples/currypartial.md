@@ -104,7 +104,7 @@ There are some other basic tools in `futils` you should know about. Apart from c
 
 - pipe & compose → Function domain
 - map, filter & fold → Array domain
-- field, merge & call → Object domain
+- prop, merge & call → Object domain
 
 Here are some examples from each to wet your appetite. Each example shows a simple application from the functions in each domain.
 
@@ -114,13 +114,10 @@ We will start with `pipe`. It takes two up to N functions and pipes the result f
 Next to pipe is `compose`, which works exactly the same way (it clues functions together) but it does so by doing right composition of functions. 
 
 ```javascript
-const {pipe} = require('futils');
+const {pipe, toUpper, trim} = require('futils');
 
-const upper = (s) => s.toUpperCase();
-const trim = (s) => s.trim();
-
-// trimUpper: String → trim → upper → String
-const trimUpper = pipe(trim, upper);
+// trimUpper: String → trim → toUpper → String
+const trimUpper = pipe(trim, toUpper);
 
 trimUpper('   shout! '); // -> 'SHOUT!'
 ```
@@ -150,7 +147,7 @@ Imagine there exists a world, where for each value `A` a corresponding `B` exist
 Sooner or later, everyone needs to interact with some object's API. Here are some helpers from `futils` to interface them:
 
 ```javascript
-const {pipe, merge, field, call} = require('futils');
+const {pipe, merge, prop, call} = require('futils');
 
 // you can merge objects together, which creates a new object
 merge({a: 1}, {b: 2}); // -> {a: 1, b: 2}
@@ -158,7 +155,7 @@ merge({a: 1}, {b: 2}); // -> {a: 1, b: 2}
 // or call methods and access fields
 const handleEvent = pipe(
     call('preventDefault'),
-    field('target.value')
+    prop('target.value')
 );
 ```
 

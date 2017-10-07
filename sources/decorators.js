@@ -259,6 +259,47 @@ export const partialRight = (f, ...pargs) => {
  *     optional failure function, the `given` function allows to model `if` and
  *     `if-else` expressions
  * @method
+ * @version 2.4.5
+ * @param {function} p A predicate
+ * @param {function} t A continuation
+ * @param {function} [f] A failure
+ * @return {function} A wrapped function
+ *
+ * @example
+ * const {ifElse, isString} = require('futils');
+ *
+ * const greet = ifElse(
+ *     isString,
+ *     (subject) => `Hello ${subject}`,
+ *     () => 'Need a string!'
+ * );
+ *
+ * greet('World'); // -> Hello World
+ * greet(null); // -> Need a string!
+ */
+export const ifElse = (p, t = void 0, f = void 0) => {
+    if (t === void 0) {
+        return (_t, _f) => {
+            return ifElse(p, _t, _f);
+        };
+    }
+
+    if (isFunc(p) && isFunc(t)) {
+        if (isFunc(f)) {
+            return aritize(t.length, (...xs) => {
+                return !!p(...xs) ? t(...xs) : f(...xs);
+            });
+        }
+        return aritize(t.length, (...xs) => {
+            return !!p(...xs) ? t(...xs) : null;
+        });
+    }
+    throw 'decorators::ifElse awaits (fn, fn fn?), but saw ' + [p, t, f];        
+}
+
+/**
+ * Alias for the `ifElse` function.
+ * @method
  * @deprecated Use ifElse
  * @version 0.5.0
  * @param {function} p A predicate
@@ -278,48 +319,7 @@ export const partialRight = (f, ...pargs) => {
  * greet('World'); // -> Hello World
  * greet(null); // -> Need a string!
  */
-export const given = (p, t = void 0, f = void 0) => {
-    if (t === void 0) {
-        return (_t, _f) => {
-            return given(p, _t, _f);
-        };
-    }
-
-    if (isFunc(p) && isFunc(t)) {
-        if (isFunc(f)) {
-            return aritize(t.length, (...xs) => {
-                return !!p(...xs) ? t(...xs) : f(...xs);
-            });
-        }
-        return aritize(t.length, (...xs) => {
-            return !!p(...xs) ? t(...xs) : null;
-        });
-    }
-    throw 'decorators::given awaits (fn, fn fn?), but saw ' + [p, t, f];        
-}
-
-/**
- * Alias for `given` function. Use this as it will succeed `given`.
- * @method
- * @version 2.4.5
- * @param {function} p A predicate
- * @param {function} t A continuation
- * @param {function} [f] A failure
- * @return {function} A wrapped function
- *
- * @example
- * const {ifElse, isString} = require('futils');
- *
- * const greet = ifElse(
- *     isString,
- *     (subject) => `Hello ${subject}`,
- *     () => 'Need a string!'
- * );
- *
- * greet('World'); // -> Hello World
- * greet(null); // -> Need a string!
- */
-export const ifElse = given;
+export const given = ifElse;
 
 /**
  * Takes a function and returns a variant of it, which only executes the given

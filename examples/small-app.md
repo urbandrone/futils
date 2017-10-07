@@ -118,7 +118,7 @@ The final code can be seen below:
 
 ```javascript
 // <root>/source/helpers/dvc.js
-const {Task, curry, pipe, fold, given} = require('futils');
+const {Task, curry, pipe, fold, ifElse} = require('futils');
 const snabbdom = require('snabbdom');
 const classes = require('snabbdom/modules/class').default;
 const props = require('snabbdom/modules/props').default;
@@ -128,7 +128,7 @@ const on = require('snabbdom/modules/eventlisteners').default;
 const patch = snabbdom.init([classes, props, style, on]);
 
 // taskify :: a → Task a
-const taskify = given(Task.is, id, Task.of):
+const taskify = ifElse(Task.is, id, Task.of):
 
 // signalize :: (Action → State) → ActionType → a → ()
 const signalize = curry((f, type, data) => f({type, data}));
@@ -233,7 +233,7 @@ module.exports = {findBy, swapBy, remove};
 If the signature of the controller function looks familiar, you might have already seen or used `Redux` which uses things called `reducer` functions for the same purpose. The controller itself is a reducer function. This is the logic:
 
 ```javascript
-const {Maybe, pipe, find, map, curry, filter, field} = require('futils');
+const {Maybe, curry} = require('futils');
 const {Add, Remove, Update} = require('./actions');
 const {findBy, swapBy, remove} = require('./helpers');
 
@@ -315,7 +315,7 @@ The last thing our component needs to have is a way to view the state. To commun
 Normally you would break this up into smaller functions (or subcomponents) but it's easer to grasp what happens if you can see the big picture.
 
 ```javascript
-const {compose, pipe, fold, merge, call, field} = require('futils');
+const {compose, pipe, fold, merge, call, prop} = require('futils');
 const h = require('snabbdom/h');
 const {Add, Remove, Update} = require('./actions');
 
@@ -323,7 +323,7 @@ const {Add, Remove, Update} = require('./actions');
 // handles clicks on the save button, returns a array of <input> elements
 const inputs = pipe(
     call('preventDefault'),
-    field('target.parentNode'),
+    prop('target.parentNode'),
     call('querySelectorAll', 'input[type="text"]')
 );
 

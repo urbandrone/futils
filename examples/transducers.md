@@ -65,11 +65,11 @@ transduce(inc1Filter2, join, 'Numbers:', [1, 2, 3]); // -> Numbers: 3 4
 
 And it only uses **one** loop. Cool! There is a bunch of other cool stuff transducers can be useful for.
 
-## Be lazy
+## Lazyness
 Transducers are lazy in a sense that they allow to create chains of complex transformations which are only ever executed by calling `transduce` on them.
 
-## Be portable
-The transducers provided by `futils` implement the [transducer protocol](https://github.com/queckezz/transducer-protocol) which improves portability. So for example, you can use the transducers in combination with [reactive streams](./ex02-reactive.md) as long as they implement a `transduce` method which adheres to the same protocol. You can even mix-and-match multiple transducer libraries with `futils`, for example if some of them provide transducers `futils` does not provide.
+## Portability
+The transducers provided by `futils` implement the [transducer protocol](https://github.com/queckezz/transducer-protocol) which improves portability. So for example, you can use the transducers in combination with [reactive streams](./frp.md) as long as they implement a `transduce` method which adheres to the same protocol. You can even mix-and-match multiple transducer libraries with `futils`, for example if some of them provide transducers `futils` does not provide.
 
 
 ---

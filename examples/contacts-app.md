@@ -231,7 +231,7 @@ And these are the implementations of the helper functions:
 
 ```javascript
 // <root>/source/helpers/dom.js
-const {curry, pipe, call, field, fold, merge} = require('futils');
+const {curry, pipe, call, prop, fold, merge} = require('futils');
 
 // stopDefault :: Event → Event
 const stopDefault = call('preventDefault');
@@ -245,7 +245,7 @@ const readPairs = fold((a, x) => merge(a, {[x.name]: x.value}), {});
 // inputsToPairs :: Event → {}
 const inputsToPairs = pipe(
     stopDefault,
-    field('target.parentNode'),
+    prop('target.parentNode'),
     query('input[type="text"]'),
     readPairs
 );

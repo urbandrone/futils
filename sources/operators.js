@@ -75,6 +75,35 @@ export const has = dyadic((key, x) => _owns.call(x, key));
 /**
  * Accesses a given object by a chain of keys
  * @method
+ * @version 2.7.2
+ * @param {string} key Single key or a chain of keys separated by `.`
+ * @param {object|array|string|Monad} x Data structure to access
+ * @return {any|null} Either the value of the key or null
+ *
+ * @example
+ * const {prop} = require('futils');
+ *
+ * const getName = prop('name');
+ * getName({name: 'John Doe'}); // -> 'John Doe'
+ *
+ * const firstName = prop('name.first');
+ * firstName({name: {first: 'John', last: 'Doe'}}); // -> 'John'
+ */
+export const prop = dyadic((key, x) => {
+    let ks = isString(key) && /\./.test(key) ?
+             key.split('.') :
+             [key];
+    return ks.reduce((a, b) => isAny(a) && isAny(a[b]) ?
+                               a[b] :
+                               null,
+                     x
+                    );
+});
+
+/**
+ * Alias for the `prop` function. 
+ * @method
+ * @deprecated Use prop
  * @version 0.2.0
  * @param {string} key Single key or a chain of keys separated by `.`
  * @param {object|array|string|Monad} x Data structure to access
@@ -89,16 +118,7 @@ export const has = dyadic((key, x) => _owns.call(x, key));
  * const firstName = field('name.first');
  * firstName({name: {first: 'John', last: 'Doe'}}); // -> 'John'
  */
-export const field = dyadic((key, x) => {
-    let ks = isString(key) && /\./.test(key) ?
-             key.split('.') :
-             [key];
-    return ks.reduce((a, b) => isAny(a) && isAny(a[b]) ?
-                               a[b] :
-                               null,
-                     x
-                    );
-});
+export const field = prop;
 
 /**
  * Assigns a value and a key to a given data structure, returns a clone of the
@@ -462,6 +482,42 @@ export const toUpper = (x) => isString(x) ? x.toUpperCase() : x;
  * toLower('ABC'); // -> 'abc'
  */
 export const toLower = (x) => isString(x) ? x.toLowerCase() : x;
+
+/**
+ * Trims whitespace from both sides of a string
+ * @method
+ * @version 2.7.2
+ * @param {string} x The string to trim
+ * @return {string} The altered string
+ *
+ * @example
+ * const {trim} = require('futils');
+ *
+ * trim('   hello world   '); // -> 'hello world'
+ */
+export const trim = (x) => isString(x) ? x.trim() : x;
+
+/**
+ * Given a string or an array, reverses the input. If the input is an array,
+ *   the function first creates a copy and reverses that so the original is
+ *   left intact
+ * @method
+ * @version 2.7.2
+ * @param {string|array} x The string or array to reverse
+ * @return {string|array} The reversed string or array
+ *
+ * @example
+ * const {reverse} = require('futils');
+ *
+ * reverse('abc'); // -> 'cba'
+ *
+ * reverse([1, 2, 3]); // -> [3, 2, 1]
+ */
+export const reverse = (xs) => isArray(xs) ?
+    xs.slice().reverse() :
+    isString(xs) ?
+    xs.split('').reverse().join('') :
+    xs;
 
 /**
  * Given a iterable collection, returns all unique items of it

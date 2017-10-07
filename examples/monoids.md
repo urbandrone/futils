@@ -65,6 +65,8 @@ Let's start with the practical example. We will do some form validation for inpu
 First some utility functions and constant definitions:
 
 ```javascript
+const {pipe, not} = require('futils');
+
 // EMAIL :: Regex
 const EMAIL = /^[a-z0-9]{1,}@[a-z0-9]{3,}\.\w{2,8}$/i
 
@@ -80,24 +82,25 @@ const query = pipe(document.querySelectorAll.bind(document), Array.from);
 
 `query` takes a selector a queries all matching nodes into a array
 
-Here is the graphical form:
-![Type transformations](./assets/06-monoids-mappings.png?raw=true "Mappings")
-
 
 ### Validator functions
 For evaluations sake, we need some validator functions, which should have the signature `(a -> Bool)`. Most of them will read from DOM nodes.
 
 ```javascript
+const {pipe, not, prop, call} = require('futils');
+
+// [... skipped ...]
+
 // required :: DOM -> Bool
-const required = bool(field('required'));
+const required = bool(prop('required'));
 // hasVal :: DOM -> Bool
-const hasVal = bool(pipe(field('value'), call('trim')));
+const hasVal = bool(pipe(prop('value'), call('trim')));
 // isChecked :: DOM -> Bool
-const isChecked = bool(field('checked'));
+const isChecked = bool(prop('checked'));
 // isEmail :: String -> Bool
 const isEmail = bool(pipe(call('trim'), EMAIL.test.bind(EMAIL)));
 // mailValid :: DOM -> Bool
-const mailValid = and(hasVal, pipe(field('value'), isEmail));
+const mailValid = and(hasVal, pipe(prop('value'), isEmail));
 ```
 
 ![Validation functions](./assets/06-monoids-predicates.png?raw=true "Predicates")
@@ -107,6 +110,10 @@ const mailValid = and(hasVal, pipe(field('value'), isEmail));
 Nearly done. Now we need to define a function which actually queries the DOM for elements, filters only those which are `required`, and maps the validator over it. Here is how it looks like:
 
 ```javascript
+const {pipe, not, prop, call, curry} = require('futils');
+
+// [... skipped ...]
+
 // nodesValid :: (DOM -> Bool) -> Selector -> [Bool]
 const nodesValid = curry((vf, selector) => query(selector)).
     filter(required).
@@ -133,6 +140,10 @@ In other words:
 We can make the signature more generic by saying the given function has the signature `(a -> [b])` instead of `(String -> [Bool])`. This is it:
 
 ```javascript
+const {pipe, not, prop, call, foldMap} = require('futils');
+
+// [... skipped ...]
+
 // foldMapInto :: Monoid -> (a -> [b]) -> {} -> Monoid b
 const foldMapInto = curry((M, f, hash) => Object.keys(hash).
     map((k) => foldMap(M, f(hash[k], k))).
@@ -152,6 +163,10 @@ It works in three steps:
 This is it (nearly). We've made us a nice utility module which we can use to assembly the application on the fly. Here is how it looks like:
 
 ```javascript
+const {All, pipe, not, prop, call, foldMap} = require('futils');
+
+// [... skipped ...]
+
 const config = {
     'input[type="email"]': mailValid,
     'input[type="checkbox"]': isChecked,
@@ -169,7 +184,7 @@ const result = prog(config).fold(id);
 If you are like me and want a better overview, here is the complete code in one file. Typically you'd split the application apart from the definitions of the validators and foldMapInto. Please also note the call to `require` at the top of the file which imports all helpers needed:
 
 ```javascript
-const {foldMap, All, id, pipe, not, and, curry, field, call} = require('futils');
+const {All, id, pipe, not, and, curry, prop, trim, foldMap} = require('futils');
 
 // EMAIL :: Regex
 const EMAIL = /^[a-z0-9]{1,}@[a-z0-9]{3,}\.\w{2,8}$/i
@@ -180,15 +195,15 @@ const bool = pipe(not, not);
 const query = pipe(document.querySelectorAll.bind(document), Array.from);
 
 // required :: DOM -> Bool
-const required = bool((e) => e && e.required);
+const required = bool(prop('required'));
 // hasVal :: DOM -> Bool
-const hasVal = bool((e) => e && e.value && e.value.trim());
+const hasVal = bool(pipe(prop('value'), trim));
 // isChecked :: DOM -> Bool
-const isChecked = bool((e) => e && e.checked);
+const isChecked = bool(prop('checked'));
 // isEmail :: String -> Bool
-const isEmail = bool((v) => EMAIL.test(v));
+const isEmail = bool(pipe(trim, EMAIL.test.bind(EMAIL)));
 // mailValid :: DOM -> Bool
-const mailValid = and(hasVal, pipe(field('value'), isEmail));
+const mailValid = and(hasVal, pipe(prop('value'), isEmail));
 
 // nodesValid :: (DOM -> Bool) -> String -> [Bool]
 const nodesValid = curry((vf, css) => query(css)).
