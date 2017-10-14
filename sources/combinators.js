@@ -68,16 +68,16 @@ export const tap = (x) => (y) => y(x);
  * @return {any} Final result
  *
  * @example
- * const {by, equals, field} = require('futils');
+ * const {by, equals, prop} = require('futils');
  *
- * const eqLength = by(equals, field('length'));
+ * const eqLength = by(equals, prop('length'));
  *
  * eqLength('hi', 'cu'); // -> true
  * eqLength('hi', 'bye'); // -> false
  */
 export const by = (x, y, ...zs) => {
     if (y === void 0) {
-        return (y, ..._zs) => by(x, y, ..._zs);
+        return (_y, ..._zs) => by(x, _y, ..._zs);
     }
     return zs.length > 0 ? x(...zs.map(y)) : (..._zs) => x(..._zs.map(y));
 }

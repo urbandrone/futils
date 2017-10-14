@@ -82,9 +82,43 @@ fooHeight(STRUCT); // -> 90
 Quite often you will want to transform a given object into a array, so you can map, filter and fold over it. Here is how you can do it with `futils` and the pairs function:
 
 ```javascript
-const {pairs, merge, fold} = require('futils');
+const {pairs, merge, map, fold, pipe} = require('futils');
 
-@TODO
+const movies = {
+    'Matrix': {
+        'released': '24-03-1999',
+        'runtime': '136 min',
+        'excerpt': 'Thomas A. Anderson is a man living two lives. By day he is an average computer programmer and by night a hacker known as Neo. Neo has always questioned his reality, but the truth is far beyond his imagination.'
+    },
+    'Pulp Fiction': {
+        'released': '21-05-1994',
+        'runtime': '154 min',
+        'excerpt': 'The lives of two mob hit men, a boxer, a gangster\'s wife, and a pair of diner bandits intertwine in four tales of violence and redemption.'
+    }
+}
+
+// package :: [[String, Record]] -> Record
+const package = map(([title, movieData]) => merge(movieData, {title}));
+
+// renderMovie :: Record -> String
+const renderMovie = (movie) => `
+    <div class="movie">
+        <h2 class="movie_title">${movie.title}</h2>
+        <p class="movie_excerpt">${movie.excerpt}</p>
+        <p class="movie_info">
+            <span class="movie_info_item">${movie.released}</span>
+            <span class="movie_info_item">${movie.length}</span>
+        </p>
+    </div>
+`;
+
+// renderAll :: [Record] -> String
+const renderAll = fold((acc, movie) => `${acc}${renderMovie(movie)}`, '');
+
+// render :: Record -> String
+const render = pipe(pairs, package, renderAll);
+
+document.body.innerHTML = `<div class="movies">${render(movies)}</div>`;
 ```
 
 Another often found structure are arrays with objects in them.
