@@ -115,6 +115,55 @@ const mapMapLens = pipe(mappedLens, mappedLens);
 over(mapMapLens, toUpper, [['a', 'b', 'c']]); // -> [['A', 'B', 'C']]
 ```
 
+## A lens for `Map`s
+Since ES6 (or ES2015) the new `Map` structure is available in JavaScript. The lenses in `futils` are not primarily created to work with this new structure, but it is trivial to create a lens which does work with them which covers the final part of this tutorial.
+
+For the purpose of creating new _kinds_ of lenses, there exists the special `lens` function that accepts a getter and a setter function and creates us a new lens.
+
+```javascript
+const {lens} = require('futils');
+
+const mapsL = lens(                      // mapsL is a new lens type
+    (key, m) => m.get(key),              // getter function for mapsL
+    (key, value, m) => m.set(key, value) // setter function for mapsL
+);
+```
+
+Here, `mapsL` is a new lens which works over ES6 `Map` structures:
+
+```javascript
+const {lens, over, map} = require('futils');
+
+// mapsL :: Lens
+const mapsL = lens(
+    (key, m) => m.get(key),
+    (key, value, m) => m.set(key, value)
+);
+
+// userMap :: Map
+const userMap = new Map([['users', ['John Doe']]]);
+
+// prog :: [String] -> [String]
+const prog = map((s) => s.split(' ').reverse().join(', '));
+
+over(mapsL('users'), prog, userMap).entries();
+// -> [[users', ['Doe, John']]]
+```
+
+However, by using this code the `userMap` structure is altered which is _not_ how lenses work in general. So please keep in mind: If you create new lens types, _you are responsible for making them work correctly_. This means, the setter function should create a new `Map`.
+
+> This is not necessary but just good measure! Maybe you are working with a
+> third party library like `Immutable.js` which already does it for you.
+
+```javascript
+const {lens, over} = require('futils');
+
+const mapsL = lens(
+    (key, m) => m.get(key),
+    (key, value, m) => new Map(m.set(key, value).entries()) // return a new Map
+);
+```
+
 
 ---
 [Index](./readme.md)

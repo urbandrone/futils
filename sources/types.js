@@ -15,6 +15,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * @module types
  */
 
+
+const _toString = Object.prototype.toString;
+
 /**
  * Returns true if given either `null` or `undefined`
  * @method
@@ -209,7 +212,7 @@ export const isFunc = (x) => typeof x === 'function';
  * isObject({}); // -> true
  * isObject([]); // -> false
  */
-export const isObject = (x) => ({}.toString.call(x) === '[object Object]');
+export const isObject = (x) => _toString.call(x) === '[object Object]';
 
 /**
  * Returns true if given a array
@@ -340,6 +343,30 @@ export const isIterator = (x) => !isNil(x) && isFunc(x.next);
  * isIterable({}); // -> false
  */
 export const isIterable = (x) => !isNil(x) && !!(x[Symbol.iterator] || !isNaN(x.length));
+
+/**
+ * Returns true for generator functions
+ * @method
+ * @version 2.8.0
+ * @param {any} x Value to check
+ * @return {boolean} True for generators
+ *
+ * @example
+ * const {isGenerator} = require('futils');
+ *
+ * function * makeIds (seed) {
+ *     let n = Math.abs(seed);
+ *     while (true) {
+ *         yield n;
+ *         n += 1;
+ *     }
+ * }
+ * 
+ * isGenerator(makeIds(0)); // -> true
+ * isGenerator([1, 2, 3]); // -> false
+ */
+export const isGenerator = (x) => !!x && isFunc(x.next) && isFunc(x.throw) &&
+                                    isFunc(x.return) && !!x[Symbol.iterator];
 
 /**
  * Awaits a type predicate and a value and returns true if the value is a array

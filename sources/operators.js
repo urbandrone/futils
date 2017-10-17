@@ -8,7 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {isAny, isFunc, isArray, isString, isSetoid, isFunctor,
+import {isAny, isFunc, isArray, isString, isSetoid, isFunctor, isMap,
         isNumber, isObject, isIterable, isApply, isMonoid, isRegex} from './types';
 import {dyadic, triadic} from './arity';
 import {trampoline, suspend} from './trampolines';
@@ -59,7 +59,7 @@ export const call = (method, ...partials) => (provider, ...rest) => {
  * @method 
  * @version 0.2.0
  * @param {string} key Name of the field
- * @param {object} x The object to test
+ * @param {object|map} x The object or map to test
  * @return {boolean} True if the field is present
  *
  * @example
@@ -70,14 +70,14 @@ export const call = (method, ...partials) => (provider, ...rest) => {
  * has('foo', testee); // -> true
  * has('missing', testee); // -> false
  */
-export const has = dyadic((key, x) => _owns.call(x, key));
+export const has = dyadic((key, x) => isMap(x) ? x.has(key) : _owns.call(x, key));
 
 /**
  * Accesses a given object by a chain of keys
  * @method
  * @version 2.7.2
  * @param {string} key Single key or a chain of keys separated by `.`
- * @param {object|array|string|Monad} x Data structure to access
+ * @param {object|array|string|map} x Data structure to access
  * @return {any|null} Either the value of the key or null
  *
  * @example
@@ -93,11 +93,13 @@ export const prop = dyadic((key, x) => {
     let ks = isString(key) && /\./.test(key) ?
              key.split('.') :
              [key];
-    return ks.reduce((a, b) => isAny(a) && isAny(a[b]) ?
-                               a[b] :
-                               null,
-                     x
-                    );
+    return ks.reduce((a, b) => {
+        if (isAny(a)) {
+            return isMap(a) && a.has(b) ? a.get(b) :
+                   isAny(a[b]) ? a[b] : null;
+        }
+        return null;
+    }, x);
 });
 
 /**
@@ -106,7 +108,7 @@ export const prop = dyadic((key, x) => {
  * @deprecated Use prop
  * @version 0.2.0
  * @param {string} key Single key or a chain of keys separated by `.`
- * @param {object|array|string|Monad} x Data structure to access
+ * @param {object|array|string|map} x Data structure to access
  * @return {any|null} Either the value of the key or null
  *
  * @example
@@ -127,8 +129,8 @@ export const field = prop;
  * @version 0.3.0
  * @param {string|number} k The key to assign to
  * @param {*} v The value to assing
- * @param {array|object} x The data structure to transform
- * @return {array|object|*} New array or object or the given thing
+ * @param {array|object|map} x The data structure to transform
+ * @return {array|object|map|*} New array, object, map or the given thing
  *
  * @example
  * const {assoc} = require('futils');
@@ -154,6 +156,9 @@ export const assoc = triadic((k, v, x) => {
         if (isString(key)) {
             receiver[key] = v;
         }
+    } else if (isMap(x)) {
+        receiver = new Map(x.entries());
+        receiver.set(key, v);
     }
     return receiver;
 });
@@ -211,7 +216,7 @@ export const immutable = (x) => Object.freeze(Object.assign({}, x));
  * Returns pairs of [key, value] from a given object
  * @method 
  * @version 2.0.0
- * @param {object} xs The object to take pairs from
+ * @param {object|map} xs The object to take pairs from
  * @return {array} Array of pairs [ [pair], [pair], ... ]
  *
  * @example
@@ -219,7 +224,9 @@ export const immutable = (x) => Object.freeze(Object.assign({}, x));
  *
  * pairs({foo: 1, bar: 0}); // -> [['foo', 1], ['bar', 0]]
  */
-export const pairs = (xs) => Object.keys(xs).map((k) => [k, xs[k]]);
+export const pairs = (xs) => isMap(xs) ?
+    xs.entries() :
+    Object.keys(xs).map((k) => [k, xs[k]]);
 
 /**
  * Given a constructor function and a context (usually `this`) returns either
@@ -645,9 +652,44 @@ export const fold = triadic((f, x, xs) => {
     if (isFunc(xs.fold)) {
         return xs.fold(f, x);
     }
+    if (isFunc(xs.reduce)) {
+        return xs.reduce(f, x);
+    }
     const go = trampoline((g, acc, as) => {
         if (as.length < 1) { return acc; }
         return suspend(go, g, g(acc, first(as)), rest(as));
+    });
+    return go(f, x, Array.from(xs));
+});
+
+/**
+ * Given a function, a seed value and a iterable collection, return the
+ *     iterable folded down into the seed value
+ * @method 
+ * @version 2.8.0
+ * @param {function} f Function to call on each iteration
+ * @param {any} x The seed value to fold into
+ * @param {array|Monad|Monoid} xs The collection to fold down
+ * @return {any} Depends on the seed value
+ *
+ * @example
+ * const {foldRight} = require('futils');
+ *
+ * const add = (a, b) => a + b;
+ *
+ * foldRight(add, 0, [1, 2, 3]); // -> 6
+ * foldRight(add, '', ['hello,', ' ', 'world']); // -> 'world hello'
+ */
+export const foldRight = triadic((f, x, xs) => {
+    if (isFunc(xs.foldRight)) {
+        return xs.foldRight(f, x);
+    }
+    if (isFunc(xs.reduceRight)) {
+        return xs.reduceRight(f, x);
+    }
+    const go = trampoline((g, acc, as) => {
+        if (as.length < 1) { return acc; }
+        return suspend(go, g, g(acc, last(as)), initial(as));
     });
     return go(f, x, Array.from(xs));
 });

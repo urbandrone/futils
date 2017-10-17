@@ -1,26 +1,35 @@
 const _ = require('../futils');
 describe('futils/operators module', () => {
     
-    it('testing field :: s -> o -> a', () => {
-        expect(_.field('a', {a: 1})).toBe(1);
-        expect(_.field('a.b', {a: {b: 1}})).toBe(1);
-    });
-    
     it('testing prop :: s -> o -> a', () => {
         expect(_.prop('a', {a: 1})).toBe(1);
         expect(_.prop('a.b', {a: {b: 1}})).toBe(1);
+        expect(_.prop('a', new Map([['a', 1]]))).toBe(1);
+        expect(_.prop('a.b', new Map([['a', new Map([['b', 1]])]]))).toBe(1);
+    });
+    
+    it('testing field :: s -> o -> a', () => {
+        expect(_.field('a', {a: 1})).toBe(1);
+        expect(_.field('a.b', {a: {b: 1}})).toBe(1);
+        expect(_.field('a', new Map([['a', 1]]))).toBe(1);
+        expect(_.field('a.b', new Map([['a', new Map([['b', 1]])]]))).toBe(1);
     });
 
     it('testing has :: s -> o -> b', () => {
         expect(_.has('a', {a: 1})).toBe(true);
         expect(_.has('b', {a: 1})).toBe(false);
+        expect(_.has('a', new Map([['a', 1]]))).toBe(true);
+        expect(_.has('b', new Map([['a', 1]]))).toBe(false);
     });
 
     it('testing assoc :: s -> a -> o -> o', () => {
-        let s = {a: 1};
+        let s = {a: 1}; let m = new Map([['a', 1]]);
         expect(_.assoc('b', 2, s).b).toBe(2);
         expect(s.a).toBe(1);
         expect(s.b).toBe(undefined);
+        expect(_.assoc('b', 2, m).get('b')).toBe(2);
+        expect(m.get('a')).toBe(1);
+        expect(m.get('b')).toBe(undefined);
     });
 
     it('testing call :: s -> o -> a | o', () => {
@@ -139,7 +148,13 @@ describe('futils/operators module', () => {
     });
 
     it('testing fold :: Function -> a -> Array -> a', () => {
-        expect(_.fold(_.concat, [], [[1], [2, 3], 4])).toEqual([1, 2, 3, 4]);
+        const add = (a, b) => a + b;
+        expect(_.fold(add, '', ['a', 'b', 'c'])).toBe('abc');
+    });
+
+    it('testing foldRight :: Function -> a -> Array -> a', () => {
+        const add = (a, b) => a + b;
+        expect(_.foldRight(add, '', ['a', 'b', 'c'])).toBe('cba');
     });
 
     it('testing foldMap :: Monoid -> as -> Monoid', () => {

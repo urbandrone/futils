@@ -35,7 +35,7 @@ const comp = (f, g) => (...args) => f(g(...args));
  * @return {function} A lens for the given data type
  *
  * @example
- * const {lens, over} = require('futils');
+ * const {lens, over, map} = require('futils');
  *
  * let MapLens = lens(
  *     (k, xs) => xs.get(k),
@@ -44,7 +44,7 @@ const comp = (f, g) => (...args) => f(g(...args));
  * 
  * let m = new Map([['users', ['john doe']]]); 
  *
- * over(MapLens('users'), (s) => s.toUpperCase(), m); // -> ['JOHN DOE']
+ * over(MapLens('users'), map((s) => s.toUpperCase()), m); // -> Map([users, ['JOHN DOE']])
  */
 export const lens = curry((gets, sets, k, f, xs) => {
     return map(

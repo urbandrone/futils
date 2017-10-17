@@ -18,7 +18,7 @@
 5. Collection operations
 6. Lenses
 7. Transducers
-8. Monoids (Additive, Multiple, Fn, All, Any, Min, Max, Dict)
+8. Monoids (Additive, Multiple, Char, Fn, All, Any, Min, Max, Dict)
 9. Monads (Identity, Maybe, Either, State, IO, Task)
 10. Maths (small extensions to _Math_)
 11. Abstract types and pattern matching (Experimental)
@@ -45,7 +45,7 @@ const _ = require('futils');
 // your code
 ```
 
-## Install for ES6 (via jspm.io and SystemJS)
+## Install for ES6
 If you use `jspm` either for a Node or Browser based application:
 ```
 jspm install npm:futils
@@ -58,8 +58,12 @@ import {pipe, isString, call} from 'futils';
 // your code
 ```
 
-### Note:
-If you want to use `futils` in conjunction with a bundler which supports tree shaking (like `rollup`), only those functions which you already use from `futils` will be included in the final build, which may significantly lower the file size of your scripts after bundling.
+> If you want to use `futils` in conjunction with a bundler which supports
+> tree shaking (like `rollup`), only those functions which you already use
+> from `futils` will be included in the final build, which may significantly
+> lower the file size of your scripts after bundling. Just make sure you
+> _transpile it after bundling_, because otherwise you may end up with ES5
+> and ES6 code mixed together.
 
 ## Install for browsers
 Download the `futils.js` file and include it with a script tag which allows you to get access to the global `futils` namespace:
@@ -77,8 +81,10 @@ var _ = futils;
 ### Via CDN (unpkg.com)
 Grab the latest version of `futils` from the [unpkg](https://unpkg.com/futils@latest/futils.js) CDN.
 
-### Note:
-If you want to use `futils` in non ES2015-ready browsers, make sure you include a ES2015 environment polyfill like [core-js](https://github.com/zloirock/core-js). It's fine if you only use the native shim without ES7 proposels.
+> If you want to use `futils` in non ES2015-ready browsers, make sure you
+> include a ES2015 environment polyfill like 
+> [core-js](https://github.com/zloirock/core-js).
+> It's fine if you only use the native shim without ES7 proposels.
 
 ## Install for AMD
 If you want to use `futils` with a AMD powered development workflow, you can do that too. Just like using it in the browser, all you have to do is download the file `futils.js` and use it in your code:
