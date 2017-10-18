@@ -43,10 +43,10 @@ const _owns = Object.prototype.hasOwnProperty;
  */
 export const call = (method, ...partials) => (provider, ...rest) => {
     let res = isString(method) && isFunc(provider[method]) ?
-              provider[method](...partials, ...rest) :
-              isFunc(method) ?
-              method.call(provider, ...partials, ...rest) :
-              null;
+                provider[method](...partials, ...rest) :
+                isFunc(method) ?
+                method.call(provider, ...partials, ...rest) :
+                null;
     if (res == null) {
         return provider;
     }
@@ -91,12 +91,12 @@ export const has = dyadic((key, x) => isMap(x) ? x.has(key) : _owns.call(x, key)
  */
 export const prop = dyadic((key, x) => {
     let ks = isString(key) && /\./.test(key) ?
-             key.split('.') :
-             [key];
+                key.split('.') :
+                [key];
     return ks.reduce((a, b) => {
         if (isAny(a)) {
             return isMap(a) && a.has(b) ? a.get(b) :
-                   isAny(a[b]) ? a[b] : null;
+                    isAny(a[b]) ? a[b] : null;
         }
         return null;
     }, x);
@@ -151,12 +151,16 @@ export const assoc = triadic((k, v, x) => {
         if (isNumber(key) && key < x.length && key >= 0) {
             receiver[key] = v;
         }
-    } else if (isObject(x)) {
+        return receiver;
+    }
+    if (isObject(x)) {
         receiver = Object.assign({}, x);
         if (isString(key)) {
             receiver[key] = v;
         }
-    } else if (isMap(x)) {
+        return receiver;
+    } 
+    if (isMap(x)) {
         receiver = new Map(x.entries());
         receiver.set(key, v);
     }
@@ -187,9 +191,9 @@ export const assoc = triadic((k, v, x) => {
  *
  * customer === customerWithBasket; // -> false
  */
-export const merge = (...xs) => xs.length > 1 ? Object.assign({}, ...xs) : (...ys) => {
-    return merge(...xs, ...ys);
-};
+export const merge = (...xs) => xs.length > 1 ?
+    Object.assign({}, ...xs) :
+    (...ys) => merge(...xs, ...ys);
 
 /**
  * Takes a object and prevents its pairs from being changed or removed, as well
@@ -225,7 +229,7 @@ export const immutable = (x) => Object.freeze(Object.assign({}, x));
  * pairs({foo: 1, bar: 0}); // -> [['foo', 1], ['bar', 0]]
  */
 export const pairs = (xs) => isMap(xs) ?
-    xs.entries() :
+    [...xs.entries()] :
     Object.keys(xs).map((k) => [k, xs[k]]);
 
 /**
@@ -336,10 +340,10 @@ export const head = (xs) => [first(xs)];
  * ); // -> [<a></a>, <a></a>, ...]
  */
 export const initial = (xs) => isArray(xs) ?
-                        xs.slice(0, xs.length - 1) :
-                        isIterable(xs) ?
-                        Array.from(xs).slice(0, xs.length - 1) :
-                        [];
+    xs.slice(0, xs.length - 1) :
+    isIterable(xs) ?
+    Array.from(xs).slice(0, xs.length - 1) :
+    [];
 
 /**
  * Given a iterable collection, returns the last item
@@ -388,10 +392,10 @@ export const tail = (xs) => [last(xs)];
  * rest(document.querySelectorAll('a')); // -> [..., <a></a>, <a></a>]
  */
 export const rest = (xs) => isArray(xs) ?
-                     xs.slice(1) :
-                     isIterable(xs) ?
-                     Array.from(xs).slice(1) :
-                     [];
+    xs.slice(1) :
+    isIterable(xs) ?
+    Array.from(xs).slice(1) :
+    [];
 
 /**
  * Returns the item at the given index position from either a string or array
@@ -406,9 +410,10 @@ export const rest = (xs) => isArray(xs) ?
  *
  * nth(1, 'abc'); // -> 'b'
  */
-export const nth = dyadic((i, x) => isNumber(i) && (isString(x) || isArray(x)) ?
-                                    x[Math.abs(i)] :
-                                    x)
+export const nth = dyadic((i, x) => isNumber(i) && 
+    (isString(x) || isArray(x)) ?
+    x[Math.abs(i)] :
+    x)
 
 /**
  * When given a array, joins the contents by a given separator
@@ -424,8 +429,8 @@ export const nth = dyadic((i, x) => isNumber(i) && (isString(x) || isArray(x)) ?
  * join('-', [1, 2, 3]); // -> '1-2-3'
  */
 export const join = dyadic((separator, xs) => isArray(xs) ?
-                                              xs.join(separator) :
-                                              xs);
+    xs.join(separator) :
+    xs);
 
 /**
  * Splits a string into pieces with a given separator
@@ -441,8 +446,8 @@ export const join = dyadic((separator, xs) => isArray(xs) ?
  * split('-', '1-2-3'); // -> ['1', '2', '3']
  */
 export const split = dyadic((splitter, x) => isString(x) ?
-                                              x.split(splitter) :
-                                              x);
+    x.split(splitter) :
+    x);
 
 /**
  * Replaces parts of a string with other parts and returns the result
@@ -459,8 +464,8 @@ export const split = dyadic((splitter, x) => isString(x) ?
  * replace('-', ', ', '1-2-3'); // -> '1, 2, 3'
  */
 export const replace = triadic((sign, repl, x) => isRegex(sign) && isString(x) ?
-                                                  x.replace(sign, repl) :
-                                                  x);
+    x.replace(sign, repl) :
+    x);
 
 /**
  * Transforms a string into all uppercase
@@ -997,14 +1002,14 @@ export const map = dyadic((f, m) => {
         if (isFunctor(m)) {
             return m.map(f);
         }
-        if (isIterable(m)) {
-            return Array.from(m).map(f);
-        }
         if (isObject(m)) {
             return Object.keys(m).reduce((acc, k) => {
                 acc[k] = f(m[k], k, m);
                 return acc;
             }, {});
+        }
+        if (isIterable(m)) {
+            return Array.from(m).map(f);
         }
         return m;
     }

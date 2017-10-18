@@ -289,12 +289,64 @@ export const isNode = (x) => Node.prototype.isPrototypeOf(x);
  */
 export const isNodeList = (x) => NodeList.prototype.isPrototypeOf(x);
 
+/**
+ * Returns true if given a Map
+ * @method
+ * @version 0.1.0
+ * @param {any} x Value to check
+ * @return {boolean} True for Maps
+ *
+ * @example
+ * const {isMap} = require('futils');
+ *
+ * isMap(new Map()); // -> true
+ * isMap({}); // -> false
+ */
 export const isMap = (x) => Map.prototype.isPrototypeOf(x);
 
+/**
+ * Returns true if given a Set
+ * @method
+ * @version 0.1.0
+ * @param {any} x Value to check
+ * @return {boolean} True for Sets
+ *
+ * @example
+ * const {isSet} = require('futils');
+ *
+ * isSet(new Set()); // -> true
+ * isSet([]); // -> false
+ */
 export const isSet = (x) => Set.prototype.isPrototypeOf(x);
 
+/**
+ * Returns true if given a WeakSet
+ * @method
+ * @version 0.1.0
+ * @param {any} x Value to check
+ * @return {boolean} True for WeakSets
+ *
+ * @example
+ * const {isWeakSet} = require('futils');
+ *
+ * isWeakSet(new WeakSet()); // -> true
+ * isWeakSet({}); // -> false
+ */
 export const isWeakSet = (x) => WeakSet.prototype.isPrototypeOf(x);
 
+/**
+ * Returns true if given a WeakMap
+ * @method
+ * @version 0.1.0
+ * @param {any} x Value to check
+ * @return {boolean} True for WeakMaps
+ *
+ * @example
+ * const {isWeakMap} = require('futils');
+ *
+ * isWeakMap(new WeakMap()); // -> true
+ * isWeakMap({}); // -> false
+ */
 export const isWeakMap = (x) => WeakMap.prototype.isPrototypeOf(x);
 
 /**

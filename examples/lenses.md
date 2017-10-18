@@ -160,7 +160,7 @@ const {lens, over} = require('futils');
 
 const mapsL = lens(
     (key, m) => m.get(key),
-    (key, value, m) => new Map(m.set(key, value).entries()) // return a new Map
+    (key, value, m) => new Map(m.entries()).set(key, value) // return a new Map
 );
 ```
 

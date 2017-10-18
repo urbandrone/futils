@@ -121,6 +121,30 @@ describe('futils/types module', function () {
         expect(b).toBe(false);
     });
 
+    it('testing isMap :: a -> b', function () {
+        expect(_.isMap(new Map())).toBe(true);
+        expect(_.isMap(null)).toBe(false);
+        expect(_.isMap({})).toBe(false);
+    });
+
+    it('testing isSet :: a -> b', function () {
+        expect(_.isSet(new Set())).toBe(true);
+        expect(_.isSet(null)).toBe(false);
+        expect(_.isSet([])).toBe(false);
+    });
+
+    it('testing isWeakMap :: a -> b', function () {
+        expect(_.isWeakMap(new WeakMap())).toBe(true);
+        expect(_.isWeakMap(null)).toBe(false);
+        expect(_.isWeakMap({})).toBe(false);
+    });
+
+    it('testing isWeakSet :: a -> b', function () {
+        expect(_.isWeakSet(new WeakSet())).toBe(true);
+        expect(_.isWeakSet(null)).toBe(false);
+        expect(_.isWeakSet({})).toBe(false);
+    });
+
     it('testing isDate :: a -> b', function () {
         var a = _.isDate(new Date());
         var b = _.isDate('2014-01-01');

@@ -30,6 +30,8 @@ describe('futils/operators module', () => {
         expect(_.assoc('b', 2, m).get('b')).toBe(2);
         expect(m.get('a')).toBe(1);
         expect(m.get('b')).toBe(undefined);
+        expect(_.assoc('b', 1, s) === s).toBe(false);
+        expect(_.assoc('b', 1, m) === m).toBe(false);
     });
 
     it('testing call :: s -> o -> a | o', () => {
@@ -54,14 +56,16 @@ describe('futils/operators module', () => {
     });
 
     it('testing pairs :: o -> as', () => {
-        let o = _.pairs({foo: 1, bar: 0});
-
-        expect(o).toEqual([['foo', 1], ['bar', 0]]);
+        expect(_.pairs({a: 1, b: 2})).toEqual([['a', 1], ['b', 2]]);
+        expect(_.pairs(new Map([['a', 1], ['b', 2]]))).toEqual([['a', 1], ['b', 2]]);
     });
 
     it('testing concat :: [a] -> [a] -> [a, a]', () => {
         expect(_.concat([1], [2])).toEqual([1, 2]);
         expect(_.concat([1], 2)).toEqual([1, 2]);
+        expect(_.concat('1', '2')).toBe('12');
+        expect(_.concat(1, 2)).toBe(3);
+        expect(_.concat((a) => a + 1, (a) => a + 2)(3)).toBe(6);
     });
 
     it('testing instance :: a -> Ctor -> a', () => {
