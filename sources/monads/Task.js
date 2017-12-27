@@ -100,7 +100,7 @@ export class Task {
      *
      * // logs "Resolved: 1"
      */
-    static resolve (a) { return new Task((_, res) => res(a)); }
+    static resolve (a) { return Task.of(a); }
 
     /**
      * Returns a Task which rejects the given value
@@ -402,7 +402,8 @@ export class Task {
     }
     // -- Applicative
     /**
-     * Creates a new instance of a Task. Use `.of` instead of the constructor 
+     * Lifts a given value into a Task and returns the Task. Use `.of` instead
+     * of the constructor in case the value to resolve to is already available.  
      * @method of
      * @memberof module:monads/task.Task
      * @static
@@ -412,7 +413,7 @@ export class Task {
      * @example
      * const {Task} = require('futils');
      *
-     * let one = Task.of((rej, res) => res(1));
+     * let one = Task.of(1);
      *
      * one.run(
      *     (x) => console.error('Rejected: ' + x),
@@ -421,7 +422,7 @@ export class Task {
      *
      * // logs "Resolved: 1"
      */
-    static of (a) { return new Task((rej, res) => res(a)); }
+    static of (a) { return new Task((_, res) => res(a)); }
     of (a) { return Task.of(a); }
 
     /**
