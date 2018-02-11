@@ -140,14 +140,14 @@ Hooray, less stuff to type!
 ### run & exec(ute)
 By now you know that the State monad is a wrapper for functions which take a state value and return a result value and a state value and that we can build a sequence of transformation steps with it. In all example so far we've called `.run` with some initial state when we wanted to get the result of the computation.
 
-There are in fact times where you _don't_ want the result but rather the new _state_ value. The State monad of `futils` has a `.exec` method which works just like `.run` but returns the new state value:
+There are in fact times when you _don't_ want the result but rather the new _state_. The State monad of `futils` has a `.exec` method which works just like `.run` but returns the new state value:
 ```javascript
 const {State} = require('futils');
 
 const mod = (a) => new State((s) => [a + s[0], s.slice(1)]);
 
-mod('start with: ').run('abc'); // -> 'start with: a'
-mod('start with: ').exec('abc'); // -> 'bc'
+mod('result: ').run('abc'); // -> 'result: a'
+mod('state: ').exec('abc'); // -> 'state: bc'
 ```
 
 One application for `.exec` is this: If you have a key:value collection you want to alter and then return, you can easily achive it! Take a look at this example:
@@ -172,14 +172,14 @@ const mod = (a) => new State((s) => [a + s[0], s.slice(1)]);
 
 const describe = curry((s, v) => `${s} ${v}`);
 
-mod('').fold(describe('starts with:'), 'abc'); // -> 'starts with: a'
-mod('').foldExec(describe('ends with:'), 'abc'); // -> 'ends with: bc'
+mod('').fold(describe('result:'), 'abc'); // -> 'result: a'
+mod('').foldExec(describe('state:'), 'abc'); // -> 'state: bc'
 ```
 
 So instead of just prepending some kind of description, we could have passed them into another monad like `Maybe`.
 
 ### get and put
-So far, whenever we started writing a computation with the help of the State monad, we wrote a little helper function which acted as entry point. But we don't need to do so, because `State` offers another way to pull a state out of thin air (so to speak) via a static `.get` method:
+So far, whenever we started writing a computation with the help of the State monad we wrote a little helper function which acted as entry point. But we don't need to do so, because `State` offers another way to pull a state out of thin air (so to speak) via a static `.get` method:
 ```javascript
 const {State} = require('futils');
 
@@ -195,10 +195,10 @@ prog.exec(3); // -> 45
 
 It simply doesn't take anything and copies the state value onto the result value position.
 
-The `.put` method does the exact opposite, it takes a value and defines it as the new state value and _discards_ the current value. It is very useful in cases where you create some type of intermediate result which should become the new state for the next computation, which for example happens in a recursive algorithm like we are going to see in the next section.
+The `.put` method does the exact opposite, it takes a value and defines it as the new state value and _discards_ the current value. `.put` is very useful in case you create some type of intermediate result which should become the new state for the next computation, which for example happens in a recursive algorithm like the one we are going to see in the next section.
 
 ## Recursive addition
-Here is one more example of how `State` can be used: Writing recursive algorithms without using trampolines. This is a simple one, which just sums up all given numbers:
+Here is one more example of how `State` can be used: Writing recursive algorithms without using trampolines. This one is simple, it just sums up all given numbers:
 ```javascript
 const {State, first, rest} = require('futils');
 
