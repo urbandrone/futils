@@ -18,6 +18,7 @@ import {isFunc} from '../types';
 
 
 const MV = Symbol('MonadicValue');
+const runState = Symbol('RunState');
 
 
 /**
@@ -34,6 +35,10 @@ export class State {
     
     set compute (a) { this[MV] = a; }
     get compute () { return this[MV]; }
+
+    [runState](s) {
+        return this.compute(s);
+    }
 
     /**
      * Returns a new State which grabs whatever is the current state
@@ -65,7 +70,8 @@ export class State {
      * @example
      * const {State} = require('futils');
      *
-     * const prog = State.get().flatMap((s) => State.put(n + 1));
+     * const prog = State.get().
+     *     flatMap((s) => State.put(s + 1));
      *
      * prog.exec(1); // -> 2
      */
@@ -88,7 +94,7 @@ export class State {
      *
      * prog.exec(1); // -> 2
      */
-    static modify (f) { return State.get().flatMap((s) => State.put(f(s))); }
+    static modify (f) { return State.get().flatMap((a) => State.put(f(a))); }
 
     /**
      * Returns a string representation of the instance
@@ -141,13 +147,13 @@ export class State {
      *
      * const inc = (a) => a + 1;
      *
-     * one.map(inc); // -> State(2)
+     * one.map(inc).run(); // -> 2
      */
     map (f) {
         if (isFunc(f)) {
-            return new State((b) => {
-                let r = this.compute(b);
-                return [f(r[0]), r[1]];
+            return new State((s) => {
+                let [a, s2] = this[runState](s);
+                return [f(a), s2];
             });
         }
         throw 'State::map expects argument to be function but saw ' + f;
@@ -169,9 +175,9 @@ export class State {
      *
      * let one = State.of(1);
      *
-     * one.value; // -> 1
+     * one.run(); // -> 1
      */
-    static of (a) { return new State((b) => [a, b]); }
+    static of (a) { return new State((s) => [a, s]); }
     of (a) { return State.of(a); }
 
     /**
@@ -184,17 +190,17 @@ export class State {
      * @return {State} New instance of the Functor
      *
      * @example
-     * const {State, Identity} = require('futils');
+     * const {State} = require('futils');
      *
-     * let one = Identity.of(1);
+     * let div2 = State.of((a) => a / 2);
      *
-     * const aInc = State.of((a) => a + 1);
+     * const aInc = State.get().map((a) => a + 1);
      *
-     * aInc.ap(one); // -> Identity(2)
+     * div2.ap(aInc).run(2); // -> 1.5;
      */
     ap (m) {
         if (isFunc(m.map)) {
-            return m.map((a) => this.run()(a));
+            return this.flatMap(m.map.bind(m));
         }
         throw 'State::ap expects argument to be Functor but saw ' + m;
     }
@@ -214,14 +220,11 @@ export class State {
      *
      * const mInc = (n) => State.of(n + 1);
      *
-     * one.flatMap(mInc); // -> State(2);
+     * one.flatMap(mInc).run(); // -> 2;
      */
     flatMap (f) {
         if (isFunc(f)) {
-            return new State((b) => {
-                let r = this.compute(b);
-                return f(r[0]).compute(r[1]);
-            });
+            return this.map(f).flatten();
         }
         throw 'State::flatMap expects argument to be function but saw ' + f;
     }
@@ -239,12 +242,12 @@ export class State {
      *
      * let one = State.of(State.of(1));
      *
-     * one.flatten(); // -> State(1)
+     * one.flatten().run(); // -> 1
      */
     flatten () {
-        return new State((b) => {
-            let r = this.compute(b);
-            return r[0].compute(r[1]);
+        return new State((s) => {
+            let [m, s2] = this[runState](s);
+            return m[runState](s2);
         });
     }
 
@@ -268,6 +271,25 @@ export class State {
     }
 
     /**
+     * Runs the computation and passes the final state to the given function
+     * @method foldExec
+     * @memberof module:monads/state.State
+     * @param {function} f Function the state is passed into
+     * @param {any} x The seed state to compute the result from
+     * @return {any} The final state passed through the function
+     *
+     * @example
+     * const {State} = require('futils');
+     *
+     * const inc = State.get().map((n) => n + 1);
+     *
+     * inc.foldExec((x) => x, 1); // -> 1
+     */
+    foldExec (f, x) {
+        return f(this.exec(x));
+    }
+
+    /**
      * Runs the computation and returns the final value
      * @method run
      * @memberof module:monads/state.State
@@ -278,19 +300,18 @@ export class State {
      * @example
      * const {State} = require('futils');
      *
-     * const nums = [1, 2, 3, 4, 5];
+     * const push = (a) => new State((s) => [null, [...s, a]]);
+     * const shift = () => new State((s) => [s[0], s.slice(1)]);
      *
-     * const add = (xs) => {
-     *     if (xs.length < 1) { return State.get().flatMap(State.of); }
-     *     return State.get().flatMap((sum) => {
-     *         return State.put(sum + xs[0]).flatMap(() => add(xs.slice(1)));
-     *     });
-     * }
+     * const prog = State.get().
+     *   flatMap(shift).
+     *   flatMap(push).
+     *   flatMap(shift);
      *
-     * add(nums).run(0); // -> 15
+     * prog.run([1, 2, 3]); // -> 2
      */
     run (s) {
-        return this.compute(s)[0];
+        return this[runState](s)[0];
     }
 
     /**
@@ -306,18 +327,17 @@ export class State {
      * @example
      * const {State} = require('futils');
      *
-     * const nums = [1, 2, 3, 4, 5];
+     * const push = (a) => new State((s) => [null, [...s, a]]);
+     * const shift = () => new State((s) => [s[0], s.slice(1)]);
      *
-     * const add = (xs) => {
-     *     if (xs.length < 1) { return State.get().flatMap(State.of); }
-     *     return State.get().flatMap((sum) => {
-     *         return State.put(sum + xs[0]).flatMap(() => add(xs.slice(1)));
-     *     });
-     * }
+     * const prog = State.get().
+     *   flatMap(shift).
+     *   flatMap(push).
+     *   flatMap(shift);
      *
-     * add(nums).exec(0); // -> 15
+     * prog.exec([1, 2, 3]); // -> [3, 1]
      */
     exec (s) {
-        return this.compute(s)[1];
+        return this[runState](s)[1];
     }
 }

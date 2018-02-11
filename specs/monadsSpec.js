@@ -420,7 +420,8 @@ describe('futils/monads module', function () {
         });
 
         it('implements a way to fold .run', () => {
-            expect(m.run()).toBe(1);
+            expect(m.fold((n) => n, null)).toBe(1);
+            expect(m.foldExec((n) => n, null)).toBe(null);
         });
 
         it('is a monad .flatMap', () => {

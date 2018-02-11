@@ -79,6 +79,7 @@ const add1 = (x) => x + 1;
 new Container(3).map(identity); // -> Container(3)
 
 new Container(3).map(compose(add1, add1)); // -> Container(5)
+new Container(3).map(add1).map(add1); // -> Container(5)
 ```
 
 

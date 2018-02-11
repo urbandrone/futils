@@ -10,6 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 import {curry} from './decorators';
 import {trampoline, suspend} from './trampolines';
+import {isIterable, isNumber} from './types';
 
 /**
  * Provides basic math operations missing on Math
@@ -144,3 +145,97 @@ export const gcd = curry((a, b) => {
  * lcm(12, 18); // -> 36
  */
 export const lcm = curry((a, b) => !a || !b ? 0 : Math.abs(a * b) / gcd(a, b));
+
+/**
+ * Calculates the sum based on different possible inputs. Ignores values
+ *     which are not numbers or iterators and replaces them with zero
+ * @method
+ * @version 2.9.0
+ * @param {number|array|iterator} [...a] A list of numbers or many single numbers
+ * @return {number} The sum
+ *
+ * @example
+ * const {sum} = require('futils');
+ *
+ * sum(1, 2, null, 3); // -> 6
+ * sum([1, 2, null, 3]); // -> 6
+ * sum([1, 2], 3); // -> 6
+ * sum(null); // -> 0
+ *
+ * // -- or use with iterators. this generator produces up to N numbers
+ * function * genN (n) {
+ *     const i = 0;
+ *     const j = Math.abs(n);
+ *     while (i <= j) {
+ *     	   yield i;
+ *     	   i += 1;
+ *     }
+ * }
+ *
+ * sum(genN(3)); // -> 6
+ * sum(genN(2), 3); // -> 6
+ * sum(0, gen(3)); // -> 6
+ *
+ * // -- or mix and match
+ * sum(1, genN(3), null, [1, 2, 3]); // -> 13
+ */
+export const sum = (...ns) => ns.reduce((m, n) => {
+	if (isNumber(n)) {
+		return m + n;
+	}
+	if (isIterable(n)) {
+		const go = trampoline((x, xs) => {
+			if (xs.length < 1) { return x; }
+			return suspend(go, x + (isNumber(xs[0]) ? xs[0] : 0), xs.slice(1));
+		});
+		return go(m, [...n]);
+	}
+	return m;
+}, 0);
+
+/**
+ * Calculates the product based on different possible inputs. Ignores values
+ *     which are not numbers or iterators and replaces them with one
+ * @method
+ * @version 2.9.0
+ * @param {number|array|iterator} [...a] A list of numbers or many single numbers
+ * @return {number} The product
+ *
+ * @example
+ * const {product} = require('futils');
+ *
+ * product(1, 2, null, 3); // -> 6
+ * product([1, 2, null, 3]); // -> 6
+ * product([1, 2], 3); // -> 6
+ * product(null); // -> 0
+ *
+ * // -- or use with iterators. this generator produces up to N numbers
+ * function * genN (n) {
+ *     const i = 1;
+ *     const j = Math.abs(n);
+ *     while (i <= j) {
+ *     	   yield i;
+ *     	   i += 1;
+ *     }
+ * }
+ *
+ * product(genN(3)); // -> 6
+ * product(genN(2), 3); // -> 6
+ * product(1, gen(3)); // -> 6
+ *
+ * // -- or mix and match
+ * product(1, genN(3), null, [1, 2, 3]); // -> 36
+ */
+export const product = (...ns) => ns.reduce((m, n) => {
+	if (isNumber(n)) {
+		return m < 1 ? n : m * n;
+	}
+	if (isIterable(n)) {
+		const go = trampoline((x, xs) => {
+			if (xs.length < 1) { return x; }
+			return suspend(go, x * (isNumber(xs[0]) ? xs[0] : 1), xs.slice(1));
+		});
+		return go(m < 1 ? 1 : m, [...n]);
+	}
+	return m;
+}, 0);

@@ -28,6 +28,8 @@ export const divide = maths.divide;
 export const modulo = maths.modulo;
 export const gcd = maths.gcd;
 export const lcm = maths.lcm;
+export const sum = maths.sum;
+export const product = maths.product;
 
 export const isNil = type.isNil;
 export const isAny = type.isAny;

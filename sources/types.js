@@ -549,7 +549,7 @@ export const isApply = (x) => !!x && isFunc(x.ap);
  * 
  * isFoldable(makeFoldable(10)); // -> true
  */
-export const isFoldable = (x) => !!x && isFunc(x.fold);
+export const isFoldable = (x) => !!x && (isFunc(x.fold) || isFunc(x.reduce));
 
 /**
  * Returns true if given a bifunctor (something that implements `biMap`)

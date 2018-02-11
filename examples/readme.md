@@ -1,5 +1,5 @@
 # futils Examples
-A growing set of **How to** tutorials for working with the `futils` package.
+A growing set of tutorials for working with the `futils` package.
 
 ## Available tutorials
 * [Getting started](./getting-started.md)
@@ -12,5 +12,6 @@ A growing set of **How to** tutorials for working with the `futils` package.
 * [List of contacts](./contacts-app.md)
 * [Lenses](./lenses.md)
 * [Types](./datatypes.md)
+* [Stateful transformations](./stateful-transformations.md)
 * [FRP](./frp.md)
 * [Transducers](./transducers.md);

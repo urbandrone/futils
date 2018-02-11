@@ -14,7 +14,7 @@
 1. Type checking
 2. Arity modifications
 3. Function combinators and decorators
-4. Trampolining
+4. Trampolines
 5. Collection operations
 6. Lenses
 7. Transducers
@@ -25,7 +25,12 @@
 
 One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with a lot of other stuff too: jQuery, Reactive Streams, React/Preact and virtual-dom, JSPM, Electron...
 
-Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the invocation until all needed parameters are given.
+Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the invocation until all needed parameters are given, for example:
+```javascript
+const incAll = map((n) => n + 1);
+
+incAll([1, 2, 3]); // -> [2, 3, 4]
+```
 
 ## More information
 [API Documentation](http://www.der-davi.de/futils/docs/index.html)  
@@ -39,8 +44,8 @@ npm install futils --save
 ```
 
 After installation you can access the functions by calling require:
-```
-const _ = require('futils');
+```javascript
+const {curry, pipe, map} = require('futils');
 
 // your code
 ```
@@ -52,8 +57,8 @@ jspm install npm:futils
 ```
 
 After the package has been installed successfully, you can import and use the toolkit like you would do with any other package too:
-```
-import {pipe, isString, call} from 'futils';
+```javascript
+import {curry, pipe, map} from 'futils';
 
 // your code
 ```
@@ -72,14 +77,14 @@ Download the `futils.js` file and include it with a script tag which allows you 
 ```
 
 You can then access the namespace from there:
-```
-var _ = futils;
+```javascript
+var {curry, pipe, map} = futils;
 
 // your code
 ```
 
-### Via CDN (unpkg.com)
-Grab the latest version of `futils` from the [unpkg](https://unpkg.com/futils@latest/futils.js) CDN.
+### Via CDN
+Grab the latest version of `futils` either from the [jsdelivr](https://www.jsdelivr.com/package/npm/futils) or the [unpkg](https://unpkg.com/futils@latest/futils.js) CDN.
 
 > If you want to use `futils` in non ES2015-ready browsers, make sure you
 > include a ES2015 environment polyfill like 
@@ -88,7 +93,7 @@ Grab the latest version of `futils` from the [unpkg](https://unpkg.com/futils@la
 
 ## Install for AMD
 If you want to use `futils` with a AMD powered development workflow, you can do that too. Just like using it in the browser, all you have to do is download the file `futils.js` and use it in your code:
-```
+```javascript
 define(['path/to/futils'], function (futils) {
     // your code
 });
