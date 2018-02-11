@@ -2,7 +2,7 @@
 A growing set of tutorials and examples for working with the `futils` package.
 
 ## Basics
-These tutorials will explain the basics of `futils` and give you an introduction into some core concepts in functional programming. Choose one if you don't have any background in writing functional JavaScript or if you just want to refresh you knowledge.
+These tutorials will explain the basics of `futils` and give you an introduction into some core concepts in functional programming. Choose one if you don't have any background in writing functional JavaScript, want to see what `futils` provides or if you just want to refresh you knowledge.
 * [Getting started](./getting-started.md)
 * [Currying and partial application](./currypartial.md)
 * [Array mutations](./arrays.md)
@@ -12,10 +12,10 @@ These tutorials will explain the basics of `futils` and give you an introduction
 * [Stateful transformations](./stateful-transformations.md)
 * [Lenses](./lenses.md)
 * [Types](./datatypes.md)
-* [Transducers](./transducers.md);
+* [Transducers](./transducers.md)
 
 ## Advanced
-Tutorials listed make use of the things described in the basic tutorials and show some possible real world examples. Take a look at the ones you are interested in if you already have some knowledge in writing functional JavaScript and want to see how `futils` can help you.
+Tutorials listed below make use of the concepts described in the basic tutorials and show some possible real world examples. Take a look at the ones you are interested in if you already have some knowledge in writing functional JavaScript and want to see how `futils` can help you with it.
 * [Small Applications](./small-app.md)
 * [A list of contacts](./contacts-app.md)
 
