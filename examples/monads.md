@@ -459,7 +459,7 @@ In case you want to run different Tasks in parallel, the Tasks in `futils` have 
 ### Promise compatibility
 A `Task` can easily be converted into a `Promise` and vice versa, with the static `Task.fromPromise` and `Task.toPromise` methods. Each instance of a Task additionally has a `toPromise` method implemented, which makes converting a breeze. Please note that a `Task` which is converted into a `Promise` is evaluted immediatly, because that's the execution model of promises.
 
-Make sure to get yourself familiar with `Functor`s, `Applicative`s and `Monad`s, we are going to use them in the next tutorial a lot.
+Make sure to get yourself familiar with `Functor`s, `Applicative`s and `Monad`s, we are going to use them a lot in upcoming tutorial.
 
 ---
 [Index](./readme.md)
