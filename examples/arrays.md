@@ -69,7 +69,7 @@ OK, this might be a bit cheesy but it illustrates the basic concept. We define _
 ### Creating images from Base64 encoded strings
 Here is another example of the concept. We want to create a hashmap of images from an array of `{}` which describe the images. Something you might receive from a web api.
 
-So here is how you might end up building this stuff (we'll see how to work with async code in [tutorial four](./ex04-monads.md)):
+So here is how you might end up building this stuff (we'll see how to work with async code when we reach the [monads tutorial](./monads.md)):
 
 ```javascript
 // notice how we use futils from a CDN and therefor don't use require but the

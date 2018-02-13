@@ -7,10 +7,14 @@ What's interesting about lenses in general is their ability to open nested data 
 
 Because all lenses are just functions in and of themself, they can be composed together like all other functions can with `compose` and `pipe`.
 
+> If you use `compose`, you are able to write your lenses from left to right,
+> which makes them more readable. With `pipe`, you have to write them from
+> right to left.
+
 With `futils`, you can create lenses which operate on objects with the `makeLenses` function. See below for some example code.
 
 ```javascript
-const {makeLenses, view, set, over, pipe} = require('futils');
+const {makeLenses, view, set, over, compose} = require('futils');
 
 // This is our state
 const Player = {name: 'John Doe', stats: {hp: {max: 550, level: 275}, level: 6}};
@@ -25,7 +29,7 @@ We have a bunch of lenses now, but most of them are not really useful just by th
 The `view` function is useful to extract (or view, hence it's name) the part of the data structure the used lens is focusing on. For example:
 
 ```javascript
-const {makeLenses, view, set, over, pipe} = require('futils');
+const {makeLenses, view, set, over, compose} = require('futils');
 
 
 const Player = {name: 'John Doe', stats: {hp: {max: 550, level: 275}, level: 6}};
@@ -34,7 +38,7 @@ const L = ...
 
 
 // composition of lenses
-const hpLevel = pipe(L.stats, L.hp, L.level);
+const hpLevel = compose(L.stats, L.hp, L.level);
 
 
 view(L.name, Player); // -> 'John Doe'
@@ -57,7 +61,7 @@ Note that `set` does not alter the `Player` constant or it's internals! instead,
 
 
 ### Over
-We have ways to set and to view now but we cannot manipulate any value which is inside a structure. This is what `over` is useful for. It works like mapping a function through a lens over a value and then giving the whole structure back again.
+Now we have a way to set and to view parts of the structure, but we cannot manipulate any value which is inside it. This is what `over` is useful for. It works like mapping a function through a lens over a value and then giving the whole structure back again.
 
 ```javascript
 const L = ...
@@ -79,12 +83,12 @@ Like `set` it creates a new structure and leaves the old one intact.
 
 
 ## Focusing over arrays
-When creating a new set of lenses with `makeLenses`, a special lens for numerical keys is created too. It has the special name `index`.
+When creating a new set of lenses with `makeLenses`, a special lens for numerical keys is created, too. It has the special name `index`.
 
 ```javascript
 const L = makeLenses(); // just index based lenses
 
-const thirdOfFirst = pipe(L.index(0), L.index(2));
+const thirdOfFirst = compose(L.index(0), L.index(2));
 
 view(thirdOfFirst, [['a', 'b', 'c']]); // -> 'c'
 set(thirdOfFirst, 'd', [['a', 'b', 'c']]); // -> [['a', 'b', 'd']]
@@ -97,7 +101,7 @@ Instead of piping the whole array structure through the lens, it is also possibl
 [['a', 'b', 'c']].map(over(L.index(2), toUpper)); // -> [['a', 'b', 'C']]
 ```
 
-If you need to map over all items an array contains, `futils` provides a special helper lens called `mappedLens`:
+If you need to map over every item of an array, `futils` provides a special helper lens called `mappedLens`:
 
 ```javascript
 const {mappedLens, over} = require('futils');
@@ -108,9 +112,9 @@ over(mappedLens, toUpper, ['a', 'b', 'c']); // -> ['A', 'B', 'C']
 You can compose it exactly like other lenses:
 
 ```javascript
-const {mappedLens, over, pipe} = require('futils');
+const {mappedLens, over, compose} = require('futils');
 
-const mapMapLens = pipe(mappedLens, mappedLens);
+const mapMapLens = compose(mappedLens, mappedLens);
 
 over(mapMapLens, toUpper, [['a', 'b', 'c']]); // -> [['A', 'B', 'C']]
 ```
@@ -153,7 +157,8 @@ over(mapsL('users'), prog, userMap).entries();
 However, by using this code the `userMap` structure is altered which is _not_ how lenses work in general. So please keep in mind: If you create new lens types, _you are responsible for making them work correctly_. This means, the setter function should create a new `Map`.
 
 > This is not necessary but just good measure! Maybe you are working with a
-> third party library like `Immutable.js` which already does it for you.
+> third party library like `Immutable.js` which already creates a new Map when
+> you call `set` on it!
 
 ```javascript
 const {lens, over} = require('futils');

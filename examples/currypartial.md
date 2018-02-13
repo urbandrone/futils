@@ -162,7 +162,7 @@ const handleEvent = pipe(
 These are some of the many basic building blocks provided by the library.
 
 ## Next parts
-In the next tutorials you will see how to use `futils` in other, more advanced situations. You will be introduced to other concepts and aspects like reactive streams and monads. After that, we are going to build a simple application mainly from `futils` itself as well as a little library called `snabbdom` which does the virtual DOM rendering stuff. Stay tuned!
+In upcoming tutorials, you will see how to use `futils` in other, more advanced situations. You will be introduced to other concepts and aspects like lenses, transducers and monads.
 
 
 
