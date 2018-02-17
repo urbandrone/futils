@@ -13,7 +13,7 @@ Then create a new `.js` file inside that directory with the following contents:
 ```javascript
 const fetch = require('node-fetch');
 const rx = require('kefir');
-const f = require('futils');
+const {call, map, pipe} = require('futils');
 ```
 
 ## Getting a list of repos
@@ -21,7 +21,7 @@ For now, we want to show a list of all repositories a specific Github user has a
 ```javascript
 const fetch = require('node-fetch');
 const rx = require('kefir');
-const f = require('futils');
+const {call, map, pipe} = require('futils');
 
 let URL = 'https://api.github.com/users/octocat/repos';
 
@@ -39,7 +39,7 @@ let URL = 'https://api.github.com/users/octocat/repos';
 const fetchRepos = (url) => rx.fromPromise(fetch(url));
 
 // toJson :: Response -> JSON
-const toJson = f.call('json');
+const toJson = call('json');
 
 fetchRepos(URL).
     map(toJson);
@@ -53,13 +53,13 @@ Now that we have a way to fetch data and parse it to JSON, all that's left to do
 const fetchRepos = (url) => rx.fromPromise(fetch(url));
 
 // toJson :: Response -> JSON
-const toJson = f.call('json');
+const toJson = call('json');
 
 // render :: array[JSON] -> array[string]
-const render = f.map((repo) => `${repo.name}: ${repo.html_url}`);
+const render = map((repo) => `${repo.name}: ${repo.html_url}`);
 
 // join :: array[string] -> string
-const join = f.call('join', '\n');
+const join = call('join', '\n');
 
 fetchRepos(URL).
     map(toJson).
@@ -74,7 +74,7 @@ But wait, we can do better than that. For example, let's reduce the number of ti
 ...
 
 fetchRepos(URL).
-    map(f.pipe(toJson, render, join)).
+    map(pipe(toJson, render, join)).
     onValue(console.log.bind(console)).
     onError(console.error.bind(console));
 ```
@@ -84,25 +84,26 @@ That's it! Here is the complete example code:
 ```javascript
 const fetch = require('node-fetch');
 const rx = require('kefir');
-const f = require('futils');
+const {call, map, pipe} = require('futils');
 
 let URL = 'https://api.github.com/users/octocat/repos';
 const fetchRepos = (url) => rx.fromPromise(fetch(url));
 
 // toJson :: Response -> JSON
-const toJson = f.call('json');
+const toJson = call('json');
 
 // render :: array[JSON] -> array[string]
-const render = f.map((repo) => `${repo.name}: ${repo.html_url}`);
+const render = map((repo) => `${repo.name}: ${repo.html_url}`);
 
 // join :: array[string] -> string
-const join = f.call('join', '\n');
+const join = call('join', '\n');
 
 fetchRepos(URL).
-    map(f.pipe(toJson, render, join)).
+    map(pipe(toJson, render, join)).
     onValue(console.log.bind(console)).
     onError(console.error.bind(console));
 ```
+
 
 ---
 [Index](./readme.md)
