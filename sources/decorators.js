@@ -136,7 +136,9 @@ export const curry = (f) => {
             if (f.length <= args.length) {
                 return f(...args);
             }
-            return (...rest) => curry(f)(...args, ...rest);
+            return (...rest) => {
+                return curry(f)(...args, ...rest);
+            }
         }
     }
     throw 'decorators::curry awaits a function but saw ' + f;
@@ -173,7 +175,9 @@ export const curryRight = (f) => {
             if (f.length <= args.length) {
                 return f(...args.reverse());
             }
-            return (...rest) => curry(f)(...args, ...rest);
+            return (...rest) => {
+                return curry(f)(...args, ...rest);
+            }
         }
     }
     throw 'decorators::curryRight awaits a function but saw ' + f;
@@ -200,10 +204,11 @@ export const curryRight = (f) => {
  * pAdd(2); // -> 3
  */
 export const partial = (f, ...pargs) => {
-    var _ps = pargs;
+    var _ps = pargs, _rest;
     if (isFunc(f)) {
-        while (_ps.length < f.length) {
-            _ps.push(void 0);
+        if (_ps.length < f.length) {
+            _rest = new Array(Math.max(0, f.length - _ps.length));
+            _ps = [..._ps, ..._rest.fill(void 0)];
         }
         return (...args) => {
             let _as = _ps.map((a) => isVoid(a) ? args.shift() : a);
@@ -237,10 +242,11 @@ export const partial = (f, ...pargs) => {
  * pAdd(2); // -> 3
  */
 export const partialRight = (f, ...pargs) => {
-    var _ps = pargs;
+    var _ps = pargs, _rest;
     if (isFunc(f)) {
-        while (_ps.length < f.length) {
-            _ps.push(void 0);
+        if (_ps.length < f.length) {
+            _rest = new Array(Math.max(0, f.length - _ps.length));
+            _ps = [..._ps, ..._rest.fill(void 0)];
         }
         return (...args) => {
             let _as = _ps.map((a) => isVoid(a) ? args.shift() : a);

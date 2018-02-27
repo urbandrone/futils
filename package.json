@@ -5,7 +5,7 @@
   "main": "futils.js",
   "module": "sources/__main.es6.js",
   "scripts": {
-    "test": "./node_modules/.bin/jasmine-node ./specs/ --captureExceptions",
+    "test": "./node_modules/.bin/jasmine-node ./specs --captureExceptions",
     "docs": "./node_modules/.bin/jsdoc -c ./conf.json --verbose",
     "bundle": "rollup -c"
   },
@@ -16,12 +16,13 @@
   "keywords": [
     "functional programming",
     "toolkit",
-    "lenses",
-    "transducers",
-    "utilities",
-    "union type",
     "monads",
     "monoids",
+    "lenses",
+    "transducers",
+    "combinators",
+    "decorators",
+    "ADT",
     "ES2015",
     "ES6"
   ],

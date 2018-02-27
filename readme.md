@@ -9,23 +9,23 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## About
-`futils` (spoken "f-utils") is a collection composed of helpers from these categories:
+`futils` (spoken "f-utils") is a small (~ 10 Kb gzipped) but versatile collection of functional programming goodies. It is composed of helpers from these categories:
 
 1. Type checking
 2. Arity modifications
 3. Function combinators and decorators
 4. Trampolines
 5. Collection operations
-6. Lenses
+6. Lenses (van Laarhoven)
 7. Transducers
-8. Monoids (Additive, Multiple, Char, Fn, All, Any, Min, Max, Dict)
+8. Monoids (Additive, Multiple, Char, Fn, All, Any, Min, Max, Dict, Unit)
 9. Monads (Identity, Maybe, Either, State, IO, Task)
 10. Maths (small extensions to _Math_)
 11. Abstract types and pattern matching (Experimental)
 
-One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with a lot of other stuff too: jQuery, Reactive Streams, React/Preact and virtual-dom, JSPM, Electron...
+One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with a lot of other stuff – here is a small excerpt: jQuery, Reactive Streams, React/Preact and virtual-dom, Immutable.js, Electron...
 
-Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the invocation until all needed parameters are given, for example:
+Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the execution until all needed parameters are given, for example:
 ```javascript
 const incAll = map((n) => n + 1);
 

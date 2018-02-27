@@ -9,7 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isAny, isFunc, isArray, isString, isSetoid, isFunctor, isMap,
-        isNumber, isObject, isIterable, isApply, isMonoid, isRegex} from './types';
+        isNumber, isObject, isIterable, isApply, isMonoid, isRegex, isGenerator} from './types';
 import {dyadic, triadic} from './arity';
 import {trampoline, suspend} from './trampolines';
 
@@ -23,6 +23,16 @@ import {trampoline, suspend} from './trampolines';
 
 
 const _owns = Object.prototype.hasOwnProperty;
+
+const _runGen = (f, seed, gen) => {
+    let result = seed, x = null;
+    while (true) {
+        x = f(result, gen);
+        if (x.done) { break; }
+        else { result = x.value; }
+    }
+    return result;
+}
 
 /**
  * Allows to predefine a method invocation
@@ -38,8 +48,8 @@ const _owns = Object.prototype.hasOwnProperty;
  * const upper = call('toUpperCase');
  * upper('hello world'); // -> 'HELLO WORLD'
  *
- * const firstHalf = call('slice', 0, 5);
- * firstHalf([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // -> [1, 2, 3, 4, 5]
+ * const firstFive = call('slice', 0, 5);
+ * firstFive([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // -> [1, 2, 3, 4, 5]
  */
 export const call = (method, ...partials) => (provider, ...rest) => {
     let res = isString(method) && isFunc(provider[method]) ?
@@ -291,7 +301,7 @@ export const concat = dyadic((a, b) => {
 });
 
 /**
- * Given a iterable collection, returns the first item
+ * Given a iterable collection, returns the first item.
  * @method
  * @version 0.2.0
  * @param {array|array-like} xs The collection
@@ -324,10 +334,11 @@ export const head = (xs) => [first(xs)];
 
 
 /**
- * Given a iterable collection, returns all items but the last of it
+ * Given a iterable collection, returns all items but the last of it. Don't use
+ *    it on infinite sequences.
  * @method
  * @version 2.0.0
- * @param {array|array-like} xs The collection
+ * @param {array|array-like|iterator} xs The collection
  * @return {array} Whatever the initial items are
  *
  * @example
@@ -339,14 +350,20 @@ export const head = (xs) => [first(xs)];
  *     document.querySelectorAll('a')
  * ); // -> [<a></a>, <a></a>, ...]
  */
-export const initial = (xs) => isArray(xs) ?
-    xs.slice(0, xs.length - 1) :
-    isIterable(xs) ?
-    Array.from(xs).slice(0, xs.length - 1) :
-    [];
+export const initial = (xs) => {
+    let _xs = xs;
+    if (isArray(xs)) {
+        return xs.slice(0, xs.length - 1);
+    }
+    if (isIterable(xs)) {
+        _xs = Array.from(xs);
+        return _xs.slice(0, _xs.length - 1);
+    }
+    return [];
+}
 
 /**
- * Given a iterable collection, returns the last item
+ * Given a iterable collection, returns the last item.
  * @method
  * @version 0.2.0
  * @param {array|array-like} xs The collection
@@ -362,7 +379,7 @@ export const initial = (xs) => isArray(xs) ?
 export const last = (xs) => xs[xs.length - 1];
 
 /**
- * Given a iterable collection, returns the tail of it
+ * Given a iterable collection, returns the tail of it.
  * @method
  * @version 2.0.0
  * @param {array|array-like} xs The collection
@@ -378,10 +395,11 @@ export const last = (xs) => xs[xs.length - 1];
 export const tail = (xs) => [last(xs)];
 
 /**
- * Given a iterable collection, returns all items but the first of it
+ * Given a iterable collection, returns all items but the first of it. Don't use
+ *    it on infinite sequences.
  * @method
  * @version 2.0.0
- * @param {array|array-like} xs The collection
+ * @param {array|array-like|iterator} xs The collection
  * @return {array} Whatever the rest items are
  *
  * @example
@@ -398,11 +416,12 @@ export const rest = (xs) => isArray(xs) ?
     [];
 
 /**
- * Returns the item at the given index position from either a string or array
+ * Returns the item at the given index position from either a string, array or
+ *     array-like. Don't use it on infinite sequences
  * @method
  * @version 2.5.2
  * @param {number} index Index position of the item to get (zero based)
- * @param {string|array} x Collection to get the item from
+ * @param {string|array|iterator} x Collection to get the item from
  * @return {any} Item at the given position
  *
  * @example
@@ -410,9 +429,10 @@ export const rest = (xs) => isArray(xs) ?
  *
  * nth(1, 'abc'); // -> 'b'
  */
-export const nth = dyadic((i, x) => isNumber(i) && 
-    (isString(x) || isArray(x)) ?
-    x[Math.abs(i)] :
+export const nth = dyadic((i, x) => isNumber(i) && (isString(x) || isArray(x)) ?
+    x[Math.max(0, Math.min(x.length, Math.abs(i)))] :
+    isIterable(x) ?
+    nth(i, Array.from(x)) :
     x)
 
 /**
@@ -512,11 +532,11 @@ export const trim = (x) => isString(x) ? x.trim() : x;
 /**
  * Given a string or an array, reverses the input. If the input is an array,
  *   the function first creates a copy and reverses that so the original is
- *   left intact
+ *   left intact. Don't use it on infinite sequences
  * @method
  * @version 2.7.2
- * @param {string|array} x The string or array to reverse
- * @return {string|array} The reversed string or array
+ * @param {string|array|array-like|iterator} x The collection to reverse
+ * @return {string|array} A reversed string or array
  *
  * @example
  * const {reverse} = require('futils');
@@ -529,13 +549,16 @@ export const reverse = (xs) => isArray(xs) ?
     xs.slice().reverse() :
     isString(xs) ?
     xs.split('').reverse().join('') :
+    isIterable(xs) ?
+    Array.from(xs).reverse() :
     xs;
 
 /**
- * Given a iterable collection, returns all unique items of it
+ * Given a iterable collection, returns all unique items of it. Don't use
+ *    it on infinite sequences.
  * @method
  * @version 2.0.0
- * @param {array|array-like} xs The collection
+ * @param {array|array-like|iterator} xs The collection
  * @return {array} Only unique items
  *
  * @example
@@ -543,16 +566,17 @@ export const reverse = (xs) => isArray(xs) ?
  *
  * unique([2, 1, 2, 3, 3, 1]); // -> [2, 1, 3]
  */
-export const unique = (xs) => xs.reduce((acc, x) => {
+export const unique = (xs) => Array.from(xs).reduce((acc, x) => {
     return acc.lastIndexOf(x) < 0 ? [...acc, x] : acc;
 }, []);
 
 /**
- * Given two iterable collections, returns the union of them
+ * Given two iterable collections, returns the union of them. Don't use
+ *    it on infinite sequences.
  * @method
  * @version 2.0.0
- * @param {array|array-like} xs First collection
- * @param {array|array-like} ys Second collection
+ * @param {array|array-like|iterator} xs First collection
+ * @param {array|array-like|iterator} ys Second collection
  * @return {array} The union of xs and ys
  *
  * @example
@@ -563,11 +587,12 @@ export const unique = (xs) => xs.reduce((acc, x) => {
 export const union = dyadic((xs, ys) => unique([...xs, ...ys]));
 
 /**
- * Given two iterable collections, returns the intersection of them
+ * Given two iterable collections, returns the intersection of them. Don't use
+ *    it on infinite sequences.
  * @method
  * @version 2.0.0
- * @param {array|array-like} xs First collection
- * @param {array|array-like} ys Second collection
+ * @param {array|array-like|iterator} xs First collection
+ * @param {array|array-like|iterator} ys Second collection
  * @return {array} The intersection of xs and ys
  *
  * @example
@@ -576,18 +601,25 @@ export const union = dyadic((xs, ys) => unique([...xs, ...ys]));
  * intersect([2, 1, 2], [3, 3, 1]); // -> [1]
  */
 export const intersect = dyadic((xs, ys) => {
-    return union(xs, ys).filter((a) => {
-        return xs.indexOf(a) > -1 && ys.indexOf(a) > -1;
-    });
+    let _xs = xs, _ys = ys;
+    if (isIterable(xs) && isIterable(ys)) {
+        _xs = Array.from(xs);
+        _ys = Array.from(ys);
+        return union(_xs, _ys).filter((a) => {
+            return _xs.indexOf(a) > -1 && _ys.indexOf(a) > -1;
+        });
+    }
+    throw 'operators::intersect awaits two iterables but saw ' + [xs, ys];
 });
 
 
 /**
- * Given two iterable collections, returns the difference of them
+ * Given two iterable collections, returns the difference of them. Don't use
+ *    it on infinite sequences.
  * @method
  * @version 2.0.0
- * @param {array|array-like} xs First collection
- * @param {array|array-like} ys Second collection
+ * @param {array|array-like|iterator} xs First collection
+ * @param {array|array-like|iterator} ys Second collection
  * @return {array} The difference of xs and ys
  *
  * @example
@@ -596,9 +628,15 @@ export const intersect = dyadic((xs, ys) => {
  * differ([2, 1, 2], [3, 3, 1]); // -> [2, 3]
  */
 export const differ = dyadic((xs, ys) => {
-    return union(xs, ys).filter((a) => {
-        return xs.indexOf(a) < 0 || ys.indexOf(a) < 0;
-    });
+    let _xs = xs, _ys = ys;
+    if (isIterable(xs) && isIterable(ys)) {
+        _xs = Array.from(xs);
+        _ys = Array.from(ys);
+        return union(_xs, _ys).filter((a) => {
+            return _xs.indexOf(a) < 0 || _ys.indexOf(a) < 0
+        });
+    }
+    throw 'operators::differ awaits two iterables but saw ' + [xs, ys];
 });
 
 /**
@@ -637,12 +675,13 @@ tail call optimization, which now finally seems to arrive.
 
 /**
  * Given a function, a seed value and a iterable collection, return the
- *     iterable folded down into the seed value
+ *     iterable folded down into the seed value. Don't use
+ *     it on infinite sequences.
  * @method 
  * @version 2.2.0
  * @param {function} f Function to call on each iteration
  * @param {any} x The seed value to fold into
- * @param {array|Monad|Monoid} xs The collection to fold down
+ * @param {array|array-like|iterator|Monad|Monoid} xs The collection to fold
  * @return {any} Depends on the seed value
  *
  * @example
@@ -669,12 +708,13 @@ export const fold = triadic((f, x, xs) => {
 
 /**
  * Given a function, a seed value and a iterable collection, return the
- *     iterable folded down into the seed value
+ *     iterable folded down into the seed value. Don't use
+ *     it on infinite sequences.
  * @method 
  * @version 2.8.0
  * @param {function} f Function to call on each iteration
  * @param {any} x The seed value to fold into
- * @param {array|Monad|Monoid} xs The collection to fold down
+ * @param {array|array-like|iterator|Monad|Monoid} xs The collection to fold
  * @return {any} Depends on the seed value
  *
  * @example
@@ -745,11 +785,11 @@ export const range = dyadic((start, stop) => {
 /**
  * Given a function and a list, filters the list with the given function and
  *     returns a list that only contains values for which the function returned
- *     a truthy value
+ *     a truthy value. Don't use it on infinite sequences.
  * @method 
  * @version 2.2.0
  * @param {function} f Filter function
- * @param {array} xs List to filter
+ * @param {array|array-like|iterator} xs List to filter
  * @return {array} New list
  *
  * @example
@@ -760,15 +800,15 @@ export const range = dyadic((start, stop) => {
  * filter(evens, [1, 2, 3, 4, 5, 6]); // -> [2, 4, 6]
  */
 export const filter = dyadic((f, xs) => {
-    return fold((ys, x) => !!f(x) ? [...ys, x] : ys, [], Array.from(xs));
+    return fold((ys, x) => !!f(x) ? [...ys, x] : ys, [], xs);
 });
 
 /**
  * Given a list, returns a new list with all `null` and `undefined` values
- *     removed
+ *     removed. Don't use it on infinite sequences.
  * @method 
  * @version 2.2.0
- * @param {array} xs List to transform
+ * @param {array|array-like|iterator} xs List to transform
  * @return {array} A new list
  *
  * @example
@@ -776,14 +816,15 @@ export const filter = dyadic((f, xs) => {
  *
  * keep([1, null, 3]); // -> [1, 3]
  */
-export const keep = (xs) => filter((x) => x != null, Array.from(xs));
+export const keep = (xs) => filter((x) => x != null, xs);
 
 /**
- * Given a number `n` and a list, drops the first n items from the list
+ * Given a number `n` and a list, drops the first n items from the list. Don't
+ *     use it on infinite sequences.
  * @method 
  * @version 2.2.0
  * @param {number} n Number of items to drop
- * @param {array} xs List to drop items from
+ * @param {array|array-like|iterator} xs List to drop items from
  * @return {array} New list
  *
  * @example
@@ -804,11 +845,12 @@ export const drop = dyadic((n, xs) => {
 
 /**
  * Given a predicate function and a list, drops items from the list until the
- *     function returns a falsy value for the first time
+ *     function returns a falsy value for the first time. Don't use
+ *     it on infinite sequences.
  * @method 
  * @version 2.2.0 
  * @param {function} f Predicate function
- * @param {array} xs List to drop items from
+ * @param {array|array-like|iterator} xs List to drop items from
  * @return {array} New list
  *
  * @example
@@ -816,7 +858,7 @@ export const drop = dyadic((n, xs) => {
  *
  * const lt3 = (n) => n < 3;
  *
- * dropWhile(lt3, [1, 2, 3, 4, 5]); // -> [4, 5]
+ * dropWhile(lt3, [1, 2, 3, 4]); // -> [3, 4]
  */
 export const dropWhile = dyadic((f, xs) => {
     let drops = true;
@@ -831,20 +873,42 @@ export const dropWhile = dyadic((f, xs) => {
 
 /**
  * Given a number `n` and a list, takes n items from the beginning of the list
- *     and drops the rest
+ *     and drops the rest. Can be used on infinite sequences.
  * @method 
  * @version 2.2.0 
  * @param {number} n Number of items to take
- * @param {array} xs List to take items from
+ * @param {array|array-like|iterator} xs List to take items from
  * @return {array} New list
  *
  * @example
  * const {take} = require('futils');
  *
  * take(2, [1, 2, 3, 4, 5]); // -> [1, 2];
+ *
+ * 
+ * // You can even use it on infinite sequences
+ * function * nums() {
+ *     let i = 1;
+ *     while (true) {
+ *         yield i;
+ *         i += 1;
+ *     }
+ * }
+ *
+ * take(2, nums()); // -> [1, 2]
  */
 export const take = dyadic((n, xs) => {
     let i = 0;
+    if (isGenerator(xs)) {
+        return _runGen((res, gen) => {
+            const v = gen.next();
+            if (v.done || i >= n) {
+                return {done: true, value: res};
+            }
+            i += 1;
+            return {value: [...res, v.value]};
+        }, [], xs);
+    }
     return fold((ys, x) => {
         if (i < n) {
             i += 1;
@@ -856,11 +920,12 @@ export const take = dyadic((n, xs) => {
 
 /**
  * Given a predicate function and a list, takes items from the beginning of the
- *     list until the function returns a falsy value for the first time
+ *     list until the function returns a falsy value for the first time. Can be
+ *     used on infinite sequences.
  * @method 
  * @version 2.2.0 
  * @param {function} f Predicate function
- * @param {array} xs List to take items from
+ * @param {array|array-like|iterator} xs List to take items from
  * @return {array} New list
  *
  * @example
@@ -869,9 +934,30 @@ export const take = dyadic((n, xs) => {
  * const lt3 = (n) => n < 3;
  *
  * takeWhile(lt3, [1, 2, 3, 4, 5]); // -> [1, 2]
+ *
+ * 
+ * // You can even use it on infinite sequences
+ * function * nums() {
+ *     let i = 1;
+ *     while (true) {
+ *         yield i;
+ *         i += 1;
+ *     }
+ * }
+ *
+ * takeWhile(lt3, nums()); // -> [1, 2]
  */
 export const takeWhile = dyadic((f, xs) => {
     let takes = true;
+    if (isGenerator(xs)) {
+        return _runGen((res, gen) => {
+            const v = gen.next();
+            if (v.done || !(takes = !!f(v.value))) {
+                return {done: true, value: res};
+            }
+            return {value: [...res, v.value]};
+        }, [], xs);
+    }
     return fold((ys, x) => {
         if (takes && (takes = !!f(x))) {
             return [...ys, x];
@@ -882,11 +968,11 @@ export const takeWhile = dyadic((f, xs) => {
 
 /**
  * Given a function and a list, returns the first item for which the function
- *     returns a truthy value
+ *     returns a truthy value. Don't use it on infinite sequences.
  * @method 
  * @version 2.2.0 
  * @param {function} f Function to match with
- * @param {array} xs List to find item from
+ * @param {array|array-like|iterator} xs List to find item from
  * @return {any|null} Either a match or null
  *
  * @example
@@ -897,16 +983,17 @@ export const takeWhile = dyadic((f, xs) => {
  * find(divBy(2), [1, 2, 3, 4, 5]); // -> 2
  */
 export const find = dyadic((f, xs) => {
-    return fold((ys, x) => ys == null && !!f(x) ? x : ys, null, Array.from(xs));
+    return fold((ys, x) => ys == null && !!f(x) ? x : ys, null, xs);
 });
 
 /**
  * Given a function and a list, returns the first item for which the function
- *     returns a truthy value. Matches items from the right
+ *     returns a truthy value. Matches items from the right. Don't use
+ *     it on infinite sequences.
  * @method 
  * @version 2.2.0 
  * @param {function} f Function to match with
- * @param {array} xs List to find item from
+ * @param {array|array-like|iterator} xs List to find item from
  * @return {any|null} Either a match or null
  *
  * @example
@@ -921,7 +1008,7 @@ export const findRight = dyadic((f, xs) => find(f, Array.from(xs).reverse()));
 /**
  * Given a Monoid TypeConstructor and a list, folds all values in the list into
  *     the Monoid Type. When used with a function instead of a Monoid, folds
- *     into a Array and reduces intermediate nestings
+ *     into an array and reduces intermediate nestings
  * @method 
  * @version 2.4.0
  * @param {Monoid|function} M Monoid or function returning a Array
@@ -1074,7 +1161,7 @@ export const ap = dyadic((mf, ma) => {
  * flatten([[1, 2], 3, [[4, 5]]], true); // -> [1, 2, 3, 4, 5]
  */
 export const flatten = (m, deep = false) => {
-    if (isObject(m)) {
+    if (isObject(m) && !isFunc(m.flatten)) {
         return m;
     }
     if (isFunc(m.flatten)) {

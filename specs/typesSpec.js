@@ -1,5 +1,8 @@
 const _ = require('../futils');
 describe('futils/types module', function () {
+    function * gen (n) {
+        yield n;
+    }
 
     it('testing isNil :: a -> b', function () {
         var nul = _.isNil(null);
@@ -175,10 +178,12 @@ describe('futils/types module', function () {
         var a = _.isIterator(null);
         var b = _.isIterator({next: true});
         var c = _.isIterator({next: function () {}});
+        var d = _.isIterator(gen(0));
 
         expect(a).toBe(false);
         expect(b).toBe(false);
         expect(c).toBe(true);
+        expect(d).toBe(true);
     });
 
     it('testing isIterable :: a -> b', function () {
@@ -186,21 +191,19 @@ describe('futils/types module', function () {
         var b = _.isIterable('string');
         var c = _.isIterable({length: 10});
         var d = _.isIterable(new Date());
+        var e = _.isIterable(gen(0));
 
         expect(a).toBe(true);
         expect(b).toBe(true);
         expect(c).toBe(true);
         expect(d).toBe(false);
+        expect(e).toBe(true);
     });
 
     it('testing isGenerator :: a -> b', function () {
         var a = _.isGenerator(null);
         var b = _.isGenerator({next: true});
         var c = _.isGenerator({next() {}});
-
-        function * gen (n) {
-            yield n;
-        }
 
         expect(a).toBe(false);
         expect(b).toBe(false);

@@ -397,11 +397,13 @@ export const isIterator = (x) => !isNil(x) && isFunc(x.next);
 export const isIterable = (x) => !isNil(x) && !!(x[Symbol.iterator] || !isNaN(x.length));
 
 /**
- * Returns true for generator functions
+ * Returns true for iterators from generator functions. This is the strict
+ *     version of isIterator, which only checks for a .next method on the given
+ *     iterator while isGenerator checks for ES2015 conformity
  * @method
  * @version 2.8.0
  * @param {any} x Value to check
- * @return {boolean} True for generators
+ * @return {boolean} True for iterators from generators
  *
  * @example
  * const {isGenerator} = require('futils');

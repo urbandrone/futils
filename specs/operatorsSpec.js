@@ -1,6 +1,14 @@
 const _ = require('../futils');
 describe('futils/operators module', () => {
     
+    function * iter(upper) {
+        let seed = 0;
+        while (seed < upper) {
+            yield seed;
+            seed += 1;
+        }
+    }
+
     it('testing prop :: s -> o -> a', () => {
         expect(_.prop('a', {a: 1})).toBe(1);
         expect(_.prop('a.b', {a: {b: 1}})).toBe(1);
@@ -85,6 +93,7 @@ describe('futils/operators module', () => {
 
     it('testing initial :: xs -> [xs]', () => {
         expect(_.initial([1, 2, 3])).toEqual([1, 2]);
+        expect(_.initial(iter(3))).toEqual([0, 1]);
     });
 
     it('testing last :: xs -> x', () => {
@@ -97,6 +106,7 @@ describe('futils/operators module', () => {
 
     it('testing rest :: xs -> [xs]', () => {
         expect(_.rest([1, 2, 3])).toEqual([2, 3]);
+        expect(_.rest(iter(3))).toEqual([1, 2]);
     });
 
     it('testing nth :: n -> x -> x', () => {
@@ -141,24 +151,29 @@ describe('futils/operators module', () => {
 
     it('testing union :: xs -> ys -> [xs : ys]', () => {
         expect(_.union([1, 2], [3, 2])).toEqual([1, 2, 3]);
+        expect(_.union(iter(3), iter(4))).toEqual([0, 1, 2, 3]);
     });
 
     it('testing intersect :: xs -> ys -> [xs & ys]', () => {
         expect(_.intersect([1, 2], [3, 2])).toEqual([2]);
+        expect(_.intersect(iter(3), iter(4))).toEqual([0, 1, 2]);
     });
 
     it('testing differ :: xs -> ys -> [xs | ys]', () => {
         expect(_.differ([1, 2], [3, 2])).toEqual([1, 3]);
+        expect(_.differ(iter(3), iter(4))).toEqual([3]);
     });
 
     it('testing fold :: Function -> a -> Array -> a', () => {
         const add = (a, b) => a + b;
         expect(_.fold(add, '', ['a', 'b', 'c'])).toBe('abc');
+        expect(_.fold(add, 0, iter(4))).toBe(6);
     });
 
     it('testing foldRight :: Function -> a -> Array -> a', () => {
         const add = (a, b) => a + b;
         expect(_.foldRight(add, '', ['a', 'b', 'c'])).toBe('cba');
+        expect(_.foldRight(add, 0, iter(4))).toBe(6);
     });
 
     it('testing foldMap :: Monoid -> as -> Monoid', () => {
@@ -177,6 +192,7 @@ describe('futils/operators module', () => {
 
     it('testing filter :: Function -> [a] -> [a]', () => {
         expect(_.filter((n) => n < 3, [1, 2, 3])).toEqual([1, 2]);
+        expect(_.filter((n) => n < 3, iter(4))).toEqual([0, 1, 2]);
     });
 
     it('testing keep :: [a] -> [a]', () => {
@@ -185,26 +201,34 @@ describe('futils/operators module', () => {
 
     it('testing drop :: Number -> [a] -> [a]', () => {
         expect(_.drop(2, [1, 2, 3])).toEqual([3]);
+        expect(_.drop(2, iter(4))).toEqual([2, 3]);
     });
 
     it('testing dropWhile :: Function -> [a] -> [a]', () => {
         expect(_.dropWhile((n) => n < 3, [1, 2, 3])).toEqual([3]);
+        expect(_.dropWhile((n) => n < 3, iter(4))).toEqual([3]);
     });
 
     it('testing take :: Number -> [a] -> [a]', () => {
         expect(_.take(2, [1, 2, 3])).toEqual([1, 2]);
+        expect(_.take(2, iter(4))).toEqual([0, 1]);
+        expect(_.take(2, iter(Infinity))).toEqual([0, 1]);
     });
 
     it('testing takeWhile :: Function -> [a] -> [a]', () => {
         expect(_.takeWhile((n) => n < 3, [1, 2, 3])).toEqual([1, 2]);
+        expect(_.takeWhile((n) => n < 3, iter(4))).toEqual([0, 1, 2]);
+        expect(_.takeWhile((n) => n < 3, iter(Infinity))).toEqual([0, 1, 2]);
     });
 
     it('testing find :: Function -> [a] -> a', () => {
         expect(_.find((n) => n % 2 === 0, [1, 2, 3, 4])).toBe(2);
+        expect(_.find((n) => n > 0 && n % 2 === 0, iter(5))).toBe(2);
     });
 
     it('testing findRight :: Function -> [a] -> a', () => {
         expect(_.findRight((n) => n % 2 === 0, [1, 2, 3, 4])).toBe(4);
+        expect(_.findRight((n) => n > 0 && n % 2 === 0, iter(5))).toBe(4);
     });
 
     it('testing equals :: Setoid -> Setoid -> Bool', () => {
