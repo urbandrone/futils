@@ -1,6 +1,6 @@
 {
   "name": "futils",
-  "version": "2.8.4",
+  "version": "2.9.0",
   "description": "Functional programming utility toolkit",
   "main": "futils.js",
   "module": "sources/__main.es6.js",
