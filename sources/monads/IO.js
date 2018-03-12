@@ -9,7 +9,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isFunc} from '../types';
-import {id, compose} from '../combinators';
 
 /**
  * Implementation of the IO monad
@@ -24,7 +23,7 @@ const MV = Symbol('MonadicValue');
 
 /**
  * The IO monad class. This monad is useful if you do not want to perform async
- *   IO actions. If you want to do async IO actions you have to use the
+ *   IO actions. If you want to do async IO actions you should use the
  *   [Task monad]{@link module:monads/task.Task}
  * @class module:monads/io.IO
  * @version 2.0.0
@@ -109,7 +108,9 @@ export class IO {
      */
     map (f) {
         if (isFunc(f)) {
-            return new IO(compose(f, this.run));
+            return new IO((x) => {
+                return f(this.run(x));
+            });
         }
         throw 'IO::map expects argument to be function but saw ' + f;
     }
@@ -177,7 +178,7 @@ export class IO {
      */
     flatMap (f) {
         if (isFunc(f)) {
-            return this.map(f).run();
+            return this.map(f).flatten();
         }
         throw 'IO::flatMap expects argument to be function but saw ' + f;
     }
@@ -260,7 +261,7 @@ export class IO {
      * one.sequence(Identity); // -> Identity(IO(1));
      */
     sequence (A) {
-        return this.traverse(id, A);
+        return this.traverse((x) => x, A);
     }
 
     // -- Semigroup
@@ -283,7 +284,9 @@ export class IO {
      * screenBottom.run(); // -> Int
      */
     concat (M) {
-        return new IO(compose(M.run, this.run));
+        return new IO((x) => {
+            return M.run(this.run(x));
+        });
     }
 
     // -- Monoid
@@ -301,7 +304,7 @@ export class IO {
      * IO.empty().concat(IO.of(1)); // -> IO(1)
      */
     static empty () {
-        return new IO(id);
+        return new IO((x) => x);
     }
     
     /**
@@ -314,7 +317,7 @@ export class IO {
      */
     try (x) {
         try {
-            return this.fold(id, x);
+            return this.fold((y) => y, x);
         } catch (exc) {
             return exc;
         }

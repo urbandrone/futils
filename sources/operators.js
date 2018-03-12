@@ -28,8 +28,12 @@ const _runGen = (f, seed, gen) => {
     let result = seed, x = null;
     while (true) {
         x = f(result, gen);
-        if (x.done) { break; }
-        else { result = x.value; }
+        if (x.done) {
+            if (isFunc(gen.return)) { gen.return(); }
+            break;
+        } else {
+            result = x.value;
+        }
     }
     return result;
 }

@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## About
-`futils` (spoken "f-utils") is a small (~ 10 Kb gzipped) but versatile collection of functional programming goodies. It is composed of helpers from these categories:
+`futils` (spoken "f-utils") is a small (~ 10 Kb gzipped) but versatile collection of functional programming goodies. It ships helpers from these categories:
 
 1. Type checking
 2. Arity modifications
@@ -56,7 +56,7 @@ If you use `jspm` either for a Node or Browser based application:
 jspm install npm:futils
 ```
 
-After the package has been installed successfully, you can import and use the toolkit like you would do with any other package too:
+After the package has been installed successfully, you can import and use the toolkit like you would do with any other package:
 ```javascript
 import {curry, pipe, map} from 'futils';
 
@@ -64,8 +64,8 @@ import {curry, pipe, map} from 'futils';
 ```
 
 > If you want to use `futils` in conjunction with a bundler which supports
-> tree shaking (like `rollup`), only those functions which you already use
-> from `futils` will be included in the final build, which may significantly
+> tree shaking (like `webpack` or `rollup`), only those functions which you 
+> already use will be included in the final build, which may significantly
 > lower the file size of your scripts after bundling. Just make sure you
 > _transpile it after bundling_, because otherwise you may end up with ES5
 > and ES6 code mixed together.
@@ -84,7 +84,7 @@ var {curry, pipe, map} = futils;
 ```
 
 ### Via CDN
-Grab the latest version of `futils` either from the [jsdelivr](https://www.jsdelivr.com/package/npm/futils) or the [unpkg](https://unpkg.com/futils@latest/futils.js) CDN.
+Grab the latest version of `futils` either from [jsdelivr](https://www.jsdelivr.com/package/npm/futils) or [unpkg](https://unpkg.com/futils@latest/futils.js).
 
 > If you want to use `futils` in non ES2015-ready browsers, make sure you
 > include a ES2015 environment polyfill like 

@@ -124,31 +124,27 @@ export class Either {
      * @memberof module:monads/either.Either
      * @static
      * @param {function} f Function to execute
+     * @param {*} x A default value if the function errors
      * @return {function} A function awaiting arguments to execute f
      *
      * @example
      * const {Either} = require('futils');
      *
-     * const readUrl = () => window.location.href;
-     * const fails = () => window.local.href;
+     * const readUrl = (x) => x.href;
      *
-     * Either.try(readUrl)(); // -> Right(' ... ')
-     * Either.try(fails)(); // -> Left('TypeError: ... ')
+     * Either.try(readUrl)(window.location); // -> Right(' ... ')
+     * Either.try(readUrl)(null); // -> Left(TypeError)
+     * 
+     * // if given a default value to recover to: 
+     * Either.try(readUrl, 'github.com')(null); // -> Right('github.com')
      */
-    static try (f) {
+    static try (f, x) {
         if (isFunc(f)) {
             return aritize(f.length, (...args) => {
                 try {
-                    let r = f(...args);
-                    if (Either.is(r)) {
-                        return r;
-                    }
-                    if (evalsRight(r)) {
-                        return Right.of(r);
-                    }
-                    return Left.of(r && r.message ? r.message : r);
+                    return Right.of(f(...args));
                 } catch (exc) {
-                    return Left.of(exc.message);
+                    return x !== undefined ? Right.of(x) : Left.of(exc);
                 }
             });
         }

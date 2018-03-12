@@ -223,9 +223,11 @@ describe('futils/monads module', function () {
         });
 
         it('can try M::try', () => {
-            const h = () => { return new Error('Left'); };
+            const exc = new Error('Left');
+            const h = () => { throw exc; };
             expect(Either.try(f)(1).value).toBe(2);
-            expect(Either.try(h)(1).value).toBe('Left');
+            expect(Either.try(h)(1).value).toBe(exc);
+            expect(Either.try(h, 1)(1).value).toBe(1);
         });
 
         it('can be derived from null M::fromNullable', () => {
@@ -239,8 +241,9 @@ describe('futils/monads module', function () {
         });
 
         it('can be derived from IO M::fromIO', () => {
+            const exc = new Error('Left');
             expect(Either.fromIO(IO.of(1)).value).toBe(1);
-            expect(Either.fromIO(IO.of(new Error('err'))).value).toBe('err');
+            expect(Either.fromIO(IO.of(exc)).value).toBe(exc);
         });
 
         it('can return alternative values .orGet', () => {
