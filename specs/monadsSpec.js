@@ -242,8 +242,9 @@ describe('futils/monads module', function () {
 
         it('can be derived from IO M::fromIO', () => {
             const exc = new Error('Left');
+            const throws = new IO(() => { throw exc; });
             expect(Either.fromIO(IO.of(1)).value).toBe(1);
-            expect(Either.fromIO(IO.of(exc)).value).toBe(exc);
+            expect(Either.fromIO(throws).value).toBe(exc);
         });
 
         it('can return alternative values .orGet', () => {

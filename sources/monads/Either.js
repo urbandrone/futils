@@ -42,7 +42,7 @@ export class Either {
             this[IS_RIGHT] = true;
             return this;
         }
-        this.value = l && l.message ? l.message : l;
+        this.value = l != null ? l : null;
         this[IS_RIGHT] = false;
     }
     set value (a) { this[MV] = a; }
