@@ -8,7 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {isArray, isObject, isNil, isNumber, isString, isFunc} from './types';
+import {isArray, isObject, isNil, isNumber, isString, isFunc, isGenerator} from './types';
 import {curry} from './decorators';
 /**
  * A collection of transducer functions, inspired by Clojure
@@ -75,7 +75,7 @@ export const fold = curry((tf, seed, ls) => {
     var xf = isFunc(tf) ? Transformer(tf) : tf,
         v = seed;
 
-    if (isObject(ls)) {
+    if (isObject(ls) && !isGenerator(ls)) {
         let ks = Object.keys(ls);
         for (let k of ks) {
             v = xf[STEP](v, [ls[k], k]);
@@ -94,6 +94,7 @@ export const fold = curry((tf, seed, ls) => {
             break;
         }
     }
+    if (isFunc(ls.return)) { ls.return(); } // closes pending @@iterator
     return xf[RESULT](v);
 });
 
@@ -317,11 +318,11 @@ export const drop = (n = 1) => {
  */
 export const dropWhile = (f) => {
     return (xf) => {
-        var drop = true, stop = false;
+        var drops = true, stop = false;
         return {
             [INIT]: () => xf[INIT](),
             [STEP]: (xs, v) => {
-                if (!stop && (drop = !!f(v))) {
+                if (!stop && (drops = !!f(v))) {
                     return xs;
                 }
                 stop = true;
@@ -384,12 +385,12 @@ export const take = (n = 1) => {
  */
 export const takeWhile = (f) => {
     return (xf) => {
-        var take = true;
+        var takes = true;
         return {
             [INIT]: () => xf[INIT](),
             [STEP]: (xs, v) => {
-                take = !!f(v);
-                if (take) {
+                takes = !!f(v);
+                if (takes) {
                     return xf[STEP](xs, v);
                 }
                 return Transformer.reduce(xs);

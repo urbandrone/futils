@@ -21,7 +21,7 @@
 8. Monoids (Additive, Multiple, Char, Fn, All, Any, Min, Max, Dict, Unit)
 9. Monads (Identity, Maybe, Either, State, IO, Task)
 10. Maths (small extensions to _Math_)
-11. Abstract types and pattern matching (Experimental)
+11. Abstract types and pattern matching
 
 One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with a lot of other stuff – here is a small excerpt: jQuery, Reactive Streams, React/Preact and virtual-dom, Immutable.js, Electron...
 

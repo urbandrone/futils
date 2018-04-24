@@ -165,7 +165,7 @@ Now we have seen what abstract types _are_, we need to take a look at how we can
 ```javascript
 const show = Type.cata({
     Address: (x) => `${x.street} in ${x.city}`,
-    Person: (x) => `This is ${x.first} ${x.last} from ${show(x.address)}`
+    Person: (x) => `${x.first} ${x.last} from ${show(x.address)}`
 });
 ```
 
@@ -175,7 +175,7 @@ This means: Let `show` be a function which either matches against an `Address` o
 const addr2 = Address({street: 'Teststreet 1', city: 'Exampleton'});
 const dianejones = Person({first: 'Diane', last: 'Jones', address: addr2});
 
-show(dianejones); // -> 'This is Diane Jones from Teststreet 1 in Exampleton'
+show(dianejones); // -> 'Diane Jones from Teststreet 1 in Exampleton'
 ```
 
 What happens if we pass in a string?
@@ -191,7 +191,7 @@ We can relax this behaviour a bit, if we tell `cata` how to deal with things whi
 ```javascript
 const show = Type.cata({
     Address: (x) => `${x.street} in ${x.city}`,
-    Person: (x) => `This is ${x.first} ${x.last} from ${show(x.address)}`,
+    Person: (x) => `${x.first} ${x.last} from ${show(x.address)}`,
     orElse: (x) => isString(x) ? x : ''
 });
 ```
@@ -201,6 +201,30 @@ Let's try passing in the string again:
 ```javascript
 show('Test'); // -> 'Test'
 ```
+
+### Pattern matching
+In fact, we don't have to stop here – `Type.cata` not only allows to match on types defined via `Type` itself, but also to pattern match agains _native_ values (except `null` and `undefined`). This means, we can write the `show` function more expressive by adding a case for strings:
+
+```javascript
+const show = Type.cata({
+    Address: (x) => `${x.street} in ${x.city}`,
+    Person: (x) => `${x.first} ${x.last} from ${show(x.address)}`,
+    String: (s) => s,
+    orElse: () => ''
+});
+```
+
+Finally, we can use _destructuring_. This leaves us with the end result:
+
+```javascript
+const show = Type.cata({
+    Address: ({street, city}) => `${street} in ${city}`,
+    Person: ({first, last, address}) => `${first} ${last} from ${show(address)}`,
+    String: (s) => s,
+    orElse: () => ''
+});
+```
+
 
 ## Conclusion
 This tutorial gave a brief introduction about how to define and use abstract types and the `Type` function provided by `futils`. I hope you enjoyed reading it and got some ideas how to use abstract types in your own programs.

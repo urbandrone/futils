@@ -63,11 +63,16 @@ describe('futils/Type module', () => {
         });
 
         const match = Type.cata({
-            Address: () => `here is the address!`,
+            Address: ({city, street, zip}) => `${street}, in ${match(zip)} ${city}`,
+            Zip: (num) => num,
+            Array: (xs) => xs.join(', '),
+            Boolean: (bool) => bool ? 'True!' : 'False!',
             orElse: () => 'Something else was given...'
         });
 
-        expect(match(address)).toBe('here is the address!');
+        expect(match(address)).toBe('Fake street, in 12345 Faketown');
+        expect(match([1, 2, 3])).toBe('1, 2, 3');
+        expect(match(true)).toBe('True!');
         expect(match(null)).toBe('Something else was given...');
     });
 });

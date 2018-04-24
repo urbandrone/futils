@@ -149,8 +149,13 @@ Type.isType = (a) => isObject(a) &&
 
 
 Type.cata = curry((cases, tval) => {
-    if (Type.isType(tval) && isFunc(cases[tval[TYPE]])) {
-        return cases[tval[TYPE]](tval[VAL]);
+    if (tval != null) {
+        if (Type.isType(tval) && isFunc(cases[tval[TYPE]])) {
+            return cases[tval[TYPE]](tval[VAL]);
+        }
+        if (isFunc(cases[tval.constructor.name])) {
+            return cases[tval.constructor.name](tval);
+        }
     }
     if (isFunc(cases.orElse)) { // has orElse clause?
         return cases.orElse(Type.isType(tval) ? tval[VAL] : tval);
