@@ -1,5 +1,5 @@
 # Contacts list
-This time we are going to build a small application which allows to manage a list of contacts. We will see how to integrate more advanced stuff like DB interaktion and asynchronous stuff. It builds mainly on the architecure we've seen in [example 5](./ex05-cdinventory.md) and shows how to split your applications into more/smaller subcomponents instead of a single big one. Have fun!
+This time we are going to build a small application which allows to manage a list of contacts. We will see how to integrate more advanced stuff like DB interaction and asynchronous stuff. It builds mainly on the architecure we've seen when we created a [CD inventory](./small-app.md) and shows how to split your applications into more/smaller subcomponents instead of a single big one. Have fun!
 
 ## Folder structure
 This is the folder structure we use:

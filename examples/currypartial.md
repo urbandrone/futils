@@ -126,14 +126,13 @@ trimUpper('   shout! '); // -> 'SHOUT!'
 Now that you know that much about functions, let's move on to arrays and what we can do with them.
 
 ```javascript
-const {pipe, map, filter, fold} = require('futils');
+const {pipe, curry, map, filter, fold} = require('futils');
 
 const isSome = (a) => a != null;
-const add = (a, b) => a + b;
-const inc = add(1);
+const add = curry((a, b) => a + b);
 
 // sum: Array → filter(!!) → map(+1) → fold (+) 0
-const sum = pipe(filter(isSome), map(inc), fold(add, 0));
+const sum = pipe(filter(isSome), map(add(1)), fold(add, 0));
 
 sum([1, 2, 3, 4, 5]); // -> 15
 sum([1, null, undefined, 4, 5]); // -> 10
