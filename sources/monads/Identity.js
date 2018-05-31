@@ -243,12 +243,11 @@ export class Identity {
      * //   the type signature stays the same (because this is the
      * //   Identity monod)
      * 
-     * one.traverse(Maybe.of, Maybe);
-     * // -> Some(Identity(1))
+     * one.traverse((x) => x, Maybe); // -> Some(Identity(1))
      */
     traverse (f, A) {
         if (isFunc(f)) {
-            return this.fold((x) => f(x).map(Identity.of))
+            return A.of(this.fold(f)).map(Identity.of)
         }
         throw 'Identity::traverse expects function but saw ' + f;
     }

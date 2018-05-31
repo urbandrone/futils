@@ -8,7 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {isFunc, isVoid, isObject, isArray, isArrayOf, isString} from './types';
+import {isFunc, isNil, isObject, isArray, isArrayOf, isString} from './types';
 import {curry} from './decorators';
 import {instance} from './operators';
 
@@ -23,70 +23,102 @@ import {instance} from './operators';
 const VAL = Symbol('TypeValue');
 const TYPE = Symbol('TypeName');
 
-
-
-const matchArrayT = (def, x) => {
-    return def.length === x.length &&  x.every((_x, _i) => def[_i](_x));
+const ERROR = {
+    NO_NAME: `Type awaits string and definition as arguments.
+>   Name is missing or empty string.`,
+    NO_DEF: `Type awaits string and definition as argument.
+>   Definition is missing or none of:
+    - Function (x) => boolean
+    - Object of pairs {key: (x) => boolean}
+    - Array of functions [(x) => boolean]`
 }
 
 
+
+const matchDef = (def, val) => {
+    if (isFunc(def) && def(val)) {
+        return true;
+    }
+    if (isArrayOf(isFunc, def) && isArray(val)) {
+        if (def.length > 1) {
+            return def.length === val.length && def.every((d, i) => d(val[i]));
+        }
+        return val.every((v) => def[0](v));
+    }
+    if (isObject(def) && isObject(val)) {
+        return Object.keys(def).reduce((b, k) => {
+            return b && !isNil(val[k]) && def[k](val[k]);
+        }, true);
+    }
+    return false;
+}
+
+
+
 const makeType = (name, def) => {
+    if (!isString(name) || name.trim() === '') {
+        throw ERROR.NO_NAME;
+    }
+    if (!isFunc(def) && !isObject(def) && !isArrayOf(isFunc, def)) {
+        throw ERROR.NO_DEF;
+    }
+
     function TypeCtor (x) {
         let self = instance(TypeCtor, this);
         self[TYPE] = name;
-        if (isFunc(def) && def(x)) {
+        if (matchDef(def, x)) {
             self[VAL] = x;
             return self;
         }
-        if (isObject(def)) {
-            if (Object.keys(def).reduce((b, k) => b && !!def[k](x[k]), true)) {
-                self[VAL] = x;
-                return self;
+        throw `Type ${name} got invalid value ${JSON.stringify(x)}`;
+    }
+    Object.defineProperties(TypeCtor, {
+        of: {
+            writable: false,
+            enumerable: true,
+            value: function (x) {
+                return new TypeCtor(x);
             }
-        }
-        if (isArrayOf(isFunc, def) && isArray(x)) {
-            if (def.length > 1 && matchArrayT(def, x)) {
-                self[VAL] = x;
-                return self;
+        },
+        is: {
+            writable: false,
+            enumerable: true,
+            value: function (x) {
+                return TypeCtor.prototype.isPrototypeOf(x);
             }
-            if (x.every((_x) => def[0](_x))) {
-                self[VAL] = x;
-                return self;
-            }
-        }
-        throw `Constructor ${name} got invalid value ${JSON.stringify(x)}`;
-    }
-
-    TypeCtor.prototype.toString = function () {
-        if (isObject(this[VAL])) {
-            const xs = Object.keys(this[VAL]).
-                map((k) => this[VAL][k].toString()).
-                join(', ');
-
-            return `${name}(${xs})`;
-        }
-        return `${name}(${this[VAL]})`;
-    }
-
-    TypeCtor.prototype.valueOf = function () {
-        return this[VAL];
-    }
-
-    TypeCtor.prototype.fold = function (f) {
-        return f(this[VAL]);
-    }
-
-    Object.defineProperty(TypeCtor, 'of', {
-        writable: false,
-        value: function (x) {
-            return new TypeCtor(x);
         }
     });
-
-    Object.defineProperty(TypeCtor, 'is', {
-        writable: false,
-        value: function (x) {
-            return TypeCtor.prototype.isPrototypeOf(x);
+    Object.defineProperties(TypeCtor.prototype, {
+        toString: {
+            writable: false,
+            enumerable: true,
+            value: function () {
+                if (isObject(this[VAL])) {
+                    return `${name}(${Object.keys(this[VAL]).reduce((a, k) => {
+                        return !a ?
+                               this[VAL][k].toString() :
+                               `${a}, ${this[VAL][k].toString()}`;
+                    }, '')})`;
+                }
+                return `${name}(${this[VAL].toString()})`;
+            }
+        },
+        valueOf: {
+            writable: false,
+            enumerable: true,
+            value: function () {
+                return this[VAL];
+            }
+        },
+        fold: {
+            writable: false,
+            enumerable: true,
+            value: function (f, x) {
+                if (isFunc(f)) {
+                    return f(this[VAL], x);
+                }
+                throw `${name}::fold expected argument to be function but saw ${f}`;
+            }
         }
     });
 
@@ -121,6 +153,7 @@ const makeType = (name, def) => {
  * });
  *
  * const title = field('title');
+ * 
  * const format = Type.cata({
  *     Page: (e) => `${e.title} written on ${e.date.toISOString()}: ${e.text}`,
  *     Chapter: (c) => `- ${c.title} -\n ` + c.pages.map(title).join('\n'),
@@ -143,8 +176,8 @@ const makeType = (name, def) => {
 const Type = curry(makeType);
 
 
-Type.isType = (a) => isObject(a) &&
-                     !isVoid(a[VAL]) &&
+Type.isType = (a) => !isNil(a) &&
+                     !isNil(a[VAL]) &&
                      isString(a[TYPE]);
 
 

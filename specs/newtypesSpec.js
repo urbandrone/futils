@@ -33,7 +33,7 @@ describe('futils/Type module', () => {
         try {
             Zip('foo');
         } catch (exc) {
-            expect(exc).toBe('Constructor Zip got invalid value "foo"');
+            expect(exc).toBe('Type Zip got invalid value "foo"');
         }
     });
 

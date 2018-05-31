@@ -16,7 +16,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  */
 
 
-const _toString = Object.prototype.toString;
 
 /**
  * Returns true if given either `null` or `undefined`
@@ -212,7 +211,7 @@ export const isFunc = (x) => typeof x === 'function';
  * isObject({}); // -> true
  * isObject([]); // -> false
  */
-export const isObject = (x) => _toString.call(x) === '[object Object]';
+export const isObject = (x) => x != null && x.constructor === Object;
 
 /**
  * Returns true if given a array
@@ -501,7 +500,7 @@ export const isObjectOf = (f, x) => {
  * 
  * isSetoid(makeSetoid(10)); // -> true
  */
-export const isSetoid = (x) => !!x && isFunc(x.equals);
+export const isSetoid = (x) => x != null && isFunc(x.equals);
 
 /**
  * Returns true if given a functor (something that implements `map`)
@@ -515,7 +514,7 @@ export const isSetoid = (x) => !!x && isFunc(x.equals);
  * 
  * isFunctor([]); // -> true
  */
-export const isFunctor = (x) => !!x && isFunc(x.map);
+export const isFunctor = (x) => x != null && isFunc(x.map);
 
 /**
  * Returns true if given a apply (something that implements `ap`)
@@ -533,7 +532,21 @@ export const isFunctor = (x) => !!x && isFunc(x.map);
  * 
  * isApply(makeApply(10)); // -> true
  */
-export const isApply = (x) => !!x && isFunc(x.ap);
+export const isApply = (x) => x != null && isFunc(x.ap);
+
+/**
+ * Returns true if given a pointed value (something that implements `of`)
+ * @method 
+ * @version 2.10.0
+ * @param {any} x Value to check
+ * @return {boolean} True if given a pointed value, false otherwise
+ *
+ * @example
+ * const {isPointed} = require('futils');
+ * 
+ * isPointed(Array); // -> true
+ */
+export const isPointed = (x) => x != null && (isFunc(x.constructor.of) || isFunc(x.of));
 
 /**
  * Returns true if given a foldable (something that implements `fold`)
@@ -551,7 +564,7 @@ export const isApply = (x) => !!x && isFunc(x.ap);
  * 
  * isFoldable(makeFoldable(10)); // -> true
  */
-export const isFoldable = (x) => !!x && (isFunc(x.fold) || isFunc(x.reduce));
+export const isFoldable = (x) => x != null && (isFunc(x.fold) || isFunc(x.reduce));
 
 /**
  * Returns true if given a bifunctor (something that implements `biMap`)
@@ -569,7 +582,7 @@ export const isFoldable = (x) => !!x && (isFunc(x.fold) || isFunc(x.reduce));
  *
  * isBifunctor(makeBifunctor(1)); // -> true
  */
-export const isBifunctor = (x) => !!x && isFunc(x.biMap);
+export const isBifunctor = (x) => x != null && isFunc(x.biMap);
 
 /**
  * Returns true if given a semigroup (something that implements `concat`)
@@ -583,7 +596,7 @@ export const isBifunctor = (x) => !!x && isFunc(x.biMap);
  *
  * isSemigroup([]); // -> true
  */
-export const isSemigroup = (x) => !!x && isFunc(x.concat);
+export const isSemigroup = (x) => x != null && isFunc(x.concat);
 
 /**
  * Returns true if given a monoid (something that implements `concat` and `empty`)
@@ -619,9 +632,7 @@ export const isMonoid = (x) => {
  * 
  * isApplicative(makeApplicative(10)); // -> true
  */
-export const isApplicative = (x) => {
-    return isApply(x) && (isFunc(x.of) || isFunc(x.constructor.of));
-}
+export const isApplicative = (x) => isApply(x) && isPointed(x);
 
 /**
  * Returns true if given a monad (something that implements `equals`,

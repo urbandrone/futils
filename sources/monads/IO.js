@@ -235,12 +235,12 @@ export class IO {
      *
      * const one = IO.of(1);
      * 
-     * one.traverse(Identity.of, Identity);
+     * one.traverse((x) => x, Identity);
      * // -> Identity(IO(1))
      */
     traverse (f, A) {
         if (isFunc(f)) {
-            return this.fold((x) => f(x).map(IO.of))
+            return A.of(this.fold(f)).map(IO.of);
         }
         throw 'IO::traverse expects function but saw ' + f;
     }

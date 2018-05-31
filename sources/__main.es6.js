@@ -62,6 +62,7 @@ export const isObjectOf = type.isObjectOf;
 export const isSetoid = type.isSetoid;
 export const isFunctor = type.isFunctor;
 export const isApply = type.isApply;
+export const isPointed = type.isPointed;
 export const isFoldable = type.isFoldable;
 export const isBifunctor = type.isBifunctor;
 export const isSemigroup = type.isSemigroup;

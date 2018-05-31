@@ -248,6 +248,15 @@ describe('futils/types module', function () {
         expect(_.isApply(a)).toBe(true);
     });
 
+    it('testing isPointed :: a -> b', function () {
+        class A { static of() {} }
+
+        let a = new A();
+        expect(_.isPointed(A)).toBe(true);
+        expect(_.isPointed(a)).toBe(true);
+        expect(_.isPointed(Array)).toBe(true);
+    });
+
     it('testing isFoldable :: a -> b', function () {
         class A { fold() {} }
 
@@ -256,7 +265,7 @@ describe('futils/types module', function () {
     });
 
     it('testing isApplicative :: a -> b', function () {
-        class A { of() {} ap() {} }
+        class A { static of() {} ap() {} }
 
         let a = new A();
         expect(_.isApplicative(a)).toBe(true);

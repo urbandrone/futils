@@ -464,14 +464,13 @@ export class Either {
      *
      * const one = Right.of(1);
      * 
-     * one.traverse(Identity.of, Identity);
-     * // -> Identity(Right(1))
+     * one.traverse((x) => x, Identity); // -> Identity(Right(1))
      */
     traverse (f, A) {
-        return this.fold(
-            (l) => A.of(l).map(Left.of),
-            (r) => f(r).map(Right.of)
-        );
+        if (isFunc(f)) {
+            return this.fold((l) => A.of(l).map(Left.of), (r) => A.of(f(r)).map(Right.of));
+        }
+        throw 'Either::traverse expects function but saw ' + f;
     }
 
     /**

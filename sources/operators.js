@@ -718,7 +718,7 @@ export const fold = triadic((f, x, xs) => {
  * @version 2.8.0
  * @param {function} f Function to call on each iteration
  * @param {any} x The seed value to fold into
- * @param {array|array-like|iterator|Monad|Monoid} xs The collection to fold
+ * @param {array|array-like|iterator} xs The collection to fold
  * @return {any} Depends on the seed value
  *
  * @example

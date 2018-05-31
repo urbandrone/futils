@@ -1,25 +1,25 @@
 const {Maybe, liftA2, curry} = require('futils');
 
-// greet :: String -> String -> String
-const greet = curry((how, who) => `${how} ${who}!`);
-
-
-
 /**
- * Try replacing either the "greetsWith" or "greetsWho"
+ * Try replacing either the "greeting" or "receiver"
  * constant with "Maybe.of(null)"
  */
 
-// greetsWith :: Maybe String
-const greetsWith = Maybe.of('Hello');
-
-// greetsWho :: Maybe String
-const greetsWho = Maybe.of('world');
 
 
+// greet :: String -> String -> String
+const greet = curry((how, who) => `${how} ${who}!`);
 
-liftA2(greet, greetsWith, greetsWho).
+// greeting :: Maybe String
+const greeting = Maybe.of('Hello');
+
+// receiver :: Maybe String
+const receiver = Maybe.of('world');
+
+
+
+liftA2(greet, greeting, receiver).
 	cata({
-		None: () => 'Who shall I greet?',
+		None: () => 'What should be done?',
 		Some: (greeting) => greeting
 	});

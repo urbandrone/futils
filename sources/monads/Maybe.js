@@ -345,13 +345,13 @@ export class Maybe {
      * //   type may-be None so leaving the second argument blank results
      * //   in the instance not knowing where to traverse to in a None case
      * 
-     * one.traverse(Maybe.of, Maybe);
-     * // -> Some(Identity(1))
+     * one.traverse((x) => x, Maybe); // -> Some(Identity(1))
      */
     traverse (f, A) {
-        return this.fold(() => A.of(new None()),
-                         (x) => f(x).map(Maybe.of))
-        
+        if (isFunc(f)) {
+            return A.of(this.fold(() => null, f)).map(Maybe.of);
+        }
+        throw 'Maybe::traverse expects function but saw ' + f;
     }
 
     /**
