@@ -12,12 +12,24 @@ import {isFunc, isVoid} from './types';
 import {aritize} from './arity';
 
 /**
- * A collection of function decorator functions. Please note that these are not
+ * A collection of function decorator functions. Please note that they are not
  *     the same as the proposed ES7 object and method decorators
  * @module decorators
  * @requires types
  * @requires arity
  */
+
+
+
+const _curried = (f, g, args) => {
+    return aritize(f.length - args.length, (...rest) => {
+        const _as = args.concat(rest).filter((a) => a !== void 0);
+        if (f.length <= _as.length) { return g(f, _as); }
+        return _curried(f, g, _as);
+    });
+}
+
+
 
 /**
  * Takes a function and returns a variant of it which will only executed once
@@ -132,14 +144,7 @@ export const flip = (f) => {
 export const curry = (f) => {
     if (isFunc(f)) {
         if (f.length < 2) { return f; }
-        return (...args) => {
-            if (f.length <= args.length) {
-                return f(...args);
-            }
-            return (...rest) => {
-                return curry(f)(...args, ...rest);
-            }
-        }
+        return _curried(f, (g, as) => g(...as), []);
     }
     throw 'decorators::curry awaits a function but saw ' + f;
 }
@@ -171,14 +176,7 @@ export const curry = (f) => {
 export const curryRight = (f) => {
     if (isFunc(f)) {
         if (f.length < 2) { return f; }
-        return (...args) => {
-            if (f.length <= args.length) {
-                return f(...args.reverse());
-            }
-            return (...rest) => {
-                return curry(f)(...args, ...rest);
-            }
-        }
+        return _curried(f, (g, as) => g(...as.reverse()), []);
     }
     throw 'decorators::curryRight awaits a function but saw ' + f;
 }

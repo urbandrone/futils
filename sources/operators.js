@@ -658,6 +658,7 @@ export const differ = dyadic((xs, ys) => {
  * zip([1, 2], ['one', 'two']); // -> [[1, 'one'], [2, 'two']]
  * zip([1, 2], ['one']); // -> [[1, 'one']]
  * zip([1], ['one', 'two']); // -> [[1, 'one']]
+ * zip(1, 2); // -> [[1, 2]]
  */
 export const zip = dyadic((xs, ys) => {
     if (isArray(xs) && isArray(ys)) {
@@ -665,7 +666,7 @@ export const zip = dyadic((xs, ys) => {
                 ys.map((y, i) => [xs[i], y]) :
                 xs.map((x, i) => [x, ys[i]]);
     }
-    return [xs, ys];
+    return [[xs, ys]];
 });
 
 
@@ -775,7 +776,7 @@ export const unfold = dyadic((f, x) => {
  * @version 2.2.0
  * @param {integer} start Starting index
  * @param {integer} stop Final index
- * @return {array} List of all integers from start through end
+ * @return {array} List of all integers from start through to end
  *
  * @example
  * const {range} = require('futils');
@@ -1011,8 +1012,8 @@ export const findRight = dyadic((f, xs) => find(f, Array.from(xs).reverse()));
 
 /**
  * Given a Monoid TypeConstructor and a list, folds all values in the list into
- *     the Monoid Type. When used with a function instead of a Monoid, folds
- *     into an array and reduces intermediate nestings
+ *     the Monoid Type. When used with a function instead of a Monoid, make sure
+ *     the function returns a value which belongs to a semigroup
  * @method 
  * @version 2.4.0
  * @param {Monoid|function} M Monoid or function returning a Array
@@ -1228,7 +1229,7 @@ export const flatMap = dyadic((f, m) => {
  *
  * const xs = [1, 2, 3];
  *
- * traverse(Some.of, Some, xs); // -> Some([1, 2, 3])
+ * traverse((x) => x, Some, xs); // -> Some([1, 2, 3])
  */
 export const traverse = triadic((f, A, xs) => {
     if (isFunc(f) && isFunc(A.of)) {
@@ -1236,10 +1237,7 @@ export const traverse = triadic((f, A, xs) => {
             return xs.traverse(f, A);
         }
         if (isArray(xs)) {
-            return xs.reduceRight(
-                (a, x) => f(x).map(Array.of).concat(a),
-                A.of([])
-            );
+            return xs.reduce((a, x) => a.concat(f(x)), A.of([]));
         }
         throw 'operators::traverse cannot act on ' + xs;
     }

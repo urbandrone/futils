@@ -26,16 +26,24 @@ describe('futils/decorators module', function () {
         var a = (x, y) => x + y;
         var b = _.curry(a);
 
-        expect(a(2, 1)).toBe(3);
-        expect(b(2)(1)).toBe(3);
+        expect(a('a', 'b')).toBe('ab');
+        expect(b('a')('b')).toBe('ab');
+        expect(b('a', 'b')).toBe('ab');
+        expect(b('a')()('b')).toBe('ab');
+        expect(b.length).toBe(2);
+        expect(b(2).length).toBe(1);
     });
 
     it('testing curryRight :: f -> f', function () {
         var a = (x, y) => x + y;
         var b = _.curryRight(a);
 
-        expect(a(2, 1)).toBe(3);
-        expect(b(2)(1)).toBe(3);
+        expect(a('a', 'b')).toBe('ab');
+        expect(b('a')('b')).toBe('ba');
+        expect(b('a', 'b')).toBe('ba');
+        expect(b('a')()('b')).toBe('ba');
+        expect(b.length).toBe(2);
+        expect(b(2).length).toBe(1);
     });
 
     it('testing partial :: f -> f', function () {

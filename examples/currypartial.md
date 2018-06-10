@@ -36,25 +36,27 @@ const sayHello = add('hello ');
 sayHello('world'); // -> 'hello world'
 ```
 
-"But", you might say, "all of this could have been done by calling `Function.prototype.bind`, too". And that's correct!
+"But", you might say, "all of this could have been done by calling `Function.prototype.bind`, too". That's correct!
 ```javascript
 const add = (a, b) => a + b;
 
 const sayHello = add.bind(null, 'hello ');
 sayHello('world'); // -> 'hello world'
+sayHello.length; // -> 1
 ```
 
-Let's make the above example a bit more complicated to demonstrate the difference between `curry` and `bind`. While it is in fact true that one can use partial application by using `bind`, it has two drawbacks:
+Let's make the above example a bit more complicated to demonstrate the difference between `curry` and `bind`. While it is in fact true that one can use partial application by using `bind`, it has some drawbacks:
 
 1. You _have to_ specify a context, even if it is `null`
-2. You can only skip _the first_ invocation but not subsequent ones
+2. You can only skip _the first_ invocation but not subsequent ones without having to use `bind` again
 
-The `curry` combinator does not have these two drawbacks:
+The `curry` combinator does not have these problems:
 ```javascript
 const add = curry((a, b) => a + b);
 
 const sayHello = add('hello ');
 sayHello()()()()('world'); // -> 'hello world'
+sayHello.length; // -> 1
 ```
 
 ## partial

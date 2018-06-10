@@ -20,7 +20,8 @@ const isFn = (f) => typeof f === 'function';
 
 /**
  * Takes a number and a function with a variadic number of arguments and returns
- *     a function which takes as much arguments as specified
+ *     a function which takes as much arguments as specified. Valid numbers range
+ *     from zero up to and including sixteen.
  * @method 
  * @version 0.8.0
  * @param {number} n Integer value describing the arity
@@ -34,14 +35,68 @@ const isFn = (f) => typeof f === 'function';
  * sum(1, 2, 3); // -> 6
  *
  * const addTwo = aritize(2, sum);
+ * addTwo.length; // -> 2
  * addTwo(1, 2, 3); // -> 3
  */
 export const aritize = (n, f) => {
-    let len = n, args = [], wrap = null;
-    if (f.length >= len) { return f; }
-    while (len > 0) { args.push('arg' + len--); }
-    wrap = 'return (' + args.join(',') + ') => fx(' + args.join(',') + ')';
-    return new Function('fx', wrap)(f);
+    if (typeof n !== 'number' || isNaN(n) || !isFinite(n)) {
+        throw 'arity::aritize awaits a number as first argument but saw ' + n;
+    }
+    if (!isFn(f)) {
+        throw 'arity::aritize awaits a function as second argument but saw ' + f;
+    }
+    switch (Math.abs(n)) {
+        case 1:
+            return (a) => f(a);
+        case 2:
+            return (a, b) => f(a, b);
+        case 3:
+            return (a, b, c) => f(a, b, c);
+        case 4:
+            return (a, b, c, d) => f(a, b, c, d);
+        case 5:
+            return (a, b, c, d, e) => f(a, b, c, d, e);
+        case 6:
+            return (a, b, c, d, e, g) => f(a, b, c, d, e, g);
+        case 7:
+            return (a, b, c, d, e, g, h) => f(a, b, c, d, e, g, h);
+        case 8:
+            return (a, b, c, d, e, g, h, i) => f(a, b, c, d, e, g, h, i);
+        case 9:
+            return (a, b, c, d, e, g, h, i, j) => {
+                return f(a, b, c, d, e, g, h, i, j);
+            }
+        case 10:
+            return (a, b, c, d, e, g, h, i, j, k) => {
+                return f(a, b, c, d, e, g, h, i, j, k);
+            }
+        case 11:
+            return (a, b, c, d, e, g, h, i, j, k, l) => {
+                return f(a, b, c, d, e, g, h, i, j, k, l);
+            }
+        case 12:
+            return (a, b, c, d, e, g, h, i, j, k, l, m) => {
+                return f(a, b, c, d, e, g, h, i, j, k, l, m);
+            }
+        case 13:
+            return (a, b, c, d, e, g, h, i, j, k, l, m, o) => {
+                return f(a, b, c, d, e, g, h, i, j, k, l, m, o);
+            }
+        case 14:
+            return (a, b, c, d, e, g, h, i, j, k, l, m, o, p) => {
+                return f(a, b, c, d, e, g, h, i, j, k, l, m, o, p);
+            }
+        case 15:
+            return (a, b, c, d, e, g, h, i, j, k, l, m, o, p, q) => {
+                return f(a, b, c, d, e, g, h, i, j, k, l, m, o, p, q);
+            }
+        case 16:
+            return (a, b, c, d, e, g, h, i, j, k, l, m, o, p, q, r) => {
+                return f(a, b, c, d, e, g, h, i, j, k, l, m, o, p, q, r);
+            }
+        default:
+            return f;
+    }
 }
 
 
@@ -71,7 +126,7 @@ export const monadic = (f) => {
             return f(x);
         }
     }
-    throw 'decorators::monadic awaits a function but saw ' + f;
+    throw 'arity::monadic awaits a function but saw ' + f;
 }
 
 /**
@@ -103,7 +158,7 @@ export const dyadic = (f) => {
             return f(x, y);
         }
     }
-    throw 'decorators::dyadic awaits a function but saw ' + f;
+    throw 'arity::dyadic awaits a function but saw ' + f;
 }
 
 /**
@@ -138,7 +193,7 @@ export const triadic = (f) => {
             return f(x, y, z);
         }
     }
-    throw 'decorators::triadic awaits a function but saw ' + f;
+    throw 'arity::triadic awaits a function but saw ' + f;
 }
 
 /**
@@ -176,5 +231,5 @@ export const tetradic = (f) => {
             return f(w, x, y, z);
         }
     }
-    throw 'decorators::tetradic awaits a function but saw ' + f;
+    throw 'arity::tetradic awaits a function but saw ' + f;
 }
