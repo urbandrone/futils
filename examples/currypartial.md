@@ -50,7 +50,7 @@ Let's make the above example a bit more complicated to demonstrate the differenc
 1. You _have to_ specify a context, even if it is `null`
 2. You can only skip _the first_ invocation but not subsequent ones without having to use `bind` again
 
-The `curry` combinator does not have these problems:
+The `curry` combinator does not have these limitations:
 ```javascript
 const add = curry((a, b) => a + b);
 
@@ -132,12 +132,12 @@ const {pipe, curry, map, filter, fold} = require('futils');
 
 const isSome = (a) => a != null;
 const add = curry((a, b) => a + b);
+const abs = Math.abs.bind(Math);
 
-// sum: Array → filter(!!) → map(+1) → fold (+) 0
-const sum = pipe(filter(isSome), map(add(1)), fold(add, 0));
+// sum: Array → filter(!!) → map(|n|) → fold (+) 0
+const sum = pipe(filter(isSome), map(abs), fold(add, 0));
 
-sum([1, 2, 3, 4, 5]); // -> 15
-sum([1, null, undefined, 4, 5]); // -> 10
+sum([1, null, undefined, -4, 5]); // -> 10
 ```
 
 Isn't that great? We packed three operations into a single function which works on a list of numbers and/or `null` and/or `undefined` values and returns the sum of all of the numbers or zero. All in one line!
