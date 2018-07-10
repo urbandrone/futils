@@ -73,7 +73,28 @@ export class Maybe {
      * some; // -> Some('This is a success')
      */
     static fromEither (m) {
-        return m.fold(None.of, Maybe.of);
+        return m.fold(None.of, Some.of);
+    }
+
+    /**
+     * Creates an Maybe.None or an Maybe.Some from a given Task monad
+     * @method fromTask
+     * @memberof module:monads/maybe.Maybe
+     * @static
+     * @param {Task} m Task monad instance
+     * @return {None|Some} None or Some wrapper
+     *
+     * @example
+     * const {Maybe, Task} = require('futils');
+     *
+     * let resolve = Task.resolve('Succeed');
+     * let reject = Task.reject('Error');
+     *
+     * Maybe.fromTask(resolve); // -> Some('Succeed')
+     * Maybe.fromTask(reject); // -> None(null)
+     */
+    static fromTask (m) {
+        return m.run(None.of, Some.of);
     }
 
     /**

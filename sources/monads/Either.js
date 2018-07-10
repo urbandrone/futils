@@ -74,7 +74,7 @@ export class Either {
     }
 
     /**
-     * Creates a Either.Left or a Either.Right from a given Maybe.None or
+     * Creates an Either.Left or an Either.Right from a given Maybe.None or
      *     Maybe.Some
      * @method fromMaybe
      * @memberof module:monads/either.Either
@@ -96,7 +96,7 @@ export class Either {
     }
 
     /**
-     * Creates a Either.Left or a Either.Right from a given IO monad
+     * Creates an Either.Left or an Either.Right from a given IO monad
      * @method fromIO
      * @memberof module:monads/either.Either
      * @static
@@ -104,16 +104,36 @@ export class Either {
      * @return {Left|Right} Left or Right wrapper
      *
      * @example
-     * const {Either, IO} = require('futils');
+     * const {Either, IO, prop} = require('futils');
      *
-     * let location = IO.of(window.location.href);
-     * let fails = IO.of(window.local.href);
+     * const getHref = new IO(prop('href'));
      *
-     * Either.fromIO(location); // -> Right('...')
-     * Either.fromIO(fails); // -> Left('TypeError: ...')
+     * Either.fromIO(getHref, window.location); // -> Right('...')
+     * Either.fromIO(getHref, window.local); // -> Left('TypeError: ...')
      */
     static fromIO (m, ...ps) {
         return Either.try(m.run)(...ps);
+    }
+
+    /**
+     * Creates an Either.Left or an Either.Right from a given Task monad
+     * @method fromTask
+     * @memberof module:monads/either.Either
+     * @static
+     * @param {Task} m Task monad instance
+     * @return {Left|Right} Left or Right wrapper
+     *
+     * @example
+     * const {Either, Task} = require('futils');
+     *
+     * let resolve = Task.resolve('Succeed');
+     * let reject = Task.reject('Error');
+     *
+     * Either.fromTask(resolve); // -> Right('Succeed')
+     * Either.fromTask(reject); // -> Left('Error')
+     */
+    static fromTask(m) {
+        return m.run(Left.of, Right.of);
     }
 
     /**

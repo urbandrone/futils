@@ -25,25 +25,32 @@
 
 One of it's goals in planning was to have a toolset of commonly used functional helpers when writing applications and/or webpage related code. It works great with a lot of other stuff – here is a small excerpt: jQuery, Reactive Streams, React/Preact and virtual-dom, Immutable.js, Electron...
 
-Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the execution until all needed parameters are given, for example:
-```javascript
-const incAll = map((n) => n + 1);
+Where applicable, all functions in `futils` are autocurried. This allows you to "skip" the execution until all needed parameters are given.
 
-incAll([1, 2, 3]); // -> [2, 3, 4]
+Here's a quick example of the library in action:
+```javascript
+const {Additive, isInt, pipe, filter, foldMap} = require('futils');
+
+const INTS = [1, 2, undefined, 4, 5, undefined, 7, 8, 9, 10];
+
+const sum = pipe(filter(isInt), foldMap(Additive));
+
+sum(INTS).fold((n) => `The sum is ${n}`); // -> 'The sum is 46'
 ```
+
+You can find alot more example in the [examples](./examples/readme.md) folder.
 
 ## More information
 [API Documentation](http://www.der-davi.de/futils/docs/index.html)  
 [Examples](./examples/readme.md)  
 
 ## Install with NPM
-Global or local installation
+Just do the usual stuff:
 ```
-npm install futils -g
-npm install futils --save
+npm install futils
 ```
 
-After installation you can access the functions by calling require:
+After installation, use require:
 ```javascript
 const {curry, pipe, map} = require('futils');
 

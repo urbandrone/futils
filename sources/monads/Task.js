@@ -125,6 +125,58 @@ export class Task {
     static reject (a) { return new Task((rej) => rej(a)); }
 
     /**
+     * Converts an Maybe.None or Maybe.Some into a Task. If given a Maybe.None,
+     *     the resulting Task is rejected
+     * @method fromMaybe
+     * @memberof module:monads/task.Task
+     * @static
+     * @param {Some|None} m Maybe monad instance
+     * @return {Task} Task wrapper
+     *
+     * @example
+     * const {None, Some, Task} = require('futils');
+     *
+     * Task.fromMaybe(new None()).run(
+     *     () => 'failure',
+     *     (v) => `success ${v}`
+     * ); // -> 'failure'
+     *
+     * Task.fromMaybe(new Some(1)).run(
+     *     () => 'failure',
+     *     (v) => `success ${v}`
+     * ); // -> 'success 1'
+     */
+    static fromMaybe (m) {
+        return new Task((rej, res) => { m.fold(rej, res); });
+    }
+
+    /**
+     * Converts an Either.Left or Either.Right into a Task. If given a Either.Left,
+     *     the resulting Task is rejected
+     * @method fromEither
+     * @memberof module:monads/task.Task
+     * @static
+     * @param {Right|Left} m Either monad instance
+     * @return {Task} Task wrapper
+     *
+     * @example
+     * const {Left, Right, Task} = require('futils');
+     *
+     * Task.fromEither(new Left(1)).run(
+     *     (v) => `failure ${v}`,
+     *     (v) => `success ${v}`
+     * ); // -> 'failure 1'
+     *
+     * Task.fromEither(new Right(1)).run(
+     *     (v) => `failure ${v}`,
+     *     (v) => `success ${v}`
+     * ); // -> 'success 1'
+     */
+    static fromEither (m) {
+        return new Task((rej, res) => { m.fold(rej, res); });
+    }
+
+    /**
      * Create a Task from a callback function. If the callback throws a error
      * for any reason, that error is caught automatically and propagates along
      * the error chain. This method is curried
