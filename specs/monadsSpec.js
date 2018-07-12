@@ -158,7 +158,7 @@ describe('futils/monads module', function () {
         });
 
         it('is applicative .ap', () => {
-            expect(new IO(comb('!')).ap(m).run()).toBe('test!');
+            expect(IO.of(comb('!')).ap(m).run()).toBe('test!');
         });
 
         it('can be traversed .traverse', () => {
@@ -439,25 +439,6 @@ describe('futils/monads module', function () {
 
         it('is pointed M::of', () => {
             expect(m.run()).toBe(1);
-        });
-
-        it('can be derived from Identity', () => {
-            expect(State.fromIdentity(Identity.of(1)).map(f).run(1)).toBe(3);
-        });
-
-        it('can be derived from Maybe', () => {
-            expect(State.fromMaybe(Some.of(1)).map(f).run(1)).toBe(3);
-            expect(State.fromMaybe(None.of()).map(f).run(1)).toBe(2);
-        });
-
-        it('can be derived from Either', () => {
-            expect(State.fromEither(Right.of(1)).map(f).run(1)).toBe(3);
-            expect(State.fromEither(Left.of(1)).map(f).run(1)).toBe(2);
-        });
-
-        it('can be derived from IO', () => {
-            expect(State.fromIO(IO.of(1)).map(f).run(1)).toBe(3);
-            expect(State.fromIO(new IO(f)).run(1)).toBe(2);
         });
 
         it('can grab the current state M::get', () => {
