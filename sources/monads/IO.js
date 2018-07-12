@@ -67,6 +67,68 @@ export class IO {
      */
     static is (a) { return IO.prototype.isPrototypeOf(a); }
 
+    /**
+     * Converts instances of the Identity monad into instances of the IO monad
+     * @method fromIdentity
+     * @memberOf module:monads/io.IO
+     * @static
+     * @param {Identity} m The Identity monad instance
+     * @return {IO} Instance of the IO monad
+     *
+     * @example
+     * const {Identity, IO} = require('futils');
+     *
+     * const id = Identity.of(1);
+     *
+     * IO.fromIdentity(id); // -> IO(1)
+     */
+    static fromIdentity (m) {
+        return m.fold(IO.of);
+    }
+
+    /**
+     * Converts instances of the Maybe monad into instances of the IO monad. If
+     *     given a Maybe.None, returns the empty IO
+     * @method fromMaybe
+     * @memberOf module:monads/io.IO
+     * @static
+     * @param {None|Some} m The Maybe monad instance
+     * @return {IO} Instance of the IO monad
+     *
+     * @example
+     * const {Maybe, IO} = require('futils');
+     *
+     * const none = Maybe.None();
+     * const some = Maybe.Some(1);
+     *
+     * IO.fromMaybe(none); // -> IO(a)
+     * IO.fromMaybe(some); // -> IO(1)
+     */
+    static fromMaybe (m) {
+        return m.fold(IO.empty, IO.of);
+    }
+
+    /**
+     * Converts instances of the Either monad into instances of the IO monad
+     * @method fromEither
+     * @memberOf module:monads/io.IO
+     * @static
+     * @param {Left|Right} m The Either monad instance
+     * @return {IO} Instance of the IO monad
+     *
+     * @example
+     * const {Either, IO} = require('futils');
+     *
+     * const left = Either.Left(1);
+     * const right = Either.Right(2);
+     *
+     * IO.fromEither(left); // -> IO(1)
+     * IO.fromEither(right); // -> IO(2)
+     */
+    static fromEither (m) {
+        return m.fold(IO.of, IO.of);
+    }
+
     // -- Setoid 
     /**
      * Given another Setoid, checks if they are equal
@@ -148,14 +210,15 @@ export class IO {
      * const {IO} = require('futils');
      *
      * let one = IO.of(1);
+     * let two = IO.of(2);
      *
-     * const aInc = IO.of((a) => a + 1);
+     * const aInc = IO.of((a) => (b) => a + b);
      *
-     * aInc.ap(one); // -> IO(2)
+     * aInc.ap(one).ap(two); // -> IO(3)
      */
     ap (m) {
         if (isFunc(m.map)) {
-            return m.map(this.run);
+            return m.map(this.run());
         }
         throw 'IO::ap expects argument to be Functor but saw ' + m;
     }

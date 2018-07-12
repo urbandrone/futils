@@ -51,6 +51,20 @@ describe('futils/monads module', function () {
             expect(m.value).toBe(1);
         });
 
+        it('can be derived from Maybe', () => {
+            expect(Identity.fromMaybe(Some.of(1)).value).toBe(1);
+            expect(Identity.fromMaybe(None.of()).value).toBe(null);
+        });
+
+        it('can be derived from Either', () => {
+            expect(Identity.fromEither(Right.of(1)).value).toBe(1);
+            expect(Identity.fromEither(Left.of(1)).value).toBe(1);
+        });
+
+        it('can be derived from IO', () => {
+            expect(Identity.fromIO(IO.of(1)).value).toBe(1);
+        });
+
         it('is printable .toString', () => {
             expect(m.toString()).toBe('Identity(1)');
         });
@@ -105,6 +119,20 @@ describe('futils/monads module', function () {
 
         it('is pointed M::of', () => {
             expect(m.run()).toBe('test');
+        });
+
+        it('can be derived from Maybe', () => {
+            expect(IO.fromMaybe(Some.of(1)).run()).toBe(1);
+            expect(IO.fromMaybe(None.of()).run()).toBe(undefined);
+        });
+
+        it('can be derived from Either', () => {
+            expect(IO.fromEither(Right.of(1)).run()).toBe(1);
+            expect(IO.fromEither(Left.of(1)).run()).toBe(1);
+        });
+
+        it('can be derived from Identity', () => {
+            expect(IO.fromIdentity(Identity.of(1)).run()).toBe(1);
         });
 
         it('is printable .toString', () => {
@@ -235,6 +263,10 @@ describe('futils/monads module', function () {
             expect(Either.fromNullable(null).value).toBe(null);
         });
 
+        it('can be derived from Identity', () => {
+            expect(Either.fromIdentity(Identity.of(1)).value).toBe(1);
+        });
+
         it('can be derived from Maybe M::fromMaybe', () => {
             expect(Either.fromMaybe(Some.of(1)).value).toBe(1);
             expect(Either.fromMaybe(None.of()).value).toBe(null);
@@ -346,6 +378,15 @@ describe('futils/monads module', function () {
             expect(Maybe.fromEither(Left.of('failure')).value).toBe(null);
         });
 
+        it('can be derived from Identity', () => {
+            expect(Maybe.fromIdentity(Identity.of(1)).value).toBe(1);
+        });
+
+        it('can be derived from IO', () => {
+            expect(Maybe.fromIO(IO.of(1)).value).toBe(1);
+            expect(Maybe.fromIO(IO.empty()).value).toBe(null);
+        });
+
         it('can return alternative values .orGet', () => {
             expect(some.orGet(2)).toBe(1);
             expect(none.orGet(2)).toBe(2);
@@ -400,6 +441,25 @@ describe('futils/monads module', function () {
             expect(m.run()).toBe(1);
         });
 
+        it('can be derived from Identity', () => {
+            expect(State.fromIdentity(Identity.of(1)).map(f).run(1)).toBe(3);
+        });
+
+        it('can be derived from Maybe', () => {
+            expect(State.fromMaybe(Some.of(1)).map(f).run(1)).toBe(3);
+            expect(State.fromMaybe(None.of()).map(f).run(1)).toBe(2);
+        });
+
+        it('can be derived from Either', () => {
+            expect(State.fromEither(Right.of(1)).map(f).run(1)).toBe(3);
+            expect(State.fromEither(Left.of(1)).map(f).run(1)).toBe(2);
+        });
+
+        it('can be derived from IO', () => {
+            expect(State.fromIO(IO.of(1)).map(f).run(1)).toBe(3);
+            expect(State.fromIO(new IO(f)).run(1)).toBe(2);
+        });
+
         it('can grab the current state M::get', () => {
             let op = State.get();
             expect(op.run(1)).toBe(1);
@@ -423,7 +483,7 @@ describe('futils/monads module', function () {
             expect(m.map(f).run()).toBe(2);
         });
 
-        it('implements a way to fold .run', () => {
+        it('implements a way to fold .fold/.foldExec', () => {
             expect(m.fold((n) => n, null)).toBe(1);
             expect(m.foldExec((n) => n, null)).toBe(null);
         });
@@ -629,6 +689,90 @@ describe('futils/monads module', function () {
             let val, flag;
             const checkout = (v) => val = v;
             const t = Task.fromNodeCPS((n, cb) => { cb(null, n); }, 1);
+
+            runs(() => {
+                setTimeout(() => {
+                    flag = true;
+                }, 50);
+            });
+
+            waitsFor(() => {
+                t.map(f).run(id, checkout);
+                return true;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(2);
+            });
+        });
+
+        it('can be derived from Identity', () => {
+            let val, flag;
+            const checkout = (v) => val = v;
+            const t = Task.fromIdentity(Identity.of(1));
+
+            runs(() => {
+                setTimeout(() => {
+                    flag = true;
+                }, 50);
+            });
+
+            waitsFor(() => {
+                t.map(f).run(id, checkout);
+                return true;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(2);
+            });
+        });
+
+        it('can be derived from Maybe', () => {
+            let val, flag;
+            const checkout = (v) => val = v;
+            const t = Task.fromMaybe(Maybe.of(1));
+
+            runs(() => {
+                setTimeout(() => {
+                    flag = true;
+                }, 50);
+            });
+
+            waitsFor(() => {
+                t.map(f).run(id, checkout);
+                return true;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(2);
+            });
+        });
+
+        it('can be derived from Either', () => {
+            let val, flag;
+            const checkout = (v) => val = v;
+            const t = Task.fromEither(Either.of(1));
+
+            runs(() => {
+                setTimeout(() => {
+                    flag = true;
+                }, 50);
+            });
+
+            waitsFor(() => {
+                t.map(f).run(id, checkout);
+                return true;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(2);
+            });
+        });
+
+        it('can be derived from IO', () => {
+            let val, flag;
+            const checkout = (v) => val = v;
+            const t = Task.fromIO(IO.of(1));
 
             runs(() => {
                 setTimeout(() => {

@@ -130,6 +130,98 @@ export class State {
      */
     static is (a) { return State.prototype.isPrototypeOf(a); }
 
+    /**
+     * Converts instances of the Identity monad into instances of the State monad
+     *     by settings the value inside the Identity as current value of the
+     *     resulting State monad
+     * @method fromIdentity
+     * @memberOf module:monads/state.State
+     * @static
+     * @param {Identity} m The Identity monad instance
+     * @return {State} State monad instance
+     *
+     * @example
+     * const {Identity, State} = require('futils');
+     *
+     * const id = Identity.of(1);
+     *
+     * const inc = (a) => a + 1;
+     *
+     * State.fromIdentity(id).map(inc).run(1); // -> 3
+     */
+    static fromIdentity (m) {
+        return m.fold(State.of);
+    }
+
+    /**
+     * Converts instances of the Maybe monad into instances of the State monad.
+     *     If given a Maybe.None, returns a blank State via State.get()
+     * @method fromMaybe
+     * @memberOf module:monads/state.State
+     * @static
+     * @param {None|Some} m Maybe monad instance
+     * @return {State} State monad instance
+     *
+     * @example
+     * const {Maybe, State} = require('futils');
+     *
+     * const none = Maybe.None();
+     * const some = Maybe.Some(1);
+     *
+     * const inc = (a) => a + 1;
+     *
+     * State.fromMaybe(some).map(inc).run(1); // -> 3
+     * State.fromMaybe(none).map(inc).run(1); // -> 2
+     */
+    static fromMaybe (m) {
+        return m.fold(State.get, State.of);
+    }
+
+    /**
+     * Converts instances of the Either monad into instances of the State monad.
+     *     If given a Either.Left, returns a blank State via State.get()
+     * @method fromEither
+     * @memberOf module:monads/state.State
+     * @static
+     * @param {Left|Right} m Either monad instance
+     * @return {State} State monad instance
+     *
+     * @example
+     * const {Either, State} = require('futils');
+     *
+     * const left = Either.Left(1);
+     * const right = Either.Right(1);
+     *
+     * const inc = (a) => a + 1;
+     *
+     * State.fromEither(right).map(inc).run(1); // -> 3
+     * State.fromEither(left).map(inc).run(1); // -> 2
+     */
+    static fromEither (m) {
+        return m.fold(State.get, State.of);
+    }
+
+    /**
+     * Converts instances of the IO monad into instances of the State monad
+     * @method fromIO
+     * @memberOf module:monads/state.State
+     * @static
+     * @param {IO} m IO monad instance
+     * @return {State} State monad instance
+     *
+     * @example
+     * const {IO, State} = require('futils');
+     *
+     * const io = IO.of(1);
+     * const ioInc = new IO((a) => a + 1);
+     *
+     * State.fromIO(io).run(); // -> 1
+     * State.fromIO(ioInc).run(1); // -> 2
+     */
+    static fromIO (m) {
+        return State.get().map((a) => m.try(a));
+    }
+
     // -- Setoid 
     // -- Functor
     /**

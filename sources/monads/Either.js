@@ -48,17 +48,24 @@ export class Either {
     set value (a) { this[MV] = a; }
     get value () { return this[MV]; }
 
+    static Left (a) {
+        return new Either(a, null);
+    } 
+
+    static Right (a) {
+        return new Either(null, a);
+    }
+
 
     /**
-     * Given a fallback and the value to create from, returns a Left with the
-     *     fallback value if the actual value has been null or undefined and
+     * Given a value to create from, returns a Left with the
+     *     value if it has been an error, null or undefined and
      *     a Right if the value has any other value
      * @method fromNullable
      * @memberof module:monads/either.Either
      * @static
-     * @param {any} exc Fallback value
      * @param {any} a Value to wrap
-     * @return {Left|Right} Either a Left with the fallback or a Right
+     * @return {Left|Right} Either a Left or a Right
      *
      * @example
      * const {Either} = require('futils');
@@ -71,6 +78,28 @@ export class Either {
             return Right.of(a);
         }
         return Left.of(a);
+    }
+
+    /**
+     * Converts instances of the Identity monad into instances of the Either
+     *     monad by using Either.fromNullable
+     * @method fromIdentity
+     * @memberOf module:monads/either.Either
+     * @static
+     * @param {Identity} m The Identity monad instance
+     * @return {Left|Right} Instance of the Either monad
+     *
+     * @example
+     * const {Identity, Either} = require('futils');
+     *
+     * const id1 = Identity.of(1);
+     * const id2 = Identity.of(null);
+     *
+     * Either.fromIdentity(id1); // -> Right(1)
+     * Either.fromIdentity(id2); // -> Left(null)
+     */
+    static fromIdentity (m) {
+        return m.fold(Either.fromNullable);
     }
 
     /**
@@ -113,27 +142,6 @@ export class Either {
      */
     static fromIO (m, ...ps) {
         return Either.try(m.run)(...ps);
-    }
-
-    /**
-     * Creates an Either.Left or an Either.Right from a given Task monad
-     * @method fromTask
-     * @memberof module:monads/either.Either
-     * @static
-     * @param {Task} m Task monad instance
-     * @return {Left|Right} Left or Right wrapper
-     *
-     * @example
-     * const {Either, Task} = require('futils');
-     *
-     * let resolve = Task.resolve('Succeed');
-     * let reject = Task.reject('Error');
-     *
-     * Either.fromTask(resolve); // -> Right('Succeed')
-     * Either.fromTask(reject); // -> Left('Error')
-     */
-    static fromTask(m) {
-        return m.run(Left.of, Right.of);
     }
 
     /**

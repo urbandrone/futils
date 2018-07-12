@@ -34,6 +34,14 @@ export class Maybe {
         this.value = a;
     }
 
+    static None () {
+        return new None();
+    }
+
+    static Some (a) {
+        return new Some(a);
+    }
+
     /**
      * Returns a string representation of the instance
      * @method toString
@@ -50,6 +58,27 @@ export class Maybe {
      * nothing.toString(); // -> "None"
      */
     toString () { return `Maybe`; }
+
+    /**
+     * Converts instances of the Identity monad into instances of the Maybe monad
+     * @method fromIdentity
+     * @memberOf module:monads/maybe.Maybe
+     * @static
+     * @param {Identity} m The Identity monad instance
+     * @return {None|Some} None or Some instance
+     *
+     * @example
+     * const {Identity, Maybe} = require('futils');
+     *
+     * const id1 = Identity.of(1);
+     * const id2 = Identity.of(null);
+     *
+     * Maybe.fromIdentity(id1); // -> Some(1)
+     * Maybe.fromIdentity(id2); // -> None
+     */
+    static fromIdentity (m) {
+        return m.fold(Maybe.of);
+    }
 
     /**
      * Creates either a Maybe.None or a Maybe.Some from a given Either.Left or
@@ -77,25 +106,29 @@ export class Maybe {
     }
 
     /**
-     * Creates an Maybe.None or an Maybe.Some from a given Task monad
-     * @method fromTask
-     * @memberof module:monads/maybe.Maybe
+     * Converts instances of the IO monad into instances of the Maybe monad
+     * @method fromIO
+     * @memberOf module:monads/maybe.Maybe
      * @static
-     * @param {Task} m Task monad instance
-     * @return {None|Some} None or Some wrapper
+     * @param {IO} m The IO monad instance
+     * @return {None|Some} None or Some instance
      *
      * @example
-     * const {Maybe, Task} = require('futils');
+     * const {IO, Maybe} = require('futils');
      *
-     * let resolve = Task.resolve('Succeed');
-     * let reject = Task.reject('Error');
+     * const id1 = IO.of(1);
+     * const id2 = IO.of(null);
      *
-     * Maybe.fromTask(resolve); // -> Some('Succeed')
-     * Maybe.fromTask(reject); // -> None(null)
+     * Maybe.fromIO(id1); // -> Some(1)
+     * Maybe.fromIO(id2); // -> None
      */
-    static fromTask (m) {
-        return m.run(None.of, Some.of);
+    static fromIO (m) {
+        return m.fold((v) => {
+            return Error.prototype.isPrototypeOf(v) ? new None() : Maybe.of(v);
+        });
     }
+
+    
 
     /**
      * Returns true if given a instance of the class

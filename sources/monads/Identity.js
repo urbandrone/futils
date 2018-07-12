@@ -67,6 +67,71 @@ export class Identity {
      */
     static is (a) { return Identity.prototype.isPrototypeOf(a); }
 
+    /**
+     * Converts instances of the Maybe monad into instances of the Identity
+     *     monad. If given a Maybe.None, returns an Identity with a null value
+     * @method fromMaybe
+     * @memberOf module:monads/identity.Identity
+     * @static
+     * @param {None|Some} m The Maybe monad instance
+     * @return {Identity} Instance of the Identity monad
+     *
+     * @example
+     * const {Maybe, Identity} = require('futils');
+     *
+     * const none = Maybe.None();
+     * const some = Maybe.Some(1);
+     *
+     * Identity.fromMaybe(none); // -> Identity(null)
+     * Identity.fromMaybe(some); // -> Identity(1)
+     */
+    static fromMaybe (m) {
+        return m.fold(Identity.of, Identity.of);
+    }
+
+    /**
+     * Converts instances of the Either monad into instances of the Identity
+     *     monad
+     * @method fromEither
+     * @memberOf module:monads/identity.Identity
+     * @static
+     * @param {Left|Right} m The Either monad instance
+     * @return {Identity} Instance of the Identity monad
+     *
+     * @example
+     * const {Either, Identity} = require('futils');
+     *
+     * const left = Either.Left('l');
+     * const right = Either.Right('r');
+     *
+     * Identity.fromEither(left); // -> Identity('l')
+     * Identity.fromEither(right); // -> Identity('r')
+     */
+    static fromEither (m) {
+        return m.fold(Identity.of, Identity.of);
+    }
+
+    /**
+     * Converts instances of the IO monad into instances of the Identity monad.
+     *     Please note that this will make the IO run immediatly via it's try()
+     *     method which might return an Error as result
+     * @method fromIO
+     * @memberOf module:monads/identity.Identity
+     * @static
+     * @param {IO} m The IO monad instance
+     * @return {Identity} Instance of the Identity monad
+     *
+     * @example
+     * const {IO, Identity} = require('futils');
+     *
+     * const doc = IO.of(document).map((d) => d.body);
+     *
+     * Identity.fromIO(doc); // -> Identity(<body>)
+     */
+    static fromIO (m) {
+        return Identity.of(m.try());
+    }
+
     // -- Setoid 
     /**
      * Given another Setoid, checks if they are equal

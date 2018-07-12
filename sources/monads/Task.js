@@ -125,6 +125,35 @@ export class Task {
     static reject (a) { return new Task((rej) => rej(a)); }
 
     /**
+     * Converts instances of the Identity monad into instances of the Task monad.
+     *     Always resolves to whatever value has been in the Identity
+     * @method fromIdentity
+     * @memberOf module:monads/task.Task
+     * @static
+     * @param {Identity} m The Identity monad instance
+     * @return {Task} Task monad instance
+     *
+     * @example
+     * const {Identity, Task} = require('futils');
+     *
+     * const id1 = Identity.of(1);
+     * const id2 = Identity.of(null);
+     *
+     * Task.fromIdentity(id1).run(
+     *     () => `failure`,
+     *     (v) => `success ${v}`
+     * ); // -> 'success 1'
+     *
+     * Task.fromIdentity(id2).run(
+     *     () => `failure`,
+     *     (v) => `success ${v}`
+     * ); // -> 'success null'
+     */
+    static fromIdentity (m) {
+        return new Task((_, res) => m.fold(res));
+    }
+
+    /**
      * Converts an Maybe.None or Maybe.Some into a Task. If given a Maybe.None,
      *     the resulting Task is rejected
      * @method fromMaybe
@@ -174,6 +203,39 @@ export class Task {
      */
     static fromEither (m) {
         return new Task((rej, res) => { m.fold(rej, res); });
+    }
+
+    /**
+     * Converts instances of the IO monad into instances of the Task monad.
+     *     Rejects if the IO produces an error and resolves in any other case
+     * @method fromIO
+     * @memberOf module:monads/task.Task
+     * @static
+     * @param {IO} m The IO monad instance
+     * @return {Task} Task monad instance
+     *
+     * @example
+     * const {IO, Task} = require('futils');
+     *
+     * const succeeds = IO.of(1).map((n) => n.toFixed(2));
+     * const fails = IO.of(null).map((n) => n.toFixed(2));
+     *
+     * Task.fromIO(succeeds).run(
+     *     (v) => `failure ${v.message}`,
+     *     (v) => `success ${v}`
+     *  ); // -> 'success 1.00'
+     *
+     * Task.fromIO(fails).run(
+     *     (v) => `failure ${v.message}`,
+     *     (v) => `success ${v}`
+     * ); // -> 'failure Cannot read property toFixed of null'
+     */
+    static fromIO (m) {
+        return new Task((rej, res) => {
+            let r = m.try();
+            if (Error.prototype.isPrototypeOf(r)) { rej(r); }
+            else { res(r); }
+        });
     }
 
     /**

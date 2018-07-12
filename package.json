@@ -36,12 +36,12 @@
   "devDependencies": {
     "babel-cli": "^6.11.4",
     "babel-preset-es2015-rollup": "^1.2.0",
-    "jasmine-node": "^1.14.5",
+    "jasmine-node": "^1.15.0",
     "jsdoc": "^3.4.0",
     "minami": "^1.1.1",
     "rollup": "^0.36.3",
     "rollup-plugin-babel": "^2.6.1",
-    "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-json": "^2.3.1",
     "rollup-plugin-uglify": "^1.0.1"
   },
   "dependencies": {}

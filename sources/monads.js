@@ -185,4 +185,7 @@ const liftA5 = curry((f, M1, M2, M3, M4, M5) => {
 
 
 
-export default {liftA2, liftA3, liftA4, liftA5, Identity, Task, State, Maybe, Some, None, Either, Left, Right, IO};
+export default {
+	liftA2, liftA3, liftA4, liftA5,
+	Identity, Task, State, Maybe, Some, None, Either, Left, Right, IO
+};
