@@ -19,7 +19,7 @@
 6. Lenses (van Laarhoven)
 7. Transducers
 8. Monoids (Additive, Multiple, Char, Fn, All, Any, Min, Max, Dict, Unit)
-9. Monads (Identity, Maybe, Either, State, IO, Task)
+9. Monads (Identity, Maybe, Either, List, State, IO, Task)
 10. Maths (small extensions to _Math_)
 11. Abstract types and pattern matching
 
@@ -38,7 +38,7 @@ const sum = pipe(filter(isInt), foldMap(Additive));
 sum(INTS).fold((n) => `The sum is ${n}`); // -> 'The sum is 46'
 ```
 
-You can find alot more example in the [examples](./examples/readme.md) folder.
+You can find some tutorials in the [examples](./examples/readme.md) folder.
 
 ## More information
 [API Documentation](http://www.der-davi.de/futils/docs/index.html)  

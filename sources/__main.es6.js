@@ -110,6 +110,7 @@ export const Some = monads.Some;
 export const Either = monads.Either;
 export const Left = monads.Left;
 export const Right = monads.Right;
+export const List = monads.List;
 export const State = monads.State;
 export const Task = monads.Task;
 export const liftA2 = monads.liftA2;

@@ -13,7 +13,7 @@ import {aritize} from '../arity';
 
 /**
  * Implementation of the Either monad
- * @module monads/Either
+ * @module monads/either
  * @requires types
  */
 
@@ -122,6 +122,26 @@ export class Either {
      */
     static fromMaybe (m) {
         return m.fold(Either.empty, Either.of);
+    }
+
+    /**
+     * Converts instances of the List monad into instances of the Either monad.
+     *     Please note that only the first item of the List will be returned
+     * @method fromList
+     * @memberOf monads/either.Either
+     * @static
+     * @param {List} m The List monad instance
+     * @return {Left|Right} Instance of the Either monad
+     *
+     * @example
+     * const {List, Either} = require('futils');
+     *
+     * const nums = List.of(1, 2, 3);
+     *
+     * Either.fromList(nums); // -> Right(1)
+     */
+    static fromList (m) {
+        return m.fold((a) => evalsRight(a[0]) ? Right.of(a[0]) : Left.of(a[0]));
     }
 
     /**

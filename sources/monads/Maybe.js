@@ -106,6 +106,28 @@ export class Maybe {
     }
 
     /**
+     * Converts instances of the List monad into instances of the Maybe monad.
+     *     Please note that only the first item of the List will be returned.
+     * @method fromList
+     * @memberOf monads/maybe.Maybe
+     * @static
+     * @param {List} m The List monad instance
+     * @return {Maybe} Instance of the Maybe monad
+     *
+     * @example
+     * const {List, Maybe} = require('futils');
+     *
+     * const nums = List.of(1, 2, 3);
+     * const none = List.empty();
+     *
+     * Maybe.fromList(nums); // -> Some(1)
+     * Maybe.fromList(none); // -> None()
+     */
+    static fromList (m) {
+        return m.fold((a) => Maybe.of(a[0]));
+    }
+
+    /**
      * Converts instances of the IO monad into instances of the Maybe monad
      * @method fromIO
      * @memberOf module:monads/maybe.Maybe

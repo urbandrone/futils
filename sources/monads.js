@@ -12,6 +12,7 @@ import {curry} from './decorators';
 import {Identity} from './monads/Identity';
 import {Maybe, None, Some} from './monads/Maybe';
 import {Either, Left, Right} from './monads/Either';
+import {List} from './monads/List';
 import {IO} from './monads/IO';
 import {State} from './monads/State';
 import {Task} from './monads/Task';
@@ -23,6 +24,7 @@ import {Task} from './monads/Task';
  * @requires monads/identity
  * @requires monads/maybe
  * @requires monads/either
+ * @requires monads/list
  * @requires monads/io
  * @requires monads/state
  * @requires monads/task
@@ -56,6 +58,11 @@ import {Task} from './monads/Task';
 /**
  * Grants access to the Either monad class
  * @member Either
+ */
+
+/**
+ * Grants access to the List monad class
+ * @member List
  */
 
 /**
@@ -187,5 +194,5 @@ const liftA5 = curry((f, M1, M2, M3, M4, M5) => {
 
 export default {
 	liftA2, liftA3, liftA4, liftA5,
-	Identity, Task, State, Maybe, Some, None, Either, Left, Right, IO
+	Identity, Task, State, Maybe, Some, None, Either, Left, Right, List, IO
 };

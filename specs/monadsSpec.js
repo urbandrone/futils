@@ -10,6 +10,7 @@ const {
     Either,
     Left,
     Right,
+    List,
     IO,
     State,
     Task
@@ -59,6 +60,10 @@ describe('futils/monads module', function () {
         it('can be derived from Either', () => {
             expect(Identity.fromEither(Right.of(1)).value).toBe(1);
             expect(Identity.fromEither(Left.of(1)).value).toBe(1);
+        });
+
+        it('can be derived from List', () => {
+            expect(Identity.fromList(List.of(1)).value).toBe(1);
         });
 
         it('can be derived from IO', () => {
@@ -133,6 +138,10 @@ describe('futils/monads module', function () {
 
         it('can be derived from Identity', () => {
             expect(IO.fromIdentity(Identity.of(1)).run()).toBe(1);
+        });
+
+        it('can be derived from List', () => {
+            expect(IO.fromList(List.of(1)).value).toBe(1);
         });
 
         it('is printable .toString', () => {
@@ -272,6 +281,11 @@ describe('futils/monads module', function () {
             expect(Either.fromMaybe(None.of()).value).toBe(null);
         });
 
+        it('can be derived from List', () => {
+            expect(Either.fromList(List.of(1)).value).toBe(1);
+            expect(Either.fromList(List.empty()).value).toBe(undefined);
+        });
+
         it('can be derived from IO M::fromIO', () => {
             const exc = new Error('Left');
             const throws = new IO(() => { throw exc; });
@@ -382,6 +396,11 @@ describe('futils/monads module', function () {
             expect(Maybe.fromIdentity(Identity.of(1)).value).toBe(1);
         });
 
+        it('can be derived from List', () => {
+            expect(Maybe.fromList(List.of(1)).value).toBe(1);
+            expect(Maybe.fromList(List.empty()).value).toBe(null);
+        });
+
         it('can be derived from IO', () => {
             expect(Maybe.fromIO(IO.of(1)).value).toBe(1);
             expect(Maybe.fromIO(IO.empty()).value).toBe(null);
@@ -429,6 +448,86 @@ describe('futils/monads module', function () {
             expect(none.concat(m.concat(n)).value).toBe('hello ');
             expect(m.concat(none.concat(n)).value).toBe('hello ');
             expect(m.concat(n.concat(none)).value).toBe('hello ');
+        });
+    });
+
+    describe('List monad', () => {
+        const m = List.of(1);
+        const f = (n) => n + 1;
+        const mf = (n) => List.of(n + 1);
+
+        it('is pointed M::of', () => {
+            expect(m.value).toEqual([1]);
+        });
+
+        it('is printable .toString', () => {
+            expect(m.toString()).toBe('List([1])');
+        });
+
+        it('is isomorphic to arrays .toArray', () => {
+            expect(List.fromArray([1]).toArray()).toEqual([1]);
+        });
+
+        it('can be derived from Either M::fromEither', () => {
+            expect(List.fromEither(Right.of(1)).value).toEqual([1]);
+            expect(List.fromEither(Left.of('failure')).value).toEqual([]);
+        });
+
+        it('can be derived from Identity', () => {
+            expect(List.fromIdentity(Identity.of(1)).value).toEqual([1]);
+        });
+
+        it('can be derived from IO', () => {
+            expect(List.fromIO(IO.of(1)).value).toEqual([1]);
+            expect(List.fromIO(IO.empty()).value).toEqual([]);
+        });
+
+        it('is a setoid .equals', () => {
+            expect(m.equals(m)).toBe(true);
+            expect(m.equals(List.of(2))).toBe(false);
+        });
+
+        it('is a functor .map', () => {
+            expect(m.map(f).value).toEqual([2]);
+        });
+
+        it('implements a way to fold .fold', () => {
+            expect(m.fold((n) => n)).toEqual([1]);
+        });
+
+        it('is a monad .flatMap', () => {
+            expect(m.flatMap(mf).value).toEqual([2])
+        });
+
+        it('can be flattended .flatten', () => {
+            expect(List.of(List.of(1)).flatten().value).toEqual([1]);
+        });
+
+        it('is applicative .ap', () => {
+            expect(List.of(f).ap(m).value).toEqual([2]);
+        });
+
+        it('is a semigroup .concat', () => {
+            expect(List.of(1).concat(m).value).toEqual([1, 1]);
+        });
+
+        it('is a monoid List::empty', () => {
+            expect(List.empty().concat(m)).toEqual([1]);
+            expect(m.concat(List.empty())).toEqual([1]);
+        });
+
+        it('can be traversed .traverse', () => {
+            const x = List.of(1);
+            const tf = (y) => y.traverse(id, Identity);
+            expect(Identity.is(tf(x))).toBe(true);
+            expect(tf(x).map(List.is).fold(id)).toBe(true);
+        });
+
+        it('can be sequenced .sequece', () => {
+            const x = List.of(Identity.of(1));
+            const tf = (y) => y.sequence(Identity);
+            expect(Identity.is(tf(x))).toBe(true);
+            expect(tf(x).map(List.is).fold(id)).toBe(true);
         });
     });
 
@@ -733,6 +832,27 @@ describe('futils/monads module', function () {
             let val, flag;
             const checkout = (v) => val = v;
             const t = Task.fromEither(Either.of(1));
+
+            runs(() => {
+                setTimeout(() => {
+                    flag = true;
+                }, 50);
+            });
+
+            waitsFor(() => {
+                t.map(f).run(id, checkout);
+                return true;
+            }, 'executing monadic action...', 750);
+
+            runs(() => {
+                expect(val).toBe(2);
+            });
+        });
+
+        it('can be derived from List', () => {
+            let val, flag;
+            const checkout = (v) => val = v;
+            const t = Task.fromList(List.of(1));
 
             runs(() => {
                 setTimeout(() => {

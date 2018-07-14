@@ -13,7 +13,7 @@ import {isVoid, isFunc} from '../types';
 
 /**
  * Implementation of the Task monad
- * @module monads/Task
+ * @module monads/task
  * @requires types
  */
 
@@ -203,6 +203,30 @@ export class Task {
      */
     static fromEither (m) {
         return new Task((rej, res) => { m.fold(rej, res); });
+    }
+
+    /**
+     * Converts instances of the List monad into instances of the Task monad.
+     *     Please note that only the first item of the List will be returned.
+     *     The resulting Task always resolves
+     * @method fromList
+     * @memberOf monads/task.Task
+     * @static
+     * @param {List} m The List monad instance
+     * @return {Task} Instance of the Task monad
+     *
+     * @example
+     * const {List, Task} = require('futils');
+     *
+     * const nums = List.of(1, 2, 3);
+     *
+     * Task.fromList(nums).run(
+     *     (v) => `failure ${v}`,
+     *     (v) => `success ${v}`
+     * ); // -> 'success 1'
+     */
+    static fromList (m) {
+        return new Task((_, res) => { m.fold((a) => res(a[0])); });
     }
 
     /**

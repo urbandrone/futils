@@ -12,7 +12,7 @@ import {isFunc} from '../types';
 
 /**
  * Implementation of the State monad
- * @module monads/State
+ * @module monads/state
  * @requires types
  */
 

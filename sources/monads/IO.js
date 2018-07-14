@@ -12,7 +12,7 @@ import {isFunc} from '../types';
 
 /**
  * Implementation of the IO monad
- * @module monads/IO
+ * @module monads/io
  * @requires types
  */
 
@@ -127,6 +127,26 @@ export class IO {
      */
     static fromEither (m) {
         return m.fold(IO.of, IO.of);
+    }
+
+    /**
+     * Converts instances of the List monad into instances of the IO monad.
+     *     Please note that only the first item of the List will be returned.
+     * @method fromList
+     * @memberOf monads/io.IO
+     * @static
+     * @param {List} m The List monad instance
+     * @return {IO} Instance of the IO monad
+     *
+     * @example
+     * const {List, IO} = require('futils');
+     *
+     * const nums = List.of(1, 2, 3);
+     *
+     * IO.fromList(nums); // -> IO(1)
+     */
+    static fromList (m) {
+        return m.fold((a) => IO.of(a[0]));
     }
 
     // -- Setoid 

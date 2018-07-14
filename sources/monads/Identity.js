@@ -12,7 +12,7 @@ import {isFunc} from '../types';
 
 /**
  * Implementation of the Identity monad
- * @module monads/Identity
+ * @module monads/identity
  * @requires types
  */
 
@@ -109,6 +109,26 @@ export class Identity {
      */
     static fromEither (m) {
         return m.fold(Identity.of, Identity.of);
+    }
+
+    /**
+     * Converts instances of the List monad into instances of the Identity monad.
+     *     Please note that only the first item of the List will be returned
+     * @method fromList
+     * @memberOf monads/identity.Identity
+     * @static
+     * @param {List} m The List monad instance
+     * @return {Identity} Instance of the Identity monad
+     *
+     * @example
+     * const {List, Identity} = require('futils');
+     *
+     * const nums = List.of(1, 2, 3);
+     *
+     * Identity.fromList(nums); // -> Identity(1)
+     */
+    static fromList (m) {
+        return m.fold((a) => Identity.of(a[0]));
     }
 
     /**
@@ -303,10 +323,6 @@ export class Identity {
      * const {Maybe, Identity} = require('futils');
      *
      * const one = Identity.of(1);
-     *
-     * // Note: ::traverse doesn't need it's second parameter but
-     * //   the type signature stays the same (because this is the
-     * //   Identity monod)
      * 
      * one.traverse((x) => x, Maybe); // -> Some(Identity(1))
      */
