@@ -148,7 +148,8 @@ export class List {
      * List.fromIO(doc); // -> List([<body>])
      */
     static fromIO (m) {
-        return List.of(m.try());
+        let r = m.try();
+        return r == null ? List.empty() : List.of(r);
     }
 
     /**
@@ -372,7 +373,7 @@ export class List {
         if (isFunc(f)) {
             return A.of(this.value.reduce(
                 (a, b) => a.concat(List.of(f(b))),
-                A.of(List.empty())
+                List.empty()
             ));
         }
         throw 'List::traverse expects function but saw ' + f;

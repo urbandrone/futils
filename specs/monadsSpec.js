@@ -141,7 +141,7 @@ describe('futils/monads module', function () {
         });
 
         it('can be derived from List', () => {
-            expect(IO.fromList(List.of(1)).value).toBe(1);
+            expect(IO.fromList(List.of(1)).run()).toBe(1);
         });
 
         it('is printable .toString', () => {
@@ -283,7 +283,7 @@ describe('futils/monads module', function () {
 
         it('can be derived from List', () => {
             expect(Either.fromList(List.of(1)).value).toBe(1);
-            expect(Either.fromList(List.empty()).value).toBe(undefined);
+            expect(Either.fromList(List.empty()).value).toBe(null);
         });
 
         it('can be derived from IO M::fromIO', () => {
@@ -512,8 +512,8 @@ describe('futils/monads module', function () {
         });
 
         it('is a monoid List::empty', () => {
-            expect(List.empty().concat(m)).toEqual([1]);
-            expect(m.concat(List.empty())).toEqual([1]);
+            expect(List.empty().concat(m).value).toEqual([1]);
+            expect(m.concat(List.empty()).value).toEqual([1]);
         });
 
         it('can be traversed .traverse', () => {
