@@ -244,11 +244,8 @@ TimeStamp.prototype.map = function (f) {
 Aw yeah, now we can run functions over the value in our custom type and keep all the goodness we've seen so far! Here's some code for you:
 
 ```javascript
-const MS_DAY = 1000 * 60 * 60 * 24;
-
-
-// incrementDays :: Number -> TimeStamp Date -> TimeStamp Date
-const incrementDays = curry((n, date) => new Date(+date + n * MS_DAY));
+// incrementDays :: Number -> Date -> Date
+const incrementDays = curry((n, d) => new Date(+d + n * 3600000 * 24));
 
 
 TimeStamp(new Date(2018, 2, 10)).
