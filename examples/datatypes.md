@@ -225,6 +225,37 @@ const show = Type.cata({
 });
 ```
 
+## Extending types
+Besides `cata`, some types we define need more methods to work efficiently with them. Good news: Any type returned by `Type` is a constructor function and we can augment it's `prototype` with new methods.
+
+For example, let's construct a type `TimeStamp` which holds a value of type `Date`, and implement the Functor interface on it (if you havn't done already, take a look at the [monads](./monads.md) example).
+
+```javascript
+const {Type, curry, isDate} = require('futils');
+
+
+const TimeStamp = Type('TimeStamp', isDate);
+
+TimeStamp.prototype.map = function (f) {
+    return this.fold((d) => TimeStamp(f(d)));
+}
+```
+
+Aw yeah, now we can run functions over the value in our custom type and keep all the goodness we've seen so far! Here's some code for you:
+
+```javascript
+const MS_DAY = 1000 * 60 * 60 * 24;
+
+
+// incrementDays :: Number -> TimeStamp Date -> TimeStamp Date
+const incrementDays = curry((n, date) => new Date(+date + n * MS_DAY));
+
+
+TimeStamp(new Date(2018, 2, 10)).
+    map(incrementDays(3)).
+    fold((d) => d); // -> Date(2018, 2, 13)
+```
+
 
 ## Conclusion
 This tutorial gave a brief introduction about how to define and use abstract types and the `Type` function provided by `futils`. I hope you enjoyed reading it and got some ideas how to use abstract types in your own programs.
