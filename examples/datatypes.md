@@ -241,7 +241,10 @@ TimeStamp.prototype.map = function (f) {
 }
 ```
 
-Aw yeah, now we can run functions over the value in our custom type and keep all the goodness we've seen so far! Here's some code for you:
+Aw yeah, now we can run functions over the value in our custom type and keep all the goodness we've seen so far!
+You might be wondering, where that `fold` function did come from. It is automatically available in every instance of a type, created with a constructor returned by `Type`. It actually takes two arguments: The first argument is a function which itself takes two arguments, and the second argument may be anything. `fold` then returns whatever the given function returns. The purpose of it is to provide a way to get the value(s) out of the wrapper.
+
+Here's some code for example:
 
 ```javascript
 // incrementDays :: Number -> Date -> Date

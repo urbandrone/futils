@@ -323,12 +323,14 @@ export class Identity {
      * const {Maybe, Identity} = require('futils');
      *
      * const one = Identity.of(1);
+     *
+     * const odds = (n) => n % 2 !== 0 ? Maybe.of(n) : Maybe.of(null);
      * 
-     * one.traverse((x) => x, Maybe); // -> Some(Identity(1))
+     * one.traverse(odds, Maybe); // -> Some(Identity(1))
      */
     traverse (f, A) {
         if (isFunc(f)) {
-            return A.of(this.fold(f)).map(Identity.of)
+            return A.of(Identity.of).ap(this.fold(f));
         }
         throw 'Identity::traverse expects function but saw ' + f;
     }

@@ -508,15 +508,20 @@ export class Either {
      * @return {Applicative} Either A(Right(x)) or A(Left(x))
      *
      * @example
-     * const {Right, Identity} = require('futils');
+     * const {Either, Identity} = require('futils');
      *
-     * const one = Right.of(1);
+     * const one = Either.of(1);
+     *
+     * const odds = (n) => Identity.of(n % 2 !== 0 ? n : null);
      * 
-     * one.traverse((x) => x, Identity); // -> Identity(Right(1))
+     * one.traverse(odds, Identity); // -> Identity(Right(1))
      */
     traverse (f, A) {
         if (isFunc(f)) {
-            return this.fold((l) => A.of(l).map(Left.of), (r) => A.of(f(r)).map(Right.of));
+            return this.fold(
+                (l) => A.of(Left.of(l)),
+                (r) => f(r).map(Right.of)
+            );
         }
         throw 'Either::traverse expects function but saw ' + f;
     }
@@ -530,9 +535,9 @@ export class Either {
      * @return {Applicative} Either A(Right(x)) or A(Left(x))
      *
      * @example
-     * const {Right, Identity} = require('futils');
+     * const {Either, Identity} = require('futils');
      *
-     * const one = Right.of(Identity.of(1));
+     * const one = Either.of(Identity.of(1));
      *
      * one.sequence(Identity); // -> Identity(Right(1));
      */

@@ -366,15 +366,17 @@ export class List {
      * const {Maybe, List} = require('futils');
      *
      * const one = List.of(1);
+     *
+     * const odds = (n) => n % 2 !== 0 ? Maybe.of(n) : Maybe.of(null);
      * 
-     * one.traverse((x) => x, Maybe); // -> Some(List([1]))
+     * one.traverse(odds, Maybe); // -> Some(List([1]))
      */
     traverse (f, A) {
         if (isFunc(f)) {
-            return A.of(this.value.reduce(
-                (a, b) => a.concat(List.of(f(b))),
-                List.empty()
-            ));
+            return this.value.reduce(
+                (t, a) => f(a).map((b) => (s) => s.concat(List.of(b))).ap(t),
+                A.of(List.empty())
+            );
         }
         throw 'List::traverse expects function but saw ' + f;
     }

@@ -97,9 +97,9 @@ describe('futils/monads module', function () {
 
         it('can be traversed .traverse', () => {
             const x = Identity.of(1);
-            const tf = (y) => y.traverse(id, Some);
-            expect(Some.is(tf(x))).toBe(true);
-            expect(tf(x).map(Identity.is).fold(id, id)).toBe(true);
+            const tf = (y) => y !== 0 ? Some.of(y) : None.of();
+            expect(Some.is(x.traverse(tf, Maybe))).toBe(true);
+            expect(x.traverse(tf, Maybe).map(Identity.is).fold(id, id)).toBe(true);
         });
 
         it('can be sequenced .sequece', () => {
@@ -172,9 +172,9 @@ describe('futils/monads module', function () {
 
         it('can be traversed .traverse', () => {
             const x = IO.of(1);
-            const tf = (y) => y.traverse(id, Some);
-            expect(Some.is(tf(x))).toBe(true);
-            expect(tf(x).map(IO.is).fold(id, id)).toBe(true);
+            const tf = (y) => y !== 0 ? Some.of(y) : None.of();
+            expect(Some.is(x.traverse(tf, Maybe))).toBe(true);
+            expect(x.traverse(tf, Maybe).map(IO.is).fold(id, id)).toBe(true);
         });
 
         it('can be sequenced .sequece', () => {
@@ -305,9 +305,9 @@ describe('futils/monads module', function () {
 
         it('can be traversed .traverse', () => {
             const x = Either.of(1);
-            const tf = (y) => y.traverse(id, Some);
-            expect(Some.is(tf(x))).toBe(true);
-            expect(tf(x).map(Right.is).fold(id, id)).toBe(true);
+            const tf = (y) => y !== 0 ? Some.of(y) : None.of();
+            expect(Some.is(x.traverse(tf, Maybe))).toBe(true);
+            expect(x.traverse(tf, Maybe).map(Either.is).fold(id, id)).toBe(true);
         });
 
         it('can be sequenced .sequece', () => {
@@ -418,9 +418,9 @@ describe('futils/monads module', function () {
 
         it('can be traversed .traverse', () => {
             const x = Maybe.of(1);
-            const tf = (y) => y.traverse(id, Identity);
-            expect(Identity.is(tf(x))).toBe(true);
-            expect(tf(x).map(Some.is).fold(id, id)).toBe(true);
+            const tf = (y) => Identity.of(y !== 0 ? y : null);
+            expect(Identity.is(x.traverse(tf, Identity))).toBe(true);
+            expect(x.traverse(tf, Identity).map(Some.is).fold(id, id)).toBe(true);
         });
 
         it('can be sequenced .sequece', () => {
@@ -518,9 +518,9 @@ describe('futils/monads module', function () {
 
         it('can be traversed .traverse', () => {
             const x = List.of(1);
-            const tf = (y) => y.traverse(id, Identity);
-            expect(Identity.is(tf(x))).toBe(true);
-            expect(tf(x).map(List.is).fold(id)).toBe(true);
+            const tf = (y) => y !== 0 ? Some.of(y) : None.of();
+            expect(Some.is(x.traverse(tf, Maybe))).toBe(true);
+            expect(x.traverse(tf, Maybe).map(List.is).fold(id, id)).toBe(true);
         });
 
         it('can be sequenced .sequece', () => {

@@ -317,13 +317,14 @@ export class IO {
      * const {IO, Identity} = require('futils');
      *
      * const one = IO.of(1);
+     *
+     * const odds = (n) => n % 2 !== 0 ? Identity.of(n) : Identity.of(null);
      * 
-     * one.traverse((x) => x, Identity);
-     * // -> Identity(IO(1))
+     * one.traverse(odds, Identity); // -> Identity(IO(1))
      */
     traverse (f, A) {
         if (isFunc(f)) {
-            return A.of(this.fold(f)).map(IO.of);
+            return A.of(IO.of).ap(this.fold(f));
         }
         throw 'IO::traverse expects function but saw ' + f;
     }

@@ -261,7 +261,7 @@ export class Maybe {
      */
     ap (F) {
         return this.fold(
-            () => new None(),
+            () => this,
             (s) => F.map(s)
         );
     }
@@ -415,17 +415,18 @@ export class Maybe {
      * @example
      * const {Maybe, Identity} = require('futils');
      *
-     * const one = Identity.of(1);
+     * const one = Maybe.of(1);
      *
-     * // Note: ::traverse needs it's second parameter, because the Maybe
-     * //   type may-be None so leaving the second argument blank results
-     * //   in the instance not knowing where to traverse to in a None case
+     * const odds = (n) => Identity.of(n % 2 !== 0 ? n : null);
      * 
-     * one.traverse((x) => x, Maybe); // -> Some(Identity(1))
+     * one.traverse(odds, Identity); // -> Identity(Some(1))
      */
     traverse (f, A) {
         if (isFunc(f)) {
-            return A.of(this.fold(() => null, f)).map(Maybe.of);
+            return this.fold(
+                () => A.of(new None()),
+                (a) => f(a).map(Maybe.of)
+            );
         }
         throw 'Maybe::traverse expects function but saw ' + f;
     }
