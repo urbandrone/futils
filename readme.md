@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## About
-`futils` (spoken "f-utils") is a small (~ 10 Kb gzipped) but versatile collection of functional programming goodies. It ships helpers from these categories:
+`futils` (spoken "f-utils") is a small (~ 11 Kb gzipped) but versatile collection of functional programming goodies. It ships helpers from these categories:
 
 1. Type checking
 2. Arity modifications

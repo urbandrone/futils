@@ -8,7 +8,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {isAny, isFunc, isArray, isString, isSetoid, isFunctor, isMap,
+import {isAny, isFunc, isArray, isString, isSetoid, isFunctor, isMap, isSet,
         isNumber, isObject, isIterable, isApply, isMonoid, isRegex, isGenerator} from './types';
 import {dyadic, triadic} from './arity';
 import {trampoline, suspend} from './trampolines';
@@ -19,7 +19,6 @@ import {trampoline, suspend} from './trampolines';
  * @requires types
  * @requires arity
  */
-
 
 
 const _owns = Object.prototype.hasOwnProperty;
@@ -37,6 +36,8 @@ const _runGen = (f, seed, gen) => {
     }
     return result;
 }
+
+const _arrIter = (it) => [...it];
 
 /**
  * Allows to predefine a method invocation
@@ -300,6 +301,7 @@ export const instance = (F, ctx) => {
 export const concat = dyadic((a, b) => {
     if (isNumber(a) && isNumber(b)) { return a + b; }
     if (isFunc(a) && isFunc(b)) { return (...x) => b(a(...x)); }
+    if (isObject(a) && isObject(b)) { return Object.assign({}, a, b); }
     if (isAny(a) && isFunc(a.concat)) { return a.concat(b); }
     throw 'concat :: Unable to concatenate items ' + [a, b];
 });
@@ -668,15 +670,6 @@ export const zip = dyadic((xs, ys) => {
     }
     return [[xs, ys]];
 });
-
-
-
-/** NOTE ===================
-
-Functions in the following sections are implemented in foresight of
-tail call optimization, which now finally seems to arrive.
-
-========================= */
 
 /**
  * Given a function, a seed value and a iterable collection, return the
@@ -1047,13 +1040,12 @@ export const foldMap = dyadic((M, xs) => {
 
 // -- Setoid --------------------
 /**
- * Generic setoid method, works on anything that implements a `equals` method. If
- *     no `equals` is found it matches on the values directly via strict
- *     comparison (===)
+ * Generic setoid method that checks for deep equality. Please note that this
+ *     may have a significant loss in performance for deeply nested structures.
  * @method
  * @version 2.0.0 
- * @param {Setoid|*} a Any value to compare
- * @param {Setoid|*} b Any value to compare 
+ * @param {any} a Any value to compare
+ * @param {any} b Any value to compare 
  * @return {boolean} True if both are equal
  *
  * @example
@@ -1066,7 +1058,69 @@ export const foldMap = dyadic((M, xs) => {
  * equals(1, 1); // -> true
  */
 export const equals = dyadic((a, b) => {
-    return isSetoid(b) ? b.equals(a) : a === b;
+    if (isSetoid(a)) { return a.equals(b); }
+    if (a == null) { return b == null; }
+    if (b == null) { return a == null; }
+    let tA = a.constructor.name, tB = b.constructor.name;
+    if (tA === tB) {
+        switch (tA) {
+            case 'Number':
+            case 'Function':
+            case 'String':
+            case 'Boolean':
+            case 'Symbol':
+            case 'Promise':
+                return a === b;
+            case 'Date':
+                return a.valueOf() === b.valueOf();
+            case 'RegExp':
+                return a.toString() === b.toString();
+            case 'Array':
+                return a.length === b.length && a.every((x, i) => equals(x, b[i]));
+            case 'Object':
+                return Object.keys(a).every((k) => equals(a[k], b[k])) &&
+                       Object.keys(b).every((k) => equals(b[k], a[k]));
+            case 'Set':
+            case 'Map':
+                return equals(_arrIter(a.entries()), _arrIter(b.entries()));
+            case 'Error':
+            case 'TypeError':
+            case 'RangeError':
+            case 'SyntaxError':
+            case 'ReferenceError':
+                return a.name === b.name && a.message === b.message;
+            default:
+                return false;
+        }
+    }
+    return false;
+});
+
+/**
+ * Test if a given element is part of a collection
+ * @method elem
+ * @version 2.12.0
+ * @param {any} x The value to check against
+ * @param {array|object|set} xs The collection
+ * @return {boolean} True if the element is part of the collection
+ *
+ * @example
+ * const {elem} = require('futils');
+ *
+ * elem(2, [1, 2, 3]); // -> true
+ * elem(2, [1, 3, 5]); // -> false
+ */
+export const elem = dyadic((a, xs) => {
+    if (isArray(xs)) {
+        return xs.some(equals(a));
+    }
+    if (isObject(xs)) {
+        return Object.keys(xs).some((k) => equals(a, xs[k]));
+    }
+    if (isSet(xs)) {
+        return xs.has(a);
+    }
+    return false;
 });
 
 
@@ -1151,26 +1205,29 @@ export const ap = dyadic((mf, ma) => {
 // -- Monad --------------------
 
 /**
- * Generic flatten method, works on anything that implements a `flatten` method
+ * Generic flat method, works on anything that implements a `flat` method
  *     as well as on arrays
  * @method
- * @version 0.2.0
+ * @version 2.12.0
  * @param {array|Monad} m The thing to flatten
  * @param {boolean} [deep=false] Optional flag to flatten nested arrays completely
  * @return {array|Monad} New instance of given
  *
  * @example
- * const {flatten} = require('futils');
+ * const {flat} = require('futils');
  *
- * flatten([[1, 2], 3, [[4, 5]]]); // -> [1, 2, 3, [4, 5]]
- * flatten([[1, 2], 3, [[4, 5]]], true); // -> [1, 2, 3, 4, 5]
+ * flat([[1, 2], 3, [[4, 5]]]); // -> [1, 2, 3, [4, 5]]
+ * flat([[1, 2], 3, [[4, 5]]], true); // -> [1, 2, 3, 4, 5]
  */
-export const flatten = (m, deep = false) => {
-    if (isObject(m) && !isFunc(m.flatten)) {
-        return m;
+export const flat = (m, deep = false) => {
+    if (isFunc(m.flat)) {
+        return m.flat(!deep ? undefined : Infinity);
     }
     if (isFunc(m.flatten)) {
         return m.flatten();
+    }
+    if (isObject(m) && !isFunc(m.flatten)) {
+        return m;
     }
     if (isArray(m)) {
         if (!deep) {
@@ -1187,6 +1244,23 @@ export const flatten = (m, deep = false) => {
     }
     throw 'operators::flatten awaits Monad or array but saw ' + m;
 }
+
+/**
+ * Alias for the `flat` function
+ * @method
+ * @deprecated Use flat
+ * @version 0.2.0
+ * @param {array|Monad} m The thing to flatten
+ * @param {boolean} [deep=false] Optional flag to flatten nested arrays completely
+ * @return {array|Monad} New instance of given
+ *
+ * @example
+ * const {flatten} = require('futils');
+ *
+ * flatten([[1, 2], 3, [[4, 5]]]); // -> [1, 2, 3, [4, 5]]
+ * flatten([[1, 2], 3, [[4, 5]]], true); // -> [1, 2, 3, 4, 5]
+ */
+export const flatten = flat;
 
 /**
  * Generic flatMap method, works on anything which implements a `map` and a
@@ -1225,11 +1299,13 @@ export const flatMap = dyadic((f, m) => {
  * @return {Applicative} The structure wrapped in a Applicative
  *
  * @example
- * const {Some, traverse} = require('futils');
+ * const {Maybe, traverse} = require('futils');
  *
  * const xs = [1, 2, 3];
  *
- * traverse((x) => x, Some, xs); // -> Some([1, 2, 3])
+ * const gt0 = (n) => n > 0 ? Maybe.of(n) : Maybe.of(null);
+ *
+ * traverse(gt0, Maybe, xs); // -> Some([1, 2, 3])
  */
 export const traverse = triadic((f, A, xs) => {
     if (isFunc(f) && isFunc(A.of)) {
@@ -1237,7 +1313,10 @@ export const traverse = triadic((f, A, xs) => {
             return xs.traverse(f, A);
         }
         if (isArray(xs)) {
-            return xs.reduce((a, x) => a.concat(f(x)), A.of([]));
+            return xs.reduce(
+                (a, x) => f(x).map(b => c => c.concat([b])).ap(a),
+                A.of([])
+            );
         }
         throw 'operators::traverse cannot act on ' + xs;
     }

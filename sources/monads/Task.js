@@ -226,7 +226,7 @@ export class Task {
      * ); // -> 'success 1'
      */
     static fromList (m) {
-        return new Task((_, res) => { m.fold((a) => res(a[0])); });
+        return new Task((_, res) => { res(m.value[0]); });
     }
 
     /**
@@ -668,7 +668,7 @@ export class Task {
     /**
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
-     * @method flatten
+     * @method flat
      * @memberof module:monads/task.Task
      * @return {Task} New instance of the monad
      *
@@ -677,15 +677,19 @@ export class Task {
      *
      * let one = Task.resolve(Task.resolve(1));
      *
-     * one.flatten().run(
+     * one.flat().run(
      *     (x) => console.error('Rejected: ' + x),
      *     (n) => console.log('Resolved: ' + n)
      * );
      *
      * // logs "Resolved: 1"
      */
-    flatten () {
+    flat () {
         return new Task((rej, res) => this.run().run(rej, res), this.cleanUp);
+    }
+
+    flatten() {
+        return this.flat();
     }
     // -- Foldable
     // reduce

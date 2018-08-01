@@ -146,7 +146,7 @@ export class IO {
      * IO.fromList(nums); // -> IO(1)
      */
     static fromList (m) {
-        return m.fold((a) => IO.of(a[0]));
+        return IO.of(m.value[0]);
     }
 
     // -- Setoid 
@@ -196,6 +196,7 @@ export class IO {
         }
         throw 'IO::map expects argument to be function but saw ' + f;
     }
+
     // -- Applicative
     /**
      * Creates a new instance of a Identity wrapping the given value `a`. Use
@@ -261,7 +262,7 @@ export class IO {
      */
     flatMap (f) {
         if (isFunc(f)) {
-            return this.map(f).flatten();
+            return this.map(f).flat();
         }
         throw 'IO::flatMap expects argument to be function but saw ' + f;
     }
@@ -269,7 +270,7 @@ export class IO {
     /**
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
-     * @method flatten
+     * @method flat
      * @memberof module:monads/io.IO
      * @return {IO} New instance of the monad
      *
@@ -278,10 +279,14 @@ export class IO {
      *
      * let one = IO.of(IO.of(1));
      *
-     * one.flatten(); // -> IO(1)
+     * one.flat(); // -> IO(1)
      */
-    flatten () {
+    flat () {
         return this.run();
+    }
+
+    flatten() {
+        return this.flat();
     }
 
     /**

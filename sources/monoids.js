@@ -16,8 +16,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * @module monoids
  */
 
-const VAL = Symbol('MonoidalValue');
-const id = (a) => a || null;
+const VAL = Symbol('MonoidValue');
 
 
 /**
@@ -39,10 +38,14 @@ const id = (a) => a || null;
  */
 export class Unit {
     constructor() { this[VAL] = null; }
+    get value() { return this[VAL]; }
+    set value(_) { this[VAL] = null; }
     static empty() { return new Unit(); }
     static of() { return new Unit(); }
-    concat(monoid) { return monoid; }
-    fold(f) { return f(); }
+    static is(x) { return Unit.prototype.isPrototypeOf(x); }
+    equals(M) { return Unit.is(M); }
+    concat(M) { return M; }
+    fold(f) { return f(this.value); }
 }
 
 /**
@@ -63,14 +66,16 @@ export class Unit {
  * one.concat(Additive.empty()).fold(id); // -> 1
  */
 export class Additive {
-    constructor(a) {
-        this[VAL] = a;
-    }
+    constructor(a) { this.value = a; }
+    get value() { return this[VAL]; }
+    set value(a) { this[VAL] = a; }
     static empty() { return new Additive(0); }
     static of(a) { return new Additive(a); }
     of(a) { return new Additive(a); }
-    concat(monoid) { return new Additive(this[VAL] + monoid[VAL]); }
-    fold(f) { return f(this[VAL]); }
+    static is(x) { return Additive.prototype.isPrototypeOf(x); }
+    equals(M) { return Additive.is(M) && M.value === this.value; }
+    concat(M) { return new Additive(this.value + M.value); }
+    fold(f) { return f(this.value); }
 }
 
 /**
@@ -91,14 +96,16 @@ export class Additive {
  * one.concat(Char.empty()).fold(id); // -> 'a'
  */
 export class Char {
-    constructor(a) {
-        this[VAL] = a;
-    }
+    constructor(a) { this.value = a; }
+    get value() { return this[VAL]; }
+    set value(a) { this[VAL] = a; }
     static empty() { return new Char(''); }
     static of(a) { return new Char(a); }
     of(a) { return new Char(a); }
-    concat(monoid) { return new Char(this[VAL] + monoid[VAL]); }
-    fold(f) { return f(this[VAL]); }
+    static is(x) { return Char.prototype.isPrototypeOf(x); }
+    equals(M) { return Char.is(M) && M.value === this.value; }
+    concat(M) { return new Char(this.value + M.value); }
+    fold(f) { return f(this.value); }
 }
 
 /**
@@ -119,14 +126,16 @@ export class Char {
  * two.concat(Multiple.empty()).fold(id); // -> 2
  */
 export class Multiple {
-    constructor(a) {
-        this[VAL] = a;
-    }
+    constructor(a) { this.value = a; }
+    get value() { return this[VAL]; }
+    set value(a) { this[VAL] = a; }
     static empty() { return new Multiple(1); }
     static of(a) { return new Multiple(a); }
     of(a) { return new Multiple(a); }
-    concat(monoid) { return new Multiple(this[VAL] * monoid[VAL]); }
-    fold(f) { return f(this[VAL]); }
+    static is(x) { return Multiple.prototype.isPrototypeOf(x); }
+    equals(M) { return Multiple.is(M) && M.value === this.value; }
+    concat(M) { return new Multiple(this.value * M.value); }
+    fold(f) { return f(this.value); }
 }
 
 /**
@@ -147,14 +156,16 @@ export class Multiple {
  * truth.concat(All.empty()).fold(id); // -> true
  */
 export class All {
-    constructor(a) {
-        this[VAL] = a;
-    }
+    constructor(a) { this.value = a; }
+    get value() { return this[VAL]; }
+    set value(a) { this[VAL] = a; }
     static empty() { return new All(true); }
     static of(a) { return new All(a); }
     of(a) { return new All(a); }
-    concat(monoid) { return new All(this[VAL] && monoid[VAL]); }
-    fold(f) { return f(this[VAL]); }
+    static is(x) { return All.prototype.isPrototypeOf(x); }
+    equals(M) { return All.is(M) && M.value === this.value; }
+    concat(M) { return new All(this.value && M.value); }
+    fold(f) { return f(this.value); }
 }
 
 /**
@@ -175,14 +186,16 @@ export class All {
  * truth.concat(Any.empty()).fold(id); // -> true
  */
 export class Any {
-    constructor(a) {
-        this[VAL] = a;
-    }
+    constructor(a) { this.value = a; }
+    get value() { return this[VAL]; }
+    set value(a) { this[VAL] = a; }
     static empty() { return new Any(false); }
     static of(a) { return new Any(a); }
     of(a) { return new Any(a); }
-    concat(monoid) { return new Any(this[VAL] || monoid[VAL]); }
-    fold(f) { return f(this[VAL]); }
+    static is(x) { return Any.prototype.isPrototypeOf(x); }
+    equals(M) { return Any.is(M) && M.value === this.value; }
+    concat(M) { return new Any(this.value || M.value); }
+    fold(f) { return f(this.value); }
 }
 
 /**
@@ -203,14 +216,16 @@ export class Any {
  * mf.concat(Fn.empty()).fold(id); // -> 2
  */
 export class Fn {
-    constructor(a) {
-        this[VAL] = a;
-    }
-    static empty() { return new Fn(id); }
+    constructor(a) { this.value = a; }
+    get value() { return this[VAL]; }
+    set value(a) { this[VAL] = a; }
+    static empty() { return new Fn((a) => a); }
     static of(a) { return new Fn(() => a); }
     of(a) { return new Fn(() => a); }
-    concat(monoid) { return new Fn((a) => monoid[VAL](this[VAL](a))); }
-    fold(f, a) { return f(this[VAL](a)); }
+    static is(x) { return Fn.prototype.isPrototypeOf(x); }
+    equals(M) { return Fn.is(M) && M.value === this.value; }
+    concat(M) { return new Fn((a) => M.value(this.value(a))); }
+    fold(f, a) { return f(this.value(a)); }
 }
 
 /**
@@ -231,14 +246,16 @@ export class Fn {
  * two.concat(Min.empty()).fold(id); // -> 2
  */
 export class Min {
-    constructor(a) {
-        this[VAL] = a;
-    }
+    constructor(a) { this.value = a; }
+    get value() { return this[VAL]; }
+    set value(a) { this[VAL] = a; }
     static empty() { return new Min(Infinity); }
     static of(a) { return new Min(a); }
     of(a) { return new Min(a); }
-    concat(monoid) { return new Min(Math.min(this[VAL], monoid[VAL])); }
-    fold(f) { return f(this[VAL]); }
+    static is(x) { return Min.prototype.isPrototypeOf(x); }
+    equals(M) { return Min.is(M) && M.value === this.value; }
+    concat(M) { return new Min(Math.min(this.value, M.value)); }
+    fold(f) { return f(this.value); }
 }
 
 /**
@@ -259,14 +276,16 @@ export class Min {
  * one.concat(Max.empty()).fold(id); // -> 1
  */
 export class Max {
-    constructor(a) {
-        this[VAL] = a;
-    }
+    constructor(a) { this.value = a; }
+    get value() { return this[VAL]; }
+    set value(a) { this[VAL] = a; }
     static empty() { return new Max(-Infinity); }
     static of(a) { return new Max(a); }
     of(a) { return new Max(a); }
-    concat(monoid) { return new Max(Math.max(this[VAL], monoid[VAL])); }
-    fold(f) { return f(this[VAL]); }
+    static is(x) { return Max.prototype.isPrototypeOf(x); }
+    equals(M) { return Max.is(M) && M.value === this.value; }
+    concat(M) { return new Max(Math.max(this.value, M.value)); }
+    fold(f) { return f(this.value); }
 }
 
 /**
@@ -287,12 +306,14 @@ export class Max {
  * one.concat(Dict.empty()).fold(id); // -> {price: 1}
  */
 export class Dict {
-    constructor(a) {
-        this[VAL] = a;
-    }
+    constructor(a) { this.value = a; }
+    get value() { return this[VAL]; }
+    set value(a) { this[VAL] = a; }
     static empty() { return new Dict({}); }
     static of(a) { return new Dict(a); }
     of(a) { return new Dict(a); }
-    concat(monoid) { return new Dict(Object.assign({}, this[VAL], monoid[VAL])); }
-    fold(f) { return f(this[VAL]); }
+    static is(x) { return Dict.prototype.isPrototypeOf(x); }
+    equals(M) { return Dict.is(M) && M.value === this.value; }
+    concat(M) { return new Dict(Object.assign({}, this.value, M.value)); }
+    fold(f) { return f(this.value); }
 }

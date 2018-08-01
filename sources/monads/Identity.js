@@ -9,6 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isFunc} from '../types';
+import {equals} from '../operators';
 
 /**
  * Implementation of the Identity monad
@@ -128,7 +129,7 @@ export class Identity {
      * Identity.fromList(nums); // -> Identity(1)
      */
     static fromList (m) {
-        return m.fold((a) => Identity.of(a[0]));
+        return Identity.of(m.value[0]);
     }
 
     /**
@@ -171,8 +172,7 @@ export class Identity {
      * one.equals(two); // -> false
      */
     equals (b) {
-        return Identity.prototype.isPrototypeOf(b) &&
-               b.value === this.value;
+        return Identity.is(b) && equals(this.value, b.value);
     }
     // -- Functor
     /**
@@ -259,7 +259,7 @@ export class Identity {
      */
     flatMap (f) {
         if (isFunc(f)) {
-            return this.map(f).value;
+            return this.map(f).flat();
         }
         throw 'Identity::flatMap expects argument to be function but saw ' + f;
     }
@@ -267,7 +267,7 @@ export class Identity {
     /**
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
-     * @method flatten
+     * @method flat
      * @memberof module:monads/identity.Identity
      * @return {Identity} New instance of the monad
      *
@@ -276,10 +276,14 @@ export class Identity {
      *
      * let one = Identity.of(Identity.of(1));
      *
-     * one.flatten(); // -> Identity(1)
+     * one.flat(); // -> Identity(1)
      */
-    flatten () {
+    flat () {
         return this.value;
+    }
+
+    flatten() {
+        return this.flat();
     }
     // -- Foldable
     
@@ -354,7 +358,23 @@ export class Identity {
         return this.traverse((a) => a, A);
     }
     // -- Semigroup
+    /**
+     * Concatenates this member of a semigroup with another member of
+     *     the same semigroup if the inner value is a semigroup
+     * @method concat
+     * @memberof module:monads/identity.Identity 
+     * @param {Identity} S Other member of the same semigroup
+     * @return {Identity} Both Identitys concatenated
+     *
+     * @example
+     * const {Identity} = require('futils');
+     *
+     * const hello = Identity.of('hello ');
+     * const world = Identity.of('world');
+     *
+     * hello.concat(world); // -> Identity('hello world')
+     */
     concat (S) {
-        return this.fold((a) => Identity.of(a.concat(S.value)));
+        return Identity.of(this.value.concat(S.value));
     }
 }

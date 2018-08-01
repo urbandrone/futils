@@ -224,7 +224,7 @@ export class State {
      */
     flatMap (f) {
         if (isFunc(f)) {
-            return this.map(f).flatten();
+            return this.map(f).flat();
         }
         throw 'State::flatMap expects argument to be function but saw ' + f;
     }
@@ -232,7 +232,7 @@ export class State {
     /**
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner run
-     * @method flatten
+     * @method flat
      * @memberof module:monads/state.State
      * @version 2.2.0
      * @return {State} New instance of the monad
@@ -242,13 +242,17 @@ export class State {
      *
      * let one = State.of(State.of(1));
      *
-     * one.flatten().run(); // -> 1
+     * one.flat().run(); // -> 1
      */
-    flatten () {
+    flat () {
         return new State((s) => {
             let [m, s2] = this[runState](s);
             return m[runState](s2);
         });
+    }
+
+    flatten() {
+        return this.flat();
     }
 
     /**

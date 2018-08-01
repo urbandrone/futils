@@ -149,6 +149,7 @@ export const replace = operators.replace;
 export const unique = operators.unique;
 export const union = operators.union;
 export const map = operators.map;
+export const flat = operators.flat;
 export const flatten = operators.flatten;
 export const flatMap = operators.flatMap;
 export const assoc = operators.assoc;
@@ -174,5 +175,6 @@ export const foldMap = operators.foldMap;
 export const zip = operators.zip;
 export const traverse = operators.traverse;
 export const sequence = operators.sequence;
+export const elem = operators.elem;
 
 export const transducers = Transducers;

@@ -9,6 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isNil, isFunc} from '../types';
+import {equals} from '../operators';
 import {aritize} from '../arity';
 
 /**
@@ -141,7 +142,7 @@ export class Either {
      * Either.fromList(nums); // -> Right(1)
      */
     static fromList (m) {
-        return m.fold((a) => evalsRight(a[0]) ? Right.of(a[0]) : Left.of(a[0]));
+        return evalsRight(m.value[0]) ? Either.Right(m.value[0]) : Either.Left(m.value[0]);
     }
 
     /**
@@ -278,8 +279,8 @@ export class Either {
      * one.equals(one_b); // -> true
      * one.equals(two); // -> false
      */
-    equals (S) {
-        return Either.is(S) && S.value === this.value;
+    equals (b) {
+        return Either.is(b) && equals(this.value, b.value);
     }
 
     /**
@@ -418,13 +419,13 @@ export class Either {
      * one.flatMap(mInc); // -> Right(2);
      */
     flatMap (f) {
-        return this.map(f).flatten();
+        return this.map(f).flat();
     }
 
     /**
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
-     * @method flatten  
+     * @method flat  
      * @memberof module:monads/either.Either  
      * @return {Right} New instance of the monad
      *
@@ -433,10 +434,14 @@ export class Either {
      *
      * let one = Right.of(Right.of(1));
      *
-     * one.flatten(); // -> Right(1)
+     * one.flat(); // -> Right(1)
      */
-    flatten () {
+    flat () {
         return this.isRight() ? this.value : this;
+    }
+
+    flatten() {
+        return this.flat();
     }
     /**
      * Given two functions, folds the first over the instance if it reflects a

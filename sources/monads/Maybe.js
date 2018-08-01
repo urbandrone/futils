@@ -9,6 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {isFunc, isNil} from '../types';
+import {equals} from '../operators';
 
 /**
  * Implementation of the Maybe monad
@@ -124,7 +125,7 @@ export class Maybe {
      * Maybe.fromList(none); // -> None()
      */
     static fromList (m) {
-        return m.fold((a) => Maybe.of(a[0]));
+        return Maybe.of(m.value[0]);
     }
 
     /**
@@ -196,8 +197,7 @@ export class Maybe {
      * one.equals(two); // -> false
      */
     equals (b) {
-        return Maybe.prototype.isPrototypeOf(b) &&
-               b.value === this.value;
+        return Maybe.is(b) && equals(this.value, b.value);
     }
     // -- Functor
     /**
@@ -283,13 +283,13 @@ export class Maybe {
      * one.flatMap(mInc); // -> Some(2);
      */
     flatMap (f) {
-        return this.map(f).flatten();
+        return this.map(f).flat();
     }
 
     /**
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
-     * @method flatten
+     * @method flat
      * @memberof module:monads/maybe.Maybe
      * @return {Maybe} New instance of the monad
      *
@@ -298,10 +298,14 @@ export class Maybe {
      *
      * let one = Maybe.of(Maybe.of(1));
      *
-     * one.flatten(); // -> Some(1)
+     * one.flat(); // -> Some(1)
      */
-    flatten () {
+    flat () {
         return this.isSome() ? this.value : this;
+    }
+
+    flatten() {
+        return this.flat();
     }
     // -- Recovering
 

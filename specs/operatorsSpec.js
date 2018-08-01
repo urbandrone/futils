@@ -231,12 +231,38 @@ describe('futils/operators module', () => {
         expect(_.findRight((n) => n > 0 && n % 2 === 0, iter(5))).toBe(4);
     });
 
+    it('testing elem :: a -> [b] -> Boolean', () => {
+        expect(_.elem(1, [1, 2, 3])).toBe(true);
+        expect(_.elem(1, [2, 3, 4])).toBe(false);
+        expect(_.elem(1, {a: 1, b: 2, c: 3})).toBe(true);
+        expect(_.elem(1, {a: 2, b: 3, c: 4})).toBe(false);
+        expect(_.elem(1, new Set([1, 2, 3]))).toBe(true);
+        expect(_.elem(1, new Set([2, 3, 4]))).toBe(false);
+    })
+
     it('testing equals :: Setoid -> Setoid -> Bool', () => {
         let S = (a) => ({ value: a, equals(b) { return a === b.value; } });
         let a = S(1);
         let b = S(2);
+        let c = Symbol('a');
         expect(_.equals(a, a)).toBe(true);
         expect(_.equals(a, b)).toBe(false);
+        expect(_.equals(1, 1)).toBe(true);
+        expect(_.equals(1, 2)).toBe(false);
+        expect(_.equals('a', 'a')).toBe(true);
+        expect(_.equals('a', 'b')).toBe(false);
+        expect(_.equals([{foo: 1}], [{foo: 1}])).toBe(true);
+        expect(_.equals([{foo: 1}], [{foo: 2}])).toBe(false);
+        expect(_.equals(c, c)).toBe(true);
+        expect(_.equals(c, Symbol('a'))).toBe(false);
+        expect(_.equals(new Date(2000,0,1), new Date(2000,0,1))).toBe(true);
+        expect(_.equals(new Date(2000,0,1), new Date())).toBe(false);
+        expect(_.equals(/a/, /a/)).toBe(true);
+        expect(_.equals(/a/, /b/)).toBe(false);
+        expect(_.equals(true, true)).toBe(true);
+        expect(_.equals(true, false)).toBe(false);
+        expect(_.equals(new Set([1,2,3]), new Set([1,2,3]))).toBe(true);
+        expect(_.equals(new Set([1,2,3]), new Set([1,2,4]))).toBe(false);
     });
 
     it('testing ap :: Apply -> Functor -> Functor', () => {
@@ -250,9 +276,9 @@ describe('futils/operators module', () => {
         expect(_.map((n) => n + 1, [1, 2, 3])).toEqual([2, 3, 4]);
     });
 
-    it('testing flatten :: Monad -> Monad', () => {
-        expect(_.flatten([[1], 2, [[3], 4]])).toEqual([1, 2, [3], 4]);
-        expect(_.flatten([[1], 2, [[3], 4]], true)).toEqual([1, 2, 3, 4]);
+    it('testing flat :: Monad -> Monad', () => {
+        expect(_.flat([[1], 2, [[3], 4]])).toEqual([1, 2, [3], 4]);
+        expect(_.flat([[1], 2, [[3], 4]], true)).toEqual([1, 2, 3, 4]);
     });
 
     it('testing flatMap :: f -> Monad -> Monad', () => {

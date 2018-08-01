@@ -8,7 +8,8 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {isFunc} from '../types';
+import {isFunc, isArray} from '../types';
+import {equals} from '../operators';
 
 /**
  * Implementation of the List monad
@@ -31,8 +32,14 @@ export class List {
     constructor (a) {
         this.value = a;
     }
-    set value (a) { this[MV] = a; }
+    set value (a) { this[MV] = isArray(a) ? a : [a]; }
     get value () { return this[MV]; }
+    set length (_) {}
+    get length () { return this.value.length; }
+
+    [Symbol.iterator] () {
+        return this.value[Symbol.iterator]();
+    }
 
     /**
      * Returns a string representation of the instance
@@ -220,10 +227,11 @@ export class List {
      * one.equals(two); // -> false
      */
     equals (b) {
-        return List.prototype.isPrototypeOf(b) &&
-               (b.value === this.value ||
-                b.value.length === this.value.length &&
-                b.value.every((n, i) => n === this.value[i]));
+        return List.is(b) &&
+               (b === this ||
+                b.value === this.value ||
+                b.length === this.length &&
+                equals(this.value, b.value));
     }
     // -- Functor
     /**
@@ -310,7 +318,7 @@ export class List {
      */
     flatMap (f) {
         if (isFunc(f)) {
-            return this.map(f).flatten();
+            return this.map(f).flat();
         }
         throw 'List::flatMap expects argument to be function but saw ' + f;
     }
@@ -318,7 +326,7 @@ export class List {
     /**
      * Flattens down a nested monad one level and returns a new monad containing
      *     the inner value
-     * @method flatten
+     * @method flat
      * @memberof module:monads/list.List
      * @return {List} New instance of the monad
      *
@@ -327,31 +335,59 @@ export class List {
      *
      * let one = List.of(List.of(1));
      *
-     * one.flatten(); // -> List([1])
+     * one.flat(); // -> List([1])
      */
-    flatten () {
+    flat () {
         return this.value.reduce((a, m) => a.concat(m));
+    }
+
+    flatten() {
+        return this.flat();
     }
     // -- Foldable
     
     /**
-     * Takes a function and passes the current value into it. Returns the result
-     *   of applying the function to the value
+     * Takes a function and an accumulator, then passes the current value and the
+     *   accumulator into it. Returns the result of applying the function to every
+     *   value in the list. Each iteration must return a new accumulator value
      * @method fold
      * @memberof module:monads/list.List
      * @param {function} f Function to fold with
-     * @return {any} Whatever the function returns
+     * @param {any} a The initial accumulator value
+     * @return {any} The final accumulator
      *
      * @example
      * const {List} = require('futils');
      *
-     * const one = List.of(1);
+     * const one = List.of('a', 'b');
      *
-     * one.fold((n) => n); // -> [1]
+     * one.fold((acc, n) => acc + n, ''); // -> 'ab'
      */
-    fold (f) {
-        return f(this.value);
-    }    
+    fold (f, a) {
+        return this.value.reduce(f, a);
+    }
+    
+    /**
+     * Takes a function and an accumulator, then passes the current value and the
+     *   accumulator into it. Returns the result of applying the function to every
+     *   value in the list. Each iteration must return a new accumulator value.
+     *   Folds the list from right to left
+     * @method foldRight
+     * @memberof module:monads/list.List
+     * @param {function} f Function to fold with
+     * @param {any} a The initial accumulator value
+     * @return {any} The final accumulator
+     *
+     * @example
+     * const {List} = require('futils');
+     *
+     * const one = List.of('a', 'b');
+     *
+     * one.foldRight((acc, n) => acc + n, ''); // -> 'ba'
+     */
+    foldRight (f, a) {
+        return this.value.reduceRight(f, a);
+    }
 
     /**
      * Takes a function from some value to a Functor and an Applicative and
@@ -399,6 +435,7 @@ export class List {
     sequence (A) {
         return this.traverse((a) => a, A);
     }
+
     // -- Semigroup
     /**
      * Takes another member of the Semigroup and concatenates it
@@ -416,6 +453,6 @@ export class List {
      * one.concat(List.of(2)); // -> List([1, 2])
      */
     concat (S) {
-        return new List(this.value.concat(S.toArray()));
+        return new List(this.value.concat(S.value));
     }
 }
