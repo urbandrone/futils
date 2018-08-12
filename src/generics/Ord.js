@@ -15,27 +15,26 @@ import {typeOf} from '../core/typeof';
  * A generic Ord module. Any type which derives from Ord must also implement
  * a equals method
  * @module generics/Ord
- * @requires core/typeOf
  */
 
 
 
-export const compareT = (a, b) => {
-    let tA = typeOf(a), tB = typeOf(this);
+export const compareOrd = (a, b) => {
+    let tA = typeOf(a), tB = typeOf(b);
     if (tA === tB) {
         switch (tA) {
             case 'String':
-                return a.localeCompare(b) > 0;
+                return a.localeCompare(b) < 0;
             case 'Number':
             case 'Date':
-                return b < a;
+                return a < b;
             case 'Array':
-                return b.length < a.length && b.every((x,i) => compareT(x, a[i]));
+                return a.length < b.length && a.every((x,i) => compareOrd(x, b[i]));
             case 'Object':
-                return Object.keys(b).every(x => compareT(a[x], b[x]));
+                return Object.keys(a).every(x => compareOrd(a[x], b[x]));
             case 'Set':
             case 'Map':
-                return compareT([...a.entries()], [...b.entries()]);
+                return compareOrd([...a.entries()], [...b.entries()]);
             case 'Null':
             case 'Void':
             case 'Boolean':
@@ -67,7 +66,7 @@ export const compareT = (a, b) => {
             case 'TypedArray':
                 return false;
             default:
-                return compareT(a.value, b.value);
+                return compareOrd(a.value, b.value);
         }
     }
     throw `Cannot order value of type ${tA} with value of type ${tB}`;
@@ -97,13 +96,12 @@ export const compareT = (a, b) => {
  * one.lte(one); // -> true
  * two.gt(one);  // -> true
  * two.gte(two); // -> true
- * 
  */
 export class Ord {
     static mixInto (ctor) {
         if (ctor && ctor.prototype && ctor.prototype.equals) {
             ctor.prototype.lt = function (a) {
-                return compareT(a, this);
+                return compareOrd(this, a);
             }
             ctor.prototype.lte = function (a) {
                 return this.lt(a) || this.equals(a);
@@ -112,13 +110,10 @@ export class Ord {
                 return !this.lte(a);
             }
             ctor.prototype.gte = function (a) {
-                return !this.lt(a);
+                return !this.lt(a) || this.equals(a);
             }
             return ctor;
         }
         throw `Cannot derive Ord from ${typeOf(ctor)}`;
     }
 }
-
-
-export default { Ord, compareT }

@@ -6,6 +6,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+import {arity} from './core/arity';
 
 
 
@@ -29,54 +30,32 @@ const def = (x, f, d) => Object.defineProperty(x, f, {
     value: d
 });
 
-const keys = o => Object.keys(o);
-
-const tags = o => o[TYPE_TAG] ? `${o[TYPE_TAG]}.${o[TYPE]}` : o[TYPE];
-
 const caseOfT = (x, o) => {
     if (typeof o[x[TYPE]] === 'function') {
         return o[x[TYPE]].apply(x, x[VALS].map((v) => x[v]));
     }
-    throw `${tags(x)}::caseOf - No pattern matched ${x[TYPE]} in ${keys(o)}`;
+    throw `${o[TYPE_TAG]}::caseOf - No pattern matched ${x[TYPE]} in ${Object.keys(o)}`;
 }
 
 const initT = (t, f, v, p) => {
     if (f.length === v.length) {
         let o = Object.create(p);
-        o[TYPE] = t;
+        o.__type__ = o[TYPE] = t;
         o.__values__ = o[VALS] = f;
         return f.reduce((x, y, i) => {
             x[y] = v[i];
             return x;
         }, o);
     }
-    throw `${tags(p)} awaits ${f.length} arguments but got ${v.length}`;
+    throw `${t} awaits ${f.length} arguments but got ${v.length}`;
 }
 
 const makeCtor = (t, vs, p) => {
     switch (vs.length) {
-        case 1:
-            return (a) => initT(t, vs, [a], p);
-        case 2:
-            return (a, b) => initT(t, vs, [a,b], p);
-        case 3:
-            return (a, b, c) => initT(t, vs, [a,b,c], p);
-        case 4:
-            return (a,b,c,d) => initT(t, vs, [a,b,c,d], p);
-        case 5:
-            return (a,b,c,d,e) => initT(t, vs, [a,b,c,d,e], p);
-        case 6:
-            return (a,b,c,d,e,f) => initT(t, vs, [a,b,c,d,e,f], p);
-        case 7:
-            return (a,b,c,d,e,f,g) => initT(t, vs, [a,b,c,d,e,f,g], p);
-        case 8:
-            return (a,b,c,d,e,f,g,h) => initT(t, vs, [a,b,c,d,e,f,g,h], p);
-        case 9:
-            return (a,b,c,d,e,f,g,h,i) => initT(t, vs, [a,b,c,d,e,f,g,h,i], p);
-        case 10:
-            return (a,b,c,d,e,f,g,h,i,j) => initT(t, vs, [a,b,c,d,e,f,g,h,i,j], p);
-        default:
+        case 0:
             return () => initT(t, vs, [], p);
+        default:
+            return arity(vs.length, (...xs) => initT(t, vs, xs, p));
     }
 }
 
@@ -108,11 +87,10 @@ const deriveT = a => (...Gs) => Gs.reduce((t, g) => g.mixInto(t), a);
  */
 export const Type = (type, vals) => {
     const proto = {}
-    const ctor = makeCtor(type, vals, proto);
+    const ctor = makeCtor(type, null, vals, proto);
     def(ctor, 'is', (x) => { return x && x[TYPE] === type; });
     def(ctor, 'deriving', deriveT(ctor));
     ctor.prototype = proto;
-    ctor.prototype.__type__ = type;
     ctor.prototype.constructor = ctor;
     return ctor;
 }
@@ -155,21 +133,16 @@ export const UnionType = (type, defs) => {
     const union = {
         [TYPE]: type,
         prototype: {
+            [TYPE_TAG]: type,
             caseOf(o) { return caseOfT(this, o); },
             cata(o) { return caseOfT(this, o); },
         },
     };
     def(union, 'is', (x) => x != null && x[TYPE_TAG] === type);
     def(union, 'deriving', deriveT(union));
-    keys(defs).forEach(d => {
+    Object.keys(defs).forEach(d => {
         const ctor = makeCtor(d, defs[d], union.prototype);
-        ctor.prototype.__type__ = `${type}.${d}`;
-        ctor.prototype[TYPE_TAG] = type;
         union[d] = ctor;
     });
     return union;
 }
-
-
-
-export default { Type, UnionType };

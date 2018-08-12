@@ -14,7 +14,6 @@ import {typeOf} from '../core/typeof';
 /**
  * A generic Show module
  * @module generics/Show
- * @requires core/typeOf
  */
 
 
@@ -104,7 +103,3 @@ export class Show {
         throw `Cannot derive Show from ${typeOf(ctor)}`;
     }
 }
-
-
-
-export default { Show, showT }

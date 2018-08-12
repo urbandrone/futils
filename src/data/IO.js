@@ -6,6 +6,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+import {typeOf} from '../core/typeof';
 import {Type} from '../adt';
 
 
@@ -36,7 +37,7 @@ import {Type} from '../adt';
  * envB.run('arch');          // -> <architecture>
  * envC('arch').run(process); // -> <architecture>
  */
-const IO = Type('IO', ['run']);
+export const IO = Type('IO', ['run']);
 
 
 
@@ -140,21 +141,21 @@ IO.fromMaybe = (a) => IO.of(a.value);
  */
 IO.fromList = (a) => IO.of(a.value[0] == null ? null : a.value[0]);
 /**
- * A natural transformation from an Identity into a IO
- * @method fromIdentity
+ * A natural transformation from an Id into a IO
+ * @method fromId
  * @static
  * @memberOf module:data/IO.IO
- * @param {Identity} a The Identity to transform
- * @return {IO} A IO with the value of the Identity
+ * @param {Id} a The Id to transform
+ * @return {IO} A IO with the value of the Id
  *
  * @example
- * const {IO, Identity} = require('futils/data');
+ * const {IO, Id} = require('futils/data');
  *
- * const id = Identity.of(1);
+ * const id = Id.of(1);
  *
- * IO.fromIdentity(id); // -> IO(_ -> 1)
+ * IO.fromId(id); // -> IO(_ -> 1)
  */
-IO.fromIdentity = (a) => IO.of(a.value);
+IO.fromId = (a) => IO.of(a.value);
 
 
 
@@ -174,7 +175,10 @@ IO.fromIdentity = (a) => IO.of(a.value);
  * ioProcess.concat(ioArch); // -> IO(_ -> <architecture>)
  */
 IO.prototype.concat = function (a) {
-    return IO((v) => a.run(this.run(v)));
+    if (IO.is(a)) {
+        return IO((v) => a.run(this.run(v)));
+    }
+    throw `IO::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
 }
 /**
  * Maps a function over the value in a IO
@@ -260,13 +264,11 @@ IO.prototype.ap = function (a) {
  * @example
  * const {IO} = require('futils/data');
  *
- * const io = IO.of([1, 2]);
- *
- * const even = (n) => n % 2 === 0;
+ * const io = IO.empty();
  *
  * const len = (xs) => xs.length;
  *
- * io.contraMap(len).map(even); // -> IO(_ -> true)
+ * io.contraMap(len).run([1, 2]); // -> 2
  */
 IO.prototype.contraMap = function (f) {
     return IO((v) => this.run(f(v)));
@@ -283,18 +285,14 @@ IO.prototype.contraMap = function (f) {
  * @example
  * const {IO} = require('futils/data');
  *
- * const io = IO.of([1, 2]);
+ * const io = IO.empty();
  *
  * const even = (n) => n % 2 === 0;
  *
  * const len = (xs) => xs.length;
  *
- * io.proMap(len, even); // -> IO(_ -> true)
+ * io.proMap(len, even).run([1, 2]); // -> true
  */
 IO.prototype.proMap = function (f, g) {
     return IO((v) => g(this.run(f(v))));
 }
-
-
-
-export default {IO};

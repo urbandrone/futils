@@ -14,13 +14,12 @@ import {typeOf} from '../core/typeof';
 /**
  * A generic Eq module
  * @module generics/Eq
- * @requires core/typeOf
  */
 
 
 
-export const compareT = (a, b) => {
-    let tA = typeOf(a), tB = typeOf(this);
+export const compareEq = (a, b) => {
+    let tA = typeOf(a), tB = typeOf(b);
     if (tA !== tB) { return false; }
     switch (tA) {
         case 'Null':
@@ -53,13 +52,13 @@ export const compareT = (a, b) => {
         case 'RegExp':
             return b.toString() === a.toString();
         case 'Array':
-            return b.length === a.length && a.every((x,i) => compareT(x, b[i]));
+            return b.length === a.length && a.every((x,i) => compareEq(x, b[i]));
         case 'Object':
-            return Object.keys(a).every(x => compareT(a[x], b[x])) &&
-                   Object.keys(b).every(x => compareT(a[x], b[x]));
+            return Object.keys(a).every(x => compareEq(a[x], b[x])) &&
+                   Object.keys(b).every(x => compareEq(a[x], b[x]));
         case 'Set':
         case 'Map':
-            return compareT([...b.entries()], [...a.entries()]);
+            return compareEq([...b.entries()], [...a.entries()]);
         case 'Error':
         case 'EvalError':
         case 'TypeError':
@@ -68,7 +67,7 @@ export const compareT = (a, b) => {
         case 'ReferenceError':
             return a.name === b.name && a.message === b.message;
         default:
-            return compareT(a.value, b.value);
+            return compareEq(a.value, b.value);
     }
 }
 
@@ -101,14 +100,10 @@ export class Eq {
     static mixInto (ctor) {
         if (ctor && ctor.prototype) {
             ctor.prototype.equals = function (a) {
-                return compareT(this, a);
+                return compareEq(this, a);
             }
             return ctor;
         }
         throw `Cannot derive Eq from ${typeOf(ctor)}`;
     }
 }
-
-
-
-export default { Eq, compareT }

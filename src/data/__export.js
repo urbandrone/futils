@@ -1,13 +1,14 @@
-import {Identity} from './Identity';
+import {Id} from './Id';
 import {Maybe} from './Maybe';
 import {Either} from './Either';
-import {IO} from './IO';
 import {List} from './List';
+import {IO} from './IO';
 import {State} from './State';
 import {Task} from './Task';
+import {Free} from './Free';
 
 
 
 export default {
-    Identity, Maybe, Either, IO, List, State, Task
+    Id, Maybe, Either, List, IO, State, Task, Free
 }

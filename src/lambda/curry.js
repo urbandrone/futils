@@ -6,56 +6,42 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {Type} from '../adt';
-import {Show} from '../generics/Show';
-import {Eq} from '../generics/Eq';
-import {Ord} from '../generics/Ord';
+import {arity} from '../core/arity';
 
 
 
-const Identity = Type('Identity', ['value']).
-    deriving(Show, Eq, Ord);
+/**
+ * Provides the curry function. Curry can be used to turn a function which takes
+ * multiple arguments at once into a function which takes its arguments in
+ * multiple steps
+ * @module lambda/curry
+ */
 
 
 
-Identity.of = Identity;
-Identity.from = Identity;
-
-Identity.fromEither = (a) => Identity(a.value);
-Identity.fromMaybe = (a) => Identity(a.value);
-Identity.fromList = (a) => Identity(a.value[0]);
-
-
-Identity.prototype.map = function (f) {
-    return Identity(f(this.value));
-}
-
-Identity.prototype.flat = function () {
-    return this.value;
-}
-
-Identity.prototype.flatMap = function (f) {
-    return this.map(f).flat();
-}
-
-Identity.prototype.ap = function (a) {
-    return a.map(this.value);
-}
-
-Identity.prototype.reduce = function (f, x) {
-    return f(x, this.value);
-}
-
-Identity.prototype.traverse = function (f, A) {
-    return A.prototype.ap ?
-           A.of(Identity.of).ap(f(this.value)) :
-           f(this.value).map(Identity.of);
-}
-
-Identity.prototype.sequence = function (A) {
-    return this.traverse((v) => v, A);
+function _curried (f, xs) {
+    if (xs.length >= f.length) { return f(...xs); }
+    return arity(f.length - xs.length, (...ys) => _curried(f, xs.concat(ys)));
 }
 
 
 
-export default {Identity};
+/**
+ * The curry function. Takes a function and returns a variant of it which takes
+ * arguments until enough arguments to execute the given function are consumed
+ * @method curry
+ * @memberOf module:lambda/curry
+ * @param {Function} f The function to curry
+ * @return {Function} The curried variant
+ *
+ * @example
+ * const {curry} = require('futils/lambda');
+ *
+ * const add = (a, b) => a + b;
+ * const cAdd = curry(add);
+ *
+ * add(1);     // -> NaN
+ * cAdd(1);    // -> (n -> 1 + n)
+ * cAdd(1)(2); // -> 3
+ */
+export const curry = f => f.length <= 1 ? f : _curried(f, []);

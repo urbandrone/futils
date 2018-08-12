@@ -6,6 +6,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+import {typeOf} from '../core/typeof';
 import {Type} from '../adt';
 import {Show} from '../generics/Show';
 import {Eq} from '../generics/Eq';
@@ -55,7 +56,7 @@ const voids = () => void 0;
  *     (num) => { console.log(num); }
  * )
  */
-const Task = Type('Task', ['run']).
+export const Task = Type('Task', ['run']).
     deriving(Show, Eq);
 
 Task.prototype.cleanUp = voids;
@@ -180,21 +181,21 @@ Task.fromNodeFunction = f => (...a) => Task((fail, ok) => {
     f(...a, (err, v) => { if (err) { fail(err); } else { ok(v); } });
 });
 /**
- * A natural transformation from an Identity into a Task
- * @method  fromIdentity
+ * A natural transformation from an Id into a Task
+ * @method  fromId
  * @static
  * @memberOf module:data/Task.Task
- * @param {Identity} a The Identity to transform
- * @return {Task} The Task which resolves to the value of the Identity
+ * @param {Id} a The Id to transform
+ * @return {Task} The Task which resolves to the value of the Id
  *
  * @example
- * const {Task, Identity} = require('futils/data');
+ * const {Task, Id} = require('futils/data');
  *
- * const id = Identity('a value');
+ * const id = Id('a value');
  *
- * Task.fromIdentity(id); // -> Task(_, 'a value')
+ * Task.fromId(id); // -> Task(_, 'a value')
  */
-Task.fromIdentity = a => Task.of(a.value);
+Task.fromId = a => Task.of(a.value);
 /**
  * A natural transformation from a Maybe.Some or Maybe.None into a Task. If the
  * Maybe is a Maybe.None, the resulting Task rejects
@@ -301,24 +302,28 @@ Task.prototype.toPromise = function () {
  * ms500.concat(ms300); // -> Task(_, 1)
  */
 Task.prototype.concat = function (a) {
-    const clean = (x, y) => { this.cleanUp(x); a.cleanUp(y); };
-    const task = Task((fail, ok) => {
-        let done = false,
-            states = [];
+    if (Task.is(a)) {
+        const clean = (x, y) => { this.cleanUp(x); a.cleanUp(y); };
+        const task = Task((fail, ok) => {
+            let done = false,
+                states = [];
 
-        const g = f => v => {
-            if (!done) {
-                done = true;
-                delay(() => clean(states[0], states[1]));
-                f(v);
+            const g = f => v => {
+                if (!done) {
+                    done = true;
+                    delay(() => clean(states[0], states[1]));
+                    f(v);
+                }
             }
-        }
 
-        states[0] = this.run(g(fail), g(ok));
-        states[1] = a.run(g(fail), g(ok));
-        return states;
-    });
-    task.cleanUp = clean;
+            states[0] = this.run(g(fail), g(ok));
+            states[1] = a.run(g(fail), g(ok));
+            return states;
+        });
+        task.cleanUp = clean;
+        return task;
+    }
+    throw `Task::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
 }
 /**
  * Maps a function over the value and resolves with the result
@@ -463,7 +468,3 @@ Task.prototype.alt = function (a) {
     task.cleanUp = this.cleanUp;
     return task;
 }
-
-
-
-export default {Task};

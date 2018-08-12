@@ -2,8 +2,8 @@
   "name": "futils",
   "version": "2.12.0",
   "description": "Functional programming utility toolkit",
-  "main": "futils.js",
-  "module": "sources/__main.es6.js",
+  "main": "dist/futils.min.js",
+  "module": "src/__export.es6.js",
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node ./specs --captureExceptions",
     "docs": "./node_modules/.bin/jsdoc -c ./conf.json --verbose",
@@ -12,6 +12,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/urbandrone/futils.git"
+  },
+  "directories": {
+    "lib": "dist/",
+    "src": "src/"
   },
   "keywords": [
     "functional programming",
@@ -35,14 +39,14 @@
   "tonicExampleFilename": "example.js",
   "devDependencies": {
     "babel-cli": "^6.11.4",
-    "babel-preset-es2015-rollup": "^1.2.0",
+    "babel-preset-es2015-rollup": "^3.0.0",
     "jasmine-node": "^1.15.0",
     "jsdoc": "^3.4.0",
     "minami": "^1.1.1",
-    "rollup": "^0.36.3",
-    "rollup-plugin-babel": "^2.6.1",
-    "rollup-plugin-json": "^2.3.1",
-    "rollup-plugin-uglify": "^1.0.1"
+    "rollup": "^0.64.1",
+    "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-json": "^3.0.0",
+    "rollup-plugin-uglify": "^4.0.0"
   },
   "dependencies": {}
 }

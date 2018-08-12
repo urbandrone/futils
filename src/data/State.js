@@ -39,7 +39,7 @@ import {Type} from '../adt';
  * state.compute(0).value; // -> 1
  * state.compute(0).state; // -> 0
  */
-const State = Type('State', ['compute']);
+export const State = Type('State', ['compute']);
 /**
  * A wrapper for a stateful computations result value and state. Every computation
  * of a State data structure should return a StateResult. This is only needed,
@@ -47,7 +47,7 @@ const State = Type('State', ['compute']);
  * @class module:data/State.StateResult
  * @version 3.0.0
  */
-const StateResult = Type('State.Result', ['value', 'state']);
+export const StateResult = Type('State.Result', ['value', 'state']);
 
 
 
@@ -233,7 +233,3 @@ State.prototype.run = function (s) {
 State.prototype.exec = function (s) {
     return this.compute(s).state;
 }
-
-
-
-export default {State, StateResult};

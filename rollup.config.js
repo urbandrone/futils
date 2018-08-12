@@ -1,5 +1,5 @@
 import babel from 'rollup-plugin-babel';
-import uglify from 'rollup-plugin-uglify';
+import {uglify} from 'rollup-plugin-uglify';
 
 
 const BANNER = `/* @banner futils | www.npmjs.com/package/futils */`;
@@ -7,7 +7,7 @@ const BANNER = `/* @banner futils | www.npmjs.com/package/futils */`;
 const CONFIG_BABEL = {
     exclude: ['node_modules/**', '*.json']
 };
-const CONFIG_UGLYF = {
+const CONFIG_UGLIFY = {
     output: {
         comments(_, c) {
             if (c.type === "comment2") {
@@ -18,39 +18,58 @@ const CONFIG_UGLYF = {
 };
 
 export default [{
-    entry: 'src/__main.js',
-    dest: 'futils.min.js',
-    format: 'umd',
-    moduleName: 'futils',
-    sourceMap: false,
-    banner: BANNER,
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLYF)]
+    input: 'src/__export.js',
+    output: {
+        file: 'dist/futils.min.js',
+        format: 'umd',
+        name: 'futils',
+        sourcemap: false,
+        banner: BANNER
+    },
+    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
 }, {
-    entry: 'src/adt.js',
-    dest: 'adt.js',
-    format: 'cjs',
-    sourceMap: false,
-    banner: BANNER,
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLYF)]
+    input: 'src/adt.js',
+    output: {
+        file: 'dist/adt.js',
+        format: 'cjs',
+        sourcemap: false,
+        banner: BANNER
+    },
+    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
 }, {
-    entry: 'src/lambda/__export.js',
-    dest: 'lambda.js',
-    format: 'cjs',
-    sourceMap: false,
-    banner: BANNER,
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLYF)]
+    input: 'src/lambda/__export.js',
+    output: {
+        file: 'dist/lambda.js',
+        format: 'cjs',
+        sourcemap: false,
+        banner: BANNER
+    },
+    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
 }, {
-    entry: 'src/generics/__export.js',
-    dest: 'generics.js',
-    format: 'cjs',
-    sourceMap: false,
-    banner: BANNER,
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLYF)]
+    input: 'src/generics/__export.js',
+    output: {
+        file: 'dist/generics.js',
+        format: 'cjs',
+        sourcemap: false,
+        banner: BANNER
+    },
+    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
 }, {
-    entry: 'src/data/__export.js',
-    dest: 'data.js',
-    format: 'cjs',
-    sourceMap: false,
-    banner: BANNER,
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLYF)]
+    input: 'src/data/__export.js',
+    output: {
+        file: 'dist/data.js',
+        format: 'cjs',
+        sourcemap: false,
+        banner: BANNER
+    },
+    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
+}, {
+    input: 'src/monoid/__export.js',
+    output: {
+        file: 'dist/monoid.js',
+        format: 'cjs',
+        sourcemap: false,
+        banner: BANNER
+    },
+    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
 }]
