@@ -297,6 +297,27 @@ List.prototype.reduce = function (f, x) {
     return this.value.reduce(f, x);
 }
 /**
+ * Works like the Array.reduceRight method. If given a function and an initial
+ * value, reduces the values in the List to a final value
+ * @method reduceRight
+ * @memberOf module:data/List.List
+ * @param {Function} f The function to reduce with
+ * @param {any} x The seed value to reduce into
+ * @return {any} All values reduced into the seed
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * const ls = List.of(1, 2, 3);
+ *
+ * const reducer = (a, b) => a + b;
+ *
+ * ls.reduceRight(reducer, 0); // -> 6
+ */
+List.prototype.reduceRight = function (f, x) {
+    return this.value.reduceRight(f, x);
+}
+/**
  * Takes a function with signature (Applicable f) => a -> f a and an Applicative
  * constructor and traverses the List into the applicative
  * @method traverse
