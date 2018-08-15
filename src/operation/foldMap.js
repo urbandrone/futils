@@ -35,5 +35,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  */
 export const foldMap = (f, a) => {
     return a == null ? (b) => foldMap(f, b) :
+            a.foldMap ? a.foldMap(f) :
             a.reduce((x, y) => x == null ? f(y) : x.concat(f(y)), null);
 }

@@ -34,5 +34,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  */
 export const fold = (M, a) => {
     return a == null ? (b) => fold(M, b) :
+            a.fold ? a.fold(M) :
             a.reduce((x, y) => x.concat(M.of(y)), M.empty());
 }

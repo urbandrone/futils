@@ -6,28 +6,20 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {Type} from '../adt';
+import {typeOf} from '../core/typeof';
+import {UnionType} from '../adt';
 import {Show} from '../generics/Show';
-import {Eq} from '../generics/Eq';
-import {Ord} from '../generics/Ord';
-
-/* Utilities */
-const arrayFrom = (a) => Array.isArray(a) ? a :
-                        a == null ? [] :
-                        a.length && typeof a !== 'string' ? Array.from(a) :
-                        [a];
 
 
 
 
 /**
- * Grants access to the List data structure. List is a wrapper for arrays, which
- * provides an interface similiar to the other data structures
+ * Grants access to the List data structure. List is implemented as a linked
+ * list, where each part has a head and a tail. The end of the list is marked
+ * with Nil
  * @module data/List
  * @requires adt
  * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
  */
 
 
@@ -36,8 +28,6 @@ const arrayFrom = (a) => Array.isArray(a) ? a :
  * The List data type
  * @class module:data/List.List
  * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
  * @static
  * @version 3.0.0
  *
@@ -46,9 +36,28 @@ const arrayFrom = (a) => Array.isArray(a) ? a :
  *
  * List([1, 2, 3]); // -> List([1, 2, 3])
  */
-export const List = Type('List', ['value']).
-    deriving(Show, Eq, Ord);
+export const List = UnionType('List', {Cons: ['value', 'tail'], Nil: []}).
+    deriving(Show);
 
+const {Cons, Nil} = List;
+List.prototype.value = null;
+List.prototype.tail = null;
+
+
+
+/* Utilities */
+function foldl (f, a, ls) {
+    let r = a, s = ls;
+    while (!Nil.is(s)) {
+        r = f(r, s.value);
+        s = s.tail;
+    }
+    return r;
+}
+
+function foldr (f, a, ls) {
+    return foldl(f, a, foldl((x,y) => Cons(y, x), Nil(), ls));
+}
 
 
 /**
@@ -62,10 +71,9 @@ export const List = Type('List', ['value']).
  * @example
  * const {List} = require('futils/data');
  *
- * List.of(1);    // -> List([1])
- * List.of(1, 2); // -> List([1, 2])
+ * List.of(1); // -> Cons(1, Nil)
  */
-List.of = (...a) => List(a);
+List.of = (a) => Cons(a, Nil());
 /**
  * Monoid implementation for List. Returns a List without values
  * @method empty
@@ -76,9 +84,9 @@ List.of = (...a) => List(a);
  * @example
  * const {List} = require('futils/data');
  *
- * List.empty(); // -> List([])
+ * List.empty(); // -> Nil
  */
-List.empty = () => List([]);
+List.empty = Nil;
 /**
  * Lifts a value into a List. Somewhat similiar to List.of, but only accepts a
  * single value and puts it in a array if it is not an array itself. Useful to
@@ -92,10 +100,10 @@ List.empty = () => List([]);
  * @example
  * const {List} = require('futils/data');
  *
- * List.from(1);   // -> List([1])
- * List.from([1]); // -> List([1])
+ * List.from(1);   // -> Cons(1, Nil)
+ * List.from([1]); // -> Cons(1, Nil)
  */
-List.from = (a) => List(arrayFrom(a));
+List.from = (a) => a == null ? Nil() : Array.isArray(a) ? List.fromArray(a) : Cons(a, Nil());
 /**
  * A natural transformation from an array into a List
  * @method fromArray
@@ -107,9 +115,9 @@ List.from = (a) => List(arrayFrom(a));
  * @example
  * const {List} = require('futils/data');
  *
- * List.fromArray([1, 2, 3]); // -> List([1, 2, 3])
+ * List.fromArray([1, 2, 3]); // -> Cons(1, Cons(2, Cons(3, Nil)))
  */
-List.fromArray = List;
+List.fromArray = (a) => a.reduceRight((x, y) => Cons(y, x), Nil());
 /**
  * A natural transformation from an Id to a List
  * @method fromId
@@ -123,9 +131,9 @@ List.fromArray = List;
  *
  * const id = Id('a value');
  *
- * List.fromId(id); // -> List(['a value'])
+ * List.fromId(id); // -> Cons('a value', Nil)
  */
-List.fromId = (a) => List.from(a.value);
+List.fromId = (a) => List.of(a.value);
 /**
  * A natural transformation from a Maybe.Some or Maybe.None into a List
  * @method fromMaybe
@@ -140,10 +148,10 @@ List.fromId = (a) => List.from(a.value);
  * const some = Maybe.Some('a value');
  * const none = Maybe.None();
  *
- * List.fromMaybe(some); // -> List(['a value'])
- * List.fromMaybe(none); // -> List([])
+ * List.fromMaybe(some); // -> Cons('a value', Nil)
+ * List.fromMaybe(none); // -> Nil
  */
-List.fromMaybe = (a) => a.isSome() ? List.from(a.value) : List.empty();
+List.fromMaybe = (a) => a.isSome() ? List.of(a.value) : List.empty();
 /**
  * A natural transformation from an Either.Left or Either.Right into a List
  * @method fromEither
@@ -158,15 +166,18 @@ List.fromMaybe = (a) => a.isSome() ? List.from(a.value) : List.empty();
  * const l = Either.Left('a left');
  * const r = Either.Right('a right');
  *
- * List.fromEither(l); // -> List([])
- * List.fromEither(r); // -> List(['a right'])
+ * List.fromEither(l); // -> Nil
+ * List.fromEither(r); // -> Cons('a right', Nil)
  */
-List.fromEither = (a) => a.isRight() ? List.from(a.value) : List.empty();
+List.fromEither = (a) => a.isRight() ? List.of(a.value) : List.empty();
 
 
 
 List.prototype[Symbol.iterator] = function () {
-    return this.value[Symbol.iterator]();
+    return this.caseOf({
+        Nil: () => ({done: true, next() { return this; }}),
+        Cons: () => this.toArray()[Symbol.iterator]()
+    });
 }
 /**
  * A natural transformation from a List into an array
@@ -177,10 +188,10 @@ List.prototype[Symbol.iterator] = function () {
  * @example
  * const {List} = require('futils/data');
  *
- * List.of(1, 2, 3).toArray(); // -> [1, 2, 3]
+ * List.of(2).cons(1).toArray(); // -> [1, 2]
  */
 List.prototype.toArray = function () {
-    return this.value;
+    return this.reduceRight((a, x) => a.concat(x), []);
 }
 /**
  * Concattenates a List with another List
@@ -192,13 +203,13 @@ List.prototype.toArray = function () {
  * @example
  * const {List} = require('futils/data');
  *
- * const ls = List.of(1, 2, 3);
+ * const ls = List.of(1);
  *
- * ls.concat(List.of(4, 5, 6)); // -> List([1, 2, 3, 4, 5, 6])
+ * ls.concat(List.of(2)); // -> Cons(1, Cons(2, Nil))
  */
 List.prototype.concat = function (a) {
     if (List.is(a)) {
-        return List(this.value.concat(a.value));
+        return this.reduceRight((ls, x) => Cons(x, ls), a);
     }
     throw `List::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
 }
@@ -212,14 +223,14 @@ List.prototype.concat = function (a) {
  * @example
  * const {List} = require('futils/data');
  *
- * const ls = List.of(1, 2, 3);
+ * const ls = List.of(1);
  * 
  * const inc = (n) => n + 1;
  *
- * ls.map(inc); // -> List([2, 3, 4])
+ * ls.map(inc); // -> Cons(2, Nil)
  */
 List.prototype.map = function (f) {
-    return List(this.value.map(f));
+    return this.reduceRight((ls, x) => Cons(f(x), ls), Nil());
 }
 /**
  * Flattens a nested List one level
@@ -230,12 +241,14 @@ List.prototype.map = function (f) {
  * @example
  * const {List} = require('futils/data');
  *
- * const ls = List.of(List.of(1, 2, 3));
+ * const ls = List.of(List.of(1));
  *
- * ls.flat(); // -> List([1, 2, 3])
+ * ls.flat(); // -> Cons(1, Nil)
  */
 List.prototype.flat = function () {
-    return this.value.reduce((l, a) => l.concat(a));
+    return this.reduceRight((ls, x) => {
+        return x.reduceRight((ks, y) => Cons(y, ks), ls);
+    }, Nil());
 }
 /**
  * Maps a List returning function over each value in the List and flattens the result
@@ -247,11 +260,11 @@ List.prototype.flat = function () {
  * @example
  * const {List} = require('futils/data');
  *
- * const ls = List.of(1, 2, 3);
+ * const ls = List.of(1);
  *
  * const inc = (n) => List.of(n + 1);
  *
- * ls.flatMap(inc); // -> List([2, 3, 4])
+ * ls.flatMap(inc); // -> Cons(2, Nil)
  */
 List.prototype.flatMap = function (f) {
     return this.map(f).flat();
@@ -266,14 +279,17 @@ List.prototype.flatMap = function (f) {
  * @example
  * const {List} = require('futils/data');
  *
- * const ls = List.of(1, 2, 3);
+ * const ls = List.of(1);
  *
  * const mInc = List.of((n) => n + 1);
  *
- * mInc.ap(ls); // -> List([2, 3, 4])
+ * mInc.ap(ls); // -> Cons(2, Nil)
  */
 List.prototype.ap = function (a) {
-    return a.map(this.value[0]);
+    return this.caseOf({
+        Nil: () => this,
+        Cons: (h) => a.map(h)
+    });
 }
 /**
  * Works like the Array.reduce method. If given a function and an initial value,
@@ -287,14 +303,17 @@ List.prototype.ap = function (a) {
  * @example
  * const {List} = require('futils/data');
  *
- * const ls = List.of(1, 2, 3);
+ * const ls = List.of(1);
  *
  * const reducer = (a, b) => a + b;
  *
- * ls.reduce(reducer, 0); // -> 6
+ * ls.reduce(reducer, 1); // -> 2
  */
 List.prototype.reduce = function (f, x) {
-    return this.value.reduce(f, x);
+    return this.caseOf({
+        Nil: () => x,
+        Cons: () => foldl(f, x, this)
+    });
 }
 /**
  * Works like the Array.reduceRight method. If given a function and an initial
@@ -308,14 +327,17 @@ List.prototype.reduce = function (f, x) {
  * @example
  * const {List} = require('futils/data');
  *
- * const ls = List.of(1, 2, 3);
+ * const ls = List.of(1);
  *
  * const reducer = (a, b) => a + b;
  *
- * ls.reduceRight(reducer, 0); // -> 6
+ * ls.reduceRight(reducer, 1); // -> 2
  */
 List.prototype.reduceRight = function (f, x) {
-    return this.value.reduceRight(f, x);
+    return this.caseOf({
+        Nil: () => x,
+        Cons: () => foldr(f, x, this)
+    })
 }
 /**
  * Takes a function with signature (Applicable f) => a -> f a and an Applicative
@@ -329,14 +351,14 @@ List.prototype.reduceRight = function (f, x) {
  * @example
  * const {List, Maybe} = require('futils/data');
  * 
- * const ls = List.of(1, 2, 3)
+ * const ls = List.of(1)
  *
  * const fn = (n) => Maybe.of(n);
  *
- * ls.traverse(fn, Maybe); // -> Some(List([1, 2, 3]))
+ * ls.traverse(fn, Maybe); // -> Some(Cons(1, Nil))
  */
 List.prototype.traverse = function (f, A) {
-    return this.reduce(
+    return this.reduceRight(
         (t, a) => f(a).map(b => c => c.concat(List.of(b))).ap(t),
         A.of(List.empty())
     );
@@ -351,9 +373,9 @@ List.prototype.traverse = function (f, A) {
  * @example
  * const {List, Maybe} = require('futils/data');
  *
- * const ls = List.of(1, 2, 3);
+ * const ls = List.of(1);
  *
- * ls.sequence(Maybe); // -> Some(List([1, 2, 3]))
+ * ls.sequence(Maybe); // -> Some(Cons(1, Nil))
  */
 List.prototype.sequence = function (A) {
     return this.traverse(x => x, A);
@@ -368,14 +390,73 @@ List.prototype.sequence = function (A) {
  * @example
  * const {List} = require('futils/data');
  *
- * const ls = List.of(1, 2, 3);
+ * const ls = List.of(1);
  * const ns = List.empty();
  *
- * ls.alt(List.of(4)); // -> List([1, 2, 3])
- * ls.alt(List.of());  // -> List([1, 2, 3])
- * ns.alt(List.of(4)); // -> List([4])
- * ns.alt(List.of());  // -> List([])
+ * ls.alt(List.of(4));    // -> Cons(1, Nil)
+ * ls.alt(List.empty());  // -> Cons(1, Nil)
+ * ns.alt(List.of(4));    // -> Cons(4, Nil)
+ * ns.alt(List.empty());  // -> Nil
  */
 List.prototype.alt = function (a) {
-    return this.value.length < 1 ? a : this;
+    return this.caseOf({
+        Nil: () => a,
+        Cons: () => this
+    });
+}
+
+List.prototype.foldMap = function (f) {
+    return this.reduceRight((m, x) => m == null ? f(x) : m.concat(f(x)), null);
+}
+
+List.prototype.fold = function (A) {
+    return this.foldMap(A.of);
+}
+
+List.prototype.filter = function (f) {
+    return this.reduceRight((ls, x) => !!f(x) ? Cons(x, ls) : ls, Nil());
+}
+
+List.prototype.intercalate = function (a) {
+    return this.reduceRight((ls, x) => Nil.is(ls) ? Cons(x, ls) : Cons(x, Cons(a, ls)), Nil());
+}
+
+List.prototype.join = function (a) {
+    return this.reduce((ls, x) => ls === '' ? x : `${ls}${a}${x}`, '');
+}
+
+List.prototype.cons = function (a) {
+    return Cons(a, this);
+}
+
+List.prototype.snoc = function (a) {
+    return this.reduceRight((ls, x) => Cons(x, ls), Cons(a, Nil()));
+}
+
+List.protoype.head = function () {
+    return this.caseOf({
+        Nil: () => null,
+        Cons: (h) => h
+    });
+}
+
+List.prototype.tail = function () {
+    return this.caseOf({
+        Nil: () => this,
+        Cons: (_, t) => t
+    });
+}
+
+List.prototype.take = function (n) {
+    return this.caseOf({
+        Nil: () => this,
+        Cons: (h, t) => n > 0 ? Cons(h, t.take(n - 1)) : Nil()
+    });
+}
+
+List.protoype.drop = function (n) {
+    return this.caseOf({
+        Nil: () => this,
+        Cons: (_, t) => n > 1 ? t.drop(n - 1) : t
+    });
 }
