@@ -478,22 +478,6 @@ List.prototype.intercalate = function (a) {
     return this.reduceRight((ls, x) => Nil.is(ls) ? Cons(x, ls) : Cons(x, Cons(a, ls)), Nil());
 }
 /**
- * Works like the Array.join method. Joins all items in a List into a string by
- * a given separator. If no separator is given, the empty string is used
- * @method join
- * @memberOf module:data/List.List
- * @param {String} [a = ''] The optional separator
- * @return {String} All elements of the List joined to a String
- *
- * @example
- * const {List} = require('futils/data');
- *
- * List.of(3).cons(2).cons(1).join('/'); // -> '1/2/3'
- */
-List.prototype.join = function (a) {
-    return this.reduce((ls, x) => ls === '' ? x : `${ls}${a || ''}${x}`, '');
-}
-/**
  * Sets the given value to the head position of a List, making the current List
  * the new tail
  * @method cons
@@ -567,7 +551,7 @@ List.prototype.tail = function () {
  * @example
  * const {List} = require('futils/data');
  *
- * List.of(2).cons(1).cons(0).take(2); // -> Cons(0, Cons(1, Nil));
+ * List.of(2).cons(1).cons(0).take(2); // -> Cons(0, Cons(1, Nil))
  */
 List.prototype.take = function (n) {
     return this.caseOf({
@@ -585,7 +569,7 @@ List.prototype.take = function (n) {
  * @example
  * const {List} = require('futils/data');
  *
- * List.of(2).cons(1).cons(0).drop(2); // -> Cons(2, Nil);
+ * List.of(2).cons(1).cons(0).drop(2); // -> Cons(2, Nil)
  */
 List.protoype.drop = function (n) {
     return this.caseOf({
