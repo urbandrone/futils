@@ -10,6 +10,7 @@ import {reduce} from './reduce';
 import {reduceRight} from './reducer';
 import {traverse} from './traverse';
 import {sequence} from './sequence';
+import {doM} from './doM';
 
 
 
@@ -25,5 +26,6 @@ export default {
     reduce,
     reduceRight,
     traverse,
-    sequence
+    sequence,
+    doM
 }

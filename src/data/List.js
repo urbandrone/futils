@@ -33,15 +33,20 @@ import {Show} from '../generics/Show';
  *
  * @example
  * const {List} = require('futils/data');
+ * const {Cons, Nil} = List;
+ * 
+ * List.Cons(1, List.Nil());               // -> Cons(1, Nil)
+ * Cons(1, Nil());                         // -> Cons(1, Nil)
  *
- * List([1, 2, 3]); // -> List([1, 2, 3])
+ * List.Cons(1, List.Cons(2, List.Nil())); // -> Cons(1, Cons(2, Nil))
+ * Cons(1, Cons(2, Nil()));                // -> Cons(1, Cons(2, Nil))
  */
 export const List = UnionType('List', {Cons: ['value', 'tail'], Nil: []}).
     deriving(Show);
 
 const {Cons, Nil} = List;
 List.prototype.value = null;
-List.prototype.tail = null;
+List.prototype.tail = Nil();
 
 
 
@@ -100,8 +105,9 @@ List.empty = Nil;
  * @example
  * const {List} = require('futils/data');
  *
- * List.from(1);   // -> Cons(1, Nil)
- * List.from([1]); // -> Cons(1, Nil)
+ * List.from(1);    // -> Cons(1, Nil)
+ * List.from([1]);  // -> Cons(1, Nil)
+ * List.from(null); // -> Nil
  */
 List.from = (a) => a == null ? Nil() : Array.isArray(a) ? List.fromArray(a) : Cons(a, Nil());
 /**
@@ -133,7 +139,7 @@ List.fromArray = (a) => a.reduceRight((x, y) => Cons(y, x), Nil());
  *
  * List.fromId(id); // -> Cons('a value', Nil)
  */
-List.fromId = (a) => List.of(a.value);
+List.fromId = (a) => List.from(a.value);
 /**
  * A natural transformation from a Maybe.Some or Maybe.None into a List
  * @method fromMaybe
@@ -151,7 +157,7 @@ List.fromId = (a) => List.of(a.value);
  * List.fromMaybe(some); // -> Cons('a value', Nil)
  * List.fromMaybe(none); // -> Nil
  */
-List.fromMaybe = (a) => a.isSome() ? List.of(a.value) : List.empty();
+List.fromMaybe = (a) => a.isSome() ? List.from(a.value) : List.empty();
 /**
  * A natural transformation from an Either.Left or Either.Right into a List
  * @method fromEither
@@ -169,7 +175,7 @@ List.fromMaybe = (a) => a.isSome() ? List.of(a.value) : List.empty();
  * List.fromEither(l); // -> Nil
  * List.fromEither(r); // -> Cons('a right', Nil)
  */
-List.fromEither = (a) => a.isRight() ? List.of(a.value) : List.empty();
+List.fromEither = (a) => a.isRight() ? List.from(a.value) : List.empty();
 
 
 
@@ -404,56 +410,183 @@ List.prototype.alt = function (a) {
         Cons: () => this
     });
 }
-
+/**
+ * Takes function which returns a Monoid and folds the List with it into a Monoid
+ * @method foldMap
+ * @memberOf module:data/List.List
+ * @param {Function} f The Monoid returning function
+ * @return {Monoid} A Monoid of the type the function returns
+ *
+ * @example
+ * const {List} = require('futils/data');
+ * const {Sum} = require('futils/monoid');
+ *
+ * const fn = (n) => Sum.of(n);
+ *
+ * List.of(1).cons(2).foldMap(fn); // -> Sum(3)
+ */
 List.prototype.foldMap = function (f) {
     return this.reduceRight((m, x) => m == null ? f(x) : m.concat(f(x)), null);
 }
-
+/**
+ * Takes a Monoid and folds the List into it
+ * @method fold
+ * @memberOf module:data/List.List
+ * @param {Monoid} A The Monoid type constructor
+ * @return {Monoid} A Monoid of the type the function returns
+ *
+ * @example
+ * const {List} = require('futils/data');
+ * const {Sum} = require('futils/monoid');
+ *
+ * List.of(1).cons(2).fold(Sum); // -> Sum(3)
+ */
 List.prototype.fold = function (A) {
     return this.foldMap(A.of);
 }
-
+/**
+ * Takes a function which returns a Boolean and filters the List with it. Works
+ * much like the Array.filter function
+ * @method filter
+ * @memberOf module:data/List.List
+ * @param {Function} f The function to filter with
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * const even = (n) => n % 2 === 0;
+ *
+ * List.of(3).cons(2).cons(1).filter(even); // -> Cons(2, Nil)
+ */
 List.prototype.filter = function (f) {
     return this.reduceRight((ls, x) => !!f(x) ? Cons(x, ls) : ls, Nil());
 }
-
+/**
+ * Takes a value and puts it between each entry in the List
+ * @method intercalate
+ * @memberOf module:data/List.List
+ * @param {any} a The value to put in between
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * List.of(2).cons(1).intercalate(0.5); // -> Cons(1, Cons(0.5, Cons(2, Nil)))
+ */
 List.prototype.intercalate = function (a) {
     return this.reduceRight((ls, x) => Nil.is(ls) ? Cons(x, ls) : Cons(x, Cons(a, ls)), Nil());
 }
-
+/**
+ * Works like the Array.join method. Joins all items in a List into a string by
+ * a given separator. If no separator is given, the empty string is used
+ * @method join
+ * @memberOf module:data/List.List
+ * @param {String} [a = ''] The optional separator
+ * @return {String} All elements of the List joined to a String
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * List.of(3).cons(2).cons(1).join('/'); // -> '1/2/3'
+ */
 List.prototype.join = function (a) {
-    return this.reduce((ls, x) => ls === '' ? x : `${ls}${a}${x}`, '');
+    return this.reduce((ls, x) => ls === '' ? x : `${ls}${a || ''}${x}`, '');
 }
-
+/**
+ * Sets the given value to the head position of a List, making the current List
+ * the new tail
+ * @method cons
+ * @memberOf module:data/List.List
+ * @param {any} a The value to set
+ * @return {Cons} A new List
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * List.of(2).cons(1); // -> Cons(1, Cons(2, Nil));
+ */
 List.prototype.cons = function (a) {
     return Cons(a, this);
 }
-
+/**
+ * Sets a given value to the tail position of a List
+ * @method snoc
+ * @memberOf module:data/List.List
+ * @param {any} a The value to set
+ * @return {Cons} A new List
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * List.of(1).snoc(2); // -> Cons(1, Cons(2, Nil))
+ */
 List.prototype.snoc = function (a) {
     return this.reduceRight((ls, x) => Cons(x, ls), Cons(a, Nil()));
 }
-
+/**
+ * Returns the head of a List. Returns null for an empty List
+ * @method head
+ * @memberOf module:data/List.List
+ * @return {any|null} Either the head value or null
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * List.of(2).cons(1).head(); // -> 1
+ * List.empty().head();       // -> null
+ */
 List.protoype.head = function () {
     return this.caseOf({
         Nil: () => null,
         Cons: (h) => h
     });
 }
-
+/**
+ * Returns the tail of a List
+ * @method tail
+ * @memberOf module:data/List.List
+ * @return {Cons|Nil} The tail of the List
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * List.of(2).cons(1).tail(); // -> Cons(2, Nil);
+ * List.empty().tail();       // -> Nil
+ */ 
 List.prototype.tail = function () {
-    return this.caseOf({
-        Nil: () => this,
-        Cons: (_, t) => t
-    });
+    return this.drop(1)
 }
-
+/**
+ * If given a number N, returns the first N items from the List
+ * @method take
+ * @memberOf module:data/List.List
+ * @param {Number} n Amount of elements to take from the beginning of the List
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * List.of(2).cons(1).cons(0).take(2); // -> Cons(0, Cons(1, Nil));
+ */
 List.prototype.take = function (n) {
     return this.caseOf({
         Nil: () => this,
         Cons: (h, t) => n > 0 ? Cons(h, t.take(n - 1)) : Nil()
     });
 }
-
+/**
+ * If given a number N, drops the first N items from the List
+ * @method drop
+ * @memberOf module:data/List.List
+ * @param {Number} n Amount of elements to drop from the beginning of the List
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * List.of(2).cons(1).cons(0).drop(2); // -> Cons(2, Nil);
+ */
 List.protoype.drop = function (n) {
     return this.caseOf({
         Nil: () => this,

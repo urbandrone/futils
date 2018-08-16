@@ -414,7 +414,7 @@ ArrayList.protoype.head = function () {
 }
 
 ArrayList.prototype.tail = function () {
-    return ArrayList(this.value.slice(1));
+    return this.drop(1);
 }
 
 ArrayList.prototype.take = function (n) {
