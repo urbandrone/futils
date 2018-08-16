@@ -142,6 +142,7 @@ export const UnionType = (type, defs) => {
     def(union, 'deriving', deriveT(union));
     Object.keys(defs).forEach(d => {
         const ctor = makeCtor(d, defs[d], union.prototype);
+        def(ctor, 'is', (x) => x != null && x[TYPE] === d);
         union[d] = ctor;
     });
     return union;

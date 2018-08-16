@@ -39,7 +39,7 @@ export const doM = (f) => {
     const compute = f();
     const step = v => {
         const r = compute.next(v);
-        return r.done ? r.value : r.value.chain(step);
+        return r.done ? r.value : r.value.flatMap(step);
     }
     return step();
 }
