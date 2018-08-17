@@ -11,7 +11,8 @@ import {arity} from '../core/arity';
 
 
 /**
- * Provides the flip function, which flips the order of the arguments
+ * Provides the flip function, which flips the order of the first two arguments
+ * to a function
  * @module lambda/flip
  */
 
@@ -29,9 +30,10 @@ import {arity} from '../core/arity';
  *
  * const ordered = (a, b, c) => `${a}${b}${c}`;
  *
- * const reversed = flip(ordered);
+ * const flipped = flip(ordered);
  *
- * ordered(1, 2, 3);  // -> '123'
- * reversed(1, 2, 3); // -> '321'
+ * ordered(1, 2, 3); // -> '123'
+ * flipped(1, 2, 3); // -> '213'
  */
-export const flip = f => arity(f.length, (...xs) => f(...xs.reverse()));
+export const flip = f => f.length < 2 ? f :
+                        arity(f.length, (a, b, ...xs) => f(b, a, ...xs))

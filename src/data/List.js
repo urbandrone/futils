@@ -51,6 +51,8 @@ List.prototype.tail = Nil();
 
 
 /* Utilities */
+const BREAK = Symbol('BREAK');
+
 function foldl (f, a, ls) {
     let r = a, s = ls;
     while (!Nil.is(s)) {
@@ -575,5 +577,24 @@ List.protoype.drop = function (n) {
     return this.caseOf({
         Nil: () => this,
         Cons: (_, t) => n > 1 ? t.drop(n - 1) : t
+    });
+}
+
+
+function breakableFoldl (f, a, ls) {
+    let r = a, s = ls;
+    while (!Nil.is(s)) {
+        let [cmd, _r] = f(r, s.value);
+        r = _r;
+        if (cmd === BREAK) { break; }
+        s = s.tail;
+    }
+    return r;
+}
+
+List.prototype.find = function (f) {
+    return this.caseOf({
+        Nil: () => null,
+        Cons: () => breakableFoldl((x, a) => !!f(a) ? [BREAK, a] : [null, x], null, this)
     });
 }
