@@ -53,7 +53,7 @@ export const Sum = Type('Sum', ['value']).
  * of 0
  * @method of
  * @static
- * @memberOf module:monoid/Sum.Sum
+ * @memberof module:monoid/Sum.Sum
  * @param {any} a The value to lift
  * @return {Sum} A new Sum
  *
@@ -72,7 +72,7 @@ Sum.of = (a) => {
  * Monoid implementation for Sum. Returns a Sum of 0
  * @method empty
  * @static
- * @memberOf module:monoid/Sum.Sum
+ * @memberof module:monoid/Sum.Sum
  * @return {Sum} The empty Sum
  *
  * @example
@@ -87,7 +87,7 @@ Sum.empty = () => Sum(0);
 /**
  * Concattenates a Sum with another using addition
  * @method concat
- * @memberOf module:monoid/Sum.Sum
+ * @memberof module:monoid/Sum.Sum
  * @param {Sum} a The Sum instance to concattenate with
  * @return {Sum} A new Sum
  *
@@ -98,7 +98,7 @@ Sum.empty = () => Sum(0);
  *
  * sum.concat(Sum(1)); // -> Sum(2)
  */
-Sum.prototype.concat = function (a) {
+Sum.fn.concat = function (a) {
     if (Sum.is(a)) {
         return Sum(this.value + a.value);
     }

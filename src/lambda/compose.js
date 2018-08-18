@@ -19,7 +19,7 @@ import {arity} from '../core/arity';
 /**
  * The compose function combines multiple functions from right to left
  * @method compose
- * @memberOf module:lambda/compose
+ * @memberof module:lambda/compose
  * @param {Function} ...f The function to compose
  * @return {Function} The result of the composition
  *

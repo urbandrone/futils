@@ -50,7 +50,7 @@ export const Fn = Type('Fn', ['value']).
  * functions
  * @method of
  * @static
- * @memberOf module:monoid/Fn.Fn
+ * @memberof module:monoid/Fn.Fn
  * @param {any} a The value to lift
  * @return {Fn} A new Fn
  *
@@ -66,7 +66,7 @@ Fn.of = (a) => typeof a === 'function' ? Fn(a) : Fn(x => x);
  * Monoid implementation for Fn. Returns a Fn of the id function (a -> a)
  * @method empty
  * @static
- * @memberOf module:monoid/Fn.Fn
+ * @memberof module:monoid/Fn.Fn
  * @return {Fn} The empty Fn
  *
  * @example
@@ -81,7 +81,7 @@ Fn.empty = () => Fn(a => a);
 /**
  * Concattenates a Fn with another using function composition
  * @method concat
- * @memberOf module:monoid/Fn.Fn
+ * @memberof module:monoid/Fn.Fn
  * @param {Fn} a The Fn instance to concattenate with
  * @return {Fn} A new Fn
  *
@@ -92,7 +92,7 @@ Fn.empty = () => Fn(a => a);
  *
  * fn.concat(Fn((a) => a * 3)); // -> Fn(a -> a * 2 * 3)
  */
-Fn.prototype.concat = function (a) {
+Fn.fn.concat = function (a) {
     if (Fn.is(a)) {
         return Fn(x => a.value(this.value(x)));
     }

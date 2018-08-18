@@ -53,7 +53,7 @@ export const Max = Type('Max', ['value']).
  * of negative Infinity
  * @method of
  * @static
- * @memberOf module:monoid/Max.Max
+ * @memberof module:monoid/Max.Max
  * @param {any} a The value to lift
  * @return {Max} A new Max
  *
@@ -72,7 +72,7 @@ Max.of = (a) => {
  * Monoid implementation for Max. Returns a Max of negative Infinity
  * @method empty
  * @static
- * @memberOf module:monoid/Max.Max
+ * @memberof module:monoid/Max.Max
  * @return {Max} The empty Max
  *
  * @example
@@ -87,7 +87,7 @@ Max.empty = () => Max(-Infinity);
 /**
  * Concattenates a Max with another using Ord.gt comparison
  * @method concat
- * @memberOf module:monoid/Max.Max
+ * @memberof module:monoid/Max.Max
  * @param {Max} a The Max instance to concattenate with
  * @return {Max} A new Max
  *
@@ -98,7 +98,7 @@ Max.empty = () => Max(-Infinity);
  *
  * max.concat(Max(2)); // -> Max(3)
  */
-Max.prototype.concat = function (a) {
+Max.fn.concat = function (a) {
     if (Max.is(a)) {
         return this.gt(a) ? this : a;
     }

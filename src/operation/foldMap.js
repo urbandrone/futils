@@ -19,7 +19,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The foldMap function
  * @method foldMap
- * @memberOf module:operation/foldMap
+ * @memberof module:operation/foldMap
  * @param {Function} A function returning a Monoid to fold into
  * @param {Foldable} a The values to fold
  * @return {Monoid} All values folded into the Monoid

@@ -61,7 +61,7 @@ const {Right, Left} = Either;
  * Lifts a value into a Either.Right
  * @method of
  * @static
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {any} a The value to lift
  * @return {Right} The value wrapped in a Either.Right
  *
@@ -75,7 +75,7 @@ Either.of = Right;
  * Monoid implementation for Either. Returns a Either.Left with a value of null
  * @method empty
  * @static
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @return {Left} A Either.Left
  *
  * @example
@@ -89,7 +89,7 @@ Either.empty = () => Left(null);
  * null, undefined or some error it returns a Either.Left
  * @method from
  * @static
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {any} a The value to lift
  * @return {Left|Right} Either.Right for all values which are not null, undefined or some error
  *
@@ -105,7 +105,7 @@ Either.from = (a) => a == null || Error.prototype.isPrototypeOf(a) ? Left(a || n
  * A natural transformation from a Maybe.Some or Maybe.None into a Either
  * @method fromMaybe
  * @static
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {Some|None} a The Maybe to transform
  * @return {Left|Right} Either.Right if given a Maybe.Some, Either.Left otherwise
  *
@@ -123,7 +123,7 @@ Either.fromMaybe = (a) => a.isSome() ? Right(a.value) : Left(null);
  * A natural transformation from an Id into a Either
  * @method fromId
  * @static
- * @memberOf data/Either.Either
+ * @memberof data/Either.Either
  * @param {Id} a The Id to transform
  * @return {Right|Left} Either.Right if the Id holds a value different from null, undefined and error
  *
@@ -144,7 +144,7 @@ Either.fromId = (a) => Either.from(a.value);
  * is returned
  * @method fromList
  * @static
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {List} a The List to transform
  * @return {Left|Right} Either.Right if the first element is not null, undefined or some error
  *
@@ -164,7 +164,7 @@ Either.fromList = (a) => Either.from(a.value[0]);
  * Either.Right if the computation succeeds or a Either.Left if it fails
  * @method try
  * @static
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {IO|State|Function} a The computation
  * @return {Function} A function which takes arguments to run the computation
  *
@@ -193,7 +193,7 @@ Either.try = (a) => (...v) => {
 /**
  * Test if the instance is a Either.Right or a Either.Left
  * @method isRight
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @return {Boolean} True for Either.Right
  *
  * @example
@@ -205,7 +205,7 @@ Either.try = (a) => (...v) => {
  * r.isRight(); // -> true
  * l.isRight(); // -> false
  */
-Either.prototype.isRight = function () {
+Either.fn.isRight = function () {
     return this.caseOf({
         Left: () => false,
         Right: () => true
@@ -216,7 +216,7 @@ Either.prototype.isRight = function () {
  * result in Either.Left. Please note, that the inner values have to be part of a
  * Semigroup as well for concattenation to succeed
  * @method concat
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {Right|Left} a The Either instance to concattenate with
  * @return {Right|Left} A new Either
  *
@@ -231,7 +231,7 @@ Either.prototype.isRight = function () {
  * l.concat(Either.Right('b')); // -> Left('l')
  * l.concat(Either.Left('b')); // -> Left('l')
  */
-Either.prototype.concat = function (a) {
+Either.fn.concat = function (a) {
     if (Either.is(a)) {
         return this.caseOf({
             Left: () => this,
@@ -244,7 +244,7 @@ Either.prototype.concat = function (a) {
  * Maps a function over the inner value and wraps the result in a new Either. Does
  * not map the function over a Either.Left
  * @method map
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {Function} f The function to map
  * @return {Left|Right} A new Either.Right or the instance for Maybe.Left
  *
@@ -259,7 +259,7 @@ Either.prototype.concat = function (a) {
  * r.map(upperCase); // -> Right('R')
  * l.map(upperCase); // -> Left('l')
  */
-Either.prototype.map = function (f) {
+Either.fn.map = function (f) {
     return this.caseOf({
         Left: () => this,
         Right: (v) => Either.from(f(v))
@@ -268,7 +268,7 @@ Either.prototype.map = function (f) {
 /**
  * Flattens a nested Either.Right one level
  * @method flat
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @return {Left|Right} A flat Either.Right
  *
  * @example
@@ -280,7 +280,7 @@ Either.prototype.map = function (f) {
  * r.flat(); // -> Right('r')
  * l.flat(); // -> Left('l')
  */
-Either.prototype.flat = function () {
+Either.fn.flat = function () {
     return this.caseOf({
         Left: () => this,
         Right: (v) => v
@@ -289,7 +289,7 @@ Either.prototype.flat = function () {
 /**
  * Maps a Either returning function over a Either.Right and flattens the result
  * @method flatMap
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {Function} f A Either returning function to map
  * @return {Left|Right} A new Either
  *
@@ -306,13 +306,13 @@ Either.prototype.flat = function () {
  * r2.map(even); // -> Left('not even')
  * l.map(even);  // -> Left('ignored')
  */
-Either.prototype.flatMap = function (f) {
+Either.fn.flatMap = function (f) {
     return this.map(f).flat();
 }
 /**
  * Applies a function in a Either.Right to a value in another Either.Right
  * @method ap
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {Left|Right} a The Either that holds the value
  * @return {Left|Right} Either which contains the result of applying the function
  *
@@ -327,7 +327,7 @@ Either.prototype.flatMap = function (f) {
  * mInc.ap(r); // -> Right(2)
  * mInc.ap(l); // -> Left('ignored')
  */
-Either.prototype.ap = function (a) {
+Either.fn.ap = function (a) {
     return this.caseOf({
         Left: () => this,
         Right: (f) => a.map(f)
@@ -336,7 +336,7 @@ Either.prototype.ap = function (a) {
 /**
  * Bifunctor interface, maps either of two functions over the value inside a Either
  * @method biMap
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {Function} f Function to map if the structure is a Either.Left
  * @param {Function} g Function to map if the structure is a Either.Right
  * @return {Left|Right} Either with the result of applying either of the functions
@@ -353,7 +353,7 @@ Either.prototype.ap = function (a) {
  * r.biMap(defaultChar, upperCase); // -> Right('A')
  * l.biMap(defaultChar, upperCase); // -> Right('X')
  */
-Either.prototype.biMap = function (f, g) {
+Either.fn.biMap = function (f, g) {
     return this.caseOf({
         Left: (v) => Either.from(f(v)),
         Right: (v) => Either.from(g(v))
@@ -364,7 +364,7 @@ Either.prototype.biMap = function (f, g) {
  * value, returns the initial value for a Either.Left and calls the function with
  * the initial value and the current value of a Either.Right
  * @method reduce
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {Function} f The function to reduce with
  * @param {any} x The seed value to reduce into
  * @return {any} Either the seed value or whatever the reducer function returned
@@ -380,7 +380,7 @@ Either.prototype.biMap = function (f, g) {
  * r.reduce(reducer, 'hello'); // -> 'helloworld'
  * l.reduce(reducer, 'hello'); // -> 'hello'
  */
-Either.prototype.reduce = function (f, x) {
+Either.fn.reduce = function (f, x) {
     return this.caseOf({
         Left: () => x,
         Right: (v) => f(x, v)
@@ -390,7 +390,7 @@ Either.prototype.reduce = function (f, x) {
  * Takes a function with signature (Applicable f) => a -> f a and an Applicative
  * constructor and traverses the Either into the applicative
  * @method traverse
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {Function} f Function to traverse with
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A Either wrapped in the applicative
@@ -406,7 +406,7 @@ Either.prototype.reduce = function (f, x) {
  * r.traverse(fn, Array); // -> [Right(1)]
  * l.traverse(fn, Array); // -> [Left(0)] 
  */
-Either.prototype.traverse = function (f, A) {
+Either.fn.traverse = function (f, A) {
     return this.caseOf({
         Left: () => A.of(this),
         Right: (v) => f(v).map(Either.from)
@@ -415,7 +415,7 @@ Either.prototype.traverse = function (f, A) {
 /**
  * Sequences a Either into another applicative Type
  * @method sequence
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A Either wrapped in the applicative
  *
@@ -428,14 +428,14 @@ Either.prototype.traverse = function (f, A) {
  * r.sequence(Array); // -> [Right(1)]
  * l.sequence(Array); // -> [Left(0)]
  */
-Either.prototype.sequence = function (A) {
+Either.fn.sequence = function (A) {
     return this.traverse((v) => v, A);
 }
 /**
  * Swaps the disjunction of a Either, meaning a Either.Left becomes a Either.Right
  * and a Either.Right becomes a Either.Left
  * @method swap
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @return {Left|Right} A new Either
  *
  * @example
@@ -447,7 +447,7 @@ Either.prototype.sequence = function (A) {
  * r.swap(); // -> Left(1);
  * l.swap(); // -> Right(1)
  */
-Either.prototype.swap = function () {
+Either.fn.swap = function () {
     return this.caseOf({
         Left: Right,
         Right: Left
@@ -456,7 +456,7 @@ Either.prototype.swap = function () {
 /**
  * Alt implementation, allows to swap a Either.Left
  * @method alt
- * @memberOf module:data/Either.Either
+ * @memberof module:data/Either.Either
  * @param {Left|Right} a The alternative Either
  * @return {Left|Right} Choosen alternative
  *
@@ -471,7 +471,7 @@ Either.prototype.swap = function () {
  * l.alt(Either.Right(2)); // -> Right(2)
  * l.alt(Either.Left(0));  // -> Left(0)
  */
-Either.prototype.alt = function (a) {
+Either.fn.alt = function (a) {
     return this.caseOf({
         Left: () => a,
         Right: () => this

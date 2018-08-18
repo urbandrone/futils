@@ -45,7 +45,7 @@ export const IO = Type('IO', ['run']);
  * Lifts a value into a IO
  * @method of
  * @static
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {any} a The value to lift
  * @return {IO} The value wrapped into a IO
  *
@@ -59,7 +59,7 @@ IO.of = (a) => IO(() => a);
  * Monoid implementation for IO. Returns a IO that returns what is passed to it
  * @method empty
  * @static
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @return {IO} A IO
  *
  * @example
@@ -73,7 +73,7 @@ IO.empty = () => IO((a) => a);
  * it is used as computation basis
  * @method from
  * @static
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {any} a The value to lift
  * @return {IO} A IO
  *
@@ -90,7 +90,7 @@ IO.from = (a) => typeof a === 'function' ? IO(a) : IO.of(a);
  * A natural transformation from an Either.Left or Either.Right into a IO
  * @method fromEither
  * @static
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {Left|Right} a The Either to transform
  * @return {IO} A IO with the value of the Either
  *
@@ -108,7 +108,7 @@ IO.fromEither = (a) => IO.of(a.value);
  * A natural transformation from a Maybe.Some or Maybe.None into a IO
  * @method fromMaybe
  * @static
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {Some|None} a The Maybe to transform
  * @return {IO} A IO with the value of the Maybe.Some or null
  *
@@ -128,7 +128,7 @@ IO.fromMaybe = (a) => IO.of(a.value);
  * taken
  * @method fromList
  * @static
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {List} a The List to transform
  * @return {IO} A IO with the first value
  *
@@ -144,7 +144,7 @@ IO.fromList = (a) => IO.of(a.value[0] == null ? null : a.value[0]);
  * A natural transformation from an Id into a IO
  * @method fromId
  * @static
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {Id} a The Id to transform
  * @return {IO} A IO with the value of the Id
  *
@@ -162,7 +162,7 @@ IO.fromId = (a) => IO.of(a.value);
 /**
  * Concattenates a IO with another
  * @method concat
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {IO} a The IO to concattenate with
  * @return {IO} Result of concattening the IO with the given one
  *
@@ -174,7 +174,7 @@ IO.fromId = (a) => IO.of(a.value);
  *
  * ioProcess.concat(ioArch); // -> IO(_ -> <architecture>)
  */
-IO.prototype.concat = function (a) {
+IO.fn.concat = function (a) {
     if (IO.is(a)) {
         return IO((v) => a.run(this.run(v)));
     }
@@ -183,7 +183,7 @@ IO.prototype.concat = function (a) {
 /**
  * Maps a function over the value in a IO
  * @method map
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {Function} f The function to map
  * @return {IO} A IO
  *
@@ -196,13 +196,13 @@ IO.prototype.concat = function (a) {
  *
  * io.map(inc); // -> IO(_ -> 2)
  */
-IO.prototype.map = function (f) {
+IO.fn.map = function (f) {
     return IO((v) => f(this.run(v)));
 }
 /**
  * Flattens a nested IO by one level
  * @method flat
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @return {IO} A flattened IO
  *
  * @example
@@ -212,13 +212,13 @@ IO.prototype.map = function (f) {
  *
  * io.flat(); // -> IO(_ -> 1)
  */
-IO.prototype.flat = function () {
+IO.fn.flat = function () {
     return this.run();
 }
 /**
  * Maps a IO returning function over a IO and flattens the result
  * @method flatMap
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {Function} f A IO returning function to map
  * @return {IO} A new IO
  *
@@ -231,13 +231,13 @@ IO.prototype.flat = function () {
  *
  * io.flatMap(inc); // -> IO(_ -> 2)
  */
-IO.prototype.flatMap = function (f) {
+IO.fn.flatMap = function (f) {
     return this.map(f).flat();
 }
 /**
  * Applies a function in an IO to a value in another IO
  * @method ap
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {IO} a The IO that holds the value
  * @return {IO} IO which contains the result of applying the function
  *
@@ -250,14 +250,14 @@ IO.prototype.flatMap = function (f) {
  *
  * mInc.ap(io); // -> IO(_ -> 2)
  */
-IO.prototype.ap = function (a) {
+IO.fn.ap = function (a) {
     return a.map(this.run);
 }
 /**
  * Contravariant functor implementation, contramaps a function over the value 
  * passed into the IO
  * @method contraMap
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {Function} f The function to contramap with
  * @return {IO} A new IO
  *
@@ -270,14 +270,14 @@ IO.prototype.ap = function (a) {
  *
  * io.contraMap(len).run([1, 2]); // -> 2
  */
-IO.prototype.contraMap = function (f) {
+IO.fn.contraMap = function (f) {
     return IO((v) => this.run(f(v)));
 }
 /**
  * Profunctor implementation, contramaps the first function over the value given
  * into the IO and maps the second function over the result
  * @method proMap
- * @memberOf module:data/IO.IO
+ * @memberof module:data/IO.IO
  * @param {Function} f The function to contramap
  * @param {Function} g The function to map
  * @return {IO} A new IO
@@ -293,6 +293,6 @@ IO.prototype.contraMap = function (f) {
  *
  * io.proMap(len, even).run([1, 2]); // -> true
  */
-IO.prototype.proMap = function (f, g) {
+IO.fn.proMap = function (f, g) {
     return IO((v) => g(this.run(f(v))));
 }

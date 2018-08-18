@@ -6,33 +6,33 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
-
+import {curry} from '../lambda/curry';
+import {map} from '../operation/map';
+import {Val} from './_Val';
 
 /**
- * Provides the ap function
- * @module operation/ap
+ * Provied the mapped lens, which is a special lens for arrays.
+ * @module optics/mapped
+ * @requires lambda/curry
+ * @requires operation/map
  */
 
 
 
 /**
- * The ap function
- * @method ap
- * @memberof module:operation/ap
- * @param {Applicative} af The Applicative to apply
- * @param {Functor} a A Functor interface implementing type
- * @return {Functor} A new instance of the Functor
+ * The mapped function
+ * @method mapped
+ * @memberof module:optic/mapped
+ * @version 3.0.0
+ * @param {Function} f Data transformation function
+ * @param {Array} a The nested data structure
+ * @return {LensVal} A LensVal
  *
  * @example
- * const {Id} = require('futils/data');
- * const {ap} = require('futils/operation');
+ * const {mapped, over} = require('futils/optic');
  *
- * const upper = Id.of((a) => a.toUppserCase());
- * 
- * ap(upper, Id.of('a')); // -> Id('A')
- * ap(upper);             // -> (Functor -> Functor)
+ * const even = (n) => n % 2 === 0;
+ *
+ * over(mapped, even, [1, 2, 3]); // -> [false, true, false]
  */
-export const ap = (af, a) => {
-    return a == null ? (b) => ap(af, b) : af.ap(a);
-}
+export const mapped = curry((f, a) => Val(map(x => f(x).value, a)));

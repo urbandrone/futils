@@ -26,7 +26,7 @@ const _fst = a => typeof a === 'string' || isNaN(a.length) ? a :
 /**
  * The head function
  * @method head
- * @memberOf module:operation/head
+ * @memberof module:operation/head
  * @param {Array|Cons|Series} a The collection to take the head from
  * @return {any|null} Either the head or null
  *

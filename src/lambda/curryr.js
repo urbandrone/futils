@@ -30,7 +30,7 @@ function _curriedr (f, xs) {
  * The curryRight function. Takes a function and returns a variant of it which takes
  * arguments until enough arguments to execute the given function are consumed
  * @method curryRight
- * @memberOf module:lambda/curryr
+ * @memberof module:lambda/curryr
  * @param {Function} f The function to curryRight
  * @return {Function} The curried variant
  *

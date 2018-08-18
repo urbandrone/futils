@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The flatMap function
  * @method flatMap
- * @memberOf module:operation/flatMap
+ * @memberof module:operation/flatMap
  * @param {Function} f The function to flatMap with
  * @param {Monad|Array} a Any Array and/or Monad interface implementing type
  * @return {Monad|Array} A new instance of the Array or Monad

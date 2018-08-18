@@ -53,7 +53,7 @@ export const Char = Type('Char', ['value']).
  * no strings
  * @method of
  * @static
- * @memberOf module:monoid/Char.Char
+ * @memberof module:monoid/Char.Char
  * @param {any} a The value to lift
  * @return {Char} A new Char
  *
@@ -69,7 +69,7 @@ Char.of = (a) => typeof a === 'string' ? Char(a) : Char('');
  * Monoid implementation for Char. Returns a Char of an empty string
  * @method empty
  * @static
- * @memberOf module:monoid/Char.Char
+ * @memberof module:monoid/Char.Char
  * @return {Char} The empty Char
  *
  * @example
@@ -84,7 +84,7 @@ Char.empty = () => Char('');
 /**
  * Concattenates a Char with another using string concattenation
  * @method concat
- * @memberOf module:monoid/Char.Char
+ * @memberof module:monoid/Char.Char
  * @param {Char} a The Char instance to concattenate with
  * @return {Char} A new Char
  *
@@ -95,7 +95,7 @@ Char.empty = () => Char('');
  *
  * ch.concat(Char('b')); // -> Char('ab')
  */
-Char.prototype.concat = function (a) {
+Char.fn.concat = function (a) {
     if (Char.is(a)) {
         return Char(this.value.concat(a.value));
     }

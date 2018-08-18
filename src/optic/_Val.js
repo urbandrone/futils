@@ -10,29 +10,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 /**
- * Provides the ap function
- * @module operation/ap
+ * Provides the Val constructor for lenses
+ * @module optic/_Val
+ * @private
  */
 
-
-
-/**
- * The ap function
- * @method ap
- * @memberof module:operation/ap
- * @param {Applicative} af The Applicative to apply
- * @param {Functor} a A Functor interface implementing type
- * @return {Functor} A new instance of the Functor
- *
- * @example
- * const {Id} = require('futils/data');
- * const {ap} = require('futils/operation');
- *
- * const upper = Id.of((a) => a.toUppserCase());
- * 
- * ap(upper, Id.of('a')); // -> Id('A')
- * ap(upper);             // -> (Functor -> Functor)
- */
-export const ap = (af, a) => {
-    return a == null ? (b) => ap(af, b) : af.ap(a);
-}
+export const Val = a => ({value: a, map(f) { return Val(f(a)); }});

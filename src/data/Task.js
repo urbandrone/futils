@@ -59,7 +59,7 @@ const voids = () => void 0;
 export const Task = Type('Task', ['run']).
     deriving(Show, Eq);
 
-Task.prototype.cleanUp = voids;
+Task.fn.cleanUp = voids;
 
 
 
@@ -70,7 +70,7 @@ Task.prototype.cleanUp = voids;
  * value
  * @method of
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {any} a The value to lift
  * @return {Task} The value wrapped in a Task
  *
@@ -84,7 +84,7 @@ Task.of = (a) => Task((_, ok) => { ok(a); });
  * Monoid implementation for Task. Returns a Task which neither resolves nor rejects
  * @method empty
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @return {Task} A Task that is pending forever
  *
  * @example
@@ -98,7 +98,7 @@ Task.empty = () => Task(voids);
  * value
  * @method resolve
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {any} a The value to lift
  * @return {Task} The value wrapped in a Task
  *
@@ -113,7 +113,7 @@ Task.resolve = Task.of;
  * value
  * @method reject
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {any} a The value to lift
  * @return {Task} The value wrapped in a Task
  *
@@ -127,7 +127,7 @@ Task.reject = (a) => Task(fail => { fail(a); });
  * Creates a Task which resolves a function after the given amount of milliseconds
  * @method timeout
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {Number} ms Delay in milliseconds
  * @param {Function} f The function to call after the timeout
  * @return {Task} A Task that resolves with the result of the function
@@ -146,7 +146,7 @@ Task.timeout = (ms, f) => Task((_, ok) => {
  * Converts a Promise returning function into a Task returning form
  * @method fromPromiseFunction
  * @static
- * @memberOf module:data/Task.task
+ * @memberof module:data/Task.task
  * @param {Function} f A function which returns a Promise
  * @return {Function} A function which returns a Task
  *
@@ -165,7 +165,7 @@ Task.fromPromiseFunction = f => (...a) => Task((fail, ok) => {
  * Converts a Node style continuation passing function into a Task returning form
  * @method fromNodeFunction
  * @static
- * @memberOf module:data/Task.task
+ * @memberof module:data/Task.task
  * @param {Function} f A function in the Node CPS form
  * @return {Function} A function which returns a Task
  *
@@ -184,7 +184,7 @@ Task.fromNodeFunction = f => (...a) => Task((fail, ok) => {
  * A natural transformation from an Id into a Task
  * @method  fromId
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {Id} a The Id to transform
  * @return {Task} The Task which resolves to the value of the Id
  *
@@ -201,7 +201,7 @@ Task.fromId = a => Task.of(a.value);
  * Maybe is a Maybe.None, the resulting Task rejects
  * @method fromMaybe
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {Some|None} a The Maybe structure
  * @return {Task} A Task which rejects Maybe.None and resolves Maybe.Some
  *
@@ -220,7 +220,7 @@ Task.fromMaybe = a => Task((fail, ok) => { a.cata({None: fail, Some: ok}); });
  * Either is a Either.Left, the resulting Task rejects
  * @method fromEither
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {Right|Left} a The Either structure
  * @return {Task} A Task which rejects Either.Left and resolves Either.Right
  *
@@ -240,7 +240,7 @@ Task.fromEither = a => Task((fail, ok) => { a.cata({Left: fail, Right: ok}); });
  * taken. If the first element is null or undefined, a rejecting Task is returned
  * @method fromList
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {List} a The List structure
  * @return {Task} A Task of the first element
  *
@@ -257,7 +257,7 @@ Task.fromList = a => a.value[0] == null ? Task.reject(a.value[0]) : Task.of(a.va
  * the resulting Task fails with the exception
  * @method fromIO
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {IO} a The IO structure
  * @return {Task} A Task which resolves with the result of the IO
  *
@@ -274,7 +274,7 @@ Task.fromIO = a => Task((fail, ok) => { try { ok(a.run()); } catch (exc) { fail(
 /**
  * A natural transformation from a Task into a Promise
  * @method toPromise
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @return {Promise} A Promise which runs the Task
  *
  * @example
@@ -282,14 +282,14 @@ Task.fromIO = a => Task((fail, ok) => { try { ok(a.run()); } catch (exc) { fail(
  *
  * Task.of(1).toPromise(); // -> Promise(1)
  */
-Task.prototype.toPromise = function () {
+Task.fn.toPromise = function () {
     return new Promise((ok, fail) => { this.run(fail, ok); });
 }
 /**
  * Concattenates a Task with another. Resolves with the Task which resolves faster
  * or rejects if either of both fail
  * @method concat
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {Task} a The Task to concattenate with
  * @return {Task} Result of the concattenation
  *
@@ -301,7 +301,7 @@ Task.prototype.toPromise = function () {
  *
  * ms500.concat(ms300); // -> Task(_, 1)
  */
-Task.prototype.concat = function (a) {
+Task.fn.concat = function (a) {
     if (Task.is(a)) {
         const clean = (x, y) => { this.cleanUp(x); a.cleanUp(y); };
         const task = Task((fail, ok) => {
@@ -328,7 +328,7 @@ Task.prototype.concat = function (a) {
 /**
  * Maps a function over the value and resolves with the result
  * @method map
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {Function} f The function to map
  * @return {Task} A new Task
  *
@@ -339,7 +339,7 @@ Task.prototype.concat = function (a) {
  *
  * one.map((n) => n + 1); // -> Task(_, 2)
  */
-Task.prototype.map = function (f) {
+Task.fn.map = function (f) {
     const task = Task((fail, ok) => { this.run(fail, v => ok(f(v))); });
     task.cleanUp = this.cleanUp;
     return task;
@@ -347,7 +347,7 @@ Task.prototype.map = function (f) {
 /**
  * Flattens a nested Task one level
  * @method flat
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @return {Task} A Task flattened
  *
  * @example
@@ -357,7 +357,7 @@ Task.prototype.map = function (f) {
  *
  * tasks.flat(); // -> Task(_, 1)
  */
-Task.prototype.flat = function () {
+Task.fn.flat = function () {
     const task = Task((fail, ok) => { this.run().run(fail, ok); });
     task.cleanUp = this.cleanUp;
     return task;
@@ -366,7 +366,7 @@ Task.prototype.flat = function () {
  * Maps a Task returning function over a Task and flattens the result
  * @method flatMap
  * @static
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {Function} f The function to map
  * @return {Task} A new Task
  *
@@ -379,7 +379,7 @@ Task.prototype.flat = function () {
  *
  * task.flatMap(inc); // -> Task(_, 2)
  */
-Task.prototype.flatMap = function (f) {
+Task.fn.flatMap = function (f) {
     const task = Task((fail, ok) => { this.run(fail, v => f(v).run(fail, ok)); });
     task.cleanUp = this.cleanUp;
     return task;
@@ -388,7 +388,7 @@ Task.prototype.flatMap = function (f) {
  * Applies a Task with a function to another Task. Resolves when both resolve or
  * fails if either of both fails
  * @method ap
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {Task} a Task with a value
  * @return {Task} A new Task
  *
@@ -401,7 +401,7 @@ Task.prototype.flatMap = function (f) {
  *
  * apply.ap(task); // -> Task(_, 2)
  */
-Task.prototype.ap = function (a) {
+Task.fn.ap = function (a) {
     const clean = (x, y) => { this.cleanUp(x); a.cleanUp(y); };
     const task = Task((fail, ok) => {
         let aOk = false,
@@ -434,7 +434,7 @@ Task.prototype.ap = function (a) {
  * Swaps the disjunction of a Task, meaning if it normally resolves it fails and
  * if it normally fails it resolves
  * @method swap
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @return {Task} A new Task
  *
  * @example
@@ -446,7 +446,7 @@ Task.prototype.ap = function (a) {
  * ok.swap(); // -> Task(1, _)
  * fail.swap(); // -> Task(_, 1)
  */
-Task.prototype.swap = function () {
+Task.fn.swap = function () {
     const task = Task((fail, ok) => { this.run(ok, fail); });
     task.cleanUp = this.cleanUp;
     return task;
@@ -454,7 +454,7 @@ Task.prototype.swap = function () {
 /**
  * Alt implementation, allows to swap a failing Task
  * @method alt
- * @memberOf module:data/Task.Task
+ * @memberof module:data/Task.Task
  * @param {Task} a An optional Task
  * @return {Task} A new Task
  *
@@ -463,7 +463,7 @@ Task.prototype.swap = function () {
  *
  * Task.reject(0).alt(Task.of(1)); // -> Task(_, 1)
  */
-Task.prototype.alt = function (a) {
+Task.fn.alt = function (a) {
     const task = Task((fail, ok) => { this.run(() => a.run(fail, ok), ok); });
     task.cleanUp = this.cleanUp;
     return task;

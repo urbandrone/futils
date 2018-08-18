@@ -45,15 +45,15 @@ export const List = UnionType('List', {Cons: ['value', 'tail'], Nil: []}).
     deriving(Show);
 
 const {Cons, Nil} = List;
-List.prototype.value = null;
-List.prototype.tail = Nil();
+List.fn.value = null;
+List.fn.tail = Nil();
 
 
 
 /* Utilities */
 const BREAK = Symbol('BREAK');
 
-function foldl (f, a, ls) {
+const foldl = (f, a, ls) => {
     let r = a, s = ls;
     while (!Nil.is(s)) {
         r = f(r, s.value);
@@ -62,8 +62,23 @@ function foldl (f, a, ls) {
     return r;
 }
 
-function foldr (f, a, ls) {
+const breakableFoldl = (f, a, ls) => {
+    let r = a, s = ls;
+    while (!Nil.is(s)) {
+        let [cmd, _r] = f(r, s.value);
+        r = _r;
+        if (cmd === BREAK) { break; }
+        s = s.tail;
+    }
+    return r;
+}
+
+const foldr = (f, a, ls) => {
     return foldl(f, a, foldl((x,y) => Cons(y, x), Nil(), ls));
+}
+
+const breakableFoldr = (f, a, ls) => {
+    return breakableFoldl(f, a, foldl((x, y) => Cons(y, x)), Nil(), ls);
 }
 
 
@@ -71,7 +86,7 @@ function foldr (f, a, ls) {
  * Lifts one or more values into a List
  * @method of
  * @static
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {...any} a The value or values to lift
  * @return {List} A new List
  *
@@ -85,7 +100,7 @@ List.of = (a) => Cons(a, Nil());
  * Monoid implementation for List. Returns a List without values
  * @method empty
  * @static
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @return {List} A List
  *
  * @example
@@ -100,7 +115,7 @@ List.empty = Nil;
  * transform array-like objects on the fly
  * @method from
  * @static
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {any} a The value to lift
  * @return {List} A new List
  *
@@ -116,7 +131,7 @@ List.from = (a) => a == null ? Nil() : Array.isArray(a) ? List.fromArray(a) : Co
  * A natural transformation from an array into a List
  * @method fromArray
  * @static
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Array} a The array to transform
  * @return {List} A new List
  *
@@ -130,7 +145,7 @@ List.fromArray = (a) => a.reduceRight((x, y) => Cons(y, x), Nil());
  * A natural transformation from an Id to a List
  * @method fromId
  * @static
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Id} a The Id to transform
  * @return {List} A new List
  *
@@ -146,7 +161,7 @@ List.fromId = (a) => List.from(a.value);
  * A natural transformation from a Maybe.Some or Maybe.None into a List
  * @method fromMaybe
  * @static
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Some|None} a The Maybe to transform
  * @return {List} A List with the value of a Maybe.Some and an empty List for Maybe.None
  *
@@ -164,7 +179,7 @@ List.fromMaybe = (a) => a.isSome() ? List.from(a.value) : List.empty();
  * A natural transformation from an Either.Left or Either.Right into a List
  * @method fromEither
  * @static
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Left|Right} a The Either to transform
  * @return {List} List with value(s) for Either.Right, empty List for Either.Left
  *
@@ -181,7 +196,7 @@ List.fromEither = (a) => a.isRight() ? List.from(a.value) : List.empty();
 
 
 
-List.prototype[Symbol.iterator] = function () {
+List.fn[Symbol.iterator] = function () {
     return this.caseOf({
         Nil: () => ({done: true, next() { return this; }}),
         Cons: () => this.toArray()[Symbol.iterator]()
@@ -190,7 +205,7 @@ List.prototype[Symbol.iterator] = function () {
 /**
  * A natural transformation from a List into an array
  * @method toArray
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @return {Array} Array of values
  *
  * @example
@@ -198,13 +213,13 @@ List.prototype[Symbol.iterator] = function () {
  *
  * List.of(2).cons(1).toArray(); // -> [1, 2]
  */
-List.prototype.toArray = function () {
+List.fn.toArray = function () {
     return this.reduceRight((a, x) => a.concat(x), []);
 }
 /**
  * Concattenates a List with another List
  * @method concat
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {List} a The List instance to concattenate with
  * @return {List} A List containing all values from both Lists
  *
@@ -215,7 +230,7 @@ List.prototype.toArray = function () {
  *
  * ls.concat(List.of(2)); // -> Cons(1, Cons(2, Nil))
  */
-List.prototype.concat = function (a) {
+List.fn.concat = function (a) {
     if (List.is(a)) {
         return this.reduceRight((ls, x) => Cons(x, ls), a);
     }
@@ -224,7 +239,7 @@ List.prototype.concat = function (a) {
 /**
  * Maps a function over each value in the List
  * @method map
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Function} f The function to map
  * @return {List} A new List
  *
@@ -237,13 +252,13 @@ List.prototype.concat = function (a) {
  *
  * ls.map(inc); // -> Cons(2, Nil)
  */
-List.prototype.map = function (f) {
+List.fn.map = function (f) {
     return this.reduceRight((ls, x) => Cons(f(x), ls), Nil());
 }
 /**
  * Flattens a nested List one level
  * @method flat
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @return {List} A List flattened
  *
  * @example
@@ -253,7 +268,7 @@ List.prototype.map = function (f) {
  *
  * ls.flat(); // -> Cons(1, Nil)
  */
-List.prototype.flat = function () {
+List.fn.flat = function () {
     return this.reduceRight((ls, x) => {
         return x.reduceRight((ks, y) => Cons(y, ks), ls);
     }, Nil());
@@ -261,7 +276,7 @@ List.prototype.flat = function () {
 /**
  * Maps a List returning function over each value in the List and flattens the result
  * @method flatMap
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Function} f A List returning function to map
  * @return {List} A new List
  *
@@ -274,13 +289,13 @@ List.prototype.flat = function () {
  *
  * ls.flatMap(inc); // -> Cons(2, Nil)
  */
-List.prototype.flatMap = function (f) {
+List.fn.flatMap = function (f) {
     return this.map(f).flat();
 }
 /**
  * Applies a function in a List to the values in another List
  * @method ap
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {List} a The List that holds the values
  * @return {List} List which contains the results of applying the function
  *
@@ -293,7 +308,7 @@ List.prototype.flatMap = function (f) {
  *
  * mInc.ap(ls); // -> Cons(2, Nil)
  */
-List.prototype.ap = function (a) {
+List.fn.ap = function (a) {
     return this.caseOf({
         Nil: () => this,
         Cons: (h) => a.map(h)
@@ -303,7 +318,7 @@ List.prototype.ap = function (a) {
  * Works like the Array.reduce method. If given a function and an initial value,
  * reduces the values in the List to a final value
  * @method reduce
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Function} f The function to reduce with
  * @param {any} x The seed value to reduce into
  * @return {any} All values reduced into the seed
@@ -317,7 +332,7 @@ List.prototype.ap = function (a) {
  *
  * ls.reduce(reducer, 1); // -> 2
  */
-List.prototype.reduce = function (f, x) {
+List.fn.reduce = function (f, x) {
     return this.caseOf({
         Nil: () => x,
         Cons: () => foldl(f, x, this)
@@ -327,7 +342,7 @@ List.prototype.reduce = function (f, x) {
  * Works like the Array.reduceRight method. If given a function and an initial
  * value, reduces the values in the List to a final value
  * @method reduceRight
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Function} f The function to reduce with
  * @param {any} x The seed value to reduce into
  * @return {any} All values reduced into the seed
@@ -341,7 +356,7 @@ List.prototype.reduce = function (f, x) {
  *
  * ls.reduceRight(reducer, 1); // -> 2
  */
-List.prototype.reduceRight = function (f, x) {
+List.fn.reduceRight = function (f, x) {
     return this.caseOf({
         Nil: () => x,
         Cons: () => foldr(f, x, this)
@@ -351,7 +366,7 @@ List.prototype.reduceRight = function (f, x) {
  * Takes a function with signature (Applicable f) => a -> f a and an Applicative
  * constructor and traverses the List into the applicative
  * @method traverse
- * @memberOf data/List.List
+ * @memberof data/List.List
  * @param {Function} f Function to traverse with
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A List wrapped in the applicative
@@ -365,7 +380,7 @@ List.prototype.reduceRight = function (f, x) {
  *
  * ls.traverse(fn, Maybe); // -> Some(Cons(1, Nil))
  */
-List.prototype.traverse = function (f, A) {
+List.fn.traverse = function (f, A) {
     return this.reduceRight(
         (t, a) => f(a).map(b => c => c.concat(List.of(b))).ap(t),
         A.of(List.empty())
@@ -374,7 +389,7 @@ List.prototype.traverse = function (f, A) {
 /**
  * Sequences a List into another applicative Type
  * @method sequence
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Applicative} A A constructor with of and ap methods
  * @return {Applicative} A List wrapped in the applicative
  *
@@ -385,13 +400,13 @@ List.prototype.traverse = function (f, A) {
  *
  * ls.sequence(Maybe); // -> Some(Cons(1, Nil))
  */
-List.prototype.sequence = function (A) {
+List.fn.sequence = function (A) {
     return this.traverse(x => x, A);
 }
 /**
  * Alternative implementation, allows to swap a empty List
  * @method alt
- * @memberOf data/List.List
+ * @memberof data/List.List
  * @param {List} a The alternative List
  * @return {List} Choosen alternative
  *
@@ -406,7 +421,7 @@ List.prototype.sequence = function (A) {
  * ns.alt(List.of(4));    // -> Cons(4, Nil)
  * ns.alt(List.empty());  // -> Nil
  */
-List.prototype.alt = function (a) {
+List.fn.alt = function (a) {
     return this.caseOf({
         Nil: () => a,
         Cons: () => this
@@ -415,7 +430,7 @@ List.prototype.alt = function (a) {
 /**
  * Takes function which returns a Monoid and folds the List with it into a Monoid
  * @method foldMap
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Function} f The Monoid returning function
  * @return {Monoid} A Monoid of the type the function returns
  *
@@ -427,13 +442,13 @@ List.prototype.alt = function (a) {
  *
  * List.of(1).cons(2).foldMap(fn); // -> Sum(3)
  */
-List.prototype.foldMap = function (f) {
+List.fn.foldMap = function (f) {
     return this.reduceRight((m, x) => m == null ? f(x) : m.concat(f(x)), null);
 }
 /**
  * Takes a Monoid and folds the List into it
  * @method fold
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Monoid} A The Monoid type constructor
  * @return {Monoid} A Monoid of the type the function returns
  *
@@ -443,14 +458,14 @@ List.prototype.foldMap = function (f) {
  *
  * List.of(1).cons(2).fold(Sum); // -> Sum(3)
  */
-List.prototype.fold = function (A) {
+List.fn.fold = function (A) {
     return this.foldMap(A.of);
 }
 /**
  * Takes a function which returns a Boolean and filters the List with it. Works
  * much like the Array.filter function
  * @method filter
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Function} f The function to filter with
  * @return {Cons|Nil} A new List
  *
@@ -461,13 +476,13 @@ List.prototype.fold = function (A) {
  *
  * List.of(3).cons(2).cons(1).filter(even); // -> Cons(2, Nil)
  */
-List.prototype.filter = function (f) {
+List.fn.filter = function (f) {
     return this.reduceRight((ls, x) => !!f(x) ? Cons(x, ls) : ls, Nil());
 }
 /**
  * Takes a value and puts it between each entry in the List
  * @method intercalate
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {any} a The value to put in between
  * @return {Cons|Nil} A new List
  *
@@ -476,14 +491,14 @@ List.prototype.filter = function (f) {
  *
  * List.of(2).cons(1).intercalate(0.5); // -> Cons(1, Cons(0.5, Cons(2, Nil)))
  */
-List.prototype.intercalate = function (a) {
+List.fn.intercalate = function (a) {
     return this.reduceRight((ls, x) => Nil.is(ls) ? Cons(x, ls) : Cons(x, Cons(a, ls)), Nil());
 }
 /**
  * Sets the given value to the head position of a List, making the current List
  * the new tail
  * @method cons
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {any} a The value to set
  * @return {Cons} A new List
  *
@@ -492,13 +507,13 @@ List.prototype.intercalate = function (a) {
  *
  * List.of(2).cons(1); // -> Cons(1, Cons(2, Nil));
  */
-List.prototype.cons = function (a) {
+List.fn.cons = function (a) {
     return Cons(a, this);
 }
 /**
  * Sets a given value to the tail position of a List
  * @method snoc
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {any} a The value to set
  * @return {Cons} A new List
  *
@@ -507,13 +522,13 @@ List.prototype.cons = function (a) {
  *
  * List.of(1).snoc(2); // -> Cons(1, Cons(2, Nil))
  */
-List.prototype.snoc = function (a) {
+List.fn.snoc = function (a) {
     return this.reduceRight((ls, x) => Cons(x, ls), Cons(a, Nil()));
 }
 /**
  * Returns the head of a List. Returns null for an empty List
  * @method head
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @return {any|null} Either the head value or null
  *
  * @example
@@ -531,7 +546,7 @@ List.protoype.head = function () {
 /**
  * Returns the tail of a List
  * @method tail
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @return {Cons|Nil} The tail of the List
  *
  * @example
@@ -540,13 +555,13 @@ List.protoype.head = function () {
  * List.of(2).cons(1).tail(); // -> Cons(2, Nil);
  * List.empty().tail();       // -> Nil
  */ 
-List.prototype.tail = function () {
+List.fn.tail = function () {
     return this.drop(1)
 }
 /**
  * If given a number N, returns the first N items from the List
  * @method take
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Number} n Amount of elements to take from the beginning of the List
  * @return {Cons|Nil} A new List
  *
@@ -555,7 +570,7 @@ List.prototype.tail = function () {
  *
  * List.of(2).cons(1).cons(0).take(2); // -> Cons(0, Cons(1, Nil))
  */
-List.prototype.take = function (n) {
+List.fn.take = function (n) {
     return this.caseOf({
         Nil: () => this,
         Cons: (h, t) => n > 0 ? Cons(h, t.take(n - 1)) : Nil()
@@ -564,7 +579,7 @@ List.prototype.take = function (n) {
 /**
  * If given a number N, drops the first N items from the List
  * @method drop
- * @memberOf module:data/List.List
+ * @memberof module:data/List.List
  * @param {Number} n Amount of elements to drop from the beginning of the List
  * @return {Cons|Nil} A new List
  *
@@ -579,22 +594,45 @@ List.protoype.drop = function (n) {
         Cons: (_, t) => n > 1 ? t.drop(n - 1) : t
     });
 }
-
-
-function breakableFoldl (f, a, ls) {
-    let r = a, s = ls;
-    while (!Nil.is(s)) {
-        let [cmd, _r] = f(r, s.value);
-        r = _r;
-        if (cmd === BREAK) { break; }
-        s = s.tail;
-    }
-    return r;
-}
-
-List.prototype.find = function (f) {
+/**
+ * Given a predicate function, returns the first element for which the
+ * predicate returns true. If no element passes the predicate, null is returned
+ * @method find
+ * @memberof module:data/List.List
+ * @param {Function} f The predicate function
+ * @return {any|null} The first match or null
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * const even = (n) => n % 2 === 0;
+ * 
+ * List.of(3).cons(2).cons(1).find(even); // -> 2
+ */
+List.fn.find = function (f) {
     return this.caseOf({
         Nil: () => null,
         Cons: () => breakableFoldl((x, a) => !!f(a) ? [BREAK, a] : [null, x], null, this)
+    });
+}
+/**
+ * Given a predicate function, returns the first element for which the
+ * predicate returns true. If no element passes the predicate, null is returned
+ * @method findRight
+ * @memberof module:data/List.List
+ * @param {Function} f The predicate function
+ * @return {any|null} The first match or null
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * const odd = (n) => n % 2 !== 0;
+ * 
+ * List.of(3).cons(2).cons(1).findRight(odd); // -> 3
+ */
+List.fn.findRight = function (f) {
+    return this.caseOf({
+        Nil: () => null,
+        Cons: () => breakableFoldr((x, a) => !!f(a) ? [BREAK, a] : [null, x], null, this)
     });
 }

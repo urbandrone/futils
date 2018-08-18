@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The fold function
  * @method fold
- * @memberOf module:operation/fold
+ * @memberof module:operation/fold
  * @param {Monoid} A The Monoid type constructor to fold into
  * @param {Foldable} a The values to fold
  * @return {Monoid} All values folded into the Monoid

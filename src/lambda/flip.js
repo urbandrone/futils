@@ -21,7 +21,7 @@ import {arity} from '../core/arity';
 /**
  * The flip function
  * @method flip
- * @memberOf module:lambda/flip
+ * @memberof module:lambda/flip
  * @param {Function} f The function to flip arguments
  * @return {Function} A variant of f
  *
@@ -36,4 +36,5 @@ import {arity} from '../core/arity';
  * flipped(1, 2, 3); // -> '213'
  */
 export const flip = f => f.length < 2 ? f :
+                        f.length < 3 ? (a, b) => f(b, a) :
                         arity(f.length, (a, b, ...xs) => f(b, a, ...xs))

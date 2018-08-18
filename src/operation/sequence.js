@@ -19,7 +19,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The sequence function
  * @method sequence
- * @memberOf module:operation/sequence
+ * @memberof module:operation/sequence
  * @param {Applicative} A Applicative type constructor to sequence into
  * @param {Traversable|Array} a A type that implements the Traversable interface
  * @return {Applicative} A new Applicative

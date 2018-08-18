@@ -52,7 +52,7 @@ export const Id = Type('Id', ['value']).
  * Lifts a value into the Id
  * @method of
  * @static
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {any} a The value to lift
  * @return {Id} The value wrapped in a Id
  *
@@ -66,7 +66,7 @@ Id.of = Id;
  * Lifts a value into a Id. Similiar to Id.of
  * @method from
  * @static
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {any} a The value to lift
  * @return {Id} The value wrapped in a Id
  *
@@ -80,7 +80,7 @@ Id.from = Id;
  * A natural transformation from a Either.Left or Either.Right into a Id
  * @method fromEither
  * @static
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {Left|Right} a The Either to transform
  * @return {Id} A new Id
  *
@@ -98,7 +98,7 @@ Id.fromEither = (a) => Id(a.value);
  * A natural transformation from a Maybe.Some or Maybe.None into a Id
  * @method fromMaybe
  * @static
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {Some|None} a The Maybe to transform
  * @return {Id} A new Id
  *
@@ -118,7 +118,7 @@ Id.fromMaybe = (a) => Id(a.value);
  * taken
  * @method fromList
  * @static
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {List} a The List to transform
  * @return {Id} A new Id
  *
@@ -137,7 +137,7 @@ Id.fromList = (a) => Id(a.value[0]);
  * Concattenates a Id with another. Please note, that the inner values have
  * to be part of a Semigroup as well for concattenation to succeed
  * @method concat
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {Id} a The Id instance to concattenate with
  * @return {Id} A new Id
  *
@@ -148,7 +148,7 @@ Id.fromList = (a) => Id(a.value[0]);
  *
  * id.concat(Id('world')); // -> Id('helloworld')
  */
-Id.prototype.concat = function (a) {
+Id.fn.concat = function (a) {
     if (Id.is(a)) {
         return Id(this.value.concat(a.value));
     }
@@ -157,7 +157,7 @@ Id.prototype.concat = function (a) {
 /**
  * Maps a function over the inner value and wraps the result in a new Id
  * @method map
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {Function} f The function to map
  * @return {Id} A new Id
  *
@@ -170,13 +170,13 @@ Id.prototype.concat = function (a) {
  *
  * id.map(upperCase); // -> Id('A')
  */
-Id.prototype.map = function (f) {
+Id.fn.map = function (f) {
     return Id(f(this.value));
 }
 /**
  * Flattens a nested Id one level
  * @method flat
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @return {Id} A flat Id
  *
  * @example
@@ -186,13 +186,13 @@ Id.prototype.map = function (f) {
  *
  * id.flat(); // -> Id(1)
  */
-Id.prototype.flat = function () {
+Id.fn.flat = function () {
     return this.value;
 }
 /**
  * Maps a Id returning function over a Id and flattens the result
  * @method flatMap
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {Function} f A Id returning function to map
  * @return {Id} A new Id
  *
@@ -205,13 +205,13 @@ Id.prototype.flat = function () {
  *
  * id.flatMap(even); // -> Id(true)
  */
-Id.prototype.flatMap = function (f) {
+Id.fn.flatMap = function (f) {
     return this.map(f).flat();
 }
 /**
  * Applies a function in a Id to a value in another Id
  * @method ap
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {Id} a The Id that holds the value
  * @return {Id} Id which contains the result of applying the function
  *
@@ -224,7 +224,7 @@ Id.prototype.flatMap = function (f) {
  *
  * mInc.ap(id); // -> Id(2)
  */
-Id.prototype.ap = function (a) {
+Id.fn.ap = function (a) {
     return a.map(this.value);
 }
 /**
@@ -244,14 +244,14 @@ Id.prototype.ap = function (a) {
  *
  * id.reduce(reducer, 1); // -> 2
  */
-Id.prototype.reduce = function (f, x) {
+Id.fn.reduce = function (f, x) {
     return f(x, this.value);
 }
 /**
  * Takes a function with the signature (Applicative f) => a -> f a and an Applicative
  * constructor and traverses the Id into the Applicative
  * @method traverse
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {Function} f Function to traverse with
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A Id wrapped in the Applicative
@@ -265,15 +265,15 @@ Id.prototype.reduce = function (f, x) {
  *
  * id.traverse(fn, Array); // -> [Id(1)]
  */
-Id.prototype.traverse = function (f, A) {
-    return A.prototype.ap ?
+Id.fn.traverse = function (f, A) {
+    return A.fn.ap ?
            A.of(Id.of).ap(f(this.value)) :
            f(this.value).map(Id.of);
 }
 /**
  * Sequences a Id into another Applicative type
  * @method sequence
- * @memberOf module:data/Id.Id
+ * @memberof module:data/Id.Id
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A Id wrapped in the Applicative
  *
@@ -284,6 +284,6 @@ Id.prototype.traverse = function (f, A) {
  *
  * id.sequence(Array); // -> [Id(1)]
  */
-Id.prototype.sequence = function (A) {
+Id.fn.sequence = function (A) {
     return this.traverse((v) => v, A);
 }

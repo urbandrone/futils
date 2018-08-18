@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The flat function
  * @method flat
- * @memberOf module:operation/flat
+ * @memberof module:operation/flat
  * @param {Function} f The function to flat with
  * @param {Monad|Array} a Any Array and/or Monad interface implementing type
  * @return {Monad|Array} A new instance of the Array or Monad

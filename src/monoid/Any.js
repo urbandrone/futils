@@ -52,7 +52,7 @@ export const Any = Type('Any', ['value']).
  * Lifts a value into a Any. Returns the empty Any for values which are no booleans
  * @method of
  * @static
- * @memberOf module:monoid/Any.Any
+ * @memberof module:monoid/Any.Any
  * @param {any} a The value to lift
  * @return {Any} A new Any
  *
@@ -68,7 +68,7 @@ Any.of = (a) => typeof a === 'boolean' ? Any(a) : Any(false);
  * Monoid implementation for Any. Returns a Any of false
  * @method empty
  * @static
- * @memberOf module:monoid/Any.Any
+ * @memberof module:monoid/Any.Any
  * @return {Any} The empty Any
  *
  * @example
@@ -83,7 +83,7 @@ Any.empty = () => Any(false);
 /**
  * Concattenates a Any with another using boolean comparison
  * @method concat
- * @memberOf module:monoid/Any.Any
+ * @memberof module:monoid/Any.Any
  * @param {Any} a The Any instance to concattenate with
  * @return {Any} A new Any
  *
@@ -94,7 +94,7 @@ Any.empty = () => Any(false);
  *
  * any.concat(Any(false)); // -> Any(true)
  */
-Any.prototype.concat = function (a) {
+Any.fn.concat = function (a) {
     if (Any.is(a)) {
         return !this.value ? Any(!!a.value) : this;
     }

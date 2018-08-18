@@ -53,7 +53,7 @@ export const Record = Type('Record', ['value']).
  * key-value pairs
  * @method of
  * @static
- * @memberOf module:monoid/Record.Record
+ * @memberof module:monoid/Record.Record
  * @param {any} a The value to lift
  * @return {Record} A new Record
  *
@@ -69,7 +69,7 @@ Record.of = (a) => typeOf(a) === 'Object' ? Record(a) : Record({});
  * Monoid implementation for Record. Returns a Record of a empty key-value pair
  * @method empty
  * @static
- * @memberOf module:monoid/Record.Record
+ * @memberof module:monoid/Record.Record
  * @return {Record} The empty Record
  *
  * @example
@@ -86,7 +86,7 @@ Record.empty = () => Record({});
  * that this operation might loose data because fields with the same keys will
  * be overriden
  * @method concat
- * @memberOf module:monoid/Record.Record
+ * @memberof module:monoid/Record.Record
  * @param {Record} a The Record instance to concattenate with
  * @return {Record} A new Record
  *
@@ -98,7 +98,7 @@ Record.empty = () => Record({});
  * kv.concat(Record({bar: 2}); // -> Record({ foo :: 1, bar :: 2 })
  * kv.concat(Record({foo: 2}); // -> Record({ foo :: 2 })
  */
-Record.prototype.concat = function (a) {
+Record.fn.concat = function (a) {
     if (Record.is(a)) {
         return Record(Object.assign({}, this.value, a.value));
     }

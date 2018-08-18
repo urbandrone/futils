@@ -25,7 +25,7 @@ const _rst = a => typeof a === 'string' || isNaN(a.length) ? [a] :
 /**
  * The tail function
  * @method tail
- * @memberOf module:operation/tail
+ * @memberof module:operation/tail
  * @param {Array|Cons|Series} a The collection to take the tail from
  * @return {Array|Nil|Series} Either the tail or a Array
  *

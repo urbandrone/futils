@@ -23,7 +23,7 @@ const _drop = (n, a) => typeof a === 'string' || isNaN(a.length) ? [a] :
 /**
  * The drop function
  * @method drop
- * @memberOf module:operation/drop
+ * @memberof module:operation/drop
  * @param {Number} n Number of items to drop
  * @param {Array|Cons|Series} a The collection to drop the items from
  * @return {Array|Nil|Series} Result of the drop

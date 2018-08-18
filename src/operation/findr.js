@@ -10,29 +10,46 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 /**
- * Provides the ap function
- * @module operation/ap
+ * Provides the findRight function. It takes a predicate function and a Filterable
+ * implementing type and returns either the first element for which the predicate
+ * returns true or it returns null if the no element fulfills the predicate
+ * @module operation/findr
  */
+
+
+
+const _findr = (f, a) => {
+    let r = null, i = a.length - 1;
+    while (i >= 0) {
+        if (!!f(a[i])) {
+            r = a[i];
+            break;
+        }
+        i -= 1;
+    }
+    return r;
+}
 
 
 
 /**
- * The ap function
- * @method ap
- * @memberof module:operation/ap
- * @param {Applicative} af The Applicative to apply
- * @param {Functor} a A Functor interface implementing type
- * @return {Functor} A new instance of the Functor
+ * The findRight function
+ * @method findRight
+ * @memberof module:operation/findr
+ * @param {Function} f The function to find with
+ * @param {Filterable} a A Filterable interface implementing type
+ * @return {any|null} Either the first found value or null
  *
  * @example
- * const {Id} = require('futils/data');
- * const {ap} = require('futils/operation');
+ * const {findRight} = require('futils/operation');
  *
- * const upper = Id.of((a) => a.toUppserCase());
+ * const odd = (n) => n % 2 !== 0;
  * 
- * ap(upper, Id.of('a')); // -> Id('A')
- * ap(upper);             // -> (Functor -> Functor)
+ * findRight(odd, [1, 2, 3]); // -> 3
+ * findRight(odd);            // -> (Filterable -> any)
  */
-export const ap = (af, a) => {
-    return a == null ? (b) => ap(af, b) : af.ap(a);
+export const findRight = (f, a) => {
+    return a == null ? (b) => findRight(f, b) :
+            Array.isArray(a) ? _findr(f, a) :
+            a.findRight(f);
 }

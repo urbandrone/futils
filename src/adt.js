@@ -90,7 +90,7 @@ export const Type = (type, vals) => {
     const ctor = makeCtor(type, null, vals, proto);
     def(ctor, 'is', (x) => { return x && x[TYPE] === type; });
     def(ctor, 'deriving', deriveT(ctor));
-    ctor.prototype = proto;
+    ctor.fn = ctor.prototype = proto;
     ctor.prototype.constructor = ctor;
     return ctor;
 }
@@ -130,13 +130,11 @@ export const Type = (type, vals) => {
  * line.move(-50, -50);
  */
 export const UnionType = (type, defs) => {
-    const union = {
-        [TYPE]: type,
-        prototype: {
-            [TYPE_TAG]: type,
-            caseOf(o) { return caseOfT(this, o); },
-            cata(o) { return caseOfT(this, o); },
-        },
+    const union = {[TYPE]: type};
+    union.fn = union.prototype = {
+        [TYPE_TAG]: type,
+        caseOf(o) { return caseOfT(this, o); },
+        cata(o) { return caseOfT(this, o); },
     };
     def(union, 'is', (x) => x != null && x[TYPE_TAG] === type);
     def(union, 'deriving', deriveT(union));

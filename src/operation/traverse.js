@@ -19,7 +19,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The traverse function
  * @method traverse
- * @memberOf module:operation/traverse
+ * @memberof module:operation/traverse
  * @param {Function} f The function to traverse with
  * @param {Applicative} A Applicative type constructor to traverse into
  * @param {Traversable|Array} a A type that implements the Traversable interface

@@ -21,7 +21,7 @@ import {arity} from '../core/arity';
 /**
  * The not function
  * @method not
- * @memberOf module:lambda/not
+ * @memberof module:lambda/not
  * @param {Function} f The function to negate the return value
  * @return {Function} A variant of f
  *

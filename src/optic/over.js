@@ -6,33 +6,40 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+import {curry} from '../lambda/curry';
+import {Val} from './_Val';
 
 
 
 /**
- * Provides the ap function
- * @module operation/ap
+ * Provides the over function. Over allows to apply a function over a focused
+ * value of a data structure and return the whole structure
+ * @module optic/over
+ * @requires lambda/curry
  */
 
 
 
+
+
 /**
- * The ap function
- * @method ap
- * @memberof module:operation/ap
- * @param {Applicative} af The Applicative to apply
- * @param {Functor} a A Functor interface implementing type
- * @return {Functor} A new instance of the Functor
+ * The over function
+ * @method over
+ * @memberof module:optic/over
+ * @version 3.0.0
+ * @param {Lens} l A lens to focus with
+ * @param {Function} f A tranformation function
+ * @param {Object|Array} a The structure to operate on
+ * @return {Object|Array} A manipulated clone of the structure
  *
  * @example
- * const {Id} = require('futils/data');
- * const {ap} = require('futils/operation');
+ * const {lenses, over} = require('futils/optic');
  *
- * const upper = Id.of((a) => a.toUppserCase());
- * 
- * ap(upper, Id.of('a')); // -> Id('A')
- * ap(upper);             // -> (Functor -> Functor)
+ * const L = lenses('name');
+ *
+ * const color = {code: '#3d73cc', name: 'Nice blue'};
+ * const upper = (a) => a.toUpperCase();
+ *
+ * over(L.name, upper, color); // -> {code: '#3d73cc', name: 'NICE BLUE'}
  */
-export const ap = (af, a) => {
-    return a == null ? (b) => ap(af, b) : af.ap(a);
-}
+export const over = curry((lens, f, a) => lens((x) => Val(f(x)))(a).value);

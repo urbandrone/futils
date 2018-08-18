@@ -19,7 +19,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The doM function
  * @method doM
- * @memberOf module:operation/doM
+ * @memberof module:operation/doM
  * @param {Generator} f A generator function describing the computations
  * @return {any} The result of the computation
  *

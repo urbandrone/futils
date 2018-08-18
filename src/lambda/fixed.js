@@ -21,7 +21,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * The fixed function. For a given function f, returns a function g which
  * represents the fixed point of f
  * @method fixed
- * @memberOf module:lambda/fixed
+ * @memberof module:lambda/fixed
  * @param {Function} f the initial function
  * @return {Function} The fixed point of f
  *

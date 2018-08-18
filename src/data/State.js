@@ -55,7 +55,7 @@ export const StateResult = Type('State.Result', ['value', 'state']);
  * Lifts a value into a State
  * @method of
  * @static
- * @memberOf module:data/State.State
+ * @memberof module:data/State.State
  * @param {any} a The value to lift
  * @return {State} A new State structure
  *
@@ -73,7 +73,7 @@ State.of = (a) => State((s) => StateResult(a, s));
  * state as the value and the state of the computation
  * @method get
  * @static
- * @memberOf module:data/State.State
+ * @memberof module:data/State.State
  * @return {State} A new State with the intermediate state copied to the value
  *
  * @example
@@ -90,7 +90,7 @@ State.get = () => State((s) => StateResult(s, s));
  * value with null and dropping the current intermediate state
  * @method put
  * @static
- * @memberOf module:data/State.State
+ * @memberof module:data/State.State
  * @param {any} s Whatever should be the new intermediate state
  * @return {State} A new State
  *
@@ -108,7 +108,7 @@ State.put = (s) => State(() => StateResult(null, s));
  * drops the current value
  * @method modify
  * @static
- * @memberOf module:data/State.State
+ * @memberof module:data/State.State
  * @param {Function} f A function which returns a new intermediate state from the current one
  * @return {State} A new State
  *
@@ -127,7 +127,7 @@ State.modify = (f) => State.get().flatMap((s) => State.put(f(s)));
 /**
  * Maps a function over the current value of a State
  * @method map
- * @memberOf module:data/State.State
+ * @memberof module:data/State.State
  * @param {Function} f The function to map
  * @return {State} A new State
  *
@@ -140,7 +140,7 @@ State.modify = (f) => State.get().flatMap((s) => State.put(f(s)));
  *
  * state.map(inc); // -> State(2, ?)
  */
-State.prototype.map = function (f) {
+State.fn.map = function (f) {
     return State((s) => {
         let {value, state} = this.compute(s);
         return StateResult(f(value), state);
@@ -149,7 +149,7 @@ State.prototype.map = function (f) {
 /**
  * Flattens a nested State one level
  * @method flat
- * @memberOf module:data/State.State
+ * @memberof module:data/State.State
  * @return {State} A new State
  *
  * @example
@@ -159,7 +159,7 @@ State.prototype.map = function (f) {
  *
  * state.flat();  // -> State(1, ?)
  */
-State.prototype.flat = function () {
+State.fn.flat = function () {
     return State((s) => {
         let {value, state} = this.compute(s);
         return value.compute(state);
@@ -168,7 +168,7 @@ State.prototype.flat = function () {
 /**
  * Maps a State returning function over a State and flattens the result
  * @method flatMap
- * @memberOf module:data/State.State
+ * @memberof module:data/State.State
  * @param {Function} f A State returning function to map
  * @return {State} A new State
  *
@@ -181,13 +181,13 @@ State.prototype.flat = function () {
  *
  * state.flatMap(inc); // -> State(2, ?)
  */
-State.prototype.flatMap = function (f) {
+State.fn.flatMap = function (f) {
     return this.map(f).flat();
 }
 /**
  * Applies a function as the current value of a State to a value in another State
  * @method ap
- * @memberOf module:data/State.State
+ * @memberof module:data/State.State
  * @param {State} a The State which has the current value
  * @return {State} State which contains the result of applying the function
  *
@@ -200,13 +200,13 @@ State.prototype.flatMap = function (f) {
  *
  * mInc.ap(state); // -> State(2, ?)
  */
-State.prototype.ap = function (a) {
+State.fn.ap = function (a) {
     return this.flatMap(a.map.bind(a));
 }
 /**
  * Given an initial state, computes the final value and returns it
  * @method run
- * @memberOf module:data/State.State
+ * @memberof module:data/State.State
  * @param {any} s The initial state
  * @return {any} The final value of the computation
  *
@@ -215,13 +215,13 @@ State.prototype.ap = function (a) {
  *
  * State.of(1).run(0); // -> 1
  */
-State.prototype.run = function (s) {
+State.fn.run = function (s) {
     return this.compute(s).value;
 }
 /**
  * Given an initial state, computes the final state and returns it
  * @method exec
- * @memberOf module:data/State.State
+ * @memberof module:data/State.State
  * @param {any} s The initial state
  * @return {any} The final state of the computation
  *
@@ -230,6 +230,6 @@ State.prototype.run = function (s) {
  *
  * State.of(1).run(0); // -> 0
  */
-State.prototype.exec = function (s) {
+State.fn.exec = function (s) {
     return this.compute(s).state;
 }

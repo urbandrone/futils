@@ -23,7 +23,7 @@ import {arity} from '../core/arity';
  * The memoize function, memoizes the result a certain set of arguments gave
  * and returns it immediatly for the same arguments without computation
  * @method memoize
- * @memberOf module:lambda/memoize
+ * @memberof module:lambda/memoize
  * @param {Function} f The function to implement meoization
  * @return {Function} A memoized variant of f
  *

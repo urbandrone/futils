@@ -10,29 +10,39 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 /**
- * Provides the ap function
- * @module operation/ap
+ * Provides the find function. It takes a predicate function and a Filterable
+ * implementing type and returns either the first element for which the predicate
+ * returns true or it returns null if the no element fulfills the predicate
+ * @module operation/find
  */
+
+
+
+const _find = (f, a) => {
+    let r = a.find(f);
+    return r == null ? null : r;
+}
 
 
 
 /**
- * The ap function
- * @method ap
- * @memberof module:operation/ap
- * @param {Applicative} af The Applicative to apply
- * @param {Functor} a A Functor interface implementing type
- * @return {Functor} A new instance of the Functor
+ * The find function
+ * @method find
+ * @memberof module:operation/find
+ * @param {Function} f The function to find with
+ * @param {Filterable} a A Filterable interface implementing type
+ * @return {any|null} Either the first found value or null
  *
  * @example
- * const {Id} = require('futils/data');
- * const {ap} = require('futils/operation');
+ * const {find} = require('futils/operation');
  *
- * const upper = Id.of((a) => a.toUppserCase());
+ * const even = (n) => n % 2 === 0;
  * 
- * ap(upper, Id.of('a')); // -> Id('A')
- * ap(upper);             // -> (Functor -> Functor)
+ * find(even, [1, 2, 3]); // -> 2
+ * find(even);            // -> (Filterable -> any)
  */
-export const ap = (af, a) => {
-    return a == null ? (b) => ap(af, b) : af.ap(a);
+export const find = (f, a) => {
+    return a == null ? (b) => find(f, b) :
+            Array.isArray(a) ? _find(f, a) :
+            a.find(f);
 }

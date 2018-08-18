@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The liftA function
  * @method liftA
- * @memberOf module:operation/liftA
+ * @memberof module:operation/liftA
  * @param {Function} f The function to lift
  * @param {...Apply} a Applys to apply the function to
  * @return {Apply} A new instance of the Apply

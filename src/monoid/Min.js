@@ -53,7 +53,7 @@ export const Min = Type('Min', ['value']).
  * of Infinity
  * @method of
  * @static
- * @memberOf module:monoid/Min.Min
+ * @memberof module:monoid/Min.Min
  * @param {any} a The value to lift
  * @return {Min} A new Min
  *
@@ -72,7 +72,7 @@ Min.of = (a) => {
  * Monoid implementation for Min. Returns a Min of Infinity
  * @method empty
  * @static
- * @memberOf module:monoid/Min.Min
+ * @memberof module:monoid/Min.Min
  * @return {Min} The empty Min
  *
  * @example
@@ -87,7 +87,7 @@ Min.empty = () => Min(Infinity);
 /**
  * Concattenates a Min with another using Ord.lt comparison
  * @method concat
- * @memberOf module:monoid/Min.Min
+ * @memberof module:monoid/Min.Min
  * @param {Min} a The Min instance to concattenate with
  * @return {Min} A new Min
  *
@@ -98,7 +98,7 @@ Min.empty = () => Min(Infinity);
  *
  * min.concat(Min(2)); // -> Min(2)
  */
-Min.prototype.concat = function (a) {
+Min.fn.concat = function (a) {
     if (Min.is(a)) {
         return this.lt(a) ? this : a;
     }

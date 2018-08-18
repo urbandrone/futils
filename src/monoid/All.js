@@ -52,7 +52,7 @@ export const All = Type('All', ['value']).
  * Lifts a value into a All. Returns the empty All for values which are no booleans
  * @method of
  * @static
- * @memberOf module:monoid/All.All
+ * @memberof module:monoid/All.All
  * @param {any} a The value to lift
  * @return {All} A new All
  *
@@ -68,7 +68,7 @@ All.of = (a) => typeof a === 'boolean' ? All(a) : All(true);
  * Monoid implementation for All. Returns a All of true
  * @method empty
  * @static
- * @memberOf module:monoid/All.All
+ * @memberof module:monoid/All.All
  * @return {All} The empty All
  *
  * @example
@@ -83,7 +83,7 @@ All.empty = () => All(true);
 /**
  * Concattenates a All with another using boolean comparison
  * @method concat
- * @memberOf module:monoid/All.All
+ * @memberof module:monoid/All.All
  * @param {All} a The All instance to concattenate with
  * @return {All} A new All
  *
@@ -94,7 +94,7 @@ All.empty = () => All(true);
  *
  * all.concat(All(false)); // -> All(false)
  */
-All.prototype.concat = function (a) {
+All.fn.concat = function (a) {
     if (All.is(a)) {
         return !this.value ? this : All(!!this.value && !!a.value);
     }

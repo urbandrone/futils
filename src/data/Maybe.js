@@ -53,14 +53,14 @@ export const Maybe = UnionType('Maybe', {Some: ['value'], None: []}).
     deriving(Show, Eq, Ord);
 
 const {Some, None} = Maybe;
-Maybe.prototype.value = null;
+Maybe.fn.value = null;
 
 
 /**
  * Lifts a value into a Maybe.Some
  * @method of
  * @static
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {any} a The value to lift
  * @return {Some} The value wrapped in a Maybe.Some
  *
@@ -74,7 +74,7 @@ Maybe.of = Some;
  * Monoid implementation for Maybe. Returns a Maybe.None
  * @method empty
  * @static
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @return {None} A Maybe.None
  *
  * @example
@@ -88,7 +88,7 @@ Maybe.empty = None;
  * null or undefined it returns Maybe.None
  * @method from
  * @static
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {any} a The value to lift
  * @return {Some|None} Maybe.Some if the value is not null or undefined, Maybe.None otherwise
  *
@@ -103,7 +103,7 @@ Maybe.from = (a) => a == null ? None() : Some(a);
  * A natural transformation from a Either.Left or Either.Right into a Maybe
  * @method fromEither
  * @static
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Left|Right} a The Either to transform
  * @return {Some|None} Maybe.Some if given an Either.Right, Maybe.None otherwise
  *
@@ -121,7 +121,7 @@ Maybe.fromEither = (a) => a.isRight() ? Some(a.value) : None();
  * A natural transformation from an Id into a Maybe
  * @method fromId
  * @static
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Id} a The Id to transform
  * @return {Some|None} Maybe.Some if the Id holds a value different from null or undefined
  *
@@ -141,7 +141,7 @@ Maybe.fromId = (a) => Maybe.from(a.value);
  * taken. If the first element is null or undefined, a Maybe.None is returned
  * @method fromList
  * @static
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {List} a The List to transform
  * @return {Some|None} Maybe.Some if the first element is not null or undefined
  *
@@ -161,7 +161,7 @@ Maybe.fromList = (a) => Maybe.from(a.value[0]);
 /**
  * Test if the instance is a Maybe.Some or a Maybe.None
  * @method isSome
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @return {Boolean} True if called on a Maybe.Some
  *
  * @example
@@ -173,7 +173,7 @@ Maybe.fromList = (a) => Maybe.from(a.value[0]);
  * some.isSome(); // -> true
  * none.isSome(); // -> false
  */
-Maybe.prototype.isSome = function () {
+Maybe.fn.isSome = function () {
     return this.caseOf({
         None: () => false,
         Some: () => true
@@ -184,7 +184,7 @@ Maybe.prototype.isSome = function () {
  * result in Maybe.None. Please note, that the inner values have to be part of a
  * Semigroup as well for concattenation to succeed
  * @method concat
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Some|None} a The Maybe instance to concattenate with
  * @return {Some|None} A new Maybe
  *
@@ -199,7 +199,7 @@ Maybe.prototype.isSome = function () {
  * none.concat(Maybe.Some('b')); // -> None
  * none.concat(Maybe.None()); // -> None
  */
-Maybe.prototype.concat = function (a) {
+Maybe.fn.concat = function (a) {
     if (Maybe.is(a)) {
         return this.caseOf({
             None: () => this,
@@ -212,7 +212,7 @@ Maybe.prototype.concat = function (a) {
  * Maps a function over the inner value and wraps the result in a new Maybe. Does
  * not map the function over a Maybe.None
  * @method map
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Function} f The function to map
  * @return {Some|None} A new Maybe.Some or the instance for Maybe.None
  *
@@ -227,7 +227,7 @@ Maybe.prototype.concat = function (a) {
  * some.map(upperCase); // -> Some('A')
  * none.map(upperCase); // -> None
  */
-Maybe.prototype.map = function (f) {
+Maybe.fn.map = function (f) {
     return this.caseOf({
         None: () => this,
         Some: (v) => Maybe.from(f(v))
@@ -236,7 +236,7 @@ Maybe.prototype.map = function (f) {
 /**
  * Flattens a nested Maybe.Some one level
  * @method flat
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @return {Some|None} A flat Maybe.Some
  *
  * @example
@@ -248,7 +248,7 @@ Maybe.prototype.map = function (f) {
  * some.flat(); // -> Some(1)
  * none.flat(); // -> None
  */
-Maybe.prototype.flat = function () {
+Maybe.fn.flat = function () {
     return this.caseOf({
         None: () => this,
         Some: (v) => v
@@ -257,7 +257,7 @@ Maybe.prototype.flat = function () {
 /**
  * Maps a Maybe returning function over a Maybe.Some and flattens the result
  * @method flatMap
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Function} f A Maybe returning function to map
  * @return {Some|None} A new Maybe
  *
@@ -272,13 +272,13 @@ Maybe.prototype.flat = function () {
  * some.flatMap(even); // -> Some(2)
  * none.flatMap(even); // -> None
  */
-Maybe.prototype.flatMap = function (f) {
+Maybe.fn.flatMap = function (f) {
     return this.map(f).flat();
 }
 /**
  * Applies a function in a Maybe.Some to a value in another Maybe.Some
  * @method ap
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Some|None} a The Maybe that holds the value
  * @return {Some|None} Maybe which contains the result of applying the function
  *
@@ -293,7 +293,7 @@ Maybe.prototype.flatMap = function (f) {
  * mInc.ap(some); // -> Some(2)
  * mInc.ap(none); // -> None
  */
-Maybe.prototype.ap = function (a) {
+Maybe.fn.ap = function (a) {
     return this.caseOf({
         None: () => this,
         Some: (f) => a.map(f)
@@ -302,7 +302,7 @@ Maybe.prototype.ap = function (a) {
 /**
  * Bifunctor interface, maps either of two functions over the value inside a Maybe
  * @method biMap
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Function} f Function to map if the value is a Maybe.None
  * @param {Function} g Function to map if the value is a Maybe.Some
  * @return {Some|None} Maybe with the result of applying either of the functions
@@ -319,7 +319,7 @@ Maybe.prototype.ap = function (a) {
  * some.biMap(defaultChar, upperCase); // -> Some('A')
  * none.biMap(defaultChar, upperCase); // -> Some('X')
  */
-Maybe.prototype.biMap = function (f, g) {
+Maybe.fn.biMap = function (f, g) {
     return this.caseOf({
         None: () => Maybe.from(f(null)),
         Some: (v) => Maybe.from(g(v))
@@ -330,7 +330,7 @@ Maybe.prototype.biMap = function (f, g) {
  * value, returns the initial value for a Maybe.None and calls the function with
  * the initial value and the current value of a Maybe.Some
  * @method reduce
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Function} f The function to reduce with
  * @param {any} x The seed value to reduce into
  * @return {any} Either the seed value or whatever the reducer function returned
@@ -346,7 +346,7 @@ Maybe.prototype.biMap = function (f, g) {
  * some.reduce(reducer, 'hello'); // -> 'helloworld'
  * none.reduce(reducer, 'hello'); // -> 'hello'
  */
-Maybe.prototype.reduce = function (f, x) {
+Maybe.fn.reduce = function (f, x) {
     return this.caseOf({
         None: () => x,
         Some: (v) => f(x, v)
@@ -356,7 +356,7 @@ Maybe.prototype.reduce = function (f, x) {
  * Takes a function with signature (Applicable f) => a -> f a and an Applicative
  * constructor and traverses the Maybe into the Applicative
  * @method traverse
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Function} f Function to traverse with
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A Maybe wrapped in the Applicative
@@ -372,7 +372,7 @@ Maybe.prototype.reduce = function (f, x) {
  * some.traverse(fn, Array); // -> [Some(1)]
  * none.traverse(fn, Array); // -> [None] 
  */
-Maybe.prototype.traverse = function (f, A) {
+Maybe.fn.traverse = function (f, A) {
     return this.caseOf({
         None: () => A.of(this),
         Some: (v) => f(v).map(Maybe.from)
@@ -381,7 +381,7 @@ Maybe.prototype.traverse = function (f, A) {
 /**
  * Sequences a Maybe into another Applicative type
  * @method sequence
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A Maybe wrapped in the Applicative
  *
@@ -394,13 +394,13 @@ Maybe.prototype.traverse = function (f, A) {
  * some.sequence(Array); // -> [Some(1)]
  * none.sequence(Array); // -> [None]
  */
-Maybe.prototype.sequence = function (A) {
+Maybe.fn.sequence = function (A) {
     return this.traverse((v) => v, A);
 }
 /**
  * Alt implementation, allows to swap a Maybe.None
  * @method alt
- * @memberOf module:data/Maybe.Maybe
+ * @memberof module:data/Maybe.Maybe
  * @param {Some|None} a The alternative Maybe
  * @return {Some|None} Choosen alternative
  *
@@ -415,7 +415,7 @@ Maybe.prototype.sequence = function (A) {
  * none.alt(Maybe.Some(2)); // -> Some(2)
  * none.alt(Maybe.None());  // -> None
  */ 
-Maybe.prototype.alt = function (a) {
+Maybe.fn.alt = function (a) {
     return this.caseOf({
         None: () => a,
         Some: () => this

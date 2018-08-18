@@ -19,7 +19,7 @@ import {compareEq} from '../generics/Eq';
 /**
  * The equals function
  * @method equals
- * @memberOf module:operation/equals
+ * @memberof module:operation/equals
  * @param {any} a The first value to check for equality
  * @param {any} b The second value to check against
  * @return {Boolean} True if both are equal

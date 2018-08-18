@@ -20,28 +20,28 @@ Free.of = Return;
 Free.liftM = a => Cont(a, Return);
 Free.from = F => arity(F.length, (...xs) => Free.liftM(F(...xs)));
 
-Free.prototype.map = function (f) {
+Free.fn.map = function (f) {
     return this.caseOf({
         Return: (v) => Return(f(v)),
         Cont: (v, run) => Cont(v, x => run(x).map(f))
     });
 }
 
-Free.prototype.flatMap = function (f) {
+Free.fn.flatMap = function (f) {
     return this.caseOf({
         Return: (v) => f(v),
         Cont: (v, run) => Cont(v, x => run(x).flatMap(f)) 
     });
 }
 
-Free.prototype.ap = function (a) {
+Free.fn.ap = function (a) {
     return this.caseOf({
         Return: (run) => a.map(run),
         Cont: (v, run) => Cont(v, x => run(x).ap(a))
     });
 }
 
-Free.prototype.interpret = function (transform, A) {
+Free.fn.interpret = function (transform, A) {
     return this.caseOf({
         Return: (v) => A.of(v),
         Cont: (v, run) => v == null ?

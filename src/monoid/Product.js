@@ -53,7 +53,7 @@ export const Product = Type('Product', ['value']).
  * Product of 1
  * @method of
  * @static
- * @memberOf module:monoid/Product.Product
+ * @memberof module:monoid/Product.Product
  * @param {any} a The value to lift
  * @return {Product} A new Product
  *
@@ -72,7 +72,7 @@ Product.of = (a) => {
  * Monoid implementation for Product. Returns a Product of 1
  * @method empty
  * @static
- * @memberOf module:monoid/Product.Product
+ * @memberof module:monoid/Product.Product
  * @return {Product} The empty Product
  *
  * @example
@@ -87,7 +87,7 @@ Product.empty = () => Product(1);
 /**
  * Concattenates a Product with another using multiplication
  * @method concat
- * @memberOf module:monoid/Product.Product
+ * @memberof module:monoid/Product.Product
  * @param {Product} a The Product instance to concattenate with
  * @return {Product} A new Product
  *
@@ -98,7 +98,7 @@ Product.empty = () => Product(1);
  *
  * product.concat(Product(2)); // -> Product(4)
  */
-Product.prototype.concat = function (a) {
+Product.fn.concat = function (a) {
     if (Product.is(a)) {
         return Product(this.value * a.value);
     }

@@ -17,6 +17,8 @@ import {head} from './head';
 import {tail} from './tail';
 import {take} from './take';
 import {drop} from './drop';
+import {find} from './find';
+import {findRight} from './findr';
 
 
 
@@ -39,5 +41,7 @@ export default {
     head,
     tail,
     take,
-    drop
+    drop,
+    find,
+    findRight
 }

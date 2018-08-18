@@ -19,7 +19,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The partial function 
  * @method partial
- * @memberOf module:lambda/partial
+ * @memberof module:lambda/partial
  * @param {Function} f The function to prepare for partial application
  * @param {any} ...as Partial arguments to the function
  * @return {Function} A partial variant of f

@@ -30,7 +30,7 @@ function _curried (f, xs) {
  * The curry function. Takes a function and returns a variant of it which takes
  * arguments until enough arguments to execute the given function are consumed
  * @method curry
- * @memberOf module:lambda/curry
+ * @memberof module:lambda/curry
  * @param {Function} f The function to curry
  * @return {Function} The curried variant
  *

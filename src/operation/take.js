@@ -23,7 +23,7 @@ const _take = (n, a) => typeof a === 'string' || isNaN(a.length) ? [a] :
 /**
  * The take function
  * @method take
- * @memberOf module:operation/take
+ * @memberof module:operation/take
  * @param {Number} n Number of items to take
  * @param {Array|Cons|Series} a The collection to take the items from
  * @return {Array|Nil|Series} Result of the take

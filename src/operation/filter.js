@@ -21,7 +21,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The filter function
  * @method filter
- * @memberOf module:operation/filter
+ * @memberof module:operation/filter
  * @param {Function} f The function to filter with
  * @param {Filterable} a A Filterable interface implementing type
  * @return {Filterable} A new instance of the Filterable

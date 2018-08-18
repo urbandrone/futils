@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The reduce function
  * @method reduce
- * @memberOf module:operation/reduce
+ * @memberof module:operation/reduce
  * @param {Function} f The function to reduce with
  * @param {any} a A value to reduce into
  * @param {Foldable} a A Foldable interface implementing type

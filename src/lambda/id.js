@@ -19,7 +19,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The identity function
  * @method id
- * @memberOf module:lambda/id
+ * @memberof module:lambda/id
  * @param {any} a Any value
  * @return {any} The given value
  *

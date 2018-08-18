@@ -72,4 +72,13 @@ export default [{
         banner: BANNER
     },
     plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
+}, {
+    input: 'src/optic/__export.js',
+    output: {
+        file: 'dist/optic.js',
+        format: 'cjs',
+        sourcemap: false,
+        banner: BANNER
+    },
+    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
 }]

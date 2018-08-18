@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The map function
  * @method map
- * @memberOf module:operation/map
+ * @memberof module:operation/map
  * @param {Function} f The function to map with
  * @param {Functor} a A Functor interface implementing type
  * @return {Functor} A new instance of the Functor

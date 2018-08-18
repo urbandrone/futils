@@ -19,7 +19,7 @@ import {arity} from '../core/arity';
 /**
  * The pipe function combines multiple functions from left to right
  * @method pipe
- * @memberOf module:lambda/pipe
+ * @memberof module:lambda/pipe
  * @param {Function} ...f The function to pipe
  * @return {Function} The result of the composition
  *
