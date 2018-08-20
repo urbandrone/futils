@@ -87,7 +87,7 @@ const deriveT = a => (...Gs) => Gs.reduce((t, g) => g.mixInto(t), a);
  */
 export const Type = (type, vals) => {
     const proto = {}
-    const ctor = makeCtor(type, null, vals, proto);
+    const ctor = makeCtor(type, vals, proto);
     def(ctor, 'is', (x) => { return x && x[TYPE] === type; });
     def(ctor, 'deriving', deriveT(ctor));
     ctor.fn = ctor.prototype = proto;

@@ -48,8 +48,6 @@ export const Series = Type('Series', ['value']).
 
 
 /* Utilities */
-const BREAK = Symbol('BREAK');
-
 const arrayFrom = (a) => Array.isArray(a) ? a :
                         a == null ? [] :
                         a.length && typeof a !== 'string' ? Array.from(a) :
@@ -68,17 +66,6 @@ const sameT = xs => {
         }
     }
     return xs;
-}
-
-const breakableFoldr = (f, a, ls) => {
-    let r = a, i = ls.length - 1;
-    while (i >= 0) {
-        let [cmd, _r]= f(a, ls[i]);
-        r = _r;
-        if (cmd === BREAK) { break; }
-        i -= 1;
-    }
-    return r;
 }
 
 
@@ -194,6 +181,22 @@ Series.fromMaybe = (a) => a.isSome() ? Series.from(a.value) : Series.empty();
  * Series.fromEither(r); // -> Series(['a right'])
  */
 Series.fromEither = (a) => a.isRight() ? Series.from(a.value) : Series.empty();
+/**
+ * A natural transformation from a List into a Series
+ * @method fromList
+ * @static
+ * @memberof module:data/Series.Series
+ * @param {Cons|Nil} a The List to transform
+ * @return {Series} A new Series
+ *
+ * @example
+ * const {Series, List} = require('futils/data');
+ *
+ * const ls = List.of(3).cons(2).cons(1);
+ * 
+ * Series.fromList(ls); // -> Series([1, 2, 3])
+ */
+Series.fromList = (a) => Series(sameT(a.toArray()));
 
 
 
@@ -305,7 +308,7 @@ Series.fn.flatMap = function (f) {
  * mInc.ap(ls); // -> Series([2, 3, 4])
  */
 Series.fn.ap = function (a) {
-    return a.map(this.value[0]);
+    return this.value.length < 1 ? this : a.map(this.value[0]);
 }
 /**
  * Works like the Array.reduce method. If given a function and an initial value,
@@ -476,7 +479,7 @@ Series.fn.filter = function (f) {
  * Series.of(1, 2).intercalate(0.5); // -> Series([1, 0.5, 2])
  */
 Series.fn.intercalate = function (a) {
-    return Series(sameT(this.value.reduce((ls, x) => ls.length < 1 ? ls.concat(x) : ls.concat([x, a]), [])));
+    return Series(sameT(this.value.reduce((ls, x) => ls.length < 1 ? ls.concat(x) : ls.concat([a, x]), [])));
 }
 /**
  * Sets the given value to the head position of a Series
@@ -507,37 +510,6 @@ Series.fn.cons = function (a) {
  */
 Series.fn.snoc = function (a) {
     return Series(sameT(this.value.concat(a)));
-}
-/**
- * Returns the head of a Series. Returns null if the first element is null
- * or undefined
- * @method head
- * @memberof module:data/Series.Series
- * @return {any|null} Either the head value or null
- *
- * @example
- * const {Series} = require('futils/data');
- *
- * Series.of(1, 2).head(); // -> 1
- * Series.empty().head();  // -> null
- */
-Series.fn.head = function () {
-    return this.value[0] == null ? null : this.value[0];
-}
-/**
- * Returns the tail of a Series
- * @method tail
- * @memberof module:data/Series.Series
- * @return {Series} The tail of the Series
- *
- * @example
- * const {Series} = require('futils/data');
- *
- * Series.of(1, 2).tail(); // -> Series([2]);
- * Series.empty().tail();  // -> Series([])
- */ 
-Series.fn.tail = function () {
-    return this.drop(1);
 }
 /**
  * If given a number N, returns the first N items from the Series
@@ -585,24 +557,7 @@ Series.fn.drop = function (n) {
  * Series.of(1, 2, 3).find(even); // -> 2
  */
 Series.fn.find = function (f) {
-    let r = this.value.find(f);
+    let r = this.value.find ? this.value.find(f) :
+            this.value.reduce((x, y) => x == null && !!f(y) ? y : x, null);
     return r == null ? null : r;
-}
-/**
- * Given a predicate function, returns the first element for which the
- * predicate returns true. If no element passes the predicate, null is returned
- * @method findRight
- * @memberof module:data/Series.Series
- * @param {Function} f The predicate function
- * @return {any|null} The first match or null
- *
- * @example
- * const {Series} = require('futils/data');
- *
- * const odd = (n) => n % 2 !== 0;
- * 
- * Series.of(1, 2, 3).findRight(odd); // -> 3
- */
-Series.fn.findRight = function (f) {
-    return breakableFoldr((x, a) => !!f(a) ? [BREAK, a] : [null, x], null, this.value);
 }

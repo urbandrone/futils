@@ -6,11 +6,33 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+import {Recur} from './_Recur';
 
 
-export const typeOf = (a) => {
-    if (a === null) { return 'Null'; }
-    if (a === void 0) { return 'Void'; }
-    if (a.__type__ !== void 0) { return a.__type__; }
-    return a.constructor.name;
-}
+
+/**
+ * Provides the again function for trampolines. It should be used to wrap a
+ * function and its arguments in case the invocation needs to be suspended
+ * @module trampoline/again
+ */
+
+
+
+/**
+ * The again function
+ * @method again
+ * @memberof module:trampoline/again
+ * @param {Function} f The function which shall be suspended
+ * @param {...any} a Arguments for next invocation
+ * @return {Recur} A recursion wrapping data structure
+ *
+ * @example
+ * const {recur, again} = require('futils/trampoline');
+ *
+ * const factorial = recur((n, m = 1) => {
+ *     return n <= 1 ? m : again(factorial, n - 1, n * m);
+ * });
+ *
+ * factorial(5); // -> 120
+ */
+export const again = (f, ...a) => Recur(f, a);

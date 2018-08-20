@@ -135,11 +135,29 @@ IO.fromMaybe = (a) => IO.of(a.value);
  * @example
  * const {IO, List} = require('futils/data');
  *
- * const ls = List([1, 2, 3]);
+ * const ls = List.of(2).cons(1);
  *
  * IO.fromList(ls); // -> IO(_ -> 1)
  */
-IO.fromList = (a) => IO.of(a.value[0] == null ? null : a.value[0]);
+IO.fromList = (a) => IO.of(a.head);
+/**
+ * A natural transformation from a Series into a IO. Please note that this
+ * transformation looses data, because only the first element of the series is
+ * taken
+ * @method fromSeries
+ * @static
+ * @memberof module:data/IO.IO
+ * @param {Series} a The Series to transform
+ * @return {IO} A IO with the first value
+ *
+ * @example
+ * const {IO, Series} = require('futils/data');
+ *
+ * const ls = Series.of(1, 2);
+ *
+ * IO.fromSeries(ls); // -> IO(_ -> 1)
+ */
+IO.fromSeries = (a) => IO.of(a.value[0] == null ? null : a.value[0]);
 /**
  * A natural transformation from an Id into a IO
  * @method fromId

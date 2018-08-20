@@ -11,5 +11,13 @@ import {Free} from './Free';
 
 
 export default {
-    Id, Maybe, Either, Series, List, IO, State, Task, Free
+    Id,
+    Maybe,
+    Either,
+    Series,
+    List,
+    IO,
+    State,
+    Task,
+    Free
 }

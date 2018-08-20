@@ -148,13 +148,33 @@ Maybe.fromId = (a) => Maybe.from(a.value);
  * @example
  * const {Maybe, List} = require('futils/data');
  *
- * const ls = List([1, 2, 3]);
- * const ks = List([]);
+ * const ls = List.of(2).cons(1);
+ * const ks = List.Nil();
  *
  * Maybe.fromList(ls); // -> Some(1)
  * Maybe.fromList(ks); // -> None
  */
-Maybe.fromList = (a) => Maybe.from(a.value[0]);
+Maybe.fromList = (a) => Maybe.from(a.head);
+/**
+ * A natural transformation from a Series into a Maybe. Please note that this
+ * transformation looses data, because only the first element of the series is
+ * taken. If the first element is null or undefined, a Maybe.None is returned
+ * @method fromSeries
+ * @static
+ * @memberof module:data/Maybe.Maybe
+ * @param {Series} a The Series to transform
+ * @return {Some|None} Maybe.Some if the first element is not null or undefined
+ *
+ * @example
+ * const {Maybe, Series} = require('futils/data');
+ *
+ * const ls = Series.of(1, 2);
+ * const ks = Series.empty();
+ *
+ * Maybe.fromSeries(ls); // -> Some(1)
+ * Maybe.fromSeries(ks); // -> None
+ */
+Maybe.fromSeries = (a) => Maybe.from(a.value[0]);
 
 
 
@@ -195,15 +215,15 @@ Maybe.fn.isSome = function () {
  * const none = Maybe.None();
  *
  * some.concat(Maybe.Some('b')); // -> Some('ab')
- * some.concat(Maybe.None()); // -> Some('a')
+ * some.concat(Maybe.None());    // -> None
  * none.concat(Maybe.Some('b')); // -> None
- * none.concat(Maybe.None()); // -> None
+ * none.concat(Maybe.None());    // -> None
  */
 Maybe.fn.concat = function (a) {
     if (Maybe.is(a)) {
         return this.caseOf({
             None: () => this,
-            Some: (v) => a.isSome() ? Some(v.concat(a.value)) : this
+            Some: (v) => a.isSome() ? Some(v.concat(a.value)) : a
         });
     }
     throw `Maybe::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;

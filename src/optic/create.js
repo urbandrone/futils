@@ -10,7 +10,7 @@ import {curry} from '../lambda/curry';
 import {map} from '../operation/map';
 
 /**
- * Provides the createLens function, which creates a factory for new
+ * Provides the createLens function, which acts like a factory for new
  * types of lenses
  * @module optic/create
  * @requires lambda/curry
@@ -27,6 +27,22 @@ import {map} from '../operation/map';
  * @param {Function} getter A function defining how to get a value from the structure
  * @param {Function} setter A function defining how to clone the structure and set a value
  * @return {Function} A factory function which can be used to create lens types
+ *
+ * @example
+ * const {createLens, over} = require('futils/optic');
+ *
+ * const MapLens = createLens(
+ *     (key, map) => map.get(key),
+ *     (key, val, map) => new Map([...map.entries()]).set(key, val)
+ * );
+ *
+ * const LName = MapLens('name');
+ *
+ * const data = new Map([['name', 'Nice blue'], ['code', '#3d73cc']]);
+ *
+ * const upper = (a) => a.toUpperCase();
+
+ * over(LName, upper, data); // -> Map([['name', 'NICE BLUE'], ['code', '#3d73cc']])
  */
 export const createLens = curry((gets, sets, k, f, a) => {
     return map((b) => sets(k, b, a), f(gets(k, a)));

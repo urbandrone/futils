@@ -8,7 +8,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 import {typeOf} from '../core/typeof';
 import {UnionType} from '../adt';
-import {Show} from '../generics/Show';
+import {showT} from '../generics/Show';
 
 
 
@@ -41,11 +41,10 @@ import {Show} from '../generics/Show';
  * List.Cons(1, List.Cons(2, List.Nil())); // -> Cons(1, Cons(2, Nil))
  * Cons(1, Cons(2, Nil()));                // -> Cons(1, Cons(2, Nil))
  */
-export const List = UnionType('List', {Cons: ['value', 'tail'], Nil: []}).
-    deriving(Show);
+export const List = UnionType('List', {Cons: ['head', 'tail'], Nil: []});
 
 const {Cons, Nil} = List;
-List.fn.value = null;
+List.fn.head = null;
 List.fn.tail = Nil();
 
 
@@ -56,7 +55,7 @@ const BREAK = Symbol('BREAK');
 const foldl = (f, a, ls) => {
     let r = a, s = ls;
     while (!Nil.is(s)) {
-        r = f(r, s.value);
+        r = f(r, s.head);
         s = s.tail;
     }
     return r;
@@ -65,7 +64,7 @@ const foldl = (f, a, ls) => {
 const breakableFoldl = (f, a, ls) => {
     let r = a, s = ls;
     while (!Nil.is(s)) {
-        let [cmd, _r] = f(r, s.value);
+        let [cmd, _r] = f(r, s.head);
         r = _r;
         if (cmd === BREAK) { break; }
         s = s.tail;
@@ -75,10 +74,6 @@ const breakableFoldl = (f, a, ls) => {
 
 const foldr = (f, a, ls) => {
     return foldl(f, a, foldl((x,y) => Cons(y, x), Nil(), ls));
-}
-
-const breakableFoldr = (f, a, ls) => {
-    return breakableFoldl(f, a, foldl((x, y) => Cons(y, x)), Nil(), ls);
 }
 
 
@@ -193,15 +188,36 @@ List.fromMaybe = (a) => a.isSome() ? List.from(a.value) : List.empty();
  * List.fromEither(r); // -> Cons('a right', Nil)
  */
 List.fromEither = (a) => a.isRight() ? List.from(a.value) : List.empty();
+/**
+ * A natural transformation from a Series into a List
+ * @method fromArray
+ * @static
+ * @memberof module:data/List.List
+ * @param {Series} a The Series to transform
+ * @return {List} A new List
+ *
+ * @example
+ * const {List, Series} = require('futils/data');
+ *
+ * List.fromArray(Series.of(1, 2, 3)); // -> Cons(1, Cons(2, Cons(3, Nil)))
+ */
+List.fromSeries = (a) => List.fromArray(a.value);
 
 
 
 List.fn[Symbol.iterator] = function () {
     return this.caseOf({
-        Nil: () => ({done: true, next() { return this; }}),
+        Nil: () => ({done: true, next() { return void 0; }}),
         Cons: () => this.toArray()[Symbol.iterator]()
     });
 }
+List.fn.toString = function () {
+    return this.caseOf({
+        Nil: () => 'Nil',
+        Cons: (h, t) => `Cons(${showT(h)}, ${t.toString()})`
+    });
+}
+
 /**
  * A natural transformation from a List into an array
  * @method toArray
@@ -232,7 +248,10 @@ List.fn.toArray = function () {
  */
 List.fn.concat = function (a) {
     if (List.is(a)) {
-        return this.reduceRight((ls, x) => Cons(x, ls), a);
+        return this.caseOf({
+            Nil: () => this,
+            Cons: () => Nil.is(a) ? a : this.reduceRight((ls, x) => Cons(x, ls), a)
+        });
     }
     throw `List::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
 }
@@ -368,8 +387,8 @@ List.fn.reduceRight = function (f, x) {
  * @method traverse
  * @memberof data/List.List
  * @param {Function} f Function to traverse with
- * @param {Applicative|Array} A A constructor with of and ap methods
- * @return {Applicative|Array} A List wrapped in the applicative
+ * @param {Applicative} A A constructor with of and ap methods
+ * @return {Applicative} A List wrapped in the applicative
  *
  * @example
  * const {List, Maybe} = require('futils/data');
@@ -381,10 +400,13 @@ List.fn.reduceRight = function (f, x) {
  * ls.traverse(fn, Maybe); // -> Some(Cons(1, Nil))
  */
 List.fn.traverse = function (f, A) {
-    return this.reduceRight(
-        (t, a) => f(a).map(b => c => c.concat(List.of(b))).ap(t),
-        A.of(List.empty())
-    );
+    return this.caseOf({
+        Nil: () => A.of(this),
+        Cons: () => this.reduceRight(
+            (xs, x) => xs.flatMap(a => f(x).map(b => Cons(b, a))),
+            A.of(Nil())
+        )
+    });
 }
 /**
  * Sequences a List into another applicative Type
@@ -396,7 +418,7 @@ List.fn.traverse = function (f, A) {
  * @example
  * const {List, Maybe} = require('futils/data');
  *
- * const ls = List.of(1);
+ * const ls = List.of(Maybe.of(1));
  *
  * ls.sequence(Maybe); // -> Some(Cons(1, Nil))
  */
@@ -526,39 +548,6 @@ List.fn.snoc = function (a) {
     return this.reduceRight((ls, x) => Cons(x, ls), Cons(a, Nil()));
 }
 /**
- * Returns the head of a List. Returns null for an empty List
- * @method head
- * @memberof module:data/List.List
- * @return {any|null} Either the head value or null
- *
- * @example
- * const {List} = require('futils/data');
- *
- * List.of(2).cons(1).head(); // -> 1
- * List.empty().head();       // -> null
- */
-List.protoype.head = function () {
-    return this.caseOf({
-        Nil: () => null,
-        Cons: (h) => h
-    });
-}
-/**
- * Returns the tail of a List
- * @method tail
- * @memberof module:data/List.List
- * @return {Cons|Nil} The tail of the List
- *
- * @example
- * const {List} = require('futils/data');
- *
- * List.of(2).cons(1).tail(); // -> Cons(2, Nil);
- * List.empty().tail();       // -> Nil
- */ 
-List.fn.tail = function () {
-    return this.drop(1)
-}
-/**
  * If given a number N, returns the first N items from the List
  * @method take
  * @memberof module:data/List.List
@@ -588,7 +577,7 @@ List.fn.take = function (n) {
  *
  * List.of(2).cons(1).cons(0).drop(2); // -> Cons(2, Nil)
  */
-List.protoype.drop = function (n) {
+List.fn.drop = function (n) {
     return this.caseOf({
         Nil: () => this,
         Cons: (_, t) => n > 1 ? t.drop(n - 1) : t
@@ -613,26 +602,5 @@ List.fn.find = function (f) {
     return this.caseOf({
         Nil: () => null,
         Cons: () => breakableFoldl((x, a) => !!f(a) ? [BREAK, a] : [null, x], null, this)
-    });
-}
-/**
- * Given a predicate function, returns the first element for which the
- * predicate returns true. If no element passes the predicate, null is returned
- * @method findRight
- * @memberof module:data/List.List
- * @param {Function} f The predicate function
- * @return {any|null} The first match or null
- *
- * @example
- * const {List} = require('futils/data');
- *
- * const odd = (n) => n % 2 !== 0;
- * 
- * List.of(3).cons(2).cons(1).findRight(odd); // -> 3
- */
-List.fn.findRight = function (f) {
-    return this.caseOf({
-        Nil: () => null,
-        Cons: () => breakableFoldr((x, a) => !!f(a) ? [BREAK, a] : [null, x], null, this)
     });
 }

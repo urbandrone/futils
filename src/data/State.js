@@ -30,9 +30,9 @@ import {Type} from '../adt';
  * @version 3.0.0
  *
  * @example
- * const {State, StateResult} = require('futils/data');
+ * const {State} = require('futils/data');
  *
- * const state = State((s) => StateResult(1, s));
+ * const state = State((s) => State.Result(1, s));
  *
  * state.run(0);           // -> 1
  * state.exec(0);          // -> 0
@@ -47,7 +47,7 @@ export const State = Type('State', ['compute']);
  * @class module:data/State.StateResult
  * @version 3.0.0
  */
-export const StateResult = Type('State.Result', ['value', 'state']);
+State.Result = Type('State.Result', ['value', 'state']);
 
 
 
@@ -67,7 +67,7 @@ export const StateResult = Type('State.Result', ['value', 'state']);
  * state.run(0);  // -> 1
  * state.exec(0); // -> 0
  */
-State.of = (a) => State((s) => StateResult(a, s));
+State.of = (a) => State((s) => State.Result(a, s));
 /**
  * Returns a State which drops intermediate values and copies the intermediate
  * state as the value and the state of the computation
@@ -84,7 +84,7 @@ State.of = (a) => State((s) => StateResult(a, s));
  * state.run(0);  // -> 0
  * state.exec(0); // -> 0
  */
-State.get = () => State((s) => StateResult(s, s));
+State.get = () => State((s) => State.Result(s, s));
 /**
  * Puts whatever is given as the new intermediate state, replacing the current
  * value with null and dropping the current intermediate state
@@ -102,7 +102,7 @@ State.get = () => State((s) => StateResult(s, s));
  * state.run(0);  // -> null
  * state.exec(0); // -> 1
  */
-State.put = (s) => State(() => StateResult(null, s));
+State.put = (s) => State(() => State.Result(null, s));
 /**
  * If given a function, uses the function to modify the intermediate state and
  * drops the current value
@@ -143,7 +143,7 @@ State.modify = (f) => State.get().flatMap((s) => State.put(f(s)));
 State.fn.map = function (f) {
     return State((s) => {
         let {value, state} = this.compute(s);
-        return StateResult(f(value), state);
+        return State.Result(f(value), state);
     });
 }
 /**

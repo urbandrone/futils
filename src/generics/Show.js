@@ -21,6 +21,10 @@ import {typeOf} from '../core/typeof';
 export const showT = (a) => {
     if (a === null) { return 'Null'; }
     if (a === void 0) { return 'Void'; }
+    if (a.__type__ != null) {
+        return a.__values__.length < 1 ? a.__type__ :
+                `${a.__type__}(${a.__values__.map(v => showT(a[v])).join(', ')})`;
+    }
     switch (a.constructor.name) {
         case 'Boolean':
         case 'String':
@@ -90,9 +94,6 @@ export class Show {
     static mixInto (ctor) {
         if (ctor && ctor.prototype) {
             ctor.prototype.toString = function () {
-                if (this.__type__ != null) {
-                    return `${this.__type__}(${this.__values__.map(v => showT(this[v])).join(' ')})`;
-                }
                 return showT(this);
             }
             ctor.prototype.inspect = function () {

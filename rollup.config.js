@@ -81,4 +81,13 @@ export default [{
         banner: BANNER
     },
     plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
+}, {
+    input: 'src/trampoline/__export.js',
+    output: {
+        file: 'dist/trampoline.js',
+        format: 'cjs',
+        sourcemap: false,
+        banner: BANNER
+    },
+    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
 }]

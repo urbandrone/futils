@@ -151,13 +151,34 @@ Either.fromId = (a) => Either.from(a.value);
  * @example
  * const {Either, List} = require('futils/data');
  *
- * const ls = List([1, 2, 3]);
- * const ks = List([]);
+ * const ls = List.of(2).cons(1);
+ * const ks = List.Nil();
  *
  * Either.fromList(ls); // -> Right(1)
  * Either.fromList(ks); // -> Left(null)
  */
-Either.fromList = (a) => Either.from(a.value[0]);
+Either.fromList = (a) => Either.from(a.head);
+/**
+ * A natural transformation from a Series into a Either. Please note that this
+ * transformation looses data, because only the first element of the series is
+ * taken. If the first element is null, undefined or some error, a Either.Left
+ * is returned
+ * @method fromSeries
+ * @static
+ * @memberof module:data/Either.Either
+ * @param {Series} a The Series to transform
+ * @return {Left|Right} Either.Right if the first element is not null, undefined or some error
+ *
+ * @example
+ * const {Either, Series} = require('futils/data');
+ *
+ * const ls = Series.of(1, 2);
+ * const ks = Series.empty();
+ *
+ * Either.fromSeries(ls); // -> Right(1)
+ * Either.fromSeries(ks); // -> Left(null)
+ */
+Either.fromSeries = (a) => Either.from(a.value[0]);
 /**
  * A natural transformation from a State, a IO or a function into a Either. Returns
  * a function that awaits a argument to run the computation and which returns a
@@ -227,15 +248,15 @@ Either.fn.isRight = function () {
  * const l = Either.Left('l');
  *
  * r.concat(Either.Right('b')); // -> Right('rb')
- * r.concat(Either.Left('b')); // -> Right('r')
+ * r.concat(Either.Left('b'));  // -> Left('b')
  * l.concat(Either.Right('b')); // -> Left('l')
- * l.concat(Either.Left('b')); // -> Left('l')
+ * l.concat(Either.Left('b'));  // -> Left('l')
  */
 Either.fn.concat = function (a) {
     if (Either.is(a)) {
         return this.caseOf({
             Left: () => this,
-            Right: (v) => a.isRight() ? Right(v.concat(a.value)) : this
+            Right: (v) => a.isRight() ? Right(v.concat(a.value)) : a
         });
     }
     throw `Either::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
