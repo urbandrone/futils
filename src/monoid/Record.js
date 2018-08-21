@@ -82,12 +82,12 @@ Record.empty = () => Record({});
 
 
 /**
- * Concattenates a Record with another by merging key-value pairs. Please note
+ * Concatenates a Record with another by merging key-value pairs. Please note
  * that this operation might loose data because fields with the same keys will
  * be overriden
  * @method concat
  * @memberof module:monoid/Record.Record
- * @param {Record} a The Record instance to concattenate with
+ * @param {Record} a The Record instance to concatenate with
  * @return {Record} A new Record
  *
  * @example

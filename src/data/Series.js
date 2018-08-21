@@ -218,10 +218,10 @@ Series.fn.toArray = function () {
     return this.value;
 }
 /**
- * Concattenates a Series with another Series
+ * Concatenates a Series with another Series
  * @method concat
  * @memberof module:data/Series.Series
- * @param {Series} a The Series instance to concattenate with
+ * @param {Series} a The Series instance to concatenate with
  * @return {Series} A Series containing all values from both Seriess
  *
  * @example

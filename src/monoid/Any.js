@@ -81,10 +81,10 @@ Any.empty = () => Any(false);
 
 
 /**
- * Concattenates a Any with another using boolean comparison
+ * Concatenates a Any with another using boolean comparison
  * @method concat
  * @memberof module:monoid/Any.Any
- * @param {Any} a The Any instance to concattenate with
+ * @param {Any} a The Any instance to concatenate with
  * @return {Any} A new Any
  *
  * @example

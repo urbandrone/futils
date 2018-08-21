@@ -79,10 +79,10 @@ Fn.empty = () => Fn(a => a);
 
 
 /**
- * Concattenates a Fn with another using function composition
+ * Concatenates a Fn with another using function composition
  * @method concat
  * @memberof module:monoid/Fn.Fn
- * @param {Fn} a The Fn instance to concattenate with
+ * @param {Fn} a The Fn instance to concatenate with
  * @return {Fn} A new Fn
  *
  * @example

@@ -85,10 +85,10 @@ Max.empty = () => Max(-Infinity);
 
 
 /**
- * Concattenates a Max with another using Ord.gt comparison
+ * Concatenates a Max with another using Ord.gt comparison
  * @method concat
  * @memberof module:monoid/Max.Max
- * @param {Max} a The Max instance to concattenate with
+ * @param {Max} a The Max instance to concatenate with
  * @return {Max} A new Max
  *
  * @example

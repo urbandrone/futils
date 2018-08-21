@@ -21,7 +21,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * @method concat
  * @memberof module:operation/concat
  * @param {Semigroup} a The Semigroup to concat
- * @param {Semigroup} b The Semigroup to concattenate with
+ * @param {Semigroup} b The Semigroup to concatenate with
  * @return {Semigroup} Both Semigroup instances combined
  *
  * @example

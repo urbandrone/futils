@@ -85,10 +85,10 @@ Sum.empty = () => Sum(0);
 
 
 /**
- * Concattenates a Sum with another using addition
+ * Concatenates a Sum with another using addition
  * @method concat
  * @memberof module:monoid/Sum.Sum
- * @param {Sum} a The Sum instance to concattenate with
+ * @param {Sum} a The Sum instance to concatenate with
  * @return {Sum} A new Sum
  *
  * @example

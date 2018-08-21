@@ -200,12 +200,12 @@ Maybe.fn.isSome = function () {
     });
 }
 /**
- * Concattenates a Maybe.Some with another. Concattenation with Maybe.None will
+ * Concatenates a Maybe.Some with another. Concattenation with Maybe.None will
  * result in Maybe.None. Please note, that the inner values have to be part of a
  * Semigroup as well for concattenation to succeed
  * @method concat
  * @memberof module:data/Maybe.Maybe
- * @param {Some|None} a The Maybe instance to concattenate with
+ * @param {Some|None} a The Maybe instance to concatenate with
  * @return {Some|None} A new Maybe
  *
  * @example

@@ -85,10 +85,10 @@ Product.empty = () => Product(1);
 
 
 /**
- * Concattenates a Product with another using multiplication
+ * Concatenates a Product with another using multiplication
  * @method concat
  * @memberof module:monoid/Product.Product
- * @param {Product} a The Product instance to concattenate with
+ * @param {Product} a The Product instance to concatenate with
  * @return {Product} A new Product
  *
  * @example

@@ -152,11 +152,11 @@ Id.fromSeries = (a) => Id(a.value[0]);
 
 
 /**
- * Concattenates a Id with another. Please note, that the inner values have
+ * Concatenates a Id with another. Please note, that the inner values have
  * to be part of a Semigroup as well for concattenation to succeed
  * @method concat
  * @memberof module:data/Id.Id
- * @param {Id} a The Id instance to concattenate with
+ * @param {Id} a The Id instance to concatenate with
  * @return {Id} A new Id
  *
  * @example

@@ -214,7 +214,7 @@ Task.fromId = a => Task.of(a.value);
  * Task.fromMaybe(some); // -> Task(_, 'a value')
  * Task.fromMaybe(none); // -> Task(null, _)
  */
-Task.fromMaybe = a => Task((fail, ok) => { a.cata({None: fail, Some: ok}); });
+Task.fromMaybe = a => Task((fail, ok) => { if (a.isSome()) { ok(a.value); } else { fail(null); } });
 /**
  * A natural transformation from a Either.Right or Either.Left into a Task. If the
  * Either is a Either.Left, the resulting Task rejects
@@ -269,7 +269,7 @@ Task.fromList = a => a.head == null ? Task.reject(a.head) : Task.of(a.head);
  *
  * Task.fromSeries(ls); // -> Task(_, 1)
  */
-Task.fromSeries = a => a.value[0] == null ? Task.reject(a.value[0]) : Task.of(a.value[0]);
+Task.fromSeries = a => a.value[0] == null ? Task.reject(null) : Task.of(a.value[0]);
 /**
  * A natural transformation from an IO into a Task. If the IO results in an Error,
  * the resulting Task fails with the exception
@@ -304,11 +304,11 @@ Task.fn.toPromise = function () {
     return new Promise((ok, fail) => { this.run(fail, ok); });
 }
 /**
- * Concattenates a Task with another. Resolves with the Task which resolves faster
+ * Concatenates a Task with another. Resolves with the Task which resolves faster
  * or rejects if either of both fail
  * @method concat
  * @memberof module:data/Task.Task
- * @param {Task} a The Task to concattenate with
+ * @param {Task} a The Task to concatenate with
  * @return {Task} Result of the concattenation
  *
  * @example
@@ -376,7 +376,7 @@ Task.fn.map = function (f) {
  * tasks.flat(); // -> Task(_, 1)
  */
 Task.fn.flat = function () {
-    const task = Task((fail, ok) => { this.run().run(fail, ok); });
+    const task = Task((fail, ok) => { this.run(fail, a => a.run(fail, ok)); });
     task.cleanUp = this.cleanUp;
     return task;
 }

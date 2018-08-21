@@ -85,10 +85,10 @@ Min.empty = () => Min(Infinity);
 
 
 /**
- * Concattenates a Min with another using Ord.lt comparison
+ * Concatenates a Min with another using Ord.lt comparison
  * @method concat
  * @memberof module:monoid/Min.Min
- * @param {Min} a The Min instance to concattenate with
+ * @param {Min} a The Min instance to concatenate with
  * @return {Min} A new Min
  *
  * @example

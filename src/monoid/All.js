@@ -81,10 +81,10 @@ All.empty = () => All(true);
 
 
 /**
- * Concattenates a All with another using boolean comparison
+ * Concatenates a All with another using boolean comparison
  * @method concat
  * @memberof module:monoid/All.All
- * @param {All} a The All instance to concattenate with
+ * @param {All} a The All instance to concatenate with
  * @return {All} A new All
  *
  * @example

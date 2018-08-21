@@ -82,10 +82,10 @@ Char.empty = () => Char('');
 
 
 /**
- * Concattenates a Char with another using string concattenation
+ * Concatenates a Char with another using string concattenation
  * @method concat
  * @memberof module:monoid/Char.Char
- * @param {Char} a The Char instance to concattenate with
+ * @param {Char} a The Char instance to concatenate with
  * @return {Char} A new Char
  *
  * @example

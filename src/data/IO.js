@@ -178,10 +178,10 @@ IO.fromId = (a) => IO.of(a.value);
 
 
 /**
- * Concattenates a IO with another
+ * Concatenates a IO with another
  * @method concat
  * @memberof module:data/IO.IO
- * @param {IO} a The IO to concattenate with
+ * @param {IO} a The IO to concatenate with
  * @return {IO} Result of concattening the IO with the given one
  *
  * @example

@@ -233,10 +233,10 @@ List.fn.toArray = function () {
     return this.reduceRight((a, x) => a.concat(x), []);
 }
 /**
- * Concattenates a List with another List
+ * Concatenates a List with another List
  * @method concat
  * @memberof module:data/List.List
- * @param {List} a The List instance to concattenate with
+ * @param {List} a The List instance to concatenate with
  * @return {List} A List containing all values from both Lists
  *
  * @example
