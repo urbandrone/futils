@@ -296,6 +296,43 @@ Maybe.fn.flatMap = function (f) {
     return this.map(f).flat();
 }
 /**
+ * Extracts the value from a Maybe.Some or Maybe.None. For Maybe.None returns null
+ * @method extract
+ * @memberof module:data/Maybe.Maybe
+ * @return {any|null} The value
+ *
+ * @example
+ * const {Maybe} = require('futils/data');
+ *
+ * Maybe.Some(1).extract(); // -> 1
+ * Maybe.None().extract();  // -> null
+ */
+Maybe.fn.extract = function () {
+    return this.value;
+}
+/**
+ * If given a function that takes a Maybe and returns a value, returns a Maybe
+ * @method extend
+ * @memberof module:data/Maybe.Maybe
+ * @param {Function} f A function taking a Maybe.Some or Maybe.None
+ * @return {None|Some} A new Maybe
+ *
+ * @example
+ * const {Maybe} = require('futils/data');
+ *
+ * const some = Maybe.Some('a some');
+ * const none = Maybe.None();
+ *
+ * some.extend(({value}) => /some/.test(value)); // -> Some(true)
+ * none.extend(({value}) => /some/.test(value)); // -> None
+ */
+Maybe.fn.extend = function (f) {
+    return this.caseOf({
+        None: () => this,
+        Some: () => Maybe.from(f(this))
+    });
+}
+/**
  * Applies a function in a Maybe.Some to a value in another Maybe.Some
  * @method ap
  * @memberof module:data/Maybe.Maybe

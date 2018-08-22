@@ -82,6 +82,16 @@ describe('List', () => {
         expect(c.flatMap(x => Cons(x + 1, Nil())).reduce(f, 0)).toBe(0);
     });
 
+    it('should be able to extract', () => {
+        expect(a.extract()).toBe(1);
+        expect(c.extract()).toBe(null);
+    });
+
+    it('should be able to extend', () => {
+        expect(a.extend(({head}) => head + 1).reduce(f, 0)).toBe(2);
+        expect(c.extend(({head}) => head + 1).reduce(f, 0)).toBe(0);
+    });
+
     it('should be able to ap', () => {
         expect(Cons(x => x + 1, Nil()).ap(a).reduce(f, 0)).toBe(2);
         expect(Cons(x => x + 1, Nil()).ap(c).reduce(f, 0)).toBe(0);
@@ -127,8 +137,8 @@ describe('List', () => {
         expect(Cons(1, Cons(2, Nil())).filter(x => x % 2 === 0).toString()).toBe('Cons(2, Nil)');
     });
 
-    it('should be able to intercalate', () => {
-        expect(Cons(1, Cons(2, Nil())).intercalate(0.5).toString()).toBe('Cons(1, Cons(0.5, Cons(2, Nil)))');
+    it('should be able to intersperse', () => {
+        expect(Cons(1, Cons(2, Nil())).intersperse(0.5).toString()).toBe('Cons(1, Cons(0.5, Cons(2, Nil)))');
     });
 
     it('should support cons', () => {

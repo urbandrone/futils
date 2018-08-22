@@ -55,7 +55,7 @@ const BREAK = Symbol('BREAK');
 const foldl = (f, a, ls) => {
     let r = a, s = ls;
     while (!Nil.is(s)) {
-        r = f(r, s.head);
+        r = f(r, s.head, s);
         s = s.tail;
     }
     return r;
@@ -64,7 +64,7 @@ const foldl = (f, a, ls) => {
 const breakableFoldl = (f, a, ls) => {
     let r = a, s = ls;
     while (!Nil.is(s)) {
-        let [cmd, _r] = f(r, s.head);
+        let [cmd, _r] = f(r, s.head, s);
         r = _r;
         if (cmd === BREAK) { break; }
         s = s.tail;
@@ -214,7 +214,7 @@ List.fn[Symbol.iterator] = function () {
 List.fn.toString = function () {
     return this.caseOf({
         Nil: () => 'Nil',
-        Cons: (h, t) => `Cons(${showT(h)}, ${t.toString()})`
+        Cons: () => this.reduceRight((ls, a) => `Cons(${showT(a)}, ${ls})`, 'Nil')
     });
 }
 
@@ -310,6 +310,41 @@ List.fn.flat = function () {
  */
 List.fn.flatMap = function (f) {
     return this.map(f).flat();
+}
+/**
+ * Extracts the head value from a List. For Nil instances, it returns null
+ * @method extract
+ * @memberof module:data/List.List
+ * @return {any|null} The head element
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * List.of(1).extract();   // -> 1
+ * List.empty().extract(); // -> null
+ */
+List.fn.extract = function () {
+    return this.head;
+}
+/**
+ * If given a function that takes a List and returns a value, returns a List
+ * @method extend
+ * @memberof module:data/List.List
+ * @param {Function} f A function taking a List
+ * @return {List} A new List
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * const ls = List.of(3).cons(2).cons(1);
+ *
+ * ls.extend(({head, tail}) => head + tail.head || 0); // -> Cons(6, Cons(5, Cons(3, Nil)))
+ */
+List.fn.extend = function (f) {
+    return this.caseOf({
+        Nil: () => this,
+        Cons: () => this.reduceRight((x, _, y) => Cons(f(y), x), Nil())
+    });
 }
 /**
  * Applies a function in a List to the values in another List
@@ -503,7 +538,7 @@ List.fn.filter = function (f) {
 }
 /**
  * Takes a value and puts it between each entry in the List
- * @method intercalate
+ * @method intersperse
  * @memberof module:data/List.List
  * @param {any} a The value to put in between
  * @return {Cons|Nil} A new List
@@ -511,9 +546,9 @@ List.fn.filter = function (f) {
  * @example
  * const {List} = require('futils/data');
  *
- * List.of(2).cons(1).intercalate(0.5); // -> Cons(1, Cons(0.5, Cons(2, Nil)))
+ * List.of(2).cons(1).intersperse(0.5); // -> Cons(1, Cons(0.5, Cons(2, Nil)))
  */
-List.fn.intercalate = function (a) {
+List.fn.intersperse = function (a) {
     return this.reduceRight((ls, x) => Nil.is(ls) ? Cons(x, ls) : Cons(x, Cons(a, ls)), Nil());
 }
 /**

@@ -227,6 +227,35 @@ Id.fn.flatMap = function (f) {
     return this.map(f).flat();
 }
 /**
+ * Extracts the value from a Id
+ * @method extract
+ * @memberof module:data/Id.Id
+ * @return {any} The value
+ *
+ * @example
+ * const {Id} = require('futils/data');
+ *
+ * Id.of(1).extract(); // -> 1
+ */
+Id.fn.extract = function () {
+    return this.value;
+}
+/**
+ * If given a function that takes a Id and returns a value, returns an Id
+ * @method extend
+ * @memberof module:data/Id.Id
+ * @param {Function} f A function taking a Id
+ * @return {Id} A new Id
+ *
+ * @example
+ * const {Id} = require('futils/data');
+ *
+ * Id.of(1).extend(({value}) => value + 1); // -> Id(2)
+ */
+Id.fn.extend = function (f) {
+    return Id.of(f(this));
+}
+/**
  * Applies a function in a Id to a value in another Id
  * @method ap
  * @memberof module:data/Id.Id

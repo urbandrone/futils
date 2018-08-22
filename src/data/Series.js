@@ -291,6 +291,12 @@ Series.fn.flat = function () {
 Series.fn.flatMap = function (f) {
     return this.map(f).flat();
 }
+Series.fn.extract = function () {
+    return this.value.length < 1 ? null : this.value[0];
+}
+Series.fn.extend = function (f) {
+    return this.reduceRight((s, a) => Series.from(f(s.cons(a))), Series.empty());
+}
 /**
  * Applies a function in a Series to the values in another Series
  * @method ap
@@ -468,7 +474,7 @@ Series.fn.filter = function (f) {
 }
 /**
  * Takes a value and puts it between each entry in the Series
- * @method intercalate
+ * @method intersperse
  * @memberof module:data/Series.Series
  * @param {any} a The value to put in between
  * @return {Series} A new Series
@@ -476,9 +482,9 @@ Series.fn.filter = function (f) {
  * @example
  * const {Series} = require('futils/data');
  *
- * Series.of(1, 2).intercalate(0.5); // -> Series([1, 0.5, 2])
+ * Series.of(1, 2).intersperse(0.5); // -> Series([1, 0.5, 2])
  */
-Series.fn.intercalate = function (a) {
+Series.fn.intersperse = function (a) {
     return Series(sameT(this.value.reduce((ls, x) => ls.length < 1 ? ls.concat(x) : ls.concat([a, x]), [])));
 }
 /**

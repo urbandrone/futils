@@ -70,6 +70,16 @@ describe('Series', () => {
         expect(a.flatMap(x => Series([x + 1])).reduce(f, 0)).toBe(2);
     });
 
+    it('should be able to extract', () => {
+        expect(a.extract()).toBe(1);
+        expect(c.extract()).toBe(null);
+    });
+
+    it('should be able to extend', () => {
+        expect(a.extend(({value}) => value.join(',')).reduce(f, '')).toBe('1');
+        expect(c.extend(({value}) => value.join(',')).reduce(f, '')).toBe('');
+    });
+
     it('should be able to ap', () => {
         expect(Series([x => x + 1]).ap(a).reduce(f, 0)).toBe(2);
         expect(Series([x => x + 1]).ap(c).reduce(f, 0)).toBe(0);
@@ -115,8 +125,8 @@ describe('Series', () => {
         expect(Series([1, 2]).filter(x => x % 2 === 0).toString()).toBe('Series([2])');
     });
 
-    it('should be able to intercalate', () => {
-        expect(Series([1, 2]).intercalate(0.5).toString()).toBe('Series([1, 0.5, 2])');
+    it('should be able to intersperse', () => {
+        expect(Series([1, 2]).intersperse(0.5).toString()).toBe('Series([1, 0.5, 2])');
     });
 
     it('should support cons', () => {

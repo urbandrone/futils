@@ -92,6 +92,16 @@ describe('Either', () => {
         expect(c.flatMap(x => Right(x + 1)).value).toBe(1);
     });
 
+    it('should be able to extract', () => {
+        expect(a.extract()).toBe(1);
+        expect(c.extract()).toBe(1);
+    });
+
+    it('should be able to extend', () => {
+        expect(a.extend(({value}) => value + 1).value).toBe(2);
+        expect(c.extend(({value}) => value + 1).value).toBe(1);
+    });
+
     it('should be able to ap', () => {
         expect(Right(x => x + 1).ap(a).value).toBe(2);
         expect(Right(x => x + 1).ap(c).value).toBe(1);

@@ -24,7 +24,7 @@ import {arity} from '../core/arity';
  * @memberof module:trampoline/recur
  * @param {Function} f The function which shall be suspended
  * @param {...any} a Arguments for next invocation
- * @return {Recur} A recursion wrapping data structure
+ * @return {any} The final value
  *
  * @example
  * const {recur, again} = require('futils/trampoline');

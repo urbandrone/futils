@@ -331,6 +331,43 @@ Either.fn.flatMap = function (f) {
     return this.map(f).flat();
 }
 /**
+ * Extracts the value from a Either.Right or Either.Left
+ * @method extract
+ * @memberof module:data/Either.Either
+ * @return {any} The current value
+ *
+ * @example
+ * const {Either} = require('futils/data');
+ *
+ * Either.Right('a right').extract(); // -> 'a right'
+ * Either.Left('a left').extract();   // -> 'a left'
+ */
+Either.fn.extract = function () {
+    return this.value;
+}
+/**
+ * If given a function that takes a Either and returns a value, returns a Either
+ * @method extend
+ * @memberof module:data/Either.Either
+ * @param {Function} f A function taking a Either.Right or Either.Left
+ * @return {Left|Right} A new Either
+ *
+ * @example
+ * const {Either} = require('futils/data');
+ *
+ * const r = Either.Right('a right');
+ * const l = Either.Left('a left');
+ *
+ * r.extend(({value}) => /right/.test(value)); // -> Right(true)
+ * l.extend(({value}) => /right/.test(value)); // -> Left(false)
+ */
+Either.fn.extend = function (f) {
+    return this.caseOf({
+        Left: () => this,
+        Right: () => Either.from(f(this))
+    });
+}
+/**
  * Applies a function in a Either.Right to a value in another Either.Right
  * @method ap
  * @memberof module:data/Either.Either
