@@ -155,26 +155,6 @@ Maybe.fromId = (a) => Maybe.from(a.value);
  * Maybe.fromList(ks); // -> None
  */
 Maybe.fromList = (a) => Maybe.from(a.head);
-/**
- * A natural transformation from a Series into a Maybe. Please note that this
- * transformation looses data, because only the first element of the series is
- * taken. If the first element is null or undefined, a Maybe.None is returned
- * @method fromSeries
- * @static
- * @memberof module:data/Maybe.Maybe
- * @param {Series} a The Series to transform
- * @return {Some|None} Maybe.Some if the first element is not null or undefined
- *
- * @example
- * const {Maybe, Series} = require('futils/data');
- *
- * const ls = Series.of(1, 2);
- * const ks = Series.empty();
- *
- * Maybe.fromSeries(ls); // -> Some(1)
- * Maybe.fromSeries(ks); // -> None
- */
-Maybe.fromSeries = (a) => Maybe.from(a.value[0]);
 
 
 

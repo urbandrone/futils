@@ -19,9 +19,12 @@ import {arity} from '../core/arity';
 
 
 
-function _curried (f, xs) {
-    if (xs.length >= f.length) { return f(...xs); }
-    return arity(f.length - xs.length, (...ys) => _curried(f, xs.concat(ys)));
+function _curried (f, g, xs) {
+    return arity(f.length - xs.length, (...ys) => {
+        let a = [...xs, ...ys].filter(v => v !== void 0);
+        if (a.length >= f.length) { return g(f, a); }
+        return _curried(f, g, a);
+    });
 }
 
 
@@ -44,4 +47,4 @@ function _curried (f, xs) {
  * cAdd(1);    // -> (n -> 1 + n)
  * cAdd(1)(2); // -> 3
  */
-export const curry = f => f.length <= 1 ? f : _curried(f, []);
+export const curry = f => f.length <= 1 ? f : _curried(f, (g, a) => g(...a), []);

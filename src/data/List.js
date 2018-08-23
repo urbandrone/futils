@@ -188,20 +188,6 @@ List.fromMaybe = (a) => a.isSome() ? List.from(a.value) : List.empty();
  * List.fromEither(r); // -> Cons('a right', Nil)
  */
 List.fromEither = (a) => a.isRight() ? List.from(a.value) : List.empty();
-/**
- * A natural transformation from a Series into a List
- * @method fromArray
- * @static
- * @memberof module:data/List.List
- * @param {Series} a The Series to transform
- * @return {List} A new List
- *
- * @example
- * const {List, Series} = require('futils/data');
- *
- * List.fromArray(Series.of(1, 2, 3)); // -> Cons(1, Cons(2, Cons(3, Nil)))
- */
-List.fromSeries = (a) => List.fromArray(a.value);
 
 
 

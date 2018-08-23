@@ -253,24 +253,6 @@ Task.fromEither = a => Task((fail, ok) => { a.cata({Left: fail, Right: ok}); });
  */
 Task.fromList = a => a.head == null ? Task.reject(a.head) : Task.of(a.head);
 /**
- * A natural transformation from a Series into a Task. Please note that this
- * transformation looses data, because only the first element of the series is
- * taken. If the first element is null or undefined, a rejecting Task is returned
- * @method fromSeries
- * @static
- * @memberof module:data/Task.Task
- * @param {Series} a The Series structure
- * @return {Task} A Task of the first element
- *
- * @example
- * const {Task, Series} = require('futils/data');
- *
- * const ls = Series.of(1, 2);
- *
- * Task.fromSeries(ls); // -> Task(_, 1)
- */
-Task.fromSeries = a => a.value[0] == null ? Task.reject(null) : Task.of(a.value[0]);
-/**
  * A natural transformation from an IO into a Task. If the IO results in an Error,
  * the resulting Task fails with the exception
  * @method fromIO

@@ -25,14 +25,14 @@ const _drop = (n, a) => typeof a === 'string' || isNaN(a.length) ? [a] :
  * @method drop
  * @memberof module:operation/drop
  * @param {Number} n Number of items to drop
- * @param {Array|Cons|Series} a The collection to drop the items from
- * @return {Array|Nil|Series} Result of the drop
+ * @param {Array|Cons} a The collection to drop the items from
+ * @return {Array|Nil} Result of the drop
  *
  * @example
  * const {drop} = require('futils/operation');
  *
  * drop(1, ['a', 'b']); // -> 'b'
- * drop(1);             // -> (Array/Cons/Series -> Array/Cons/Series)
+ * drop(1);             // -> (Array/Cons -> Array/Cons)
  */
 export const drop = (n, a) => a == null ? (b) => drop(n, b) :
                                 a.drop ? a.drop(n) :

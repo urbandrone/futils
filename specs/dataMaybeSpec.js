@@ -40,11 +40,6 @@ describe('Maybe', () => {
         expect(None.is(Maybe.fromList(List.Nil()))).toBe(true);
     });
 
-    it('should be able to construct from Series', () => {
-        expect(Some.is(Maybe.fromSeries(Series.of(1)))).toBe(true);
-        expect(None.is(Maybe.fromSeries(Series.empty()))).toBe(true);
-    });
-
     it('should be able to print itself', () => {
         expect(a.toString()).toBe('Some(1)');
         expect(c.toString()).toBe('None');

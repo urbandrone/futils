@@ -130,24 +130,6 @@ Id.fromMaybe = (a) => Id(a.value);
  * Id.fromList(ls); // -> Id(1)
  */
 Id.fromList = (a) => Id(a.head);
-/**
- * A natural transformation from a Series into a Id. Please note that this
- * transformation looses data, because only the first element of the series is
- * taken
- * @method fromSeries
- * @static
- * @memberof module:data/Id.Id
- * @param {Series} a The Series to transform
- * @return {Id} A new Id
- *
- * @example
- * const {Id, Series} = require('futils/data');
- *
- * const ls = Series.of(1, 2);
- *
- * Id.fromSeries(ls); // -> Id(1)
- */
-Id.fromSeries = (a) => Id(a.value[0]);
 
 
 

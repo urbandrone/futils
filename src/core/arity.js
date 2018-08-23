@@ -13,7 +13,7 @@ export const arity = (n, f) => {
         throw `Aritiy of a function cannot be ${n}`;
     }
     if (typeof f !== 'function') {
-        throw `${f} does not have some arity, only functions have`;
+        throw `${f} does not have an arity, only functions have`;
     }
     switch (Math.abs(n)) {
         case 1:

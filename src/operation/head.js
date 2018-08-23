@@ -27,7 +27,7 @@ const _fst = a => typeof a === 'string' || isNaN(a.length) ? a :
  * The head function
  * @method head
  * @memberof module:operation/head
- * @param {Array|Cons|Series} a The collection to take the head from
+ * @param {Array|Cons} a The collection to take the head from
  * @return {any|null} Either the head or null
  *
  * @example
@@ -36,4 +36,6 @@ const _fst = a => typeof a === 'string' || isNaN(a.length) ? a :
  * head(['a', 'b']); // -> 'a'
  * head([]);         // -> null
  */
-export const head = a => a == null ? null : a.head ? a.head() : _fst(a);
+export const head = a => a == null ? null :
+                        a.__type__ === 'Cons' || a.__type__ === 'Nil' ? a.head :
+                        _fst(a);

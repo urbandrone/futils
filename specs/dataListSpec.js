@@ -40,11 +40,6 @@ describe('List', () => {
         expect(Nil.is(List.fromMaybe(Maybe.None()))).toBe(true);
     });
 
-    it('should be able to construct from Series', () => {
-        expect(Cons.is(List.fromSeries(Series.of(1)))).toBe(true);
-        expect(Nil.is(List.fromSeries(Series.empty()))).toBe(true);
-    });
-
     it('should be able to be coerced itself into an array', () => {
         expect(a.toArray()).toEqual([1]);
     });

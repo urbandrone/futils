@@ -19,9 +19,13 @@ import {arity} from '../core/arity';
 
 
 
-function _curriedr (f, xs) {
-    if (xs.length >= f.length) { return f(...xs.reverse()); }
-    return arity(f.length - xs.length, (...ys) => _curriedr(f, xs.concat(ys)));
+
+function _curriedr (f, g, xs) {
+    return arity(f.length - xs.length, (...ys) => {
+        let a = [...xs, ...ys].filter(v => v !== void 0);
+        if (a.length >= f.length) { return g(f, a.reverse()); }
+        return _curriedr(f, g, a);
+    });
 }
 
 
@@ -44,4 +48,4 @@ function _curriedr (f, xs) {
  * cAdd(1);    // -> (n -> n + 1)
  * cAdd(1)(2); // -> 3
  */
-export const curryRight = f => f.length <= 1 ? f : _curriedr(f, []);
+export const curryRight = f => f.length <= 1 ? f : _curriedr(f, (g, a) => g(...a), []);

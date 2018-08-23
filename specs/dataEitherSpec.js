@@ -40,11 +40,6 @@ describe('Either', () => {
         expect(Left.is(Either.fromList(List.Nil()))).toBe(true);
     });
 
-    it('should be able to construct from Series', () => {
-        expect(Right.is(Either.fromSeries(Series.of(1)))).toBe(true);
-        expect(Left.is(Either.fromSeries(Series.empty()))).toBe(true);
-    });
-
     it('should be able to print itself', () => {
         expect(a.toString()).toBe('Right(1)');
         expect(c.toString()).toBe('Left(1)');

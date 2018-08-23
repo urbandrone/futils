@@ -26,8 +26,8 @@ const _rst = a => typeof a === 'string' || isNaN(a.length) ? [a] :
  * The tail function
  * @method tail
  * @memberof module:operation/tail
- * @param {Array|Cons|Series} a The collection to take the tail from
- * @return {Array|Nil|Series} Either the tail or a Array
+ * @param {Array|Cons} a The collection to take the tail from
+ * @return {Array|Cons|Nil} Either the tail or a Array
  *
  * @example
  * const {tail} = require('futils/operation');
@@ -35,4 +35,6 @@ const _rst = a => typeof a === 'string' || isNaN(a.length) ? [a] :
  * tail(['a', 'b']); // -> ['b']
  * tail([]);         // -> []
  */
-export const tail = a => a == null ? [] : a.tail ? a.tail() : _rst(a);
+export const tail = a => a == null ? [] : 
+                        a.__type__ === 'Cons' || a.__type__ === 'Nil' ? a.tail :
+                        _rst(a);

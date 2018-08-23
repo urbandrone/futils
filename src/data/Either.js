@@ -159,27 +159,6 @@ Either.fromId = (a) => Either.from(a.value);
  */
 Either.fromList = (a) => Either.from(a.head);
 /**
- * A natural transformation from a Series into a Either. Please note that this
- * transformation looses data, because only the first element of the series is
- * taken. If the first element is null, undefined or some error, a Either.Left
- * is returned
- * @method fromSeries
- * @static
- * @memberof module:data/Either.Either
- * @param {Series} a The Series to transform
- * @return {Left|Right} Either.Right if the first element is not null, undefined or some error
- *
- * @example
- * const {Either, Series} = require('futils/data');
- *
- * const ls = Series.of(1, 2);
- * const ks = Series.empty();
- *
- * Either.fromSeries(ls); // -> Right(1)
- * Either.fromSeries(ks); // -> Left(null)
- */
-Either.fromSeries = (a) => Either.from(a.value[0]);
-/**
  * A natural transformation from a State, a IO or a function into a Either. Returns
  * a function that awaits a argument to run the computation and which returns a
  * Either.Right if the computation succeeds or a Either.Left if it fails

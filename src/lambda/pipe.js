@@ -34,6 +34,6 @@ import {arity} from '../core/arity';
  * inc(double(1)) === fc(1); // -> true
  */
 export const pipe = (...f) => arity(
-    f[f.length - 1].length,
+    f[0].length,
     f.reduce((a, b) => (...xs) => b(a(...xs)))
 );

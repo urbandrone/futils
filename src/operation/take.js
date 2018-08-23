@@ -25,14 +25,14 @@ const _take = (n, a) => typeof a === 'string' || isNaN(a.length) ? [a] :
  * @method take
  * @memberof module:operation/take
  * @param {Number} n Number of items to take
- * @param {Array|Cons|Series} a The collection to take the items from
- * @return {Array|Nil|Series} Result of the take
+ * @param {Array|Cons} a The collection to take the items from
+ * @return {Array|Nil} Result of the take
  *
  * @example
  * const {take} = require('futils/operation');
  *
  * take(1, ['a', 'b']); // -> ['a']
- * take(1);             // -> (Array/Cons/Series -> Array/Cons/Series)
+ * take(1);             // -> (Array/Cons -> Array/Cons)
  */
 export const take = (n, a) => a == null ? (b) => take(n, b) :
                                 a.take ? a.take(n) :

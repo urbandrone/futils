@@ -33,10 +33,6 @@ describe('IO', () => {
         expect(IO.is(IO.fromList(List.of(1)))).toBe(true);
     });
 
-    it('should be able to construct from Series', () => {
-        expect(IO.is(IO.fromSeries(Series.of(1)))).toBe(true);
-    });
-
     it('should be able to construct an empty instance', () => {
         expect(IO.is(IO.empty())).toBe(true);
     });

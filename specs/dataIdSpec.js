@@ -30,10 +30,6 @@ describe('Id', () => {
         expect(Id.is(Id.fromList(List.of(1)))).toBe(true);
     });
 
-    it('should be able to construct from Series', () => {
-        expect(Id.is(Id.fromSeries(Series.of(1)))).toBe(true);
-    });
-
     it('should be able to print itself', () => {
         expect(a.toString()).toBe('Id(1)');
     });

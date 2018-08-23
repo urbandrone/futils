@@ -157,21 +157,6 @@ describe('Task', () => {
         });
     });
 
-    it('should be able to construct from Series', () => {
-        let v, w;
-        runs(function() {
-            Task.fromSeries(Series.of(1)).run(ignore, n => { v = n; });
-            Task.fromSeries(Series.empty()).run(n => { w = n; }, ignore);
-        });
-
-        waitsFor(() => v === 1 && w === null, 'v should be 1', 500);
-
-        runs(function() {
-            expect(v).toBe(1);
-            expect(w).toBe(null);
-        });
-    });
-
     it('should be able to construct from IO', () => {
         let v = null;
         runs(function() {
