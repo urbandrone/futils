@@ -32,4 +32,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  *
  * factorial(6); // -> 720
  */
-export const fixed = (f) => ((g) => g(g))((h) => f((...xs) => h(h)(...xs)));
+export const fixed = f => (g => g(g))(h => f((...xs) => h(h)(...xs)));

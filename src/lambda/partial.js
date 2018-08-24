@@ -11,7 +11,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 /**
  * Provides the partial function which allows to implement partial application.
- * Use undefined as placeholder for arguments
+ * Use undefined as placeholder for arguments that should be skipped
  * @module lambda/partial
  */
 

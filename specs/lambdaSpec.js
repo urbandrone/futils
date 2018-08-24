@@ -55,8 +55,11 @@ describe('Lambda', () => {
 
         it('should preserve the arity', () => {
             let f = L.curry((a, b, c) => a + b + c);
+            let g = L.curry(f);
             expect(f.length).toBe(3);
             expect(f('a').length).toBe(2);
+            expect(g.length).toBe(3);
+            expect(g('a').length).toBe(2);
         });
     });
 
@@ -72,8 +75,86 @@ describe('Lambda', () => {
 
         it('should preserve the arity', () => {
             let f = L.curryRight((a, b, c) => a + b + c);
+            let g = L.curryRight(f);
             expect(f.length).toBe(3);
             expect(f('a').length).toBe(2);
+            expect(g.length).toBe(3);
+            expect(g('a').length).toBe(2);
         });
     });
-})
+
+    describe('fixed', () => {
+        it('should return the fixed point of a function', () => {
+            let f = L.fixed((g) => (n) => n <= 1 ? 1 : n * g(n - 1));
+            expect(f(6)).toBe(720);
+        });
+    });
+
+    describe('flip', () => {
+        it('should flip the first two arguments', () => {
+            let f = L.flip((a, b, c) => a + b + c);
+            expect(f('a', 'b', 'c')).toBe('bac');
+        });
+
+        it('should preserve the arity', () => {
+            let f = L.flip((a, b, c) => c);
+            expect(f.length).toBe(3);
+        });
+    });
+
+    describe('id', () => {
+        it('should return what is given', () => {
+            expect(L.id(1)).toBe(1);
+            expect(L.id(L.id)(1)).toBe(1);
+        });
+    });
+
+    describe('memoize', () => {
+        it('should cache results from equal arguments', () => {
+            let runs = 0;
+            let f = L.memoize((a, b) => { runs += 1; return a + b; });
+            expect(f('a', 'b')).toBe('ab');
+            expect(f('a', 'b')).toBe('ab');
+            expect(f('a', 'c')).toBe('ac');
+            expect(runs).toBe(2);
+        });
+
+        it('should preserve the arity', () => {
+            let f = L.memoize((a, b) => a + b);
+            expect(f.length).toBe(2);
+        });
+    });
+
+    describe('not', () => {
+        it('should negate the result of the given function', () => {
+            let f = L.not(a => a > 2);
+            expect(f(1)).toBe(true);
+            expect(f(3)).toBe(false);
+        });
+
+        it('should preserve the arity', () => {
+            let f = L.not((a, b) => a + b > 2);
+            expect(f.length).toBe(2);
+        });
+    });
+
+    describe('partial', () => {
+        it('should allow to apply a function partially', () => {
+            let f = L.partial((a, b) => a + b);
+            expect(f('a', 'b')).toBe('ab');
+            expect(f(void 0, 'b')('a')).toBe('ab');
+            expect(f()('a')('b')).toBe('ab');
+            expect(f('a')()('b')).toBe('ab');
+        });
+    });
+
+    describe('partialRight', () => {
+        it('should allow to apply a function partially', () => {
+            let f = L.partialRight((a, b) => a + b);
+            expect(f('a', 'b')).toBe('ba');
+            expect(f(void 0, 'b')('a')).toBe('ba');
+            expect(f()('a')('b')).toBe('ba');
+            expect(f('a')()('b')).toBe('ba');
+        });
+    });
+});
