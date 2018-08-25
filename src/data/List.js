@@ -216,7 +216,7 @@ List.fn.toString = function () {
  * List.of(2).cons(1).toArray(); // -> [1, 2]
  */
 List.fn.toArray = function () {
-    return this.reduceRight((a, x) => a.concat(x), []);
+    return this.reduce((a, x) => a.concat(x), []);
 }
 /**
  * Concatenates a List with another List

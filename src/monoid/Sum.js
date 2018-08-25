@@ -49,8 +49,8 @@ export const Sum = Type('Sum', ['value']).
 
 
 /**
- * Lifts a value into a Sum. Casts it to a number if possible or returns a Sum
- * of 0
+ * Lifts a value into a Sum. Returns a Sum of 0 if the value
+ * isn't a number
  * @method of
  * @static
  * @memberof module:monoid/Sum.Sum
@@ -64,10 +64,7 @@ export const Sum = Type('Sum', ['value']).
  * Sum.of(null); // -> Sum(0)
  * Sum.of({});   // -> Sum(0)
  */
-Sum.of = (a) => {
-    let v = Number(a);
-    return typeof v === 'number' && !isNaN(v) ? Sum(v) : Sum(0);
-}
+Sum.of = a => typeof a === 'number' && !isNaN(a) ? Sum(a) : Sum(0);
 /**
  * Monoid implementation for Sum. Returns a Sum of 0
  * @method empty

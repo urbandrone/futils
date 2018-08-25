@@ -83,8 +83,8 @@ Record.empty = () => Record({});
 
 /**
  * Concatenates a Record with another by merging key-value pairs. Please note
- * that this operation might loose data because fields with the same keys will
- * be overriden
+ * that this operation might loose data because it overrides fields with the
+ * same keys
  * @method concat
  * @memberof module:monoid/Record.Record
  * @param {Record} a The Record instance to concatenate with

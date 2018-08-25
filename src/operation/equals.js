@@ -35,8 +35,8 @@ import {compareEq} from '../generics/Eq';
  * equals([4, 5, 6], [1, 2, 3]); // -> false
  * equals(1);                    // -> (a -> 1 == a)
  */
-export const equals = (a, b) => {
-    return b == null ? (c) => equals(a, c) :
-            typeof b.equals === 'function' ? b.equals(a) :
+export const equals = function (a, b) {
+    return arguments.length < 2 ? (c) => equals(a, c) :
+            b != null && typeof b.equals === 'function' ? b.equals(a) :
             compareEq(a, b);
 };

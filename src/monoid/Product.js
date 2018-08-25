@@ -49,8 +49,8 @@ export const Product = Type('Product', ['value']).
 
 
 /**
- * Lifts a value into a Product. Casts it to a number if possible or returns a
- * Product of 1
+ * Lifts a value into a Product. Returns a Product of 1 if the value
+ * isn't a number
  * @method of
  * @static
  * @memberof module:monoid/Product.Product
@@ -64,10 +64,7 @@ export const Product = Type('Product', ['value']).
  * Product.of(null); // -> Product(1)
  * Product.of({});   // -> Product(1)
  */
-Product.of = (a) => {
-    let v = Number(a);
-    return typeof v === 'number' && !isNaN(v) ? Product(v) : Product(1);
-}
+Product.of = a => typeof a === 'number' && !isNaN(a) ? Product(a) : Product(1);
 /**
  * Monoid implementation for Product. Returns a Product of 1
  * @method empty

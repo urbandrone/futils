@@ -49,8 +49,8 @@ export const Max = Type('Max', ['value']).
 
 
 /**
- * Lifts a value into a Max. Casts it to a number if possible or returns a Max
- * of negative Infinity
+ * Lifts a value into a Max. Returns a Max of negative Infinity if the value
+ * isn't a number
  * @method of
  * @static
  * @memberof module:monoid/Max.Max
@@ -64,10 +64,7 @@ export const Max = Type('Max', ['value']).
  * Max.of(null); // -> Max(-Infinity)
  * Max.of({});   // -> Max(-Infinity)
  */
-Max.of = (a) => {
-    let v = Number(a);
-    return typeof v === 'number' && !isNaN(v) ? Max(v) : Max(-Infinity);
-}
+Max.of = a => typeof a === 'number' && !isNaN(a) ? Max(a) : Max(-Infinity);
 /**
  * Monoid implementation for Max. Returns a Max of negative Infinity
  * @method empty

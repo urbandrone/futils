@@ -49,8 +49,8 @@ export const Min = Type('Min', ['value']).
 
 
 /**
- * Lifts a value into a Min. Casts it to a number if possible or returns a Min
- * of Infinity
+ * Lifts a value into a Min. Returns a Min of Infinity if the value
+ * isn't a number
  * @method of
  * @static
  * @memberof module:monoid/Min.Min
@@ -64,10 +64,7 @@ export const Min = Type('Min', ['value']).
  * Min.of(null); // -> Min(Infinity)
  * Min.of({});   // -> Min(Infinity)
  */
-Min.of = (a) => {
-    let v = Number(a);
-    return typeof v === 'number' && !isNaN(v) ? Min(v) : Min(Infinity);
-}
+Min.of = a => typeof a === 'number' && !isNaN(a) ? Min(a) : Min(Infinity);
 /**
  * Monoid implementation for Min. Returns a Min of Infinity
  * @method empty

@@ -17,7 +17,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 const _drop = (n, a) => typeof a === 'string' || isNaN(a.length) ? [a] :
-                        Array.from(a).slice(0, n);
+                        Array.from(a).slice(n);
 
 
 /**
