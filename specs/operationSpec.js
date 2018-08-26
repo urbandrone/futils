@@ -122,4 +122,93 @@ describe('Operation', () => {
             expect(O.head(null)).toBe(null);
         });
     });
+
+    describe('liftA', () => {
+        it('should apply a curried function to a set of functors', () => {
+            let f = a => b => c => a + b + c;
+            expect(O.liftA(f, Id.of(1), Id.of(2), Id.of(3)).value).toBe(6);
+            expect(O.liftA(f)(Id.of(1), Id.of(2), Id.of(3)).value).toBe(6);
+            expect(Id.is(O.liftA(f, Id.of(1), Id.of(2)))).toBe(true);
+        });
+    });
+
+    describe('map', () => {
+        it('should map a function over a functor', () => {
+            let f = a => a + 1;
+            expect(O.map(f, [1, 2, 3])).toEqual([2, 3, 4]);
+            expect(O.map(f)([1, 2, 3])).toEqual([2, 3, 4]);
+            expect(O.map(f, Id.of(1)).value).toBe(2);
+        });
+    });
+
+    describe('prop', () => {
+        it('should be able to get a property from an Object', () => {
+            expect(O.prop('a', {a: 1})).toBe(1);
+            expect(O.prop('a')({a: 1})).toBe(1);
+            expect(O.prop('b', {a: 1})).toBe(null);
+        });
+
+        it('should be able to get a property from an Array', () => {
+            expect(O.prop(0, [1, 2, 3])).toBe(1);
+            expect(O.prop(0)([1, 2, 3])).toBe(1);
+            expect(O.prop(5, [1, 2, 3])).toBe(null);
+        });
+
+        it('should be able to get a property from a Map', () => {
+            expect(O.prop('a', new Map([['a', 1]]))).toBe(1);
+            expect(O.prop('a')(new Map([['a', 1]]))).toBe(1);
+            expect(O.prop('b', new Map([['a', 1]]))).toBe(null);
+        });
+    });
+
+    describe('reduce', () => {
+        it('should reduce a structure', () => {
+            let f = (a, b) => a + b;
+            expect(O.reduce(f, 0, [1, 2, 3])).toBe(6);
+            expect(O.reduce(f)(0)([1, 2, 3])).toBe(6);
+            expect(O.reduce(f, 0)([1, 2, 3])).toBe(6);
+            expect(O.reduce(f, 0, Id.of(1))).toBe(1);
+        });
+    });
+
+    describe('reduceRight', () => {
+        it('should reduce a structure from the end', () => {
+            let f = (a, b) => a + b;
+            expect(O.reduceRight(f, '', ['a', 'b', 'c'])).toBe('cba');
+            expect(O.reduceRight(f)('')(['a', 'b', 'c'])).toBe('cba');
+            expect(O.reduceRight(f, '')(['a', 'b', 'c'])).toBe('cba');
+            expect(O.reduceRight(f, '', List.of('c').cons('b').cons('a'))).toBe('cba');
+        });
+    });
+
+    describe('sequence', () => {
+        it('should sequence a structure into another one', () => {
+            expect(O.sequence(Id, [Id.of(1)]).value).toEqual([1]);
+            expect(O.sequence(Id)([Id.of(1)]).value).toEqual([1]);
+            expect(O.sequence(Array, Id.of([1]))[0].value).toBe(1);
+        });
+    });
+
+    describe('tail', () => {
+        it('should return the tail of a List/rest of an Array', () => {
+            expect(O.tail([1, 2, 3])).toEqual([2, 3]);
+            expect(O.tail(List.of(3).cons(2).cons(1)).toString()).toBe('Cons(2, Cons(3, Nil))');
+        });
+    });
+
+    describe('take', () => {
+        it('should take elements from the beginning of a List or Array', () => {
+            expect(O.take(2, [1, 2, 3])).toEqual([1, 2]);
+            expect(O.take(2, List.of(3).cons(2).cons(1)).toString()).toBe('Cons(1, Cons(2, Nil))');
+        });
+    });
+
+    describe('traverse', () => {
+        it('should traverse a structure with a function', () => {
+            expect(O.traverse(a => Id.of(a), Id, [1, 2, 3]).toString()).toBe('Id([1, 2, 3])');
+            expect(O.traverse(a => Id.of(a))(Id, [1, 2, 3]).toString()).toBe('Id([1, 2, 3])');
+            expect(O.traverse(a => Id.of(a), Id)([1, 2, 3]).toString()).toBe('Id([1, 2, 3])');
+            expect(O.traverse(a => [a], Array, Id.of(1)).join(',')).toBe('Id(1)');
+        });
+    });
 });

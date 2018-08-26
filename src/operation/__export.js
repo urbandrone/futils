@@ -18,7 +18,7 @@ import {tail} from './tail';
 import {take} from './take';
 import {drop} from './drop';
 import {find} from './find';
-import {findRight} from './findr';
+import {prop} from './prop';
 
 
 
@@ -43,5 +43,5 @@ export default {
     take,
     drop,
     find,
-    findRight
+    prop
 }
