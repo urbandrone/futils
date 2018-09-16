@@ -59,6 +59,13 @@ const makeCtor = (t, vs, p) => {
     }
 }
 
+const ctorOfT = (u, x, ys) => {
+    if (typeof u[x[TYPE]] === 'function') {
+        return u[x[TYPE]](...ys);
+    }
+    throw `${u[TYPE_TAG]} - No constructor matched ${x[TYPE]}`;
+}
+
 const deriveT = a => (...Gs) => Gs.reduce((t, g) => g.mixInto(t), a);
 
 
@@ -134,10 +141,11 @@ export const UnionType = (type, defs) => {
     union.fn = union.prototype = {
         [TYPE_TAG]: type,
         caseOf(o) { return caseOfT(this, o); },
-        cata(o) { return caseOfT(this, o); },
+        cata(o) { return caseOfT(this, o); }
     };
-    def(union, 'is', (x) => x != null && x[TYPE_TAG] === type);
+    def(union, 'is', x => x != null && x[TYPE_TAG] === type);
     def(union, 'deriving', deriveT(union));
+    union.fn.constructor = function (...xs) { return ctorOfT(union, this, xs); }
     Object.keys(defs).forEach(d => {
         const ctor = makeCtor(d, defs[d], union.prototype);
         def(ctor, 'is', (x) => x != null && x[TYPE] === d);

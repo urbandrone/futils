@@ -141,6 +141,21 @@ describe('Operation', () => {
         });
     });
 
+    describe('nubBy', () => {
+        it('should remove dublicates', () => {
+            expect(O.nubBy(O.equals, [1, 2, 1, 3, 2])).toEqual([1, 2, 3]);
+            expect(O.nubBy(O.equals, List.of(2).cons(3).cons(1).cons(2).cons(1)).toString()).toBe('Cons(1, Cons(2, Cons(3, Nil)))');
+            expect(O.nubBy(O.equals)([1, 2, 1, 3, 2])).toEqual([1, 2, 3]);
+        });
+    });
+
+    describe('nub', () => {
+        it('should remove dublicates', () => {
+            expect(O.nub([1, 2, 1, 3, 2])).toEqual([1, 2, 3]);
+            expect(O.nub(List.of(2).cons(3).cons(1).cons(2).cons(1)).toString()).toBe('Cons(1, Cons(2, Cons(3, Nil)))');
+        });
+    });
+
     describe('prop', () => {
         it('should be able to get a property from an Object', () => {
             expect(O.prop('a', {a: 1})).toBe(1);

@@ -67,7 +67,13 @@ export const compareEq = (a, b) => {
         case 'ReferenceError':
             return a.name === b.name && a.message === b.message;
         default:
-            return compareEq(a.value, b.value);
+            return 'value' in a ?
+                    compareEq(a.value, b.value) :
+                    a.__values__.reduce((c, av) => {
+                        return b.__values__.reduce((d, bv) => {
+                            return !!d && compareEq(a[av], b[bv]);
+                        }, c);
+                    }, true);
     }
 }
 

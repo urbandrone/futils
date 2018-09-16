@@ -169,4 +169,14 @@ describe('List', () => {
         expect(ls.find(x => x === 2)).toBe(2);
         expect(ls.find(x => x === 4)).toBe(null);
     });
+
+    it('should be able to remove duplicates with a predicate', () => {
+        const ls = List.of(3).cons(2).cons(2).cons(1);
+        expect(ls.nubBy((x, y) => x === y).toString()).toBe('Cons(1, Cons(2, Cons(3, Nil)))');
+    });
+
+    it('should be able to remove duplicates', () => {
+        const ls = List.of(3).cons(2).cons(2).cons(1);
+        expect(ls.nub().toString()).toBe('Cons(1, Cons(2, Cons(3, Nil)))');
+    });
 });

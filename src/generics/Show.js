@@ -87,8 +87,8 @@ export const showT = (a) => {
  *
  * const one = Int(1);
  *
- * one.toString();   // -> 'Int 1'
- * one.inspect();    // -> 'Int 1'
+ * one.toString();   // -> 'Int(1)'
+ * one.inspect();    // -> 'Int(1)'
  */
 export class Show {
     static mixInto (ctor) {

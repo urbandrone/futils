@@ -66,7 +66,13 @@ export const compareOrd = (a, b) => {
             case 'TypedArray':
                 return false;
             default:
-                return compareOrd(a.value, b.value);
+                return 'value' in a ?
+                        compareOrd(a.value, b.value) :
+                        a.__values__.reduce((c, av) => {
+                            return b.__values__.reduce((d, bv) => {
+                                return !!d && compareOrd(a[av], b[bv]);
+                            }, c);
+                        }, true);
         }
     }
     throw `Cannot order value of type ${tA} with value of type ${tB}`;

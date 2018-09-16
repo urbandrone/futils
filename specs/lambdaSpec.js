@@ -100,6 +100,14 @@ describe('Lambda', () => {
             let f = L.flip((a, b, c) => c);
             expect(f.length).toBe(3);
         });
+
+        it('should work with curried functions', () => {
+            let f =L.curry((a, b, c) => a + b + c);
+            let g = L.flip(f);
+            expect(g('a').length).toBe(2);
+            expect(g('a', 'c').length).toBe(1);
+            expect(g('a', 'c', 'b')).toBe('cab');
+        });
     });
 
     describe('id', () => {

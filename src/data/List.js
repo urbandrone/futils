@@ -9,6 +9,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import {typeOf} from '../core/typeof';
 import {UnionType} from '../adt';
 import {showT} from '../generics/Show';
+import {compareEq} from '../generics/Eq';
 
 
 
@@ -624,4 +625,38 @@ List.fn.find = function (f) {
         Nil: () => null,
         Cons: () => breakableFoldl((x, a) => !!f(a) ? [BREAK, a] : [null, x], null, this)
     });
+}
+/**
+ * Given a predicate function, removes all duplicates from the List for which the
+ * predicate function returns true
+ * @method nubBy
+ * @memberof module:data/List.List
+ * @param {Function} f The predicate function
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * const eq = (a, b) => a === b;
+ *
+ * List.of(3).cons(2).cons(2).cons(1).nubBy(eq); // -> Cons(1, Cons(2, Cons(3, Nil)))
+ */
+List.fn.nubBy = function (f) {
+    return this.reduce((x, a) => {
+        return x.find(b => f(a, b)) != null ? x : x.snoc(a);
+    }, Nil());
+}
+/**
+ * Removes all duplicates from the List. Uses deep equality for comparison
+ * @method nub
+ * @memberof module:data/List.List
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils/data');
+ *
+ * List.of(3).cons(2).cons(2).cons(1).nub(); // -> Cons(1, Cons(2, Cons(3, Nil)))
+ */
+List.fn.nub = function () {
+    return this.nubBy(compareEq);
 }

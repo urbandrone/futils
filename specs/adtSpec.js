@@ -9,6 +9,11 @@ describe('Type', () => {
         expect(A(1).value).toBe(1);
     });
 
+    it('should be able to reach it\'s own constructor', () => {
+        let a = A(1);
+        expect(a.constructor(2).value).toBe(2);
+    });
+
     it('should be able to test instances', () => {
         expect(A.is(A(1))).toBe(true);
     });
@@ -32,6 +37,13 @@ describe('UnionType', () => {
     it('should be able to construct instances without new', () => {
         expect(B(1).value).toBe(1);
         expect(C(1).value).toBe(void 0);
+    });
+
+    it('should be able to reach it\'s own constructor', () => {
+        let b = B(1);
+        let c = C();
+        expect(b.constructor(2).value).toBe(2);
+        expect(c.constructor(2).value).toBe(void 0);
     });
 
     it('should be able to test instances', () => {
