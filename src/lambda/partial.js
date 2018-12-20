@@ -9,23 +9,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the partial function which allows to implement partial application.
- * Use undefined as placeholder for arguments that should be skipped
- * @module lambda/partial
+/*
+ * @module lambda
  */
 
 
 /**
- * The partial function 
+ * The partial function allows to implement partial application.
+ * Use undefined as placeholder for arguments that should be skipped
  * @method partial
- * @memberof module:lambda/partial
+ * @memberof module:lambda
  * @param {Function} f The function to prepare for partial application
  * @param {any} ...as Partial arguments to the function
  * @return {Function} A partial variant of f
  *
  * @example
- * const {partial} = require('futils/lambda');
+ * const {partial} = require('futils').lambda;
  *
  * const greet = (greeting, separator, name) => {
  *     return `${greeting}${separator}${name}`;

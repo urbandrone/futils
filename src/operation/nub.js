@@ -11,23 +11,21 @@ import {equals} from './equals';
 
 
 
-/**
- * Provides the nub function, which removes duplicates from either a List or an
- * Array
- * @module operation/nub
+/*
+ * @module operation
  */
 
 
 
 /**
- * The nub function
+ * The nub function removes duplicates from either a List or an Array
  * @method nub
- * @memberof module:operation/nub
+ * @memberof module:operation
  * @param {Array|Cons|Nil} a The collection to remove duplicates from
  * @return {Array|Cons|Nil} A new collection with all duplicates removed
  *
  * @example
- * const {nub} = require('futils/operation');
+ * const {nub} = require('futils').operation;
  *
  * nub(['a', 'b', 'a']); // -> ['a', 'b']
  * nub([]);              // -> []

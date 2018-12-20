@@ -4,7 +4,7 @@
         "dictionaries": ["jsdoc"]
     },
     "source": {
-        "include": ["sources", "package.json", "readme_jsdoc.md"],
+        "include": ["src", "package.json", "readme_jsdoc.md"],
         "includePattern": ".js$",
         "excludePattern": "(node_modules/|specs/|docs/|dist/)"
     },
@@ -16,7 +16,7 @@
     "opts": {
         "destination": "./docs/",
         "encoding": "utf8",
-        "private": true,
+        "private": false,
         "recurse": true,
         "template": "./docs/_tpl/minami"
     }

@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the Recur constructor for trampolines
- * @module trampoline/_Recur
+/*
+ * @module trampoline
  * @private
  */
 

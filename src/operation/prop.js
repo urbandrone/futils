@@ -9,10 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the prop function, which allows to extract properties or indexes. If
- * the property or index is missing, prop returns null
- * @module operation/prop
+/*
+ * @module operation
  */
 
 
@@ -22,15 +20,16 @@ const gets = (a, m) => m.has(a) ? m.get(a) : null;
 
 
 /**
- * The prop function
+ * The prop function, which allows to extract properties or indexes. If
+ * the property or index is missing, prop returns null
  * @method prop
- * @memberof module:operation/prop
+ * @memberof module:operation
  * @param {String|Number} a The key or index to get
  * @param {Object|Array|Map} b The structure to extract from
  * @return {any|null} Value of the property or index
  *
  * @example
- * const {prop} = require('futils/operation');
+ * const {prop} = require('futils').operation;
  *
  * const obj = {a: 1, b: 2, c: 3};
  * const arr = [1, 2, 3];

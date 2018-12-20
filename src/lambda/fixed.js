@@ -9,10 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the fixed function which allows to create recursive functions
- * without recursion or iteration
- * @module lambda/fixed
+/*
+ * @module lambda
  */
 
 
@@ -21,12 +19,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * The fixed function. For a given function f, returns a function g which
  * represents the fixed point of f
  * @method fixed
- * @memberof module:lambda/fixed
+ * @memberof module:lambda
  * @param {Function} f the initial function
  * @return {Function} The fixed point of f
  *
  * @example
- * const {fixed} = require('futils/lambda');
+ * const {fixed} = require('futils').lambda;
  *
  * const factorial = fixed((fact) => (n) => n < 1 ? 1 : n * fact(n - 1));
  *

@@ -1,4 +1,4 @@
-const {Record} = require('../dist/monoid');
+const {Record} = require('../dist/futils').monoid;
 
 
 

@@ -1,4 +1,4 @@
-const {IO, Either, Id, Maybe, List, Series} = require('../dist/data');
+const {IO, Either, Id, Maybe, List, Series} = require('../dist/futils').data;
 
 
 describe('IO', () => {

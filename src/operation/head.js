@@ -9,11 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the head function. It takes the first element from a List, Series or
- * Array and returns it. If the the first element is either null or undefined,
- * it returns null
- * @module operation/head
+/*
+ * @module operation
  */
 
 
@@ -24,14 +21,16 @@ const _fst = a => typeof a === 'string' || isNaN(a.length) ? a :
 
 
 /**
- * The head function
+ * The head function. It takes the first element from a List, Series or
+ * Array and returns it. If the the first element is either null or undefined,
+ * it returns null
  * @method head
- * @memberof module:operation/head
+ * @memberof module:operation
  * @param {Array|Cons} a The collection to take the head from
  * @return {any|null} Either the head or null
  *
  * @example
- * const {head} = require('futils/operation');
+ * const {head} = require('futils').operation;
  *
  * head(['a', 'b']); // -> 'a'
  * head([]);         // -> null

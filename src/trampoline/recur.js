@@ -10,24 +10,23 @@ import {arity} from '../core/arity';
 
 
 
-/**
- * Provides the recur function for building recursive functions with
- * trampolines. 
- * @module trampoline/recur
+/*
+ * @module trampoline
  */
 
 
 
 /**
- * The recur function
+ * The recur function for building recursive functions with
+ * trampolines. 
  * @method recur
- * @memberof module:trampoline/recur
+ * @memberof module:trampoline
  * @param {Function} f The function which shall be suspended
  * @param {...any} a Arguments for next invocation
  * @return {any} The final value
  *
  * @example
- * const {recur, again} = require('futils/trampoline');
+ * const {recur, again} = require('futils').trampoline;
  *
  * const factorial = recur((n, m = 1) => {
  *     return n <= 1 ? m : again(factorial, n - 1, n * m);

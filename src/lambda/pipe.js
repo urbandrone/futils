@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import {arity} from '../core/arity';
 
 
-/**
- * Provides the pipe function
- * @module lambda/pipe
+/*
+ * @module lambda
  */
 
 
@@ -19,12 +18,12 @@ import {arity} from '../core/arity';
 /**
  * The pipe function combines multiple functions from left to right
  * @method pipe
- * @memberof module:lambda/pipe
+ * @memberof module:lambda
  * @param {Function} ...f The function to pipe
  * @return {Function} The result of the composition
  *
  * @example
- * const {pipe} = require('futils/lambda');
+ * const {pipe} = require('futils').lambda;
  *
  * const inc = (n) => n + 1;
  * const double = (n) => n * 2;

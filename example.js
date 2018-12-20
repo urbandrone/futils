@@ -1,7 +1,4 @@
-const {IO, Maybe} = require('futils/data');
-const {curry} = require('futils/lambda');
-
-
+const {lambda: {curry}, data: {IO, Maybe}} = require('futils');
 const {Some, None} = Maybe;
 
 /***************** NOTE *****************
@@ -9,7 +6,7 @@ A small example which should give a brief
 description of the computer this little
 program is executed on. The final result
 should either be some string in the form
-"Running a _ system with a _ architecture"
+"Running a _ system with _ architecture"
 or "You have an alien computer!"
 ****************************************/
 

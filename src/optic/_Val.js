@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the Val constructor for lenses
- * @module optic/_Val
+/*
+ * @module optic
  * @private
  */
 

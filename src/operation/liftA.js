@@ -9,25 +9,24 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the liftA function. Use liftA to lift a curried function to 2 or
- * more Apply implementing data structures
- * @module operation/liftA
+/*
+ * @module operation
  */
 
 
 
 /**
- * The liftA function
+ * The liftA function. Use liftA to lift a curried function to 2 or
+ * more Apply implementing data structures
  * @method liftA
- * @memberof module:operation/liftA
+ * @memberof module:operation
  * @param {Function} f The function to lift
  * @param {...Apply} a Applys to apply the function to
  * @return {Apply} A new instance of the Apply
  *
  * @example
- * const {Id} = require('futils/data');
- * const {liftA} = require('futils/operation');
+ * const {Id} = require('futils').data;
+ * const {liftA} = require('futils').operation;
  *
  * const add = (a) => (b) => (c) => a + b + c;
  * 

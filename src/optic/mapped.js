@@ -10,26 +10,23 @@ import {curry} from '../lambda/curry';
 import {map} from '../operation/map';
 import {Val} from './_Val';
 
-/**
- * Provied the mapped lens, which is a special lens for arrays.
- * @module optics/mapped
- * @requires lambda/curry
- * @requires operation/map
+/*
+ * @module optic
  */
 
 
 
 /**
- * The mapped function
+ * The mapped function, which is a special lens for arrays.
  * @method mapped
- * @memberof module:optic/mapped
+ * @memberof module:optic
  * @version 3.0.0
  * @param {Function} f Data transformation function
  * @param {Array} a The nested data structure
  * @return {LensVal} A LensVal
  *
  * @example
- * const {mapped, over} = require('futils/optic');
+ * const {mapped, over} = require('futils').optic;
  *
  * const even = (n) => n % 2 === 0;
  *

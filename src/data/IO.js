@@ -12,22 +12,20 @@ import {Type} from '../adt';
 
 
 
-/**
- * Grants access to the IO data structure, which is used to describe computations
- * that perform unpure interactions with the outer world
- * @module data/IO
- * @requires adt
+/*
+ * @module data
  */
 
 
 
 /**
- * The IO data structure
- * @class module:data/IO.IO
+ * The IO data structure is used to describe computations
+ * that perform unpure interactions with the outer world
+ * @class module:data.IO
  * @version 3.0.0
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * const envA = (key) => IO(() => process[key]);
  * const envB = IO((key) => process[key]);
@@ -45,12 +43,12 @@ export const IO = Type('IO', ['run']);
  * Lifts a value into a IO
  * @method of
  * @static
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
  * @param {any} a The value to lift
  * @return {IO} The value wrapped into a IO
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * IO.of(1); // -> IO(_ -> 1)
  */
@@ -59,11 +57,11 @@ IO.of = (a) => IO(() => a);
  * Monoid implementation for IO. Returns a IO that returns what is passed to it
  * @method empty
  * @static
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
  * @return {IO} A IO
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * IO.empty(); // -> IO(a -> a)
  */
@@ -73,12 +71,12 @@ IO.empty = () => IO((a) => a);
  * it is used as computation basis
  * @method from
  * @static
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
  * @param {any} a The value to lift
  * @return {IO} A IO
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * const inc = (n) => n + 1;
  *
@@ -90,12 +88,12 @@ IO.from = (a) => typeof a === 'function' ? IO(a) : IO.of(a);
  * A natural transformation from an Either.Left or Either.Right into a IO
  * @method fromEither
  * @static
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
  * @param {Left|Right} a The Either to transform
  * @return {IO} A IO with the value of the Either
  *
  * @example
- * const {IO, Either} = require('futils/data');
+ * const {IO, Either} = require('futils').data;
  *
  * const l = Either.Left('a left');
  * const r = Either.Right('a right');
@@ -108,12 +106,12 @@ IO.fromEither = (a) => IO.of(a.value);
  * A natural transformation from a Maybe.Some or Maybe.None into a IO
  * @method fromMaybe
  * @static
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
  * @param {Some|None} a The Maybe to transform
  * @return {IO} A IO with the value of the Maybe.Some or null
  *
  * @example
- * const {IO, Maybe} = require('futils/data');
+ * const {IO, Maybe} = require('futils').data;
  *
  * const some = Maybe.Some('a some');
  * const none = Maybe.None();
@@ -128,12 +126,12 @@ IO.fromMaybe = (a) => IO.of(a.value);
  * taken
  * @method fromList
  * @static
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
  * @param {List} a The List to transform
  * @return {IO} A IO with the first value
  *
  * @example
- * const {IO, List} = require('futils/data');
+ * const {IO, List} = require('futils').data;
  *
  * const ls = List.of(2).cons(1);
  *
@@ -144,12 +142,12 @@ IO.fromList = (a) => IO.of(a.head);
  * A natural transformation from an Id into a IO
  * @method fromId
  * @static
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
  * @param {Id} a The Id to transform
  * @return {IO} A IO with the value of the Id
  *
  * @example
- * const {IO, Id} = require('futils/data');
+ * const {IO, Id} = require('futils').data;
  *
  * const id = Id.of(1);
  *
@@ -162,12 +160,13 @@ IO.fromId = (a) => IO.of(a.value);
 /**
  * Concatenates a IO with another
  * @method concat
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
+ * @instance
  * @param {IO} a The IO to concatenate with
  * @return {IO} Result of concattening the IO with the given one
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * const ioProcess = IO.of(process);
  * const ioArch = IO((p) => p.arch);
@@ -183,12 +182,13 @@ IO.fn.concat = function (a) {
 /**
  * Maps a function over the value in a IO
  * @method map
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
+ * @instance
  * @param {Function} f The function to map
  * @return {IO} A IO
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * const io = IO.of(1);
  *
@@ -202,11 +202,12 @@ IO.fn.map = function (f) {
 /**
  * Flattens a nested IO by one level
  * @method flat
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
+ * @instance
  * @return {IO} A flattened IO
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * cons io = IO.of(IO.of(1));
  *
@@ -218,12 +219,13 @@ IO.fn.flat = function () {
 /**
  * Maps a IO returning function over a IO and flattens the result
  * @method flatMap
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
+ * @instance
  * @param {Function} f A IO returning function to map
  * @return {IO} A new IO
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * const io = IO.of(1);
  *
@@ -237,12 +239,13 @@ IO.fn.flatMap = function (f) {
 /**
  * Applies a function in an IO to a value in another IO
  * @method ap
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
+ * @instance
  * @param {IO} a The IO that holds the value
  * @return {IO} IO which contains the result of applying the function
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * const io = IO.of(1);
  *
@@ -257,12 +260,13 @@ IO.fn.ap = function (a) {
  * Contravariant functor implementation, contramaps a function over the value 
  * passed into the IO
  * @method contraMap
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
+ * @instance
  * @param {Function} f The function to contramap with
  * @return {IO} A new IO
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * const io = IO.empty();
  *
@@ -277,13 +281,14 @@ IO.fn.contraMap = function (f) {
  * Profunctor implementation, contramaps the first function over the value given
  * into the IO and maps the second function over the result
  * @method proMap
- * @memberof module:data/IO.IO
+ * @memberof module:data.IO
+ * @instance
  * @param {Function} f The function to contramap
  * @param {Function} g The function to map
  * @return {IO} A new IO
  *
  * @example
- * const {IO} = require('futils/data');
+ * const {IO} = require('futils').data;
  *
  * const io = IO.empty();
  *

@@ -9,24 +9,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the flatMap function which maps a function which returns a data
- * structure over a structure of the same type and flattens the result one level
- * @module operation/flatMap
+/*
+ * @module operation
  */
 
 
 
 /**
- * The flatMap function
+ * The flatMap function which maps a function which returns a data
+ * structure over a structure of the same type and flattens the result one level
  * @method flatMap
- * @memberof module:operation/flatMap
+ * @memberof module:operation
  * @param {Function} f The function to flatMap with
  * @param {Monad|Array} a Any Array and/or Monad interface implementing type
  * @return {Monad|Array} A new instance of the Array or Monad
  *
  * @example
- * const {flatMap} = require('futils/operation');
+ * const {flatMap} = require('futils').operation;
  *
  * flatMap((a) => [a.toUpperCase()], ['a', 'b']); // -> ['A', 'B']
  * flatMap((a) => [a.toUpperCase()]);             // -> (Monad -> Monad)

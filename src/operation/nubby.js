@@ -9,11 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the nubBy function, which removes duplicates from either a List or an
- * Array with a predicate function. The predicate function has to return true for
- * elements which should be removed
- * @module operation/nubBy
+/*
+ * @module operation
  */
 
 
@@ -23,15 +20,17 @@ const _uniq = f => (a, b) => a.find(x => f(b, x)) != null ? a : a.concat(b);
 
 
 /**
- * The nubBy function
+ * The nubBy function, which removes duplicates from either a List or an
+ * Array with a predicate function. The predicate function has to return true for
+ * elements which should be removed
  * @method nubBy
- * @memberof module:operation/nubBy
+ * @memberof module:operation
  * @param {Function} f The predicate function
  * @param {Array|Cons|Nil} a The collection to remove duplicates from
  * @return {Array|Cons|Nil} A new collection with all duplicates removed
  *
  * @example
- * const {nubBy} = require('futils/operation');
+ * const {nubBy} = require('futils').operation;
  *
  * const eq = (a, b) => a === b;
  * 

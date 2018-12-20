@@ -10,25 +10,24 @@ import {arity} from '../core/arity';
 
 
 
-/**
- * Provides the memoize function. Memoize can be used to wrap pure functions
- * which do complex calculations to reduce the amount of computations needed
- * on subsequent calls
- * @module lambda/memoize
+/*
+ * @module lambda
  */
 
 
 
 /**
  * The memoize function, memoizes the result a certain set of arguments gave
- * and returns it immediatly for the same arguments without computation
+ * and returns it immediatly for the same arguments without computation.
+ * Memoize can be used to wrap pure functions which do complex calculations to
+ * reduce the amount of computations needed on subsequent calls
  * @method memoize
- * @memberof module:lambda/memoize
+ * @memberof module:lambda
  * @param {Function} f The function to implement meoization
  * @return {Function} A memoized variant of f
  *
  * @example
- * const {memoize} = require('futils/lambda');
+ * const {memoize} = require('futils').lambda;
  *
  * const compute = (a, b) => {
  *     console.log(`${a} + ${b}`); // side effect for demo purposes

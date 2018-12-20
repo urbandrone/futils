@@ -24,6 +24,11 @@ import {prop} from './prop';
 
 
 
+/**
+ * @module operation
+ */
+
+
 export default {
     equals,
     concat,

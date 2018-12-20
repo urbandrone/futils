@@ -10,24 +10,23 @@ import {Recur} from './_Recur';
 
 
 
-/**
- * Provides the again function for trampolines. It should be used to wrap a
- * function and its arguments in case the invocation needs to be suspended
- * @module trampoline/again
+/*
+ * @module trampoline
  */
 
 
 
 /**
- * The again function
+ * The again function should be used to wrap a
+ * function and its arguments in case the invocation needs to be suspended
  * @method again
- * @memberof module:trampoline/again
+ * @memberof module:trampoline
  * @param {Function} f The function which shall be suspended
  * @param {...any} a Arguments for next invocation
  * @return {Recur} A recursion wrapping data structure
  *
  * @example
- * const {recur, again} = require('futils/trampoline');
+ * const {recur, again} = require('futils').trampoline;
  *
  * const factorial = recur((n, m = 1) => {
  *     return n <= 1 ? m : again(factorial, n - 1, n * m);

@@ -10,23 +10,21 @@ import {arity} from '../core/arity';
 
 
 
-/**
- * Provides the flip function, which flips the order of the first two arguments
- * to a function
- * @module lambda/flip
+/*
+ * @module lambda
  */
 
 
 
 /**
- * The flip function
+ * The flip function flips the order of the first two arguments to a function
  * @method flip
- * @memberof module:lambda/flip
+ * @memberof module:lambda
  * @param {Function} f The function to flip arguments
  * @return {Function} A variant of f
  *
  * @example
- * const {flip} = require('futils/lambda');
+ * const {flip} = require('futils').lambda;
  *
  * const ordered = (a, b, c) => `${a}${b}${c}`;
  *

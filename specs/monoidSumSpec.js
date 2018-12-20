@@ -1,4 +1,4 @@
-const {Sum} = require('../dist/monoid');
+const {Sum} = require('../dist/futils').monoid;
 
 
 

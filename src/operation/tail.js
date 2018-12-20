@@ -9,10 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the tail function. It takes all but the first element from a List,
- * Series or Array(-like) and returns it
- * @module operation/tail
+/*
+ * @module operation
  */
 
 
@@ -23,14 +21,15 @@ const _rst = a => typeof a === 'string' || isNaN(a.length) ? [a] :
 
 
 /**
- * The tail function
+ * The tail function. It takes all but the first element from a List,
+ * Series or Array(-like) and returns it
  * @method tail
- * @memberof module:operation/tail
+ * @memberof module:operation
  * @param {Array|Cons} a The collection to take the tail from
  * @return {Array|Cons|Nil} Either the tail or a Array
  *
  * @example
- * const {tail} = require('futils/operation');
+ * const {tail} = require('futils').operation;
  *
  * tail(['a', 'b']); // -> ['b']
  * tail([]);         // -> []

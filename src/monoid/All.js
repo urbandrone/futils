@@ -15,29 +15,24 @@ import {Ord} from '../generics/Ord';
 
 
 
-/**
- * Grants access to the All monoid. All can be used to check of all of multiple
- * items are true
- * @module monoid/All
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
+/*
+ * @module monoid
  */
 
 
 
 /**
- * The All monoid
- * @class module:monoid/All.All
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
+ * The All monoid. All can be used to check of all of multiple
+ * items are true
+ * @class module:monoid.All
+ * @extends module:generics/Show
+ * @extends module:generics/Eq
+ * @extends module:generics/Ord
  * @static
  * @version 3.0.0
  *
  * @example
- * const {All} = require('futils/monoid');
+ * const {All} = require('futils').monoid;
  *
  * All(true); // -> All(true)
  *
@@ -52,12 +47,12 @@ export const All = Type('All', ['value']).
  * Lifts a value into a All. Returns the empty All for values which are no booleans
  * @method of
  * @static
- * @memberof module:monoid/All.All
+ * @memberof module:monoid.All
  * @param {any} a The value to lift
  * @return {All} A new All
  *
  * @example
- * const {All} = require('futils/monoid');
+ * const {All} = require('futils').monoid;
  *
  * All.of(false);    // -> All(false)
  * All.of(null); // -> All(true)
@@ -68,11 +63,11 @@ All.of = (a) => typeof a === 'boolean' ? All(a) : All(true);
  * Monoid implementation for All. Returns a All of true
  * @method empty
  * @static
- * @memberof module:monoid/All.All
+ * @memberof module:monoid.All
  * @return {All} The empty All
  *
  * @example
- * const {All} = require('futils/monoid');
+ * const {All} = require('futils').monoid;
  *
  * All.empty(); // -> All(true)
  */
@@ -83,12 +78,13 @@ All.empty = () => All(true);
 /**
  * Concatenates a All with another using boolean comparison
  * @method concat
- * @memberof module:monoid/All.All
+ * @memberof module:monoid.All
+ * @instance
  * @param {All} a The All instance to concatenate with
  * @return {All} A new All
  *
  * @example
- * const {All} = require('futils/monoid');
+ * const {All} = require('futils').monoid;
  *
  * const all = All(true);
  *

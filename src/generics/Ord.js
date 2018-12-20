@@ -11,10 +11,8 @@ import {typeOf} from '../core/typeof';
 
 
 
-/**
- * A generic Ord module. Any type which derives from Ord must also implement
- * a equals method
- * @module generics/Ord
+/*
+ * @module generics
  */
 
 
@@ -82,18 +80,18 @@ export const compareOrd = (a, b) => {
 
 /**
  * The generics Ord class. Provides a generic equals method for all data structures
- * which derive from it
- * @class module:generics/Ord.Ord
+ * which derive from it. Any type which derives from Ord must also implement
+ * a equals method
+ * @class module:generics.Ord
  * @static
- * @private
  * @version 3.0.0
  *
  * @example
- * const {Type} = require('futils/adt');
- * const {Ord} = require('futils/generics');
+ * const {Type} = require('futils').adt;
+ * const {Eq, Ord} = require('futils').generics;
  *
  * const Int = Type('Int', ['value']).
- *     deriving(Ord);
+ *     deriving(Eq, Ord);
  *
  * const one = Int(1);
  * const two = Int(2);
@@ -104,7 +102,7 @@ export const compareOrd = (a, b) => {
  * two.gte(two); // -> true
  */
 export class Ord {
-    static mixInto (ctor) {
+    static derive (ctor) {
         if (ctor && ctor.prototype && ctor.prototype.equals) {
             ctor.prototype.lt = function (a) {
                 return compareOrd(this, a);

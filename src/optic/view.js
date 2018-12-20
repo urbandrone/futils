@@ -11,12 +11,8 @@ import {Const} from './_Const';
 
 
 
-/**
- * Provides the view function. It allows to view a focused property of a data
- * structure and return the value of it. If the property does not exist, null
- * is returned
- * @module optic/view
- * @requires lambda/curry
+/*
+ * @module optic
  */
 
 
@@ -24,16 +20,18 @@ import {Const} from './_Const';
 
 
 /**
- * The view function
+ * The view function. It allows to view a focused property of a data
+ * structure and return the value of it. If the property does not exist, null
+ * is returned
  * @method view
- * @memberof module:optic/view
+ * @memberof module:optic
  * @version 3.0.0
  * @param {Lens} l A lens to focus with
  * @param {Object|Array} a The structure to operate on
  * @return {any|null} The focused value or null
  *
  * @example
- * const {lenses, view} = require('futils/optic');
+ * const {lenses, view} = require('futils').optic;
  *
  * const L = lenses('name');
  *

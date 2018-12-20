@@ -12,25 +12,23 @@ import {UnionType} from '../adt';
 
 
 
-/**
- * Grants access to the Free monad data type, which can be used to transform any
- * structure into a monad. This means, Free can be used to create DSLs or custom
- * interpreters for actions. It is hard to understand Free just by looking at it's
- * documentation, so make sure to also read the tutorial on github
- * @module data/Free
- * @requires adt
+/*
+ * @module data
  */
 
 
 
 /**
- * The Free union type
- * @class module:data/Free.Free
+ * The Free union type can be used to transform any
+ * structure into a monad. This means, Free can be used to create DSLs or custom
+ * interpreters for actions. It is hard to understand Free just by looking at it's
+ * documentation, so make sure to also read the tutorial on github
+ * @class module:data.Free
  * @static
  * @version 3.0.0
  * 
  * @example
- * const {Free} = require('futils/data');
+ * const {Free} = require('futils').data;
  * const {Cont, Return} = Free;
  *
  * Free.Cont(1, Free.Return); // -> Cont(1)
@@ -47,13 +45,13 @@ const {Cont, Return} = Free;
 /**
  * Lifts a value into a Free.Return
  * @method of
- * @memberof module:data/Free.Free
+ * @memberof module:data.Free
  * @static
  * @param {any} a The value to lift
  * @return {Return} A Free.Return instance
  *
  * @example
- * const {Free} = require('futils/data');
+ * const {Free} = require('futils').data;
  *
  * // TODO
  */
@@ -62,12 +60,12 @@ Free.of = Return;
  * Lifts a structure into a Free.Cont
  * @method liftM
  * @static
- * @memberof module:data/Free.Free
+ * @memberof module:data.Free
  * @param {any} a The structure
  * @return {Cont} A Free.Cont instance
  *
  * @example
- * const {Free} = require('futils/data');
+ * const {Free} = require('futils').data;
  *
  * // TODO
  */
@@ -77,12 +75,12 @@ Free.liftM = a => Cont(a, Return);
  * lifted function which puts the resulting structure into a Free.Cont
  * @method from
  * @static
- * @memberof module:data/Free.Free
+ * @memberof module:data.Free
  * @param {Function} F The constructor function to lift
  * @return {Cont} A Free.Cont instance
  *
  * @example
- * const {Free} = require('futils/data');
+ * const {Free} = require('futils').data;
  *
  * // TODO
  */
@@ -93,12 +91,13 @@ Free.from = F => arity(F.length, (...xs) => Free.liftM(F(...xs)));
 /**
  * Maps a function over a Free.Return or a Free.Cont and returns a new Free
  * @method map
- * @memberof module:data/Free.Free
+ * @memberof module:data.Free
+ * @instance
  * @param {Function} f The function to map
  * @return {Return|Cont} A new Free
  *
  * @example
- * const {Free} = require('futils/data');
+ * const {Free} = require('futils').data;
  *
  * // TODO
  */
@@ -112,12 +111,13 @@ Free.fn.map = function (f) {
  * Maps a Free returning function over a Free.Return or Free.Cont and flattens
  * the result
  * @method flatMap
- * @memberof module:data/Free.Free
+ * @memberof module:data.Free
+ * @instance
  * @param {Function} f A Free returning function to map
  * @return {Return|Cont} A new Free
  *
  * @example
- * const {Free} = require('futils/data');
+ * const {Free} = require('futils').data;
  *
  * // TODO
  */
@@ -131,12 +131,13 @@ Free.fn.flatMap = function (f) {
  * Free applicative implementation, applies a function in a Free to a value in
  * another Free
  * @method ap
- * @memberof module:data/Free.Free
+ * @memberof module:data.Free
+ * @instance
  * @param {Return|Cont} a The Free that holds the value
  * @return {Return|Cont} Free which returns the result of applying the function
  *
  * @example
- * const {Free} = require('futils/data');
+ * const {Free} = require('futils').data;
  *
  * // TODO
  */
@@ -149,12 +150,15 @@ Free.fn.ap = function (a) {
 /**
  * If given a interpreter function, which should be a natural transformation,
  * interprets the computation build with Free
+ * @method interpret
+ * @memberof module:data.Free
+ * @instance
  * @param {Function} transform The interpreter function
  * @param {ApplicativeMonad} A The data structure to interpret into
  * @return {ApplicativeMonad} A data structure which holds the result
  *
  * @example
- * const {Free, IO} = require('futils/data');
+ * const {Free, Id} = require('futils').data;
  *
  * // TODO
  */

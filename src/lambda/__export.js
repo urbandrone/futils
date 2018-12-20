@@ -11,7 +11,9 @@ import {memoize} from './memoize';
 import {not} from './not';
 import {flip} from './flip';
 
-
+/**
+ * @module lambda
+ */
 
 export default {
     id,

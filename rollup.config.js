@@ -20,81 +20,9 @@ const CONFIG_UGLIFY = {
 export default [{
     input: 'src/__export.js',
     output: {
-        file: 'dist/futils.min.js',
+        file: 'dist/futils.js',
         format: 'umd',
         name: 'futils',
-        sourcemap: false,
-        banner: BANNER
-    },
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
-}, {
-    input: 'src/adt.js',
-    output: {
-        file: 'dist/adt.js',
-        format: 'cjs',
-        sourcemap: false,
-        banner: BANNER
-    },
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
-}, {
-    input: 'src/lambda/__export.js',
-    output: {
-        file: 'dist/lambda.js',
-        format: 'cjs',
-        sourcemap: false,
-        banner: BANNER
-    },
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
-}, {
-    input: 'src/generics/__export.js',
-    output: {
-        file: 'dist/generics.js',
-        format: 'cjs',
-        sourcemap: false,
-        banner: BANNER
-    },
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
-}, {
-    input: 'src/data/__export.js',
-    output: {
-        file: 'dist/data.js',
-        format: 'cjs',
-        sourcemap: false,
-        banner: BANNER
-    },
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
-}, {
-    input: 'src/monoid/__export.js',
-    output: {
-        file: 'dist/monoid.js',
-        format: 'cjs',
-        sourcemap: false,
-        banner: BANNER
-    },
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
-}, {
-    input: 'src/operation/__export.js',
-    output: {
-        file: 'dist/operation.js',
-        format: 'cjs',
-        sourcemap: false,
-        banner: BANNER
-    },
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
-}, {
-    input: 'src/optic/__export.js',
-    output: {
-        file: 'dist/optic.js',
-        format: 'cjs',
-        sourcemap: false,
-        banner: BANNER
-    },
-    plugins: [babel(CONFIG_BABEL), uglify(CONFIG_UGLIFY)]
-}, {
-    input: 'src/trampoline/__export.js',
-    output: {
-        file: 'dist/trampoline.js',
-        format: 'cjs',
         sourcemap: false,
         banner: BANNER
     },

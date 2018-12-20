@@ -66,7 +66,7 @@ const ctorOfT = (u, x, ys) => {
     throw `${u[TYPE_TAG]} - No constructor matched ${x[TYPE]}`;
 }
 
-const deriveT = a => (...Gs) => Gs.reduce((t, g) => g.mixInto(t), a);
+const deriveT = a => (...Gs) => Gs.reduce((t, g) => g.derive(t), a);
 
 
 
@@ -79,7 +79,7 @@ const deriveT = a => (...Gs) => Gs.reduce((t, g) => g.mixInto(t), a);
  * @return {Type} Constructor function of the type
  *
  * @example
- * const {Type} = require('futils/adt');
+ * const {Type} = require('futils').adt;
  *
  * const Point = Type('Point', ['x', 'y']);
  *
@@ -113,7 +113,7 @@ export const Type = (type, vals) => {
  * @return {UnionType} Constructor functions of the sum type
  *
  * @example
- * const {UnionType} = require('futils/adt');
+ * const {UnionType} = require('futils').adt;
  *
  * const Shape = UnionType('Shape', {
  *     Rect: ['topLeft', 'bottomRight'],

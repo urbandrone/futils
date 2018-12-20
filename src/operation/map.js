@@ -9,24 +9,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the map function. Map takes a function and maps it over the value(s)
- * of a data structure. It returns a new structure of the same type
- * @module operation/map
+/*
+ * @module operation
  */
 
 
 
 /**
- * The map function
+ * The map function. Map takes a function and maps it over the value(s)
+ * of a data structure. It returns a new structure of the same type
  * @method map
- * @memberof module:operation/map
+ * @memberof module:operation
  * @param {Function} f The function to map with
  * @param {Functor} a A Functor interface implementing type
  * @return {Functor} A new instance of the Functor
  *
  * @example
- * const {map} = require('futils/operation');
+ * const {map} = require('futils').operation;
  *
  * map((a) => a.toUpperCase(), ['a', 'b']); // -> ['A', 'B']
  * map((a) => a.toUpperCase());             // -> (Functor -> Functor)

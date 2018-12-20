@@ -1,6 +1,6 @@
-const O = require('../dist/operation');
-const {Id, List} = require('../dist/data');
-const {Sum} = require('../dist/monoid');
+const O = require('../dist/futils').operation;
+const {Id, List} = require('../dist/futils').data;
+const {Sum} = require('../dist/futils').monoid;
 
 
 describe('Operation', () => {

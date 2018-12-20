@@ -9,27 +9,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import {curry} from '../lambda/curry';
 import {map} from '../operation/map';
 
-/**
- * Provides the createLens function, which acts like a factory for new
- * types of lenses
- * @module optic/create
- * @requires lambda/curry
- * @requires operation/map
+/*
+ * @module optic
  */
 
 
 
 /**
- * The createLens function
+ * The createLens function acts like a factory for new types of lenses
  * @method createLens
- * @memberof module:optic/create
+ * @memberof module:optic
  * @version 3.0.0
  * @param {Function} getter A function defining how to get a value from the structure
  * @param {Function} setter A function defining how to clone the structure and set a value
  * @return {Function} A factory function which can be used to create lens types
  *
  * @example
- * const {createLens, over} = require('futils/optic');
+ * const {createLens, over} = require('futils').optic;
  *
  * const MapLens = createLens(
  *     (key, map) => map.get(key),

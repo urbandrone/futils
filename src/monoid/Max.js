@@ -15,29 +15,24 @@ import {Ord} from '../generics/Ord';
 
 
 
-/**
- * Grants access to the Max monoid. Max can be used to find the largest item
- * from multiple items by concattenation
- * @module monoid/Max
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
+/*
+ * @module monoid
  */
 
 
 
 /**
- * The Max monoid
- * @class module:monoid/Max.Max
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
+ * The Max monoid. Max can be used to find the largest item
+ * from multiple items by concatenation
+ * @class module:monoid.Max
+ * @extends module:generics/Show
+ * @extends module:generics/Eq
+ * @extends module:generics/Ord
  * @static
  * @version 3.0.0
  *
  * @example
- * const {Max} = require('futils/monoid');
+ * const {Max} = require('futils').monoid;
  *
  * Max(1); // -> Max(1)
  *
@@ -53,12 +48,12 @@ export const Max = Type('Max', ['value']).
  * isn't a number
  * @method of
  * @static
- * @memberof module:monoid/Max.Max
+ * @memberof module:monoid.Max
  * @param {any} a The value to lift
  * @return {Max} A new Max
  *
  * @example
- * const {Max} = require('futils/monoid');
+ * const {Max} = require('futils').monoid;
  *
  * Max.of(1);    // -> Max(1)
  * Max.of(null); // -> Max(-Infinity)
@@ -69,11 +64,11 @@ Max.of = a => typeof a === 'number' && !isNaN(a) ? Max(a) : Max(-Infinity);
  * Monoid implementation for Max. Returns a Max of negative Infinity
  * @method empty
  * @static
- * @memberof module:monoid/Max.Max
+ * @memberof module:monoid.Max
  * @return {Max} The empty Max
  *
  * @example
- * const {Max} = require('futils/monoid');
+ * const {Max} = require('futils').monoid;
  *
  * Max.empty(); // -> Max(-Infinity)
  */
@@ -84,12 +79,13 @@ Max.empty = () => Max(-Infinity);
 /**
  * Concatenates a Max with another using Ord.gt comparison
  * @method concat
- * @memberof module:monoid/Max.Max
+ * @memberof module:monoid.Max
+ * @instance
  * @param {Max} a The Max instance to concatenate with
  * @return {Max} A new Max
  *
  * @example
- * const {Max} = require('futils/monoid');
+ * const {Max} = require('futils').monoid;
  *
  * const max = Max(3);
  *

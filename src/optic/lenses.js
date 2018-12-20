@@ -8,11 +8,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 import {createLens} from './create';
 
-/**
- * Provides the lenses function, which allows to create a collection of lenses
- * from strings. Also creates a "index" lens which can be used with arrays
- * @module optic/lenses
- * @requires optic/create
+/*
+ * @module optic
  */
 
 
@@ -33,15 +30,16 @@ const kvLens = createLens(
 
 
 /**
- * The lenses function
+ * The lenses function, which allows to create a collection of lenses
+ * from strings. Also creates a "index" lens which can be used with arrays
  * @method lenses
- * @memberof module:optic/lenses
+ * @memberof module:optic
  * @version 3.0.0
  * @param {...String} a Strings representing the properties of an object
  * @return {Object} Collection of lenses
  *
  * @example
- * const {lenses, over} = require('futils/optic');
+ * const {lenses, over} = require('futils').optic;
  *
  * const L = lenses('name');
  *

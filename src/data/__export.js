@@ -7,7 +7,13 @@ import {State} from './State';
 import {Task} from './Task';
 import {Free} from './Free';
 
-
+/**
+ * @module data
+ * @requires adt
+ * @requires generics.Show
+ * @requires generics.Eq
+ * @requires generics.Ord
+ */
 
 export default {
     Id,

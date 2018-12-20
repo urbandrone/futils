@@ -6,6 +6,12 @@ import {over} from './over';
 import {set} from './set';
 
 
+/**
+ * @module optic
+ * @requires lambda/curry
+ * @requires operation/map
+ */
+
 
 export default {
     createLens,

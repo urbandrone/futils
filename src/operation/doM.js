@@ -9,23 +9,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the doM function, inspired by the Haskell do notation
- * @module operation/doM
+/*
+ * @module operation
  */
 
 
 
 /**
- * The doM function
+ * The doM function, inspired by Haskell do notation
  * @method doM
- * @memberof module:operation/doM
+ * @memberof module:operation
  * @param {Generator} f A generator function describing the computations
  * @return {any} The result of the computation
  *
  * @example
- * const {Id} = require('futils/data');
- * const {doM} = require('futils/operation');
+ * const {Id} = require('futils').data;
+ * const {doM} = require('futils').operation;
  *
  * const result = doM(function * () {
  *     const a = yield Id.of(1);

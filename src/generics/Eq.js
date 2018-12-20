@@ -11,9 +11,8 @@ import {typeOf} from '../core/typeof';
 
 
 
-/**
- * A generic Eq module
- * @module generics/Eq
+/*
+ * @module generics
  */
 
 
@@ -82,14 +81,13 @@ export const compareEq = (a, b) => {
 /**
  * The generics Eq class. Provides a generic equals method for all data structures
  * which derive from it
- * @class module:generics/Eq.Eq
+ * @class module:generics.Eq
  * @static
- * @private
  * @version 3.0.0
  *
  * @example
- * const {Type} = require('futils/adt');
- * const {Eq} = require('futils/generics');
+ * const {Type} = require('futils').adt;
+ * const {Eq} = require('futils').generics;
  *
  * const Int = Type('Int', ['value']).
  *     deriving(Eq);
@@ -103,7 +101,7 @@ export const compareEq = (a, b) => {
  * one.equals(1);   // -> false
  */
 export class Eq {
-    static mixInto (ctor) {
+    static derive (ctor) {
         if (ctor && ctor.prototype) {
             ctor.prototype.equals = function (a) {
                 return compareEq(this, a);

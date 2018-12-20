@@ -9,25 +9,24 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the fold function. Usually fold is used to combine a set of values
- * into a Monoid structure
+/*
  * @module operation/fold
  */
 
 
 
 /**
- * The fold function
+ * The fold function. Usually fold is used to combine a set of values
+ * into a Monoid structure
  * @method fold
- * @memberof module:operation/fold
+ * @memberof module:operation
  * @param {Monoid} A The Monoid type constructor to fold into
  * @param {Foldable} a The values to fold
  * @return {Monoid} All values folded into the Monoid
  *
  * @example
- * const {Sum} = require('futils/monoid');
- * const {fold} = require('futils/operation');
+ * const {Sum} = require('futils').monoid;
+ * const {fold} = require('futils').operation;
  *
  * fold(Sum, [1, 2, 3, 4]); // -> Sum(10)
  * fold(Sum);               // -> (Foldable -> Sum)

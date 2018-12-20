@@ -2,7 +2,7 @@
   "name": "futils",
   "version": "2.12.0",
   "description": "Functional programming utility toolkit",
-  "main": "dist/futils.min.js",
+  "main": "dist/futils.js",
   "module": "src/__export.es6.js",
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node ./specs --captureExceptions",
@@ -13,17 +13,12 @@
     "type": "git",
     "url": "https://github.com/urbandrone/futils.git"
   },
-  "directories": {
-    "lib": "dist/",
-    "src": "src/"
-  },
   "keywords": [
     "functional programming",
     "toolkit",
     "monads",
     "monoids",
     "lenses",
-    "transducers",
     "combinators",
     "decorators",
     "ADT",

@@ -9,25 +9,24 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the reduceRight function. Reduces the values inside a structure to a
- * single value. Starts with the last value
- * @module operation/reducer
+/*
+ * @module operation
  */
 
 
 
 /**
- * The reduceRight function
+ * The reduceRight function. Reduces the values inside a structure to a
+ * single value. Starts with the last value
  * @method reduceRight
- * @memberof module:operation/reducer
+ * @memberof module:operation
  * @param {Function} f The function to reduce with
  * @param {any} a A value to reduce into
  * @param {Foldable} a A Foldable interface implementing type
  * @return {any} All values reduced into one value
  *
  * @example
- * const {reduceRight} = require('futils/operation');
+ * const {reduceRight} = require('futils').operation;
  *
  * reduceRight((a, b) => a + b, '', ['a', 'b']); // -> 'ba'
  * reduceRight((a, b) => a + b);                 // -> (a -> Foldable -> a)

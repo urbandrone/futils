@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the identity function
- * @module lambda/id
+/*
+ * @module lambda
  */
 
 
@@ -19,12 +18,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The identity function
  * @method id
- * @memberof module:lambda/id
+ * @memberof module:lambda
  * @param {any} a Any value
  * @return {any} The given value
  *
  * @example
- * const {id} = require('futils/lambda');
+ * const {id} = require('futils').lambda;
  *
  * id(1);    // -> 1
  * id(null); // -> null

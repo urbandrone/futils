@@ -14,26 +14,23 @@ import {compareEq} from '../generics/Eq';
 
 
 
-/**
- * Grants access to the List data structure. List is implemented as a linked
- * list, where each part has a head and a tail. The end of the list is marked
- * with Nil
- * @module data/List
- * @requires adt
- * @requires generics/Show.Show
+/*
+ * @module data
  */
 
 
 
 /**
- * The List data type
- * @class module:data/List.List
- * @extends module:generics/Show.Show
+ * The List data type. List is implemented as a linked
+ * list, where each part has a head and a tail. The end of the list is marked
+ * with Nil
+ * @class module:data.List
+ * @extends module:generics.Show
  * @static
  * @version 3.0.0
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  * const {Cons, Nil} = List;
  * 
  * List.Cons(1, List.Nil());               // -> Cons(1, Nil)
@@ -82,12 +79,12 @@ const foldr = (f, a, ls) => {
  * Lifts one or more values into a List
  * @method of
  * @static
- * @memberof module:data/List.List
+ * @memberof module:data.List
  * @param {...any} a The value or values to lift
  * @return {List} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.of(1); // -> Cons(1, Nil)
  */
@@ -96,11 +93,11 @@ List.of = (a) => Cons(a, Nil());
  * Monoid implementation for List. Returns a List without values
  * @method empty
  * @static
- * @memberof module:data/List.List
+ * @memberof module:data.List
  * @return {List} A List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.empty(); // -> Nil
  */
@@ -111,12 +108,12 @@ List.empty = Nil;
  * transform array-like objects on the fly
  * @method from
  * @static
- * @memberof module:data/List.List
+ * @memberof module:data.List
  * @param {any} a The value to lift
  * @return {List} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.from(1);    // -> Cons(1, Nil)
  * List.from([1]);  // -> Cons(1, Nil)
@@ -127,12 +124,12 @@ List.from = (a) => a == null ? Nil() : Array.isArray(a) ? List.fromArray(a) : Co
  * A natural transformation from an array into a List
  * @method fromArray
  * @static
- * @memberof module:data/List.List
+ * @memberof module:data.List
  * @param {Array} a The array to transform
  * @return {List} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.fromArray([1, 2, 3]); // -> Cons(1, Cons(2, Cons(3, Nil)))
  */
@@ -141,12 +138,12 @@ List.fromArray = (a) => a.reduceRight((x, y) => Cons(y, x), Nil());
  * A natural transformation from an Id to a List
  * @method fromId
  * @static
- * @memberof module:data/List.List
+ * @memberof module:data.List
  * @param {Id} a The Id to transform
  * @return {List} A new List
  *
  * @example
- * const {List, Id} = require('futils/data');
+ * const {List, Id} = require('futils').data;
  *
  * const id = Id('a value');
  *
@@ -157,12 +154,12 @@ List.fromId = (a) => List.from(a.value);
  * A natural transformation from a Maybe.Some or Maybe.None into a List
  * @method fromMaybe
  * @static
- * @memberof module:data/List.List
+ * @memberof module:data.List
  * @param {Some|None} a The Maybe to transform
  * @return {List} A List with the value of a Maybe.Some and an empty List for Maybe.None
  *
  * @example
- * const {List, Maybe} = require('futils/data');
+ * const {List, Maybe} = require('futils').data;
  *
  * const some = Maybe.Some('a value');
  * const none = Maybe.None();
@@ -175,12 +172,12 @@ List.fromMaybe = (a) => a.isSome() ? List.from(a.value) : List.empty();
  * A natural transformation from an Either.Left or Either.Right into a List
  * @method fromEither
  * @static
- * @memberof module:data/List.List
+ * @memberof module:data.List
  * @param {Left|Right} a The Either to transform
  * @return {List} List with value(s) for Either.Right, empty List for Either.Left
  *
  * @example
- * const {List, Either} = require('futils/data');
+ * const {List, Either} = require('futils').data;
  *
  * const l = Either.Left('a left');
  * const r = Either.Right('a right');
@@ -208,11 +205,12 @@ List.fn.toString = function () {
 /**
  * A natural transformation from a List into an array
  * @method toArray
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @return {Array} Array of values
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.of(2).cons(1).toArray(); // -> [1, 2]
  */
@@ -222,12 +220,13 @@ List.fn.toArray = function () {
 /**
  * Concatenates a List with another List
  * @method concat
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {List} a The List instance to concatenate with
  * @return {List} A List containing all values from both Lists
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const ls = List.of(1);
  *
@@ -245,12 +244,13 @@ List.fn.concat = function (a) {
 /**
  * Maps a function over each value in the List
  * @method map
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Function} f The function to map
  * @return {List} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const ls = List.of(1);
  * 
@@ -264,11 +264,12 @@ List.fn.map = function (f) {
 /**
  * Flattens a nested List one level
  * @method flat
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @return {List} A List flattened
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const ls = List.of(List.of(1));
  *
@@ -282,12 +283,13 @@ List.fn.flat = function () {
 /**
  * Maps a List returning function over each value in the List and flattens the result
  * @method flatMap
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Function} f A List returning function to map
  * @return {List} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const ls = List.of(1);
  *
@@ -301,11 +303,12 @@ List.fn.flatMap = function (f) {
 /**
  * Extracts the head value from a List. For Nil instances, it returns null
  * @method extract
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @return {any|null} The head element
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.of(1).extract();   // -> 1
  * List.empty().extract(); // -> null
@@ -316,12 +319,13 @@ List.fn.extract = function () {
 /**
  * If given a function that takes a List and returns a value, returns a List
  * @method extend
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Function} f A function taking a List
  * @return {List} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const ls = List.of(3).cons(2).cons(1);
  *
@@ -336,12 +340,13 @@ List.fn.extend = function (f) {
 /**
  * Applies a function in a List to the values in another List
  * @method ap
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {List} a The List that holds the values
  * @return {List} List which contains the results of applying the function
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const ls = List.of(1);
  *
@@ -359,13 +364,14 @@ List.fn.ap = function (a) {
  * Works like the Array.reduce method. If given a function and an initial value,
  * reduces the values in the List to a final value
  * @method reduce
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Function} f The function to reduce with
  * @param {any} x The seed value to reduce into
  * @return {any} All values reduced into the seed
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const ls = List.of(1);
  *
@@ -383,13 +389,14 @@ List.fn.reduce = function (f, x) {
  * Works like the Array.reduceRight method. If given a function and an initial
  * value, reduces the values in the List to a final value
  * @method reduceRight
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Function} f The function to reduce with
  * @param {any} x The seed value to reduce into
  * @return {any} All values reduced into the seed
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const ls = List.of(1);
  *
@@ -413,7 +420,7 @@ List.fn.reduceRight = function (f, x) {
  * @return {Applicative} A List wrapped in the applicative
  *
  * @example
- * const {List, Maybe} = require('futils/data');
+ * const {List, Maybe} = require('futils').data;
  * 
  * const ls = List.of(1)
  *
@@ -433,12 +440,13 @@ List.fn.traverse = function (f, A) {
 /**
  * Sequences a List into another applicative Type
  * @method sequence
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Applicative} A A constructor with of and ap methods
  * @return {Applicative} A List wrapped in the applicative
  *
  * @example
- * const {List, Maybe} = require('futils/data');
+ * const {List, Maybe} = require('futils').data;
  *
  * const ls = List.of(Maybe.of(1));
  *
@@ -455,7 +463,7 @@ List.fn.sequence = function (A) {
  * @return {List} Choosen alternative
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const ls = List.of(1);
  * const ns = List.empty();
@@ -474,13 +482,14 @@ List.fn.alt = function (a) {
 /**
  * Takes function which returns a Monoid and folds the List with it into a Monoid
  * @method foldMap
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Function} f The Monoid returning function
  * @return {Monoid} A Monoid of the type the function returns
  *
  * @example
- * const {List} = require('futils/data');
- * const {Sum} = require('futils/monoid');
+ * const {List} = require('futils').data;
+ * const {Sum} = require('futils').monoid;
  *
  * const fn = (n) => Sum.of(n);
  *
@@ -492,13 +501,14 @@ List.fn.foldMap = function (f) {
 /**
  * Takes a Monoid and folds the List into it
  * @method fold
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Monoid} A The Monoid type constructor
  * @return {Monoid} A Monoid of the type the function returns
  *
  * @example
- * const {List} = require('futils/data');
- * const {Sum} = require('futils/monoid');
+ * const {List} = require('futils').data;
+ * const {Sum} = require('futils').monoid;
  *
  * List.of(1).cons(2).fold(Sum); // -> Sum(3)
  */
@@ -509,12 +519,13 @@ List.fn.fold = function (A) {
  * Takes a function which returns a Boolean and filters the List with it. Works
  * much like the Array.filter function
  * @method filter
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Function} f The function to filter with
  * @return {Cons|Nil} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const even = (n) => n % 2 === 0;
  *
@@ -526,12 +537,13 @@ List.fn.filter = function (f) {
 /**
  * Takes a value and puts it between each entry in the List
  * @method intersperse
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {any} a The value to put in between
  * @return {Cons|Nil} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.of(2).cons(1).intersperse(0.5); // -> Cons(1, Cons(0.5, Cons(2, Nil)))
  */
@@ -542,12 +554,13 @@ List.fn.intersperse = function (a) {
  * Sets the given value to the head position of a List, making the current List
  * the new tail
  * @method cons
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {any} a The value to set
  * @return {Cons} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.of(2).cons(1); // -> Cons(1, Cons(2, Nil));
  */
@@ -557,12 +570,13 @@ List.fn.cons = function (a) {
 /**
  * Sets a given value to the tail position of a List
  * @method snoc
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {any} a The value to set
  * @return {Cons} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.of(1).snoc(2); // -> Cons(1, Cons(2, Nil))
  */
@@ -572,12 +586,13 @@ List.fn.snoc = function (a) {
 /**
  * If given a number N, returns the first N items from the List
  * @method take
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Number} n Amount of elements to take from the beginning of the List
  * @return {Cons|Nil} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.of(2).cons(1).cons(0).take(2); // -> Cons(0, Cons(1, Nil))
  */
@@ -590,12 +605,13 @@ List.fn.take = function (n) {
 /**
  * If given a number N, drops the first N items from the List
  * @method drop
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Number} n Amount of elements to drop from the beginning of the List
  * @return {Cons|Nil} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.of(2).cons(1).cons(0).drop(2); // -> Cons(2, Nil)
  */
@@ -609,12 +625,13 @@ List.fn.drop = function (n) {
  * Given a predicate function, returns the first element for which the
  * predicate returns true. If no element passes the predicate, null is returned
  * @method find
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Function} f The predicate function
  * @return {any|null} The first match or null
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const even = (n) => n % 2 === 0;
  * 
@@ -630,12 +647,13 @@ List.fn.find = function (f) {
  * Given a predicate function, removes all duplicates from the List for which the
  * predicate function returns true
  * @method nubBy
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @param {Function} f The predicate function
  * @return {Cons|Nil} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * const eq = (a, b) => a === b;
  *
@@ -649,11 +667,12 @@ List.fn.nubBy = function (f) {
 /**
  * Removes all duplicates from the List. Uses deep equality for comparison
  * @method nub
- * @memberof module:data/List.List
+ * @memberof module:data.List
+ * @instance
  * @return {Cons|Nil} A new List
  *
  * @example
- * const {List} = require('futils/data');
+ * const {List} = require('futils').data;
  *
  * List.of(3).cons(2).cons(2).cons(1).nub(); // -> Cons(1, Cons(2, Cons(3, Nil)))
  */

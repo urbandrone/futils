@@ -15,29 +15,24 @@ import {Ord} from '../generics/Ord';
 
 
 
-/**
- * Grants access to the Product monoid. Product can be used to multiply multiple
- * numbers into a final number via concattenation
- * @module monoid/Product
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
+/*
+ * @module monoid
  */
 
 
 
 /**
- * The Product monoid
- * @class module:monoid/Product.Product
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
+ * The Product monoid. Product can be used to multiply multiple
+ * numbers into a final number via concatenation
+ * @class module:monoid.Product
+ * @extends module:generics/Show
+ * @extends module:generics/Eq
+ * @extends module:generics/Ord
  * @static
  * @version 3.0.0
  *
  * @example
- * const {Product} = require('futils/monoid');
+ * const {Product} = require('futils').monoid;
  *
  * Product(1); // -> Product(1)
  *
@@ -53,12 +48,12 @@ export const Product = Type('Product', ['value']).
  * isn't a number
  * @method of
  * @static
- * @memberof module:monoid/Product.Product
+ * @memberof module:monoid.Product
  * @param {any} a The value to lift
  * @return {Product} A new Product
  *
  * @example
- * const {Product} = require('futils/monoid');
+ * const {Product} = require('futils').monoid;
  *
  * Product.of(2);    // -> Product(2)
  * Product.of(null); // -> Product(1)
@@ -69,11 +64,11 @@ Product.of = a => typeof a === 'number' && !isNaN(a) ? Product(a) : Product(1);
  * Monoid implementation for Product. Returns a Product of 1
  * @method empty
  * @static
- * @memberof module:monoid/Product.Product
+ * @memberof module:monoid.Product
  * @return {Product} The empty Product
  *
  * @example
- * const {Product} = require('futils/monoid');
+ * const {Product} = require('futils').monoid;
  *
  * Product.empty(); // -> Product(1)
  */
@@ -84,12 +79,13 @@ Product.empty = () => Product(1);
 /**
  * Concatenates a Product with another using multiplication
  * @method concat
- * @memberof module:monoid/Product.Product
+ * @memberof module:monoid.Product
+ * @instance
  * @param {Product} a The Product instance to concatenate with
  * @return {Product} A new Product
  *
  * @example
- * const {Product} = require('futils/monoid');
+ * const {Product} = require('futils').monoid;
  *
  * const product = Product(2);
  *

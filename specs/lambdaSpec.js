@@ -1,4 +1,4 @@
-const L = require('../dist/lambda');
+const L = require('../dist/futils').lambda;
 
 
 

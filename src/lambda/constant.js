@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the constant function
- * @module lambda/constant
+/*
+ * @module lambda
  */
 
 
@@ -19,12 +18,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The constant function
  * @method constant
- * @memberof module:lambda/constant
+ * @memberof module:lambda
  * @param {any} a Any value
  * @return {Function} A function that ignores its arguments and returns the initial one
  *
  * @example
- * const {constant} = require('futils/lambda');
+ * const {constant} = require('futils').lambda;
  *
  * constant(1);        // -> (_ -> 1)
  * constant(null);     // -> (_ -> null)

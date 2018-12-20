@@ -9,25 +9,24 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the filter function. Filter takes a function which returns a Boolean
- * and a Filterable collection and keeps only the items for which the function
- * returns true
- * @module operation/filter
+/*
+ * @module operation
  */
 
 
 
 /**
- * The filter function
+ * The filter function. Filter takes a function which returns a Boolean
+ * and a Filterable collection and keeps only the items for which the function
+ * returns true
  * @method filter
- * @memberof module:operation/filter
+ * @memberof module:operation
  * @param {Function} f The function to filter with
  * @param {Filterable} a A Filterable interface implementing type
  * @return {Filterable} A new instance of the Filterable
  *
  * @example
- * const {filter} = require('futils/operation');
+ * const {filter} = require('futils').operation;
  *
  * const even = (n) => n % 2 === 0;
  * 

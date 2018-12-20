@@ -11,11 +11,8 @@ import {Val} from './_Val';
 
 
 
-/**
- * Provides the over function. Over allows to apply a function over a focused
- * value of a data structure and return the whole structure
- * @module optic/over
- * @requires lambda/curry
+/*
+ * @module optic
  */
 
 
@@ -23,9 +20,10 @@ import {Val} from './_Val';
 
 
 /**
- * The over function
+ * The over function. Over allows to apply a function over a focused
+ * value of a data structure and return the whole structure
  * @method over
- * @memberof module:optic/over
+ * @memberof module:optic
  * @version 3.0.0
  * @param {Lens} l A lens to focus with
  * @param {Function} f A tranformation function
@@ -33,7 +31,7 @@ import {Val} from './_Val';
  * @return {Object|Array} A manipulated clone of the structure
  *
  * @example
- * const {lenses, over} = require('futils/optic');
+ * const {lenses, over} = require('futils').optic;
  *
  * const L = lenses('name');
  *

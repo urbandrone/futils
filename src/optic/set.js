@@ -11,11 +11,8 @@ import {Val} from './_Val';
 
 
 
-/**
- * Provides the set function, which allows to set a property to a value on a 
- * data structure and return the structure afterwards
- * @module optic/set
- * @requires lambda/curry
+/*
+ * @module optic
  */
 
 
@@ -23,9 +20,10 @@ import {Val} from './_Val';
 
 
 /**
- * The set function
+ * The set function, which allows to set a property to a value on a 
+ * data structure and return the structure afterwards
  * @method set
- * @memberof module:optic/set
+ * @memberof module:optic
  * @version 3.0.0
  * @param {Lens} l A lens to focus with
  * @param {any} v The value to set
@@ -33,7 +31,7 @@ import {Val} from './_Val';
  * @return {Object|Array} A manipulated clone of the structure
  *
  * @example
- * const {lenses, set} = require('futils/optic');
+ * const {lenses, set} = require('futils').optic;
  *
  * const L = lenses('name');
  *

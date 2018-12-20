@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the traverse function
- * @module operation/traverse
+/*
+ * @module operation
  */
 
 
@@ -19,15 +18,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The traverse function
  * @method traverse
- * @memberof module:operation/traverse
+ * @memberof module:operation
  * @param {Function} f The function to traverse with
  * @param {Applicative} A Applicative type constructor to traverse into
  * @param {Traversable|Array} a A type that implements the Traversable interface
  * @return {Applicative} A new Applicative
  *
  * @example
- * const {Id} = require('futils/data');
- * const {traverse} = require('futils/operation');
+ * const {Id} = require('futils').data;
+ * const {traverse} = require('futils').operation;
  *
  * const even = (n) => Id.of(n % 2 === 0);
  * 

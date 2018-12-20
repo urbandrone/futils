@@ -1,4 +1,4 @@
-const {Type, UnionType} = require('../dist/adt');
+const {Type, UnionType} = require('../dist/futils').adt;
 
 
 

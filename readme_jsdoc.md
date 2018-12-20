@@ -1,23 +1,70 @@
-![futils Logo](/futils/docs/logo.png?raw=true, 'futils Logo')
+<div class="readme_logo">![futils Logo](logo.jpg?raw=true, 'futils Logo')</div>
 
-# Welcome to the API documentation.
+## About
+Welcome to the futils documentation. Here you'll find detailed information about everything the library provides. Each explanation is accompanied by short example codes to give brief introductions.
 
-Although delivered as a bundle, `futils` is divided into several packages which you can see in the navigation. Each package contains functions which fit specific purposes. You can find a complete description of all packages below.
+### How this documentation is organized
+The library itself is divided into several packages or modules, and the documentation is organized the same way. Here is a short list of all modules of futils.
 
-## Packages by purpose
-| Package     | Description                                                                                                                                                                                                                                                                                                                                                                                                     |
-|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Arity       | Contains function decorators which manipulate another functions arity. Most often used functions usually are `monadic`, `dyadic`, `tetradic` and so on. The decorators appear to more useful when writing higher-order functions than day-to-day programming.                                                                                                                                                   |
-| Combinators | A package inspired by "How to mock a mockingbird" and higher-order function combinators. The functions used most often are `pipe´ and `compose`. But also higher-order-logical function combinators like `and` can be found here.                                                                                                                                                                               |
-| Decorators  | If you need to attach specific behaviours to functions, this package is for you. Some examples? `curry`, `partial`, `not`, etc.                                                                                                                                                                                                                                                                                 |
-| Lenses      | Distributes functions to work with van Laarhoven style lenses. Provides `makeLenses`, `over`, `set`, `view` and `lens` functions.                                                                                                                                                                                                                                                                               |
-| Monads      | Exports all Monad constructors as well as some utility functions. The Monad constructors provided cover a wide area of usecases and contain for example `IO`, `Maybe`, `Either`, and `Task`. The utility functions `liftA2`, `liftA3`, `liftA4` and `liftA5` simplify the writing of monadic code even further.                                                                                                 |
-| Monoids     | Apart from most of the monads being monoids, some more basic types of monoids are provided by this package.  Like the Monads package, the functions and constructors from the Monoids package help in writing your application as a pure transformation of state. You will find things like `Fn`, `Additive` and `All` in this package.                                                                         |
-| Operators   | A collection of higher-order functions which work mostly on collections like `Array`, `{}` and Monads/Monoids. If you work a lot with function composition, the functions from Operators are your day-to-day bread-and-butter tools, like `map`, `field`, `concat`, `flatMap`, `find`, etc.                                                                                                                     |
-| Trampolines | Recursion. Recursion. A lot of JavaScript engines have already started to support tail-call-optimized function execution. A lot more have disabled it behind a certain flag, which effectively makes it unsupported. Some don't have it. And some transpilers will never gonna have it. However, with the Trampolines package, you can write tail-call-optimized functions by using `trampoline` and `suspend`. |
-| Transducers | Implementation of a subset of some transducers, with respect to the [Transformer protocol](https://github.com/cognitect-labs/transducers-js#transformer-protocol). This increases interoperability with other libraries. You will find the transducers package functions under `futils.transducers`. This is a list of some of the provided transducers: `map`, `filter`, `take`, `partition`, `dropWhile`.     |
-| Types       | When writing JavaScript, we almost always need to determine the type of arguments. At least I need to. If you are anything like me, this package is for you: `isNil`, `isString`, `isMonad`, `isArrayOf` and other goodies are waiting to be explored.                                                                                                                                                          |
-| Maths       | A small package containing helper functions for usual math operations                                                                                                                                                                                                                                                                                                                                           |
-| Newtypes  | _Experimental package_  Implementation of functional types which allow for pattern matching                                                                                                                                                                                                                                                                                                                       |
+| Package    | Namespace     | Description                                                                                    |
+|------------|---------------|------------------------------------------------------------------------------------------------|
+| Trampoline | `.trampoline` | Useful to create tail recursive functions in a not tail recursive language.                    |
+| Operation  | `.operation`  | Functions inside allow to operate with various data structures in a Point-Free form.           |
+| Lambda     | `.lambda`     | Contains helpers for working with functions, like `curry`, `flip` and `compose`.               |
+| ADT        | `.adt`        | Allows easy creation of algebraic single and union data types.                                 |
+| Generics   | `.generics`   | Building blocks for new data structures which can derive generic methods.                      |
+| Monoid     | `.monoid`     | A collection of some of the most common monoidal structures like `Sum` and `All`.              |
+| Data       | `.data`       | Pre-made data structures. All of these implement various interface contracts (typeclasses).    |
+| Optic      | `.optic`      | van Laarhoven based lenses for `Object` and `Array` structures.                                |
 
-Have fun exploring! Don't forget to see the growing list of `How to` examples at [Github](https://github.com/urbandrone/futils/blob/HEAD/examples/readme.md).
+## Quickstart
+To help you get started, here's a quick start guide to get you up and running the library in a browser environment. Throughout, you'll be introduced to the structure of the library and to some of it's most common functions and structures. It is written in ES6/ES2015 but should easily be portable to ES5.
+
+##### Step 1: Download
+The library can be loaded either by downloading it from the [NPM](https://www.npmjs.com/package/futils), by getting it from a [CDN]() or by downloading it from [Github](). This quickstart uses the CDN path, but depending on your preferences you can choose one of the methods and adapt the relevant parts.
+
+> **CDN** `<script src="https://unpkg.com/futils@latest/dist/futils.js"></script>`
+>
+> **Github** `<script src="your/local/path/to/futils.js"></script>`
+>
+> **NPM** `npm i futils`
+
+
+##### Step 2: The expected result
+By completing the tutorial, you should have a working text processor which allows to encode the contents of a text file with the help of a matrix. You can either use 2d or 3d matrices for the encoding, but the tutorial uses 2d ones.
+
+We start by building a parser and the matrix functions for the 2d/3d matrices.
+
+
+##### Step 3: Modeling types
+To model the types, we make use of the **ADT** package.
+```
+const {adt: {Type, UnionType}} = futils;
+```
+
+
+```
+const Matrix = Type('Matrix2d', ['_matrix']);
+Matrix.fn._matrix = [[1, 0], [0, 1]];
+
+Matrix.fn.map = function (f) {
+    return Matrix(this._matrix.map(xy => xy.map(f)));
+}
+```
+
+
+
+
+##### Step 4: Modeling functions
+
+
+##### Step 5: Let's use `data`
+
+
+> If you have choosen to use the `NPM` route of the quickstart, this is the end. You should now have a working module ready
+> to be used. 
+
+##### Step 6: Connecting the parts
+
+
+##### Step 7: Testing

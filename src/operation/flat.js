@@ -9,24 +9,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the flat function. It can be used to flatten a nested data structure
- * one level down
- * @module operation/flat
+/*
+ * @module operation
  */
 
 
 
 /**
- * The flat function
+ * The flat function. It can be used to flatten a nested data structure
+ * one level down
  * @method flat
- * @memberof module:operation/flat
+ * @memberof module:operation
  * @param {Function} f The function to flat with
  * @param {Monad|Array} a Any Array and/or Monad interface implementing type
  * @return {Monad|Array} A new instance of the Array or Monad
  *
  * @example
- * const {flat} = require('futils/operation');
+ * const {flat} = require('futils').operation;
  *
  * flat([['a'], ['b']]); // -> ['a', 'b']
  */

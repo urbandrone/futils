@@ -15,29 +15,24 @@ import {Ord} from '../generics/Ord';
 
 
 
-/**
- * Grants access to the Any monoid. Any can be used to check of any of multiple
- * items are true
- * @module monoid/Any
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
+/*
+ * @module monoid
  */
 
 
 
 /**
- * The Any monoid
- * @class module:monoid/Any.Any
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
+ * The Any monoid. Any can be used to check of any of multiple
+ * items are true
+ * @class module:monoid.Any
+ * @extends module:generics/Show
+ * @extends module:generics/Eq
+ * @extends module:generics/Ord
  * @static
  * @version 3.0.0
  *
  * @example
- * const {Any} = require('futils/monoid');
+ * const {Any} = require('futils').monoid;
  *
  * Any(true); // -> Any(true)
  *
@@ -52,12 +47,12 @@ export const Any = Type('Any', ['value']).
  * Lifts a value into a Any. Returns the empty Any for values which are no booleans
  * @method of
  * @static
- * @memberof module:monoid/Any.Any
+ * @memberof module:monoid.Any
  * @param {any} a The value to lift
  * @return {Any} A new Any
  *
  * @example
- * const {Any} = require('futils/monoid');
+ * const {Any} = require('futils').monoid;
  *
  * Any.of(true);    // -> Any(true)
  * Any.of(null); // -> Any(false)
@@ -68,11 +63,11 @@ Any.of = (a) => typeof a === 'boolean' ? Any(a) : Any(false);
  * Monoid implementation for Any. Returns a Any of false
  * @method empty
  * @static
- * @memberof module:monoid/Any.Any
+ * @memberof module:monoid.Any
  * @return {Any} The empty Any
  *
  * @example
- * const {Any} = require('futils/monoid');
+ * const {Any} = require('futils').monoid;
  *
  * Any.empty(); // -> Any(false)
  */
@@ -83,12 +78,13 @@ Any.empty = () => Any(false);
 /**
  * Concatenates a Any with another using boolean comparison
  * @method concat
- * @memberof module:monoid/Any.Any
+ * @memberof module:monoid.Any
+ * @instance
  * @param {Any} a The Any instance to concatenate with
  * @return {Any} A new Any
  *
  * @example
- * const {Any} = require('futils/monoid');
+ * const {Any} = require('futils').monoid;
  *
  * const any = Any(true);
  *

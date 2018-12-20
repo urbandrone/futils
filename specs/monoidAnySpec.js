@@ -1,4 +1,4 @@
-const {Any} = require('../dist/monoid');
+const {Any} = require('../dist/futils').monoid;
 
 
 

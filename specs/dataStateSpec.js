@@ -1,4 +1,4 @@
-const {State} = require('../dist/data');
+const {State} = require('../dist/futils').data;
 
 
 describe('State', () => {

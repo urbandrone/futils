@@ -1,4 +1,4 @@
-const {recur, again} = require('../dist/trampoline');
+const {recur, again} = require('../dist/futils').trampoline;
 
 
 describe('Trampoline', () => {

@@ -15,29 +15,24 @@ import {Ord} from '../generics/Ord';
 
 
 
-/**
- * Grants access to the Maybe data structure and its subtypes Some and None.
- * Usually they are used whenever an operation might result in a null value
- * @module data/Maybe
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
+/*
+ * @module data
  */
 
 
 
 /**
- * The Maybe union type
- * @class module:data/Maybe.Maybe
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
+ * The Maybe union type and its subtypes Some and None.
+ * Usually they are used whenever an operation might result in a null value
+ * @class module:data.Maybe
+ * @extends module:generics.Show
+ * @extends module:generics.Eq
+ * @extends module:generics.Ord
  * @static
  * @version 3.0.0
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  * const {Some, None} = Maybe;
  *
  * Maybe.Some(1); // -> Some(1)
@@ -60,12 +55,12 @@ Maybe.fn.value = null;
  * Lifts a value into a Maybe.Some
  * @method of
  * @static
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
  * @param {any} a The value to lift
  * @return {Some} The value wrapped in a Maybe.Some
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * Maybe.of(1); // -> Some(1)
  */
@@ -74,11 +69,11 @@ Maybe.of = Some;
  * Monoid implementation for Maybe. Returns a Maybe.None
  * @method empty
  * @static
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
  * @return {None} A Maybe.None
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * Maybe.empty(); // -> None
  */
@@ -88,12 +83,12 @@ Maybe.empty = None;
  * null or undefined it returns Maybe.None
  * @method from
  * @static
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
  * @param {any} a The value to lift
  * @return {Some|None} Maybe.Some if the value is not null or undefined, Maybe.None otherwise
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * Maybe.from(1); // -> Some(1)
  * Maybe.from(null); // -> None
@@ -103,7 +98,7 @@ Maybe.from = (a) => a == null ? None() : Some(a);
  * A natural transformation from a Either.Left or Either.Right into a Maybe
  * @method fromEither
  * @static
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
  * @param {Left|Right} a The Either to transform
  * @return {Some|None} Maybe.Some if given an Either.Right, Maybe.None otherwise
  *
@@ -121,7 +116,7 @@ Maybe.fromEither = (a) => a.isRight() ? Some(a.value) : None();
  * A natural transformation from an Id into a Maybe
  * @method fromId
  * @static
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
  * @param {Id} a The Id to transform
  * @return {Some|None} Maybe.Some if the Id holds a value different from null or undefined
  *
@@ -141,12 +136,12 @@ Maybe.fromId = (a) => Maybe.from(a.value);
  * taken. If the first element is null or undefined, a Maybe.None is returned
  * @method fromList
  * @static
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
  * @param {List} a The List to transform
  * @return {Some|None} Maybe.Some if the first element is not null or undefined
  *
  * @example
- * const {Maybe, List} = require('futils/data');
+ * const {Maybe, List} = require('futils').data;
  *
  * const ls = List.of(2).cons(1);
  * const ks = List.Nil();
@@ -161,11 +156,12 @@ Maybe.fromList = (a) => Maybe.from(a.head);
 /**
  * Test if the instance is a Maybe.Some or a Maybe.None
  * @method isSome
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @return {Boolean} True if called on a Maybe.Some
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some(1);
  * const none = Maybe.None();
@@ -184,12 +180,13 @@ Maybe.fn.isSome = function () {
  * result in Maybe.None. Please note, that the inner values have to be part of a
  * Semigroup as well for concattenation to succeed
  * @method concat
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @param {Some|None} a The Maybe instance to concatenate with
  * @return {Some|None} A new Maybe
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some('a');
  * const none = Maybe.None();
@@ -212,12 +209,13 @@ Maybe.fn.concat = function (a) {
  * Maps a function over the inner value and wraps the result in a new Maybe. Does
  * not map the function over a Maybe.None
  * @method map
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @param {Function} f The function to map
  * @return {Some|None} A new Maybe.Some or the instance for Maybe.None
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some('a');
  * const none = Maybe.None();
@@ -236,11 +234,12 @@ Maybe.fn.map = function (f) {
 /**
  * Flattens a nested Maybe.Some one level
  * @method flat
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @return {Some|None} A flat Maybe.Some
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some(Maybe.Some(1));
  * const none = Maybe.None();
@@ -257,12 +256,13 @@ Maybe.fn.flat = function () {
 /**
  * Maps a Maybe returning function over a Maybe.Some and flattens the result
  * @method flatMap
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @param {Function} f A Maybe returning function to map
  * @return {Some|None} A new Maybe
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some(2);
  * const none = Maybe.None();
@@ -278,11 +278,12 @@ Maybe.fn.flatMap = function (f) {
 /**
  * Extracts the value from a Maybe.Some or Maybe.None. For Maybe.None returns null
  * @method extract
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @return {any|null} The value
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * Maybe.Some(1).extract(); // -> 1
  * Maybe.None().extract();  // -> null
@@ -293,12 +294,13 @@ Maybe.fn.extract = function () {
 /**
  * If given a function that takes a Maybe and returns a value, returns a Maybe
  * @method extend
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @param {Function} f A function taking a Maybe.Some or Maybe.None
  * @return {None|Some} A new Maybe
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some('a some');
  * const none = Maybe.None();
@@ -315,12 +317,13 @@ Maybe.fn.extend = function (f) {
 /**
  * Applies a function in a Maybe.Some to a value in another Maybe.Some
  * @method ap
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @param {Some|None} a The Maybe that holds the value
  * @return {Some|None} Maybe which contains the result of applying the function
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some(1);
  * const none = Maybe.None();
@@ -339,13 +342,14 @@ Maybe.fn.ap = function (a) {
 /**
  * Bifunctor interface, maps either of two functions over the value inside a Maybe
  * @method biMap
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @param {Function} f Function to map if the value is a Maybe.None
  * @param {Function} g Function to map if the value is a Maybe.Some
  * @return {Some|None} Maybe with the result of applying either of the functions
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some('a');
  * const none = Maybe.None();
@@ -367,13 +371,14 @@ Maybe.fn.biMap = function (f, g) {
  * value, returns the initial value for a Maybe.None and calls the function with
  * the initial value and the current value of a Maybe.Some
  * @method reduce
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @param {Function} f The function to reduce with
  * @param {any} x The seed value to reduce into
  * @return {any} Either the seed value or whatever the reducer function returned
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some('world');
  * const none = Maybe.None();
@@ -393,13 +398,14 @@ Maybe.fn.reduce = function (f, x) {
  * Takes a function with signature (Applicable f) => a -> f a and an Applicative
  * constructor and traverses the Maybe into the Applicative
  * @method traverse
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @param {Function} f Function to traverse with
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A Maybe wrapped in the Applicative
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  * 
  * const some = Maybe.Some(1);
  * const none = Maybe.None();
@@ -418,12 +424,13 @@ Maybe.fn.traverse = function (f, A) {
 /**
  * Sequences a Maybe into another Applicative type
  * @method sequence
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A Maybe wrapped in the Applicative
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some([1]);
  * const none = Maybe.None();
@@ -437,12 +444,13 @@ Maybe.fn.sequence = function (A) {
 /**
  * Alt implementation, allows to swap a Maybe.None
  * @method alt
- * @memberof module:data/Maybe.Maybe
+ * @memberof module:data.Maybe
+ * @instance
  * @param {Some|None} a The alternative Maybe
  * @return {Some|None} Choosen alternative
  *
  * @example
- * const {Maybe} = require('futils/data');
+ * const {Maybe} = require('futils').data;
  *
  * const some = Maybe.Some(1);
  * const none = Maybe.None();

@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the sequence function
- * @module operation/sequence
+/*
+ * @module operation
  */
 
 
@@ -19,14 +18,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The sequence function
  * @method sequence
- * @memberof module:operation/sequence
+ * @memberof module:operation
  * @param {Applicative} A Applicative type constructor to sequence into
  * @param {Traversable|Array} a A type that implements the Traversable interface
  * @return {Applicative} A new Applicative
  *
  * @example
- * const {Id} = require('futils/data');
- * const {sequence} = require('futils/operation');
+ * const {Id} = require('futils').data;
+ * const {sequence} = require('futils').operation;
  *
  * const ids = [Id.of(1), Id.of(2), Id.of(3)];
  * 

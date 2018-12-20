@@ -1,4 +1,4 @@
-const {Min} = require('../dist/monoid');
+const {Min} = require('../dist/futils').monoid;
 
 
 

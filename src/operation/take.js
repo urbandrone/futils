@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the take function
- * @module operation/take
+/*
+ * @module operation
  */
 
 
@@ -23,13 +22,13 @@ const _take = (n, a) => typeof a === 'string' || isNaN(a.length) ? [a] :
 /**
  * The take function
  * @method take
- * @memberof module:operation/take
+ * @memberof module:operation
  * @param {Number} n Number of items to take
  * @param {Array|Cons} a The collection to take the items from
  * @return {Array|Nil} Result of the take
  *
  * @example
- * const {take} = require('futils/operation');
+ * const {take} = require('futils').operation;
  *
  * take(1, ['a', 'b']); // -> ['a']
  * take(1);             // -> (Array/Cons -> Array/Cons)

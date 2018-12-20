@@ -14,27 +14,23 @@ import {Eq} from '../generics/Eq';
 
 
 
-/**
- * Grants access to the Fn monoid. Fn can be used to combine multiple functions
- * into a single function
- * @module monoid/Fn
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
+/*
+ * @module monoid
  */
 
 
 
 /**
- * The Fn monoid
- * @class module:monoid/Fn.Fn
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
+ * The Fn monoid. Fn can be used to combine multiple functions
+ * into a single function
+ * @class module:monoid.Fn
+ * @extends module:generics/Show
+ * @extends module:generics/Eq
  * @static
  * @version 3.0.0
  *
  * @example
- * const {Fn} = require('futils/monoid');
+ * const {Fn} = require('futils').monoid;
  *
  * Fn((a) => a); // -> Fn(a -> a)
  *
@@ -50,12 +46,12 @@ export const Fn = Type('Fn', ['value']).
  * functions
  * @method of
  * @static
- * @memberof module:monoid/Fn.Fn
+ * @memberof module:monoid.Fn
  * @param {any} a The value to lift
  * @return {Fn} A new Fn
  *
  * @example
- * const {Fn} = require('futils/monoid');
+ * const {Fn} = require('futils').monoid;
  *
  * Fn.of((a) => a * 2);    // -> Fn(a -> a * 2)
  * Fn.of(null);            // -> Fn(a -> a)
@@ -66,11 +62,11 @@ Fn.of = (a) => typeof a === 'function' ? Fn(a) : Fn(x => x);
  * Monoid implementation for Fn. Returns a Fn of the id function (a -> a)
  * @method empty
  * @static
- * @memberof module:monoid/Fn.Fn
+ * @memberof module:monoid.Fn
  * @return {Fn} The empty Fn
  *
  * @example
- * const {Fn} = require('futils/monoid');
+ * const {Fn} = require('futils').monoid;
  *
  * Fn.empty(); // -> Fn(a -> a)
  */
@@ -81,12 +77,13 @@ Fn.empty = () => Fn(a => a);
 /**
  * Concatenates a Fn with another using function composition
  * @method concat
- * @memberof module:monoid/Fn.Fn
+ * @memberof module:monoid.Fn
+ * @instance
  * @param {Fn} a The Fn instance to concatenate with
  * @return {Fn} A new Fn
  *
  * @example
- * const {Fn} = require('futils/monoid');
+ * const {Fn} = require('futils').monoid;
  *
  * const fn = Fn((a) => a * 2);
  *

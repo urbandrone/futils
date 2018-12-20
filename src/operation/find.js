@@ -9,11 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the find function. It takes a predicate function and a Filterable
- * implementing type and returns either the first element for which the predicate
- * returns true or it returns null if the no element fulfills the predicate
- * @module operation/find
+/*
+ * @module operation
  */
 
 
@@ -26,15 +23,17 @@ const _find = (f, a) => {
 
 
 /**
- * The find function
+ * The find function. It takes a predicate function and a Filterable
+ * implementing type and returns either the first element for which the predicate
+ * returns true or it returns null if the no element fulfills the predicate
  * @method find
- * @memberof module:operation/find
+ * @memberof module:operation
  * @param {Function} f The function to find with
  * @param {Filterable} a A Filterable interface implementing type
  * @return {any|null} Either the first found value or null
  *
  * @example
- * const {find} = require('futils/operation');
+ * const {find} = require('futils').operation;
  *
  * const even = (n) => n % 2 === 0;
  * 

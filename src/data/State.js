@@ -11,11 +11,8 @@ import {Type} from '../adt';
 
 
 
-/**
- * Grants access to the State data structure, which is used to describe computations
- * with intermediate state
- * @module data/State
- * @requires adt
+/*
+ * @module data
  */
 
 
@@ -25,12 +22,13 @@ import {Type} from '../adt';
 
 
 /**
- * The State data structure
- * @class module:data/State.State
+ * The State data structure is used to describe computations with intermediate
+ * states
+ * @class module:data.State
  * @version 3.0.0
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * const state = State((s) => State.Result(1, s));
  *
@@ -42,9 +40,11 @@ import {Type} from '../adt';
 export const State = Type('State', ['compute']);
 /**
  * A wrapper for a stateful computations result value and state. Every computation
- * of a State data structure should return a StateResult. This is only needed,
- * if one wants to create State structures from scratch
- * @class module:data/State.StateResult
+ * of a State data structure should return a State.Result. This is only needed,
+ * if one wants to create State structures from scratch. Please have a look at the
+ * State example
+ * @class module:data.State.Result
+ * @static
  * @version 3.0.0
  */
 State.Result = Type('State.Result', ['value', 'state']);
@@ -55,12 +55,12 @@ State.Result = Type('State.Result', ['value', 'state']);
  * Lifts a value into a State
  * @method of
  * @static
- * @memberof module:data/State.State
+ * @memberof module:data.State
  * @param {any} a The value to lift
  * @return {State} A new State structure
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * const state = State.of(1);
  *
@@ -73,11 +73,11 @@ State.of = (a) => State((s) => State.Result(a, s));
  * state as the value and the state of the computation
  * @method get
  * @static
- * @memberof module:data/State.State
+ * @memberof module:data.State
  * @return {State} A new State with the intermediate state copied to the value
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * const state = State.get();
  *
@@ -90,12 +90,12 @@ State.get = () => State((s) => State.Result(s, s));
  * value with null and dropping the current intermediate state
  * @method put
  * @static
- * @memberof module:data/State.State
+ * @memberof module:data.State
  * @param {any} s Whatever should be the new intermediate state
  * @return {State} A new State
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * const state = State.put(1);
  *
@@ -108,12 +108,12 @@ State.put = (s) => State(() => State.Result(null, s));
  * drops the current value
  * @method modify
  * @static
- * @memberof module:data/State.State
+ * @memberof module:data.State
  * @param {Function} f A function which returns a new intermediate state from the current one
  * @return {State} A new State
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * const state = State.modify((n) => n + 1);
  *
@@ -127,12 +127,13 @@ State.modify = (f) => State.get().flatMap((s) => State.put(f(s)));
 /**
  * Maps a function over the current value of a State
  * @method map
- * @memberof module:data/State.State
+ * @memberof module:data.State
+ * @instance
  * @param {Function} f The function to map
  * @return {State} A new State
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * const state = State.of(1);
  * 
@@ -149,11 +150,12 @@ State.fn.map = function (f) {
 /**
  * Flattens a nested State one level
  * @method flat
- * @memberof module:data/State.State
+ * @memberof module:data.State
+ * @instance
  * @return {State} A new State
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * const state = State.of(State.of(1));
  *
@@ -168,12 +170,13 @@ State.fn.flat = function () {
 /**
  * Maps a State returning function over a State and flattens the result
  * @method flatMap
- * @memberof module:data/State.State
+ * @memberof module:data.State
+ * @instance
  * @param {Function} f A State returning function to map
  * @return {State} A new State
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * const state = State.of(1);
  *
@@ -187,12 +190,13 @@ State.fn.flatMap = function (f) {
 /**
  * Applies a function as the current value of a State to a value in another State
  * @method ap
- * @memberof module:data/State.State
+ * @memberof module:data.State
+ * @instance
  * @param {State} a The State which has the current value
  * @return {State} State which contains the result of applying the function
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * const state = State.of(1);
  *
@@ -206,12 +210,13 @@ State.fn.ap = function (a) {
 /**
  * Given an initial state, computes the final value and returns it
  * @method run
- * @memberof module:data/State.State
+ * @memberof module:data.State
+ * @instance
  * @param {any} s The initial state
  * @return {any} The final value of the computation
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * State.of(1).run(0); // -> 1
  */
@@ -221,12 +226,13 @@ State.fn.run = function (s) {
 /**
  * Given an initial state, computes the final state and returns it
  * @method exec
- * @memberof module:data/State.State
+ * @memberof module:data.State
+ * @instance
  * @param {any} s The initial state
  * @return {any} The final state of the computation
  *
  * @example
- * const {State} = require('futils/data');
+ * const {State} = require('futils').data;
  *
  * State.of(1).run(0); // -> 0
  */

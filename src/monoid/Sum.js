@@ -15,29 +15,24 @@ import {Ord} from '../generics/Ord';
 
 
 
-/**
- * Grants access to the Sum monoid. Sum can be used to sum up multiple numbers
- * into a final number via concattenation
- * @module monoid/Sum
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
+/*
+ * @module monoid
  */
 
 
 
 /**
- * The Sum monoid
- * @class module:monoid/Sum.Sum
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
+ * The Sum monoid. Sum can be used to sum up multiple numbers
+ * into a final number via concatenation
+ * @class module:monoid.Sum
+ * @extends module:generics/Show
+ * @extends module:generics/Eq
+ * @extends module:generics/Ord
  * @static
  * @version 3.0.0
  *
  * @example
- * const {Sum} = require('futils/monoid');
+ * const {Sum} = require('futils').monoid;
  *
  * Sum(1); // -> Sum(1)
  *
@@ -53,12 +48,12 @@ export const Sum = Type('Sum', ['value']).
  * isn't a number
  * @method of
  * @static
- * @memberof module:monoid/Sum.Sum
+ * @memberof module:monoid.Sum
  * @param {any} a The value to lift
  * @return {Sum} A new Sum
  *
  * @example
- * const {Sum} = require('futils/monoid');
+ * const {Sum} = require('futils').monoid;
  *
  * Sum.of(1);    // -> Sum(1)
  * Sum.of(null); // -> Sum(0)
@@ -69,11 +64,11 @@ Sum.of = a => typeof a === 'number' && !isNaN(a) ? Sum(a) : Sum(0);
  * Monoid implementation for Sum. Returns a Sum of 0
  * @method empty
  * @static
- * @memberof module:monoid/Sum.Sum
+ * @memberof module:monoid.Sum
  * @return {Sum} The empty Sum
  *
  * @example
- * const {Sum} = require('futils/monoid');
+ * const {Sum} = require('futils').monoid;
  *
  * Sum.empty(); // -> Sum(0)
  */
@@ -84,12 +79,13 @@ Sum.empty = () => Sum(0);
 /**
  * Concatenates a Sum with another using addition
  * @method concat
- * @memberof module:monoid/Sum.Sum
+ * @memberof module:monoid.Sum
+ * @instance
  * @param {Sum} a The Sum instance to concatenate with
  * @return {Sum} A new Sum
  *
  * @example
- * const {Sum} = require('futils/monoid');
+ * const {Sum} = require('futils').monoid;
  *
  * const sum = Sum(1);
  *

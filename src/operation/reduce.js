@@ -9,25 +9,24 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the reduce function. Reduces the values inside a structure to a
- * single value
- * @module operation/reduce
+/*
+ * @module operation
  */
 
 
 
 /**
- * The reduce function
+ * The reduce function. Reduces the values inside a structure to a
+ * single value
  * @method reduce
- * @memberof module:operation/reduce
+ * @memberof module:operation
  * @param {Function} f The function to reduce with
  * @param {any} a A value to reduce into
  * @param {Foldable} a A Foldable interface implementing type
  * @return {any} All values reduced into one value
  *
  * @example
- * const {reduce} = require('futils/operation');
+ * const {reduce} = require('futils').operation;
  *
  * reduce((a, b) => a + b, '', ['a', 'b']); // -> 'ab'
  * reduce((a, b) => a + b);                 // -> (a -> Foldable -> a)

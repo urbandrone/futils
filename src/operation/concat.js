@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the concat function
- * @module operation/concat
+/*
+ * @module operation
  */
 
 
@@ -19,13 +18,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The concat function
  * @method concat
- * @memberof module:operation/concat
+ * @memberof module:operation
  * @param {Semigroup} a The Semigroup to concat
  * @param {Semigroup} b The Semigroup to concatenate with
  * @return {Semigroup} Both Semigroup instances combined
  *
  * @example
- * const {concat} = require('futils/operation');
+ * const {concat} = require('futils').operation;
  *
  * const nums = [1, 2, 3];
  * 

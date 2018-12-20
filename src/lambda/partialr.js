@@ -9,23 +9,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the partialRight function which allows to implement partial application.
- * Use undefined as placeholder for arguments that should be skipped
- * @module lambda/partialr
+/*
+ * @module lambda
  */
 
 
 /**
- * The partialRight function 
+ * The partialRight function  allows to implement partial application.
+ * Use undefined as placeholder for arguments that should be skipped
  * @method partialRight
- * @memberof module:lambda/partialr
+ * @memberof module:lambda
  * @param {Function} f The function to prepare for partial application
  * @param {any} ...as Partial arguments to the function
  * @return {Function} A partial variant of f
  *
  * @example
- * const {partialRight} = require('futils/lambda');
+ * const {partialRight} = require('futils').lambda;
  *
  * const greet = (greeting, separator, name) => {
  *     return `${greeting}${separator}${name}`;

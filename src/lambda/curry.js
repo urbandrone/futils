@@ -10,11 +10,8 @@ import {arity} from '../core/arity';
 
 
 
-/**
- * Provides the curry function. Curry can be used to turn a function which takes
- * multiple arguments at once into a function which takes its arguments in
- * multiple steps
- * @module lambda/curry
+/*
+ * @module lambda
  */
 
 
@@ -31,14 +28,16 @@ function _curried (f, g, xs) {
 
 /**
  * The curry function. Takes a function and returns a variant of it which takes
- * arguments until enough arguments to execute the given function are consumed
+ * arguments until enough arguments to execute the given function are consumed.
+ * Curry can be used to turn a function which takes multiple arguments at once 
+ * into a function which takes its arguments in multiple steps
  * @method curry
- * @memberof module:lambda/curry
+ * @memberof module:lambda
  * @param {Function} f The function to curry
  * @return {Function} The curried variant
  *
  * @example
- * const {curry} = require('futils/lambda');
+ * const {curry} = require('futils').lambda;
  *
  * const add = (a, b) => a + b;
  * const cAdd = curry(add);

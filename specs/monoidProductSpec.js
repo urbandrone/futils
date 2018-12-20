@@ -1,4 +1,4 @@
-const {Product} = require('../dist/monoid');
+const {Product} = require('../dist/futils').monoid;
 
 
 

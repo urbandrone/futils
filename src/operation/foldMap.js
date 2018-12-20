@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-/**
- * Provides the foldMap function 
- * @module operation/foldMap
+/*
+ * @module operation
  */
 
 
@@ -19,14 +18,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /**
  * The foldMap function
  * @method foldMap
- * @memberof module:operation/foldMap
+ * @memberof module:operation
  * @param {Function} A function returning a Monoid to fold into
  * @param {Foldable} a The values to fold
  * @return {Monoid} All values folded into the Monoid
  *
  * @example
- * const {Sum} = require('futils/monoid');
- * const {foldMap} = require('futils/operation');
+ * const {Sum} = require('futils').monoid;
+ * const {foldMap} = require('futils').operation;
  *
  * const sum = (n) => n <= 0 ? Sum.empty() : Sum.of(n);
  * 

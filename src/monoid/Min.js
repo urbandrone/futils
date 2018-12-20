@@ -15,29 +15,24 @@ import {Ord} from '../generics/Ord';
 
 
 
-/**
- * Grants access to the Min monoid. Min can be used to find the smallest item
- * from multiple items by concattenation
- * @module monoid/Min
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
+/*
+ * @module monoid
  */
 
 
 
 /**
- * The Min monoid
- * @class module:monoid/Min.Min
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
+ * The Min monoid. Min can be used to find the smallest item
+ * from multiple items by concatenation
+ * @class module:monoid.Min
+ * @extends module:generics/Show
+ * @extends module:generics/Eq
+ * @extends module:generics/Ord
  * @static
  * @version 3.0.0
  *
  * @example
- * const {Min} = require('futils/monoid');
+ * const {Min} = require('futils').monoid;
  *
  * Min(1); // -> Min(1)
  *
@@ -53,12 +48,12 @@ export const Min = Type('Min', ['value']).
  * isn't a number
  * @method of
  * @static
- * @memberof module:monoid/Min.Min
+ * @memberof module:monoid.Min
  * @param {any} a The value to lift
  * @return {Min} A new Min
  *
  * @example
- * const {Min} = require('futils/monoid');
+ * const {Min} = require('futils').monoid;
  *
  * Min.of(1);    // -> Min(1)
  * Min.of(null); // -> Min(Infinity)
@@ -69,11 +64,11 @@ Min.of = a => typeof a === 'number' && !isNaN(a) ? Min(a) : Min(Infinity);
  * Monoid implementation for Min. Returns a Min of Infinity
  * @method empty
  * @static
- * @memberof module:monoid/Min.Min
+ * @memberof module:monoid.Min
  * @return {Min} The empty Min
  *
  * @example
- * const {Min} = require('futils/monoid');
+ * const {Min} = require('futils').monoid;
  *
  * Min.empty(); // -> Min(Infinity)
  */
@@ -84,12 +79,13 @@ Min.empty = () => Min(Infinity);
 /**
  * Concatenates a Min with another using Ord.lt comparison
  * @method concat
- * @memberof module:monoid/Min.Min
+ * @memberof module:monoid.Min
+ * @instance
  * @param {Min} a The Min instance to concatenate with
  * @return {Min} A new Min
  *
  * @example
- * const {Min} = require('futils/monoid');
+ * const {Min} = require('futils').monoid;
  *
  * const min = Min(3);
  *

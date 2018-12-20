@@ -11,9 +11,8 @@ import {typeOf} from '../core/typeof';
 
 
 
-/**
- * A generic Show module
- * @module generics/Show
+/*
+ * @module generics
  */
 
 
@@ -73,14 +72,13 @@ export const showT = (a) => {
 /**
  * The generics Show class. Provides a generic toString method for all data structures
  * which derive from it
- * @class module:generics/Show.Show
+ * @class module:generics.Show
  * @static
- * @private
  * @version 3.0.0
  *
  * @example
- * const {Type} = require('futils/adt');
- * const {Show} = require('futils/generics');
+ * const {Type} = require('futils').adt;
+ * const {Show} = require('futils').generics;
  *
  * const Int = Type('Int', ['value']).
  *     deriving(Show);
@@ -91,7 +89,7 @@ export const showT = (a) => {
  * one.inspect();    // -> 'Int(1)'
  */
 export class Show {
-    static mixInto (ctor) {
+    static derive (ctor) {
         if (ctor && ctor.prototype) {
             ctor.prototype.toString = function () {
                 return showT(this);

@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import {compareEq} from '../generics/Eq';
 
 
-/**
- * Provides the equals function
- * @module operation/equals
+/*
+ * @module operation
  */
 
 
@@ -19,13 +18,13 @@ import {compareEq} from '../generics/Eq';
 /**
  * The equals function
  * @method equals
- * @memberof module:operation/equals
+ * @memberof module:operation
  * @param {any} a The first value to check for equality
  * @param {any} b The second value to check against
  * @return {Boolean} True if both are equal
  *
  * @example
- * const {equals} = require('futils/operation');
+ * const {equals} = require('futils').operation;
  *
  * equals(null, null);           // -> true
  * equals(1, 1);                 // -> true

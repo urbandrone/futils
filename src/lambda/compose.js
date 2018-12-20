@@ -9,9 +9,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import {arity} from '../core/arity';
 
 
-/**
- * Provides the compose function
- * @module lambda/compose
+/*
+ * @module lambda
  */
 
 
@@ -19,12 +18,12 @@ import {arity} from '../core/arity';
 /**
  * The compose function combines multiple functions from right to left
  * @method compose
- * @memberof module:lambda/compose
+ * @memberof module:lambda
  * @param {Function} ...f The function to compose
  * @return {Function} The result of the composition
  *
  * @example
- * const {compose} = require('futils/lambda');
+ * const {compose} = require('futils').lambda;
  *
  * const inc = (n) => n + 1;
  * const double = (n) => n * 2;

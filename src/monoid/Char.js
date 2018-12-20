@@ -15,29 +15,24 @@ import {Ord} from '../generics/Ord';
 
 
 
-/**
- * Grants access to the Char monoid. Char can be used to combine multiple items
- * into a string
- * @module monoid/Char
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
+/*
+ * @module monoid
  */
 
 
 
 /**
- * The Char monoid
- * @class module:monoid/Char.Char
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
+ * The Char monoid. Char can be used to combine multiple items
+ * into a string
+ * @class module:monoid.Char
+ * @extends module:generics/Show
+ * @extends module:generics/Eq
+ * @extends module:generics/Ord
  * @static
  * @version 3.0.0
  *
  * @example
- * const {Char} = require('futils/monoid');
+ * const {Char} = require('futils').monoid;
  *
  * Char('abc'); // -> Char('abc')
  *
@@ -53,12 +48,12 @@ export const Char = Type('Char', ['value']).
  * no strings
  * @method of
  * @static
- * @memberof module:monoid/Char.Char
+ * @memberof module:monoid.Char
  * @param {any} a The value to lift
  * @return {Char} A new Char
  *
  * @example
- * const {Char} = require('futils/monoid');
+ * const {Char} = require('futils').monoid;
  *
  * Char.of('abc');    // -> Char('abc')
  * Char.of(null); // -> Char('')
@@ -69,11 +64,11 @@ Char.of = (a) => typeof a === 'string' ? Char(a) : Char('');
  * Monoid implementation for Char. Returns a Char of an empty string
  * @method empty
  * @static
- * @memberof module:monoid/Char.Char
+ * @memberof module:monoid.Char
  * @return {Char} The empty Char
  *
  * @example
- * const {Char} = require('futils/monoid');
+ * const {Char} = require('futils').monoid;
  *
  * Char.empty(); // -> Char('')
  */
@@ -84,12 +79,13 @@ Char.empty = () => Char('');
 /**
  * Concatenates a Char with another using string concattenation
  * @method concat
- * @memberof module:monoid/Char.Char
+ * @memberof module:monoid.Char
+ * @instance
  * @param {Char} a The Char instance to concatenate with
  * @return {Char} A new Char
  *
  * @example
- * const {Char} = require('futils/monoid');
+ * const {Char} = require('futils').monoid;
  *
  * const ch = Char('a');
  *

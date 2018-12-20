@@ -23,14 +23,8 @@ const voids = () => void 0;
 
 
 
-/**
- * Grants access to the Task data structure. Use Task to encapsulate asynchronous
- * logic to avoid having to deal with callback hell. In contrast to a Promise, a
- * Task is evaluated lazy
- * @module data/Task
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
+/*
+ * @module data
  */
 
 
@@ -40,14 +34,16 @@ const voids = () => void 0;
 
 
 /**
- * The Task data structure
- * @class module:data/Task.Task
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
+ * The Task data structure. Use Task to encapsulate asynchronous
+ * logic to avoid having to deal with callback hell. In contrast to a Promise, a
+ * Task is evaluated lazy
+ * @class module:data.Task
+ * @extends module:generics.Show
+ * @extends module:generics.Eq
  * @version 3.0.0
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * const one = Task((rej, res) => res(1));
  *
@@ -70,12 +66,12 @@ Task.fn.cleanUp = voids;
  * value
  * @method of
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
  * @param {any} a The value to lift
  * @return {Task} The value wrapped in a Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * Task.of(1); // -> Task(_, 1)
  */
@@ -84,11 +80,11 @@ Task.of = (a) => Task((_, ok) => { ok(a); });
  * Monoid implementation for Task. Returns a Task which neither resolves nor rejects
  * @method empty
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
  * @return {Task} A Task that is pending forever
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * Task.empty(); // -> Task(?, ?)
  */
@@ -98,12 +94,12 @@ Task.empty = () => Task(voids);
  * value
  * @method resolve
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
  * @param {any} a The value to lift
  * @return {Task} The value wrapped in a Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * Task.resolve(1); // -> Task(_, 1)
  */
@@ -113,12 +109,12 @@ Task.resolve = Task.of;
  * value
  * @method reject
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
  * @param {any} a The value to lift
  * @return {Task} The value wrapped in a Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * Task.reject(1); // -> Task(1, _)
  */
@@ -127,13 +123,13 @@ Task.reject = (a) => Task(fail => { fail(a); });
  * Creates a Task which resolves a function after the given amount of milliseconds
  * @method timeout
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
  * @param {Number} ms Delay in milliseconds
  * @param {Function} f The function to call after the timeout
  * @return {Task} A Task that resolves with the result of the function
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * const delayed = () => 1;
  *
@@ -146,12 +142,12 @@ Task.timeout = (ms, f) => Task((_, ok) => {
  * Converts a Promise returning function into a Task returning form
  * @method fromPromiseFunction
  * @static
- * @memberof module:data/Task.task
+ * @memberof module:data.task
  * @param {Function} f A function which returns a Promise
  * @return {Function} A function which returns a Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  * const fs = require('fs').promises;
  *
  * const readFile = Task.fromPromiseFunction(fs.readFile.bind(fs));
@@ -165,12 +161,12 @@ Task.fromPromiseFunction = f => (...a) => Task((fail, ok) => {
  * Converts a Node style continuation passing function into a Task returning form
  * @method fromNodeFunction
  * @static
- * @memberof module:data/Task.task
+ * @memberof module:data.task
  * @param {Function} f A function in the Node CPS form
  * @return {Function} A function which returns a Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  * const fs = require('fs');
  *
  * const readFile = Task.fromNodeFunction(fs.readFile.bind(fs));
@@ -184,12 +180,12 @@ Task.fromNodeFunction = f => (...a) => Task((fail, ok) => {
  * A natural transformation from an Id into a Task
  * @method  fromId
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
  * @param {Id} a The Id to transform
  * @return {Task} The Task which resolves to the value of the Id
  *
  * @example
- * const {Task, Id} = require('futils/data');
+ * const {Task, Id} = require('futils').data;
  *
  * const id = Id('a value');
  *
@@ -201,12 +197,12 @@ Task.fromId = a => Task.of(a.value);
  * Maybe is a Maybe.None, the resulting Task rejects
  * @method fromMaybe
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
  * @param {Some|None} a The Maybe structure
  * @return {Task} A Task which rejects Maybe.None and resolves Maybe.Some
  *
  * @example
- * const {Task, Maybe} = require('futils/data');
+ * const {Task, Maybe} = require('futils').data;
  *
  * const some = Maybe.Some('a value');
  * const none = Maybe.None();
@@ -220,12 +216,12 @@ Task.fromMaybe = a => Task((fail, ok) => { if (a.isSome()) { ok(a.value); } else
  * Either is a Either.Left, the resulting Task rejects
  * @method fromEither
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
  * @param {Right|Left} a The Either structure
  * @return {Task} A Task which rejects Either.Left and resolves Either.Right
  *
  * @example
- * const {Task, Either} = require('futils/data');
+ * const {Task, Either} = require('futils').data;
  *
  * const r = Either.Right('a value');
  * const l = Either.Left('fallback');
@@ -240,12 +236,12 @@ Task.fromEither = a => Task((fail, ok) => { a.cata({Left: fail, Right: ok}); });
  * taken. If the first element is null or undefined, a rejecting Task is returned
  * @method fromList
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
  * @param {List} a The List structure
  * @return {Task} A Task of the first element
  *
  * @example
- * const {Task, List} = require('futils/data');
+ * const {Task, List} = require('futils').data;
  *
  * const ls = List.of(2).cons(1);
  *
@@ -257,12 +253,12 @@ Task.fromList = a => a.head == null ? Task.reject(a.head) : Task.of(a.head);
  * the resulting Task fails with the exception
  * @method fromIO
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
  * @param {IO} a The IO structure
  * @return {Task} A Task which resolves with the result of the IO
  *
  * @example
- * const {Task, IO} = require('futils/data');
+ * const {Task, IO} = require('futils').data;
  *
  * const env = k => IO(() => process[k]);
  *
@@ -274,11 +270,12 @@ Task.fromIO = a => Task((fail, ok) => { try { ok(a.run()); } catch (exc) { fail(
 /**
  * A natural transformation from a Task into a Promise
  * @method toPromise
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
+ * @instance
  * @return {Promise} A Promise which runs the Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * Task.of(1).toPromise(); // -> Promise(1)
  */
@@ -289,12 +286,13 @@ Task.fn.toPromise = function () {
  * Concatenates a Task with another. Resolves with the Task which resolves faster
  * or rejects if either of both fail
  * @method concat
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
+ * @instance
  * @param {Task} a The Task to concatenate with
  * @return {Task} Result of the concattenation
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * const ms300 = Task.timeout(300, () => 1);
  * const ms500 = Task.timeout(500, () => 2);
@@ -328,12 +326,13 @@ Task.fn.concat = function (a) {
 /**
  * Maps a function over the value and resolves with the result
  * @method map
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
+ * @instance
  * @param {Function} f The function to map
  * @return {Task} A new Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * const one = Task.of(1);
  *
@@ -347,11 +346,12 @@ Task.fn.map = function (f) {
 /**
  * Flattens a nested Task one level
  * @method flat
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
+ * @instance
  * @return {Task} A Task flattened
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * const tasks = Task.of(Task.of(1));
  *
@@ -366,12 +366,13 @@ Task.fn.flat = function () {
  * Maps a Task returning function over a Task and flattens the result
  * @method flatMap
  * @static
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
+ * @instance
  * @param {Function} f The function to map
  * @return {Task} A new Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * const task = Task.of(1);
  *
@@ -388,12 +389,13 @@ Task.fn.flatMap = function (f) {
  * Applies a Task with a function to another Task. Resolves when both resolve or
  * fails if either of both fails
  * @method ap
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
+ * @instance
  * @param {Task} a Task with a value
  * @return {Task} A new Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * const task = Task.of(1);
  *
@@ -434,11 +436,12 @@ Task.fn.ap = function (a) {
  * Swaps the disjunction of a Task, meaning if it normally resolves it fails and
  * if it normally fails it resolves
  * @method swap
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
+ * @instance
  * @return {Task} A new Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * const ok = Task.of(1);
  * const fail = Task.reject(1);
@@ -454,12 +457,13 @@ Task.fn.swap = function () {
 /**
  * Alt implementation, allows to swap a failing Task
  * @method alt
- * @memberof module:data/Task.Task
+ * @memberof module:data.Task
+ * @instance
  * @param {Task} a An optional Task
  * @return {Task} A new Task
  *
  * @example
- * const {Task} = require('futils/data');
+ * const {Task} = require('futils').data;
  *
  * Task.reject(0).alt(Task.of(1)); // -> Task(_, 1)
  */

@@ -15,29 +15,24 @@ import {Ord} from '../generics/Ord';
 
 
 
-/**
- * Grants access to the Record monoid. Record can be used to combine multiple
- * key-value pairs into a single one by merging
- * @module monoid/Record
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
+/*
+ * @module monoid
  */
 
 
 
 /**
- * The Record monoid
- * @class module:monoid/Record.Record
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
+ * The Record monoid. Record can be used to combine multiple
+ * key-value pairs into a single one by merging
+ * @class module:monoid.Record
+ * @extends module:generics/Show
+ * @extends module:generics/Eq
+ * @extends module:generics/Ord
  * @static
  * @version 3.0.0
  *
  * @example
- * const {Record} = require('futils/monoid');
+ * const {Record} = require('futils').monoid;
  *
  * Record({foo: 1}); // -> Record({ foo :: 1 })
  *
@@ -53,12 +48,12 @@ export const Record = Type('Record', ['value']).
  * key-value pairs
  * @method of
  * @static
- * @memberof module:monoid/Record.Record
+ * @memberof module:monoid.Record
  * @param {any} a The value to lift
  * @return {Record} A new Record
  *
  * @example
- * const {Record} = require('futils/monoid');
+ * const {Record} = require('futils').monoid;
  *
  * Record.of({foo: 1});        // -> Record({ foo :: 1 })
  * Record.of(null);            // -> Record({})
@@ -69,11 +64,11 @@ Record.of = (a) => typeOf(a) === 'Object' ? Record(a) : Record({});
  * Monoid implementation for Record. Returns a Record of a empty key-value pair
  * @method empty
  * @static
- * @memberof module:monoid/Record.Record
+ * @memberof module:monoid.Record
  * @return {Record} The empty Record
  *
  * @example
- * const {Record} = require('futils/monoid');
+ * const {Record} = require('futils').monoid;
  *
  * Record.empty(); // -> Record({})
  */
@@ -86,12 +81,13 @@ Record.empty = () => Record({});
  * that this operation might loose data because it overrides fields with the
  * same keys
  * @method concat
- * @memberof module:monoid/Record.Record
+ * @memberof module:monoid.Record
+ * @instance
  * @param {Record} a The Record instance to concatenate with
  * @return {Record} A new Record
  *
  * @example
- * const {Record} = require('futils/monoid');
+ * const {Record} = require('futils').monoid;
  *
  * const kv = Record({foo: 1});
  *

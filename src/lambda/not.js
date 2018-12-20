@@ -10,23 +10,22 @@ import {arity} from '../core/arity';
 
 
 
-/**
- * Provides the not function. It takes a function and returns a variant of it
- * that negates the return value
- * @module lambda/not
+/*
+ * @module lambda
  */
 
 
 
 /**
- * The not function
+ * The not function. It takes a function and returns a variant of it
+ * that negates the return value
  * @method not
- * @memberof module:lambda/not
+ * @memberof module:lambda
  * @param {Function} f The function to negate the return value
  * @return {Function} A variant of f
  *
  * @example
- * const {not} = require('futils/lambda');
+ * const {not} = require('futils').lambda;
  *
  * const isNull = (a) => a === null;
  *

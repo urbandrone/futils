@@ -15,31 +15,26 @@ import {Ord} from '../generics/Ord';
 
 
 
-/**
- * Grants access to the Either data structure and its subtypes Right and Left.
- * Usually they are used whenever an operation might result in an error. Typically
- * the error value is placed in a Left while the result is placed in a Right
- * (because canonically "right" means "correct")
- * @module data/Either
- * @requires adt
- * @requires generics/Show.Show
- * @requires generics/Eq.Eq
- * @requires generics/Ord.Ord
+/*
+ * @module data
  */
 
 
 
 /**
- * The Either union type
- * @class module:data/Either.Either
- * @extends module:generics/Show.Show
- * @extends module:generics/Eq.Eq
- * @extends module:generics/Ord.Ord
+ * The Either union type and its subtypes Right and Left.
+ * Usually they are used whenever an operation might result in an error. Typically
+ * the error value is placed in a Left while the result is placed in a Right
+ * (because canonically "right" means "correct")
+ * @class module:data.Either
+ * @extends module:generics.Show
+ * @extends module:generics.Eq
+ * @extends module:generics.Ord
  * @static
  * @version 3.0.0
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  * const {Left, Right} = Either;
  *
  * Either.Right(1); // -> Right(1)
@@ -61,12 +56,12 @@ const {Right, Left} = Either;
  * Lifts a value into a Either.Right
  * @method of
  * @static
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
  * @param {any} a The value to lift
  * @return {Right} The value wrapped in a Either.Right
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * Either.of(1); // -> Right(1)
  */
@@ -75,11 +70,11 @@ Either.of = Right;
  * Monoid implementation for Either. Returns a Either.Left with a value of null
  * @method empty
  * @static
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
  * @return {Left} A Either.Left
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * Either.empty(); // -> Left(null)
  */
@@ -89,12 +84,12 @@ Either.empty = () => Left(null);
  * null, undefined or some error it returns a Either.Left
  * @method from
  * @static
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
  * @param {any} a The value to lift
  * @return {Left|Right} Either.Right for all values which are not null, undefined or some error
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * Either.from(1);                   // -> Right(1)
  * Either.from(null);                // -> Left(null)
@@ -105,12 +100,12 @@ Either.from = (a) => a == null || Error.prototype.isPrototypeOf(a) ? Left(a || n
  * A natural transformation from a Maybe.Some or Maybe.None into a Either
  * @method fromMaybe
  * @static
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
  * @param {Some|None} a The Maybe to transform
  * @return {Left|Right} Either.Right if given a Maybe.Some, Either.Left otherwise
  *
  * @example
- * const {Either, Maybe} = require('futils/data');
+ * const {Either, Maybe} = require('futils').data;
  *
  * const some = Maybe.Some(1);
  * const none = Maybe.None();
@@ -144,12 +139,12 @@ Either.fromId = (a) => Either.from(a.value);
  * is returned
  * @method fromList
  * @static
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
  * @param {List} a The List to transform
  * @return {Left|Right} Either.Right if the first element is not null, undefined or some error
  *
  * @example
- * const {Either, List} = require('futils/data');
+ * const {Either, List} = require('futils').data;
  *
  * const ls = List.of(2).cons(1);
  * const ks = List.Nil();
@@ -164,12 +159,12 @@ Either.fromList = (a) => Either.from(a.head);
  * Either.Right if the computation succeeds or a Either.Left if it fails
  * @method try
  * @static
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
  * @param {IO|State|Function} a The computation
  * @return {Function} A function which takes arguments to run the computation
  *
  * @example
- * const {Either, IO} = require('futils/data');
+ * const {Either, IO} = require('futils').data;
  *
  * const ioEnv = IO((key) => process[key]);
  * const even = (n) => n % 2 === 0 ? n : null;
@@ -193,11 +188,12 @@ Either.try = (a) => (...v) => {
 /**
  * Test if the instance is a Either.Right or a Either.Left
  * @method isRight
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @return {Boolean} True for Either.Right
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right(1);
  * const l = Either.Left(null);
@@ -216,12 +212,13 @@ Either.fn.isRight = function () {
  * result in Either.Left. Please note, that the inner values have to be part of a
  * Semigroup as well for concattenation to succeed
  * @method concat
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @param {Right|Left} a The Either instance to concatenate with
  * @return {Right|Left} A new Either
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right('r');
  * const l = Either.Left('l');
@@ -244,12 +241,13 @@ Either.fn.concat = function (a) {
  * Maps a function over the inner value and wraps the result in a new Either. Does
  * not map the function over a Either.Left
  * @method map
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @param {Function} f The function to map
  * @return {Left|Right} A new Either.Right or the instance for Maybe.Left
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right('r');
  * const l = Either.Left('l');
@@ -268,11 +266,12 @@ Either.fn.map = function (f) {
 /**
  * Flattens a nested Either.Right one level
  * @method flat
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @return {Left|Right} A flat Either.Right
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right(Either.Right('r'));
  * const l = Either.Left('l');
@@ -289,12 +288,13 @@ Either.fn.flat = function () {
 /**
  * Maps a Either returning function over a Either.Right and flattens the result
  * @method flatMap
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @param {Function} f A Either returning function to map
  * @return {Left|Right} A new Either
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r1 = Either.Right(2);
  * const r2 = Either.Right(1);
@@ -312,11 +312,12 @@ Either.fn.flatMap = function (f) {
 /**
  * Extracts the value from a Either.Right or Either.Left
  * @method extract
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @return {any} The current value
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * Either.Right('a right').extract(); // -> 'a right'
  * Either.Left('a left').extract();   // -> 'a left'
@@ -327,12 +328,13 @@ Either.fn.extract = function () {
 /**
  * If given a function that takes a Either and returns a value, returns a Either
  * @method extend
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @param {Function} f A function taking a Either.Right or Either.Left
  * @return {Left|Right} A new Either
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right('a right');
  * const l = Either.Left('a left');
@@ -349,12 +351,13 @@ Either.fn.extend = function (f) {
 /**
  * Applies a function in a Either.Right to a value in another Either.Right
  * @method ap
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @param {Left|Right} a The Either that holds the value
  * @return {Left|Right} Either which contains the result of applying the function
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right(1);
  * const l = Either.Left('ignored');
@@ -373,13 +376,14 @@ Either.fn.ap = function (a) {
 /**
  * Bifunctor interface, maps either of two functions over the value inside a Either
  * @method biMap
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @param {Function} f Function to map if the structure is a Either.Left
  * @param {Function} g Function to map if the structure is a Either.Right
  * @return {Left|Right} Either with the result of applying either of the functions
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right('a');
  * const l = Either.Left('z')
@@ -401,13 +405,14 @@ Either.fn.biMap = function (f, g) {
  * value, returns the initial value for a Either.Left and calls the function with
  * the initial value and the current value of a Either.Right
  * @method reduce
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @param {Function} f The function to reduce with
  * @param {any} x The seed value to reduce into
  * @return {any} Either the seed value or whatever the reducer function returned
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right('world');
  * const l = Either.Left(null);
@@ -427,13 +432,14 @@ Either.fn.reduce = function (f, x) {
  * Takes a function with signature (Applicable f) => a -> f a and an Applicative
  * constructor and traverses the Either into the applicative
  * @method traverse
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @param {Function} f Function to traverse with
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A Either wrapped in the applicative
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  * 
  * const r = Either.Right(1);
  * const l = Either.Left(0);
@@ -452,12 +458,13 @@ Either.fn.traverse = function (f, A) {
 /**
  * Sequences a Either into another applicative Type
  * @method sequence
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @param {Applicative|Array} A A constructor with of and ap methods
  * @return {Applicative|Array} A Either wrapped in the applicative
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right([1]);
  * const l = Either.Left([0]);
@@ -472,11 +479,12 @@ Either.fn.sequence = function (A) {
  * Swaps the disjunction of a Either, meaning a Either.Left becomes a Either.Right
  * and a Either.Right becomes a Either.Left
  * @method swap
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @return {Left|Right} A new Either
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right(1);
  * const l = Either.Left(1);
@@ -493,12 +501,13 @@ Either.fn.swap = function () {
 /**
  * Alt implementation, allows to swap a Either.Left
  * @method alt
- * @memberof module:data/Either.Either
+ * @memberof module:data.Either
+ * @instance
  * @param {Left|Right} a The alternative Either
  * @return {Left|Right} Choosen alternative
  *
  * @example
- * const {Either} = require('futils/data');
+ * const {Either} = require('futils').data;
  *
  * const r = Either.Right(1);
  * const l = Either.Left(1);

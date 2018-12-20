@@ -1,4 +1,4 @@
-const O = require('../dist/optic');
+const O = require('../dist/futils').optic;
 
 
 describe('Optic', () => {

@@ -1,4 +1,4 @@
-const {Max} = require('../dist/monoid');
+const {Max} = require('../dist/futils').monoid;
 
 
 
