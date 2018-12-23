@@ -97,6 +97,12 @@ export class Show {
             ctor.prototype.inspect = function () {
                 return this.toString();
             }
+            Object.defineProperty(ctor.prototype, Symbol.toStringTag, {
+                enumerable: false,
+                configurable: false,
+                writable: false,
+                value: function () { return this.toString(); }
+            });
             return ctor;
         }
         throw `Cannot derive Show from ${typeOf(ctor)}`;

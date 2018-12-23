@@ -18,9 +18,10 @@ import {arity} from '../core/arity';
 
 
 
-export const map = (f, a) => {
+export const ap = (f, a) => {
     let tA = typeOf(a);
-    if (typeOf(f) === 'Function') {
+    let tF = typeOf(f);
+    if (tF === 'Function') {
         switch (tA) {
             // case 'Null':
             // case 'Void':
@@ -55,13 +56,13 @@ export const map = (f, a) => {
             case 'Return':
                 return a.map(f);
             case 'Object':
-                return Object.keys(a).reduce((r, k) => { r[k] = map(f, a[k]); return r; }, Object.create(null));
+                return Object.keys(a).reduce((r, k) => { r[k] = ap(f, a[k]); return r; }, Object.create(null));
             case 'Set':
                 return new Set([...a.values()].map(f));
             case 'Map':
-                return new Map([...a.entries()].map(([k, v]) => [k, map(f, v)]));
+                return new Map([...a.entries()].map(([k, v]) => [k, ap(f, v)]));
             case 'Function':
-                return arity(a.length, function mapped (...args) {
+                return arity(a.length, function applied (...args) {
                     return f(a(...args));
                 });
             case 'GeneratorFunction':
@@ -71,9 +72,7 @@ export const map = (f, a) => {
             case 'Promise':
                 return a.then(f);
             default:
-                return a.__values__ !== void 0 ?
-                    a.constructor(...a.__values__.map(v => map(f, a[v]))) :
-                    f(a);
+                return f(a);
         }
     }
     return a;
@@ -82,33 +81,41 @@ export const map = (f, a) => {
 
 
 /*
- * The generics Functor class. Provides a generic map method for all data structures
- * which derive from it. Deriving Functor with a type already implementing it will
+ * The generics Apply class. Provides a generic ap method for all data structures
+ * which derive from it. Deriving Apply with a type already implementing it will
  * throw errors.
- * @class module:generics.Functor
+ * @summary Works only for types which have a single data field!
+ * @class module:generics.Apply
  * @static
  * @version 3.1.0
  *
  * @example
  * const {Type} = require('futils').adt;
- * const {Functor} = require('futils').generics;
+ * const {Apply, Functor} = require('futils').generics;
  *
  * const Int = Type('Int', ['value']).
- *     deriving(Functor);
+ *     deriving(Functor, Apply);
  *
- * const increment = a => a + 1;
+ * const increment = Int(a => a + 1);
  *
  * const one = Int(1);
- * one.map(increment); // -> Int(2)
+ * increment.ap(one); // -> Int(2)
  */
-export class Functor {
+export class Apply {
     static derive (ctor) {
-        if (ctor && ctor.prototype && !ctor.prototype.map) {
-            ctor.prototype.map = function (f) {
-                return map(f, this);
+        if (ctor && ctor.prototype && (ctor.prototype.map || ctor.prototype.then) && !ctor.prototype.ap) {
+            ctor.prototype.ap = function (F) {
+                if (typeOf(this) === typeOf(F)) {
+                    return this.hasOwnProperty('value') ? ap(this.value, F) :
+                       this.__values__ != null ? ap(this[this.__values__[0]], F) :
+                       this instanceof Function ? ap(this, F) :
+                       Promise.prototype.isPrototypeOf(this) ? this.then(f => ap(f, F)) :
+                       F;
+                }
+                return F;
             }
             return ctor;
         }
-        throw `Cannot derive Functor from ${typeOf(ctor)}`;
+        throw `Cannot derive Apply from ${typeOf(ctor)}`;
     }
 }

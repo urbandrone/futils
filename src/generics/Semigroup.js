@@ -18,15 +18,16 @@ import {arity} from '../core/arity';
 
 
 
-export const map = (f, a) => {
+export const concat = (a, b) => {
     let tA = typeOf(a);
-    if (typeOf(f) === 'Function') {
+    if (typeOf(b) === tA) {
         switch (tA) {
-            // case 'Null':
-            // case 'Void':
-            // case 'String':
-            // case 'Number':
-            // case 'Boolean':
+            case 'Null':
+            case 'Void':
+                return a;
+            case 'Number':
+            case 'Boolean':
+                return [b.valueOf(), a.valueOf()];
             // case 'Proxy':
             // case 'Symbol':
             // case 'DataBuffer':
@@ -40,7 +41,8 @@ export const map = (f, a) => {
             // case 'Float64Array':
             // case 'TypedArray':
             // case 'State.Result':
-            //     return f(a);
+            //     return [b, a];
+            case 'String':
             case 'Array':
             case 'Id':
             case 'IO':
@@ -53,27 +55,38 @@ export const map = (f, a) => {
             case 'Right':
             case 'Cont':
             case 'Return':
-                return a.map(f);
+                return b.concat(a);
             case 'Object':
-                return Object.keys(a).reduce((r, k) => { r[k] = map(f, a[k]); return r; }, Object.create(null));
+                return Object.assign(Object.create(null), b, a);
             case 'Set':
-                return new Set([...a.values()].map(f));
+                return new Set([...b.values(), ...a.values()]);
             case 'Map':
-                return new Map([...a.entries()].map(([k, v]) => [k, map(f, v)]));
+                return [...b.entries(), ...a.entries()].reduceRight((m, [k, v]) => {
+                    if (!m.has(k)) { m.set(k, v); }
+                    return m;
+                }, new Map());
             case 'Function':
-                return arity(a.length, function mapped (...args) {
-                    return f(a(...args));
+                return arity(b.length, function concatenate (...args) {
+                    return a(b(...args));
                 });
             case 'GeneratorFunction':
                 return function * (...args) {
-                    yield f(a(...args));
+                    yield a(b(...args));
                 }
             case 'Promise':
-                return a.then(f);
+                return b.then(x => a.then(y => Promise.resolve([x, y])));
             default:
-                return a.__values__ !== void 0 ?
-                    a.constructor(...a.__values__.map(v => map(f, a[v]))) :
-                    f(a);
+                if ('value' in b) {
+                    return concat(a.value, b.value);
+                }
+                if (b.__values__ != null) {
+                    return b.__values__.reduce((x, v) => {
+                       if (x[v] != null) { x[v] = concat(x[v], b[v]); }
+                       else { x[v] = b[v]; }
+                       return x; 
+                   }, a);
+                }
+                return [b, a];
         }
     }
     return a;
@@ -82,33 +95,34 @@ export const map = (f, a) => {
 
 
 /*
- * The generics Functor class. Provides a generic map method for all data structures
- * which derive from it. Deriving Functor with a type already implementing it will
+ * The generics Semigroup class. Provides a generic ap method for all data structures
+ * which derive from it. Deriving Semigroup with a type already implementing it will
  * throw errors.
- * @class module:generics.Functor
+ * @summary Works only for types which have a single data field!
+ * @class module:generics.Semigroup
  * @static
  * @version 3.1.0
  *
  * @example
  * const {Type} = require('futils').adt;
- * const {Functor} = require('futils').generics;
+ * const {Semigroup} = require('futils').generics;
  *
- * const Int = Type('Int', ['value']).
- *     deriving(Functor);
+ * const Char = Type('Char', ['value']).
+ *     deriving(Semigroup);
  *
- * const increment = a => a + 1;
+ * const charB = Char('b');
+ * const charA = Char('a');
  *
- * const one = Int(1);
- * one.map(increment); // -> Int(2)
+ * charA.concat(charB); // -> Char('ab')
  */
-export class Functor {
+export class Semigroup {
     static derive (ctor) {
-        if (ctor && ctor.prototype && !ctor.prototype.map) {
-            ctor.prototype.map = function (f) {
-                return map(f, this);
+        if (ctor && ctor.prototype && !ctor.prototype.concat) {
+            ctor.prototype.concat = function (S) {
+                return concat(S, this);
             }
             return ctor;
         }
-        throw `Cannot derive Functor from ${typeOf(ctor)}`;
+        throw `Cannot derive Semigroup from ${typeOf(ctor)}`;
     }
 }
