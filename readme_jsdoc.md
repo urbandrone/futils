@@ -21,7 +21,7 @@ The library itself is divided into several packages or modules, and the document
 To help you get started, here's a quick start guide to get you up and running the library in a browser environment. Throughout, you'll be introduced to the structure of the library and to some of it's most common functions and structures. It is written in ES6/ES2015 but should easily be portable to ES5.
 
 ## Step 1: Download
-The library can be loaded either by downloading it from the [NPM](https://www.npmjs.com/package/futils), by getting it from a [CDN]() or by downloading it from [Github](). This quickstart uses the CDN.
+The library can be loaded either by downloading it from the [NPM](https://www.npmjs.com/package/futils), by getting it from a [CDN]() or by downloading it from [Github](). This quickstart uses NPM.
 
 | Source     | Snippet                                                                  |
 | -----------|--------------------------------------------------------------------------|
@@ -36,8 +36,8 @@ By completing the tutorial, you should have a working text processor which allow
 
 ## Step 3: Modeling types
 To model the types, we make use of the **ADT** package.
-```
-const { adt: {Type} } = futils;
+```javascript
+const { adt: {Type} } = require('futils');
 ```
 
 #### Matrix
@@ -46,7 +46,7 @@ We start by creating a `Matrix` data type with the `Type` function. You can use 
 `Type :: String -> Array String -> DataTypeConstructor`.
 
 The `Matrix` data type is going to carry the individual shifting matrix for the characters of a given string.
-```
+```javascript
 // data Matrix = Matrix (Array (Array String))
 const Matrix = Type('Matrix', ['xy']);
 
@@ -60,7 +60,7 @@ Also, let's make `Matrix` a part of the `Functor` family by providing a `map` me
 
 #### Char
 Each character of the text will be presented in a special type `Char`. The purpose of char is to provide the possibility to manipulate characters in terms of their character code. We make `Char` part of the family of `Functor`s to provide it with the necessary capability.
-```
+```javascript
 // data Char = Char String
 const Char = Type('Char', ['value']);
 
@@ -72,7 +72,7 @@ Char.fn.map = function (f) {
 
 #### Operation
 To represent the shifting operations, introduce a typeclass `Operation` which takes a function and allows classifies it as operation. To accomplish building chains of operations with this, let's make `Operation` a part of the family of `Monoid` type classes with the `concat` method being designed to perform function composition.
-```
+```javascript
 // data Operation = Operation (a -> a)
 const Operation = Type('Operation', ['run']);
 
@@ -83,17 +83,25 @@ Operation.fn.concat = function (f) {
 }
 ```
 
+As it turns out, that's exactly what the `Fn` monoid from futils is designed to do. You will find it under the **monoid** namespace. This means, we can get rid of `Operation` and just use `Fn`.
+```javascript
+const { adt: {Type},
+        monoid: {Fn} } = require('futils');
+```
+
+
 ## Step 4: Modeling functions
 So now we have types, let's think about the functions we need. The **lambda** namespace of futils grants access to utilities for combining and manipulating functions. 
-```
+```javascript
 const { adt: {Type},
-        lambda: {curry, pipe} } = futils;
+        monoid: {Fn} ,
+        lambda: {curry, pipe} } = require('futils');
 
 ```
 
 #### Text processing
 First off, we need a way to take a complete text, transform it into lines of text, transform the lines into individual words and transform these words into separate characters. JavaScript implements the `split` method for `String`s, and we are going to use it. Let's create a pure `split` function we can toss around. The function takes a "mark" argument which can either be a string or a regular expression.
-```
+```javascript
 // split :: String|Regex -> String -> Array String
 const split = curry((mark, str) => str.split(mark));
 
@@ -107,14 +115,15 @@ const toChars = pipe(
 ```
 
 With it, we can build a pipeline of operations (`toChar`) we want to perform on a given string to split it into lines, words and characters while preserving the correct nesting as `Array` structure. This structure is the reason why we have to dot chain `.map` all the way down. It looks a bit ugly, mainly because we havn't written it in a point-free form. Let's change it.
-```
+```javascript
 const { adt: {Type},
+        monoid: {Fn} ,
         lambda: {curry, pipe},
-        operation: {map, prop} } = futils;
+        operation: {map, prop} } = require('futils');
 ```
 
 With the help of the `map` function from **operation**, we can omit specifying the (cognitive) type of data we are working with. This helps us to not tie a function to a specific problem domain and therefor increases the chance for us to reuse it in other parts of our program.
-```
+```javascript
 // split :: String|Regex -> String -> Array String
 const split = curry((mark, str) => str.split(mark));
 
@@ -131,7 +140,7 @@ Complementing to `split` and `toChars`, let's write two other functions `join` a
 `fromChars(toChars('hello world')) === 'hello world'`.
 
 Here is the implementation:
-```
+```javascript
 // join :: String -> Array String -> String
 const join = curry((mark, xs) => xs.join(mark));
 
@@ -143,25 +152,28 @@ const fromChars = pipe(
 ```
 
 #### The parser
-
-```
-// Parser :: Object (a -> Operation a)
+It's time we create our "parser". As you know, a parser is a piece of software that takes some AST, and transforms it into machine code. To some extend, we create the same in a much more simple manner. Have a look at the code below: 
+```javascript
+// Parser :: Object (String : String -> Fn (Number -> Number))
 const Parser = {
-    '=': val => Operation(() => Number(val.replace('=', ''))),
-    '+': val => Operation(x => x + Number(val.replace('+', ''))),
-    '-': val => Operation(x => x - Number(val.replace('-', ''))),
-    '*': val => Operation(x => x * Number(val.replace('*', ''))),
-    '/': val => Operation(x => x / Number(val.replace('/', '')))
+    '=': val => Fn(() => Number(val.replace('=', ''))),
+    '+': val => Fn(x => x + Number(val.replace('+', ''))),
+    '-': val => Fn(x => x - Number(val.replace('-', ''))),
+    '*': val => Fn(x => x * Number(val.replace('*', ''))),
+    '/': val => Fn(x => x / Number(val.replace('/', '')))
 }
+```
 
 
-// tokenize :: (Matrix, Parser) -> Operation a
+
+```javascript
+// tokenize :: (Matrix, Parser) -> Fn a
 const tokenize = (m, p) => foldMap(
     ([x, y]) => p[x[0]](x).concat(p[y[0]](y)),
     m);
 
 
-// interpret :: Matrix -> Parser -> String -> String
+// interpretWith :: Matrix -> Parser -> String -> String
 const interpretWith = curry((m, parser, str) => {
     const encoder = tokenize(m, parser);
     const interpreter = pipe(Char.of, map(encoder.run), prop('value'));
@@ -173,10 +185,10 @@ const interpretWith = curry((m, parser, str) => {
 
 
 
-```
+```javascript
 // -- Do a quick test
-const encoderMatrix = Matrix.of([['+2', '*2'], ['-1', '/2']]);
-const decoderMatrix = Matrix.of([['*2', '+1'], ['/2', '-2']]);
+const encoderMatrix = Matrix([['+2', '*2'], ['-1', '/2']]);
+const decoderMatrix = Matrix([['*2', '+1'], ['/2', '-2']]);
 
 const myEncoder = interpretWith(encoderMatrix, Parser);
 const myDecoder = interpretWith(decoderMatrix, Parser);
@@ -193,15 +205,15 @@ console.log(`Decoded: ${myDecoder(encData)}`);
 > If you have choosen to use `NPM` in the beginning of the quickstart, this is the end.
 > You should by now have a working module ready to be used. 
 
-```
+```html
 <textarea id="input" cols="50" rows="10"></textarea>
 <textarea id="output" cols="50" rows="10"></textarea>
 ```
 
 
-```
+```javascript
 const { data: {IO, Maybe},
-        lambda: {curry} } = futils;
+        lambda: {curry} } = require('futils');
 
 
 
@@ -212,10 +224,16 @@ const on = curry((event, fn, node) => IO(() => {
     return node;
 }));
 
-const writeTo = curry((target, encode, e) => {
-    let text = e.value;
-    target.textContent = encode(text);
-})
+const setText = curry((text, node) => IO(() => {
+    node.textContent = text;
+    return node;
+}));
+
+
+
+const writeTo = curry((target, encode, e) => target.
+    map(setText(encode(e.value))).
+    run())
 ```
 
 
@@ -223,10 +241,93 @@ const writeTo = curry((target, encode, e) => {
 ## Step 6: Connecting the parts
 
 
-```
-query('#input').flatMap(on('keyup', writeTo(query('#output'), myEncoder)));
-query('#output').flatMap(on('keyup', writeTo(query('#input'), myDecoder)));
+```javascript
+query('#input').flatMap(on('keyup', writeTo(query('#output'), myEncoder))).run();
+query('#output').flatMap(on('keyup', writeTo(query('#input'), myDecoder))).run();
 ```
 
 
-## Step 7: Testing
+## Step 7: Done
+
+
+```javascript
+// file: encoder.js
+const { adt: {Type},
+        monoid: {Fn},
+        lambda: {curry, pipe},
+        operation: {map, prop} } = require('futils');
+
+
+
+/********** DATA TYPES **********/
+
+// data Matrix = Matrix Array (Array String)
+const Matrix = Type('Matrix', ['xy']);
+
+Matrix.fn.map = function (f) {
+    return Matrix(this.xy.map(([x, y] => [f(x), f(y)])));
+}
+
+
+// data Char = Char String
+const Char = Type('Char', ['value']);
+
+Char.fn.map = function (f) {
+    return Char(String.fromCharCode(f(this.value.charCodeAt(0))));
+}
+
+
+
+/********** PARSER **********/
+
+// Parser :: Object (String : String -> Fn (Number -> Number))
+const Parser = {
+    '=': val => Fn(() => Number(val.replace('=', ''))),
+    '+': val => Fn(x => x + Number(val.replace('+', ''))),
+    '-': val => Fn(x => x - Number(val.replace('-', ''))),
+    '*': val => Fn(x => x * Number(val.replace('*', ''))),
+    '/': val => Fn(x => x / Number(val.replace('/', '')))
+}
+
+
+
+/********** FUNCTIONS **********/
+
+// split :: String|Regex -> String -> Array String
+const split = curry((mark, str) => str.split(mark));
+
+// join :: String -> Array String -> String
+const join = curry((mark, xs) => xs.join(mark));
+
+
+// toChars :: String -> Array (Array (Array String))
+const toChars = pipe(
+    split(/\r|\n|\r\n/g),
+    map(split(/\s+/g)),
+    map(map(split(''))));
+
+// fromChars :: Array (Array (Array String)) -> String
+const fromChars = pipe(
+    map(map(join(''))),
+    map(join(' ')),
+    join('\n'));
+
+
+
+// tokenize :: (Matrix, Parser) -> Fn a
+const tokenize = (m, p) => foldMap(
+    ([x, y]) => p[x[0]](x).concat(p[y[0]](y)),
+    m);
+
+
+// interpretWith :: Matrix -> Parser -> String -> String
+const interpretWith = curry((m, parser, str) => {
+    const encoder = tokenize(m, parser);
+    const interpreter = pipe(Char.of, map(encoder.run), prop('value'));
+    return fromChars(toChars(str).map(map(map(interpreter))));
+});
+
+
+
+module.exports = {Matrix, Parser, interpretWith};
+```

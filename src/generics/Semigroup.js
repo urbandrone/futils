@@ -74,11 +74,10 @@ export const concat = (a, b) => {
                     yield a(b(...args));
                 }
             case 'Promise':
-                return b.then(x => a.then(y => Promise.resolve([x, y])));
+                return Promise.race([a, b]);
             default:
-                if ('value' in b) {
-                    return concat(a.value, b.value);
-                }
+                if (b.concat) { return b.concat(a); }
+                if ('value' in b) { return concat(a.value, b.value); }
                 if (b.__values__ != null) {
                     return b.__values__.reduce((x, v) => {
                        if (x[v] != null) { x[v] = concat(x[v], b[v]); }
