@@ -1,6 +1,6 @@
 {
   "name": "futils",
-  "version": "2.12.0",
+  "version": "3.0.0",
   "description": "Functional programming utility toolkit",
   "main": "dist/futils.js",
   "module": "src/__export.es6.js",
