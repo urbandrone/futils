@@ -1,77 +1,88 @@
-const {lambda: {curry}, data: {IO, Maybe}} = require('futils');
-const {Some, None} = Maybe;
-
-/***************** NOTE *****************
-A small example which should give a brief
-description of the computer this little
-program is executed on. The final result
-should either be some string in the form
-"Running a _ system with _ architecture"
-or "You have an alien computer!"
-****************************************/
+const { adt: {Type},
+        monoid: {Fn},
+        lambda: {curry, pipe},
+        operation: {map, prop, foldMap} } = require('futils');
 
 
-// proc :: forall a. String -> IO a
-const proc = k => IO(() => process[k] || null);
 
-// log :: forall a. a -> IO ()
-const log = a => IO(() => { console.log(a); });
+/********** DATA TYPES **********/
 
+// data Matrix = Matrix (Array String)
+const Matrix = Type('Matrix', ['value']);
 
-// architecture :: forall a. a -> Maybe String
-const architecture = a => {
-    switch (a) {
-        case 'arm':     return Some('ARM 32bit');
-        case 'arm64':   return Some('ARM 64bit');
-        case 'ia32':
-        case 'x32':     return Some('32bit');
-        case 'x64':     return Some('64bit');
-        case 'ppc':     return Some('PowerPC 32bit');
-        case 'ppc64':   return Some('PowerPC 64bit');
-        case 'mips':    return Some('MIPS');
-        case 'mipsel':  return Some('MIPSel');
-        case 's390':    return Some('System/390');
-        case 's390x':   return Some('System z');
-        default:        return None();
-    }
+Matrix.fn.map = function (f) {
+    return Matrix(this.value.map(f));
 }
 
-// platform :: forall a. a -> Maybe String
-const platform = a => {
-    switch (a) {
-        case 'aix':     return Some('Unix');
-        case 'darwin':  return Some('MacOS');
-        case 'win32':   return Some('Windows');
-        case 'linux':   return Some('Linux');
-        case 'freebsd': return Some('FreeBSD');
-        case 'sunos':   return Some('SunOS/Solaris');
-        case 'openbsd': return Some('OpenBSD');
-        default:        return None();
-    }
+Matrix.fn.reduce = function (f, a) {
+    return this.value.reduce(f, a);
 }
 
-// info :: Maybe String -> Maybe String -> Maybe String
-const info = curry((os, arch) => {
-    return os.flatMap(s => {
-        return arch.map(a => {
-            return `Running a ${s} system with ${a} architecture`;
-        });
-    });
+
+// data Char = Char String
+const Char = Type('Char', ['value']);
+
+Char.fn.map = function (f) {
+    return Char(String.fromCharCode(f(this.value.charCodeAt(0))));
+}
+
+
+
+/********** PARSER **********/
+
+// Parser :: Object (String : String -> Fn (Number -> Number))
+const Parser = {
+    '=': val => Fn(() => Number(val.replace('=', ''))),
+    '+': val => Fn(n => n + Number(val.replace('+', ''))),
+    '-': val => Fn(n => n - Number(val.replace('-', ''))),
+    '*': val => Fn(n => n * Number(val.replace('*', ''))),
+    '/': val => Fn(n => n / Number(val.replace('/', '')))
+}
+
+
+
+/********** FUNCTIONS **********/
+
+// split :: String|Regex -> String -> Array String
+const split = curry((mark, str) => str.split(mark));
+
+// join :: String -> Array String -> String
+const join = curry((mark, xs) => xs.join(mark));
+
+
+// toChars :: String -> Array (Array (Array String))
+const toChars = pipe(
+    split(/\r|\n|\r\n/g),
+    map(split(/\s+/g)),
+    map(map(split(''))));
+
+// fromChars :: Array (Array (Array String)) -> String
+const fromChars = pipe(
+    map(map(join(''))),
+    map(join(' ')),
+    join('\n'));
+
+
+
+// interpreterFrom :: (Matrix, Parser) -> Fn a
+const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
+
+// convert :: Matrix -> Parser -> String -> String
+const convert = curry((m, parser, str) => {
+    const interpreter = interpreterFrom(m, parser);
+    const transformer = pipe(Char, map(interpreter.value), prop('value'));
+    return fromChars(toChars(str).map(map(map(transformer))));
 });
 
 
-// getOs :: IO Maybe String
-const getOs = proc('platform').map(platform);
-// getArch :: IO Maybe String
-const getArch = proc('arch').map(architecture);
-// alien :: Maybe String
-const alien = Some('You have an alien computer!');
 
-// prog :: IO String
-const prog = getOs.
-    map(info).
-    ap(getArch).
-    map(a => a.alt(alien).value);
+/* ========= TEST ========= */
+const encoderMatrix = Matrix(['*2', '+2', '/2']);
+const decoderMatrix = Matrix(['*2', '-2', '/2']);
 
+const myEncoder = convert(encoderMatrix, Parser);
+const myDecoder = convert(decoderMatrix, Parser);
 
-prog.flatMap(log).run();
+const encData = myEncoder('Hello world');
+console.log(`Encoded: ${encData}`);
+console.log(`Decoded: ${myDecoder(encData)}`);

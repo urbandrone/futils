@@ -21,7 +21,7 @@ The library itself is divided into several packages or modules, and the document
 To help you get started, here's a quick start guide to get you up and running the library in a browser environment. Throughout, you'll be introduced to the structure of the library and to some of it's most common functions and structures. It is written in ES6/ES2015 but should easily be portable to ES5.
 
 ## Step 1: Download
-The library can be loaded either by downloading it from [NPM](https://www.npmjs.com/package/futils), by getting it from a [CDN](https://unpkg.com/futils@latest) or by downloading it from [Github](https://raw.githubusercontent.com/urbandrone/futils/dist/futils.js). This quickstart uses NPM.
+The library can be loaded either by downloading it from [NPM](https://www.npmjs.com/package/futils), by getting it from a [CDN](https://unpkg.com/futils@latest) or by downloading it from [Github](https://raw.githubusercontent.com/urbandrone/futils/master/dist/futils.js). This quickstart uses NPM.
 
 | Source     | Snippet                                                                  |
 | -----------|--------------------------------------------------------------------------|
@@ -53,9 +53,14 @@ const Matrix = Type('Matrix', ['value']);
 Matrix.fn.map = function (f) {
     return Matrix(this.value.map(f));
 }
+
+Matrix.fn.reduce = function (f, a) {
+    return this.value.reduce(f, a);
+}
 ```
 
 Also, let's make `Matrix` a part of the `Functor` family by providing a `map` method for it. Because `Matrix` is a container for an `Array` of `Array`s of `String`s, the `map` method takes a single function and projects it over each `String` in the inner `Array`s, then returning a new `Matrix` of the results.
+We can make `Matrix` be a part of the `Foldable` typeclass as well by providing a `reduce` method.
 
 
 #### Char
@@ -187,7 +192,7 @@ const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
 // convert :: Matrix -> Parser -> String -> String
 const convert = curry((m, parser, str) => {
     const interpreter = interpreterFrom(m, parser);
-    const transformer = pipe(Char.of, map(interpreter.run), prop('value'));
+    const transformer = pipe(Char, map(interpreter.value), prop('value'));
     return fromChars(toChars(str).map(map(map(transformer))));
 });
 ```
@@ -226,6 +231,10 @@ const Matrix = Type('Matrix', ['value']);
 
 Matrix.fn.map = function (f) {
     return Matrix(this.value.map(f));
+}
+
+Matrix.fn.reduce = function (f, a) {
+    return this.value.reduce(f, a);
 }
 
 
@@ -280,7 +289,7 @@ const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
 // convert :: Matrix -> Parser -> String -> String
 const convert = curry((m, parser, str) => {
     const interpreter = interpreterFrom(m, parser);
-    const transformer = pipe(Char.of, map(interpreter.run), prop('value'));
+    const transformer = pipe(Char, map(interpreter.value), prop('value'));
     return fromChars(toChars(str).map(map(map(transformer))));
 });
 
