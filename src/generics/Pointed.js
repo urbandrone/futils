@@ -21,7 +21,8 @@ import {arity} from '../core/arity';
 /*
  * The generics Pointed class. Provides a generic of method for all data constructors
  * which derive from it. Deriving Pointed with a type already implementing it will
- * throw errors.
+ * throw errors. Pointed can only be derived from classes which implement the Functor
+ * and Apply typeclasses.
  * @class module:generics.Pointed
  * @static
  * @version 3.1.0

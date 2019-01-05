@@ -9,7 +9,7 @@ The library itself is divided into several packages or modules, and the document
 | Package    | Namespace     | Description                                                                                    |
 |------------|---------------|------------------------------------------------------------------------------------------------|
 | Trampoline | `.trampoline` | Useful to create tail recursive functions in a not tail recursive language.                    |
-| Operation  | `.operation`  | Functions inside allow to operate with various data structures in a Point-Free form.           |
+| Operation  | `.operation`  | Functions that allow to operate with various data structures in a Point-Free form.             |
 | Lambda     | `.lambda`     | Contains helpers for working with functions, like `curry`, `flip` and `compose`.               |
 | ADT        | `.adt`        | Allows easy creation of algebraic single and union data types.                                 |
 | Generics   | `.generics`   | Building blocks for new data structures which can derive generic methods.                      |
@@ -21,13 +21,13 @@ The library itself is divided into several packages or modules, and the document
 To help you get started, here's a quick start guide to get you up and running the library in a browser environment. Throughout, you'll be introduced to the structure of the library and to some of it's most common functions and structures. It is written in ES6/ES2015 but should easily be portable to ES5.
 
 ## Step 1: Download
-The library can be loaded either by downloading it from the [NPM](https://www.npmjs.com/package/futils), by getting it from a [CDN]() or by downloading it from [Github](). This quickstart uses NPM.
+The library can be loaded either by downloading it from [NPM](https://www.npmjs.com/package/futils), by getting it from a [CDN](https://unpkg.com/futils@latest) or by downloading it from [Github](https://raw.githubusercontent.com/urbandrone/futils/dist/futils.js). This quickstart uses NPM.
 
 | Source     | Snippet                                                                  |
 | -----------|--------------------------------------------------------------------------|
+| **NPM**    | `npm i futils`                                                           |
 | **CDN**    | `<script src="https://unpkg.com/futils@latest"></script>`                |
 | **Github** | `<script src="local/path/to/futils.js"></script>`                        |
-| **NPM**    | `npm i futils`                                                           |
 
 
 ## Step 2: The expected result
@@ -43,15 +43,15 @@ const { adt: {Type} } = require('futils');
 #### Matrix
 We start by creating a `Matrix` data type with the `Type` function. You can use `Type` and `UnionType` in your programs to add more clarity to it and create your own data types and enumeration types. The signature of `Type` looks like this:
 
-`Type :: String -> Array String -> DataTypeConstructor`.
+`Type :: String -> Array String -> Constructor`.
 
 The `Matrix` data type is going to carry the individual shifting matrix for the characters of a given string.
 ```javascript
-// data Matrix = Matrix (Array (Array String))
-const Matrix = Type('Matrix', ['xy']);
+// data Matrix = Matrix (Array String)
+const Matrix = Type('Matrix', ['value']);
 
 Matrix.fn.map = function (f) {
-    return Matrix(this.xy.map(([x, y]) => [f(x), f(y)]));
+    return Matrix(this.value.map(f));
 }
 ```
 
@@ -83,7 +83,7 @@ Operation.fn.concat = function (f) {
 }
 ```
 
-As it turns out, that's exactly what the `Fn` monoid from futils is designed to do. You will find it under the **monoid** namespace. This means, we can get rid of `Operation` and just use `Fn`.
+As it turns out, that's exactly what the `Fn` monoid from futils is designed to do. You will find it in the **monoid** namespace. This means, we can get rid of `Operation` and just use `Fn`.
 ```javascript
 const { adt: {Type},
         monoid: {Fn} } = require('futils');
@@ -122,7 +122,7 @@ const { adt: {Type},
         operation: {map, prop} } = require('futils');
 ```
 
-With the help of the `map` function from **operation**, we can omit specifying the (cognitive) type of data we are working with. This helps us to not tie a function to a specific problem domain and therefor increases the chance for us to reuse it in other parts of our program.
+With the help of the `map` function from **operation**, we can omit specifying the (cognitive) type of data we are working with. This helps us to not tie a function to a specific problem domain and therefor increase the chance for us to reuse it in other parts of our program.
 ```javascript
 // split :: String|Regex -> String -> Array String
 const split = curry((mark, str) => str.split(mark));
@@ -152,120 +152,80 @@ const fromChars = pipe(
 ```
 
 #### The parser
-It's time we create our "parser". As you know, a parser is a piece of software that takes some AST, and transforms it into machine code. To some extend, we create the same in a much more simple manner. Have a look at the code below: 
+It's time we create our "parser". As you know, a parser is a piece of software that takes an AST and transforms it into machine code. To some extend, our parser works in the same way, although it is much simpler. Have a look at the code below: 
 ```javascript
 // Parser :: Object (String : String -> Fn (Number -> Number))
 const Parser = {
     '=': val => Fn(() => Number(val.replace('=', ''))),
-    '+': val => Fn(x => x + Number(val.replace('+', ''))),
-    '-': val => Fn(x => x - Number(val.replace('-', ''))),
-    '*': val => Fn(x => x * Number(val.replace('*', ''))),
-    '/': val => Fn(x => x / Number(val.replace('/', '')))
+    '+': val => Fn(n => n + Number(val.replace('+', ''))),
+    '-': val => Fn(n => n - Number(val.replace('-', ''))),
+    '*': val => Fn(n => n * Number(val.replace('*', ''))),
+    '/': val => Fn(n => n / Number(val.replace('/', '')))
 }
 ```
 
+Basically, our parser is just an assignment of some mathematical symbols to functions that return a `Fn` monoid as a result.
 
+The final pieces we have to write utilize the `foldMap` function of the **operation** namespace, so we have to import it:
+```javascript
+const { adt: {Type},
+        monoid: {Fn} ,
+        lambda: {curry, pipe},
+        operation: {map, prop, foldMap} } = require('futils');
+```
+
+In general, the signature of `foldMap` looks like this:
+
+`foldMap :: Functor F, Semigroup S => (a -> S a) -> F a -> S a`
+
+So it takes a function from some type `a` to a `Semigroup a`, then a `Functor a` and it finally returns a `Semigroup a`. Knowing that every monoid is also a valid semigroup, it is useful to conflate the `Fn` monoids from our parser into a single monoid while simultaneously mapping the parser over a given matrix.
 
 ```javascript
-// tokenize :: (Matrix, Parser) -> Fn a
-const tokenize = (m, p) => foldMap(
-    ([x, y]) => p[x[0]](x).concat(p[y[0]](y)),
-    m);
+// interpreterFrom :: (Matrix, Parser) -> Fn (Number -> Number)
+const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
 
-
-// interpretWith :: Matrix -> Parser -> String -> String
-const interpretWith = curry((m, parser, str) => {
-    const encoder = tokenize(m, parser);
-    const interpreter = pipe(Char.of, map(encoder.run), prop('value'));
-    return fromChars(toChars(str).map(map(map(interpreter))));
+// convert :: Matrix -> Parser -> String -> String
+const convert = curry((m, parser, str) => {
+    const interpreter = interpreterFrom(m, parser);
+    const transformer = pipe(Char.of, map(interpreter.run), prop('value'));
+    return fromChars(toChars(str).map(map(map(transformer))));
 });
 ```
 
+The `convert` function just glues all the pieces together. 
 
 
-
-
+## Step 5: Done
+It's time to do a quick test. Just create two matrices for encoding and decoding, the corresponding encoder and decoder and try it:
 ```javascript
-// -- Do a quick test
-const encoderMatrix = Matrix([['+2', '*2'], ['-1', '/2']]);
-const decoderMatrix = Matrix([['*2', '+1'], ['/2', '-2']]);
+const encoderMatrix = Matrix(['*2', '+2', '/2']);
+const decoderMatrix = Matrix(['*2', '-2', '/2']);
 
-const myEncoder = interpretWith(encoderMatrix, Parser);
-const myDecoder = interpretWith(decoderMatrix, Parser);
+const myEncoder = convert(encoderMatrix, Parser);
+const myDecoder = convert(decoderMatrix, Parser);
 
 const encData = myEncoder('Hello world');
 console.log(`Encoded: ${encData}`);
 console.log(`Decoded: ${myDecoder(encData)}`);
 ```
 
-
-## Step 5: Let's use `data`
-
-
-> If you have choosen to use `NPM` in the beginning of the quickstart, this is the end.
-> You should by now have a working module ready to be used. 
-
-```html
-<textarea id="input" cols="50" rows="10"></textarea>
-<textarea id="output" cols="50" rows="10"></textarea>
-```
-
+You can see the complete code below.
 
 ```javascript
-const { data: {IO, Maybe},
-        lambda: {curry} } = require('futils');
-
-
-
-const query = sel = IO(node => (node || document).querySelector(sel));
-
-const on = curry((event, fn, node) => IO(() => {
-    node.addEventListener(event, fn);
-    return node;
-}));
-
-const setText = curry((text, node) => IO(() => {
-    node.textContent = text;
-    return node;
-}));
-
-
-
-const writeTo = curry((target, encode, e) => target.
-    map(setText(encode(e.value))).
-    run())
-```
-
-
-
-## Step 6: Connecting the parts
-
-
-```javascript
-query('#input').flatMap(on('keyup', writeTo(query('#output'), myEncoder))).run();
-query('#output').flatMap(on('keyup', writeTo(query('#input'), myDecoder))).run();
-```
-
-
-## Step 7: Done
-
-
-```javascript
-// file: encoder.js
 const { adt: {Type},
         monoid: {Fn},
         lambda: {curry, pipe},
-        operation: {map, prop} } = require('futils');
+        operation: {map, prop, foldMap} } = require('futils');
 
 
 
 /********** DATA TYPES **********/
 
-// data Matrix = Matrix Array (Array String)
-const Matrix = Type('Matrix', ['xy']);
+// data Matrix = Matrix (Array String)
+const Matrix = Type('Matrix', ['value']);
 
 Matrix.fn.map = function (f) {
-    return Matrix(this.xy.map(([x, y] => [f(x), f(y)])));
+    return Matrix(this.value.map(f));
 }
 
 
@@ -283,10 +243,10 @@ Char.fn.map = function (f) {
 // Parser :: Object (String : String -> Fn (Number -> Number))
 const Parser = {
     '=': val => Fn(() => Number(val.replace('=', ''))),
-    '+': val => Fn(x => x + Number(val.replace('+', ''))),
-    '-': val => Fn(x => x - Number(val.replace('-', ''))),
-    '*': val => Fn(x => x * Number(val.replace('*', ''))),
-    '/': val => Fn(x => x / Number(val.replace('/', '')))
+    '+': val => Fn(n => n + Number(val.replace('+', ''))),
+    '-': val => Fn(n => n - Number(val.replace('-', ''))),
+    '*': val => Fn(n => n * Number(val.replace('*', ''))),
+    '/': val => Fn(n => n / Number(val.replace('/', '')))
 }
 
 
@@ -314,20 +274,17 @@ const fromChars = pipe(
 
 
 
-// tokenize :: (Matrix, Parser) -> Fn a
-const tokenize = (m, p) => foldMap(
-    ([x, y]) => p[x[0]](x).concat(p[y[0]](y)),
-    m);
+// interpreterFrom :: (Matrix, Parser) -> Fn a
+const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
 
-
-// interpretWith :: Matrix -> Parser -> String -> String
-const interpretWith = curry((m, parser, str) => {
-    const encoder = tokenize(m, parser);
-    const interpreter = pipe(Char.of, map(encoder.run), prop('value'));
-    return fromChars(toChars(str).map(map(map(interpreter))));
+// convert :: Matrix -> Parser -> String -> String
+const convert = curry((m, parser, str) => {
+    const interpreter = interpreterFrom(m, parser);
+    const transformer = pipe(Char.of, map(interpreter.run), prop('value'));
+    return fromChars(toChars(str).map(map(map(transformer))));
 });
 
 
 
-module.exports = {Matrix, Parser, interpretWith};
+module.exports = {Matrix, Parser, convert};
 ```

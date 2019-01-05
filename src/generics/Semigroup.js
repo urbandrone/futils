@@ -24,6 +24,9 @@ export const concat = (a, b) => {
         switch (tA) {
             case 'Null':
             case 'Void':
+            case 'State':
+            case 'Cont':
+            case 'Return':
                 return a;
             case 'Number':
             case 'Boolean':
@@ -47,14 +50,11 @@ export const concat = (a, b) => {
             case 'Id':
             case 'IO':
             case 'Task':
-            case 'State':
             case 'List':
             case 'Some':
             case 'None':
             case 'Left':
             case 'Right':
-            case 'Cont':
-            case 'Return':
                 return b.concat(a);
             case 'Object':
                 return Object.assign(Object.create(null), b, a);
@@ -71,7 +71,7 @@ export const concat = (a, b) => {
                 });
             case 'GeneratorFunction':
                 return function * (...args) {
-                    yield a(b(...args));
+                    yield * a(b(...args));
                 }
             case 'Promise':
                 return Promise.race([a, b]);

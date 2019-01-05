@@ -80,8 +80,8 @@ export const compareOrd = (a, b) => {
 
 /**
  * The generics Ord class. Provides a generic equals method for all data structures
- * which derive from it. Any type which derives from Ord must also implement
- * a equals method
+ * which derive from it. Ord can only be derived from classes which implement the
+ * Eq typeclass.
  * @class module:generics.Ord
  * @static
  * @version 3.0.0

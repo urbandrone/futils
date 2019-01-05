@@ -83,7 +83,8 @@ export const ap = (f, a) => {
 /*
  * The generics Apply class. Provides a generic ap method for all data structures
  * which derive from it. Deriving Apply with a type already implementing it will
- * throw errors.
+ * throw errors. Apply can only be derived from classes which implement the Functor
+ * typeclass.
  * @summary Works only for types which have a single data field!
  * @class module:generics.Apply
  * @static

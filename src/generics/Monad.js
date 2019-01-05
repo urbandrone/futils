@@ -72,7 +72,8 @@ export const flat = (a) => {
 /*
  * The generics Monad class. Provides a generic map method for all data structures
  * which derive from it. Deriving Monad with a type already implementing it will
- * throw errors.
+ * throw errors. Monad can only be derived from classes which implement the Functor
+ * typeclass.
  * @summary Works only for types which have a single data field!
  * @class module:generics.Monad
  * @static
