@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Home - futils Docs</title>
+    <title>data/List.js - futils Docs</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -141,280 +141,699 @@
 
 <div id="main">
     
+    <h1 class="page-title">data/List.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+The MIT License (MIT)
+Copyright (c) 2018 David Hofmann &lt;the.urban.drone@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+import {typeOf} from '../core/typeof';
+import {UnionType} from '../adt';
+import {showT} from '../generics/Show';
+import {compareEq} from '../generics/Eq';
 
 
 
 
+/*
+ * @module data
+ */
 
 
 
+/**
+ * The List data type. List is implemented as a linked
+ * list, where each part has a head and a tail. The end of the list is marked
+ * with Nil
+ * @class module:data.List
+ * @extends module:generics.Show
+ * @static
+ * @version 3.0.0
+ *
+ * @example
+ * const {List} = require('futils').data;
+ * const {Cons, Nil} = List;
+ * 
+ * List.Cons(1, List.Nil());               // -> Cons(1, Nil)
+ * Cons(1, Nil());                         // -> Cons(1, Nil)
+ *
+ * List.Cons(1, List.Cons(2, List.Nil())); // -> Cons(1, Cons(2, Nil))
+ * Cons(1, Cons(2, Nil()));                // -> Cons(1, Cons(2, Nil))
+ */
+export const List = UnionType('List', {Cons: ['head', 'tail'], Nil: []});
 
-
-    
-
-
-    <section class="readme">
-        <article><div class="readme_logo"><img src="logo.jpg?raw=true," alt="futils Logo" title="futils Logo"></div>
-
-<h1>About futils</h1><p>Welcome to the futils documentation. Here you'll find detailed information about everything the library provides. Each explanation is accompanied by short example codes to give brief introductions.</p>
-<h2>How this library is organized</h2><p>The library itself is divided into several packages or modules, and the documentation is organized the same way. Here is a short list of all modules of futils.</p>
-<table>
-<thead>
-<tr>
-<th>Package</th>
-<th>Namespace</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Trampoline</td>
-<td><code>.trampoline</code></td>
-<td>Useful to create tail recursive functions in a not tail recursive language.</td>
-</tr>
-<tr>
-<td>Operation</td>
-<td><code>.operation</code></td>
-<td>Functions that allow to operate with various data structures in a Point-Free form.</td>
-</tr>
-<tr>
-<td>Lambda</td>
-<td><code>.lambda</code></td>
-<td>Contains helpers for working with functions, like <code>curry</code>, <code>flip</code> and <code>compose</code>.</td>
-</tr>
-<tr>
-<td>ADT</td>
-<td><code>.adt</code></td>
-<td>Allows easy creation of algebraic single and union data types.</td>
-</tr>
-<tr>
-<td>Generics</td>
-<td><code>.generics</code></td>
-<td>Building blocks for new data structures which can derive generic methods.</td>
-</tr>
-<tr>
-<td>Monoid</td>
-<td><code>.monoid</code></td>
-<td>A collection of some of the most common monoidal structures like <code>Sum</code> and <code>All</code>.</td>
-</tr>
-<tr>
-<td>Data</td>
-<td><code>.data</code></td>
-<td>Pre-made data structures. All of these implement various interface contracts (typeclasses).</td>
-</tr>
-<tr>
-<td>Optic</td>
-<td><code>.optic</code></td>
-<td>van Laarhoven based lenses for <code>Object</code> and <code>Array</code> structures.</td>
-</tr>
-</tbody>
-</table>
-<h1>Quickstart</h1><p>To help you get started, here's a quick start guide to get you up and running the library in a browser environment. Throughout, you'll be introduced to the structure of the library and to some of it's most common functions and structures. It is written in ES6/ES2015 but should easily be portable to ES5.</p>
-<h2>Step 1: Download</h2><p>The library can be loaded either by downloading it from <a href="https://www.npmjs.com/package/futils">NPM</a>, by getting it from a <a href="https://unpkg.com/futils@latest">CDN</a> or by downloading it from <a href="https://raw.githubusercontent.com/urbandrone/futils/dist/futils.js">Github</a>. This quickstart uses NPM.</p>
-<table>
-<thead>
-<tr>
-<th>Source</th>
-<th>Snippet</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>NPM</strong></td>
-<td><code>npm i futils</code></td>
-</tr>
-<tr>
-<td><strong>CDN</strong></td>
-<td><code>&lt;script src=&quot;https://unpkg.com/futils@latest&quot;&gt;&lt;/script&gt;</code></td>
-</tr>
-<tr>
-<td><strong>Github</strong></td>
-<td><code>&lt;script src=&quot;local/path/to/futils.js&quot;&gt;&lt;/script&gt;</code></td>
-</tr>
-</tbody>
-</table>
-<h2>Step 2: The expected result</h2><p>By completing the tutorial, you should have a working text processor which allows to obfuscate the contents of a text file with the help of a parser.</p>
-<h2>Step 3: Modeling types</h2><p>To model the types, we make use of the <strong>ADT</strong> package.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type} } = require('futils');</code></pre><h4>Matrix</h4><p>We start by creating a <code>Matrix</code> data type with the <code>Type</code> function. You can use <code>Type</code> and <code>UnionType</code> in your programs to add more clarity to it and create your own data types and enumeration types. The signature of <code>Type</code> looks like this:</p>
-<p><code>Type :: String -&gt; Array String -&gt; Constructor</code>.</p>
-<p>The <code>Matrix</code> data type is going to carry the individual shifting matrix for the characters of a given string.</p>
-<pre class="prettyprint source lang-javascript"><code>// data Matrix = Matrix (Array String)
-const Matrix = Type('Matrix', ['value']);
-
-Matrix.fn.map = function (f) {
-    return Matrix(this.value.map(f));
-}</code></pre><p>Also, let's make <code>Matrix</code> a part of the <code>Functor</code> family by providing a <code>map</code> method for it. Because <code>Matrix</code> is a container for an <code>Array</code> of <code>Array</code>s of <code>String</code>s, the <code>map</code> method takes a single function and projects it over each <code>String</code> in the inner <code>Array</code>s, then returning a new <code>Matrix</code> of the results.</p>
-<h4>Char</h4><p>Each character of the text will be presented in a special type <code>Char</code>. The purpose of char is to provide the possibility to manipulate characters in terms of their character code. We make <code>Char</code> part of the family of <code>Functor</code>s to provide it with the necessary capability.</p>
-<pre class="prettyprint source lang-javascript"><code>// data Char = Char String
-const Char = Type('Char', ['value']);
-
-Char.fn.map = function (f) {
-    return Char(String.fromCharCode(f(this.value.charCodeAt(0))));
-}</code></pre><h4>Operation</h4><p>To represent the shifting operations, introduce a typeclass <code>Operation</code> which takes a function and allows classifies it as operation. To accomplish building chains of operations with this, let's make <code>Operation</code> a part of the family of <code>Monoid</code> type classes with the <code>concat</code> method being designed to perform function composition.</p>
-<pre class="prettyprint source lang-javascript"><code>// data Operation = Operation (a -> a)
-const Operation = Type('Operation', ['run']);
-
-Operation.empty = () => Operation(a => a);
-
-Operation.fn.concat = function (f) {
-    return Operation(x => f.run(this.run(x)));
-}</code></pre><p>As it turns out, that's exactly what the <code>Fn</code> monoid from futils is designed to do. You will find it in the <strong>monoid</strong> namespace. This means, we can get rid of <code>Operation</code> and just use <code>Fn</code>.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} } = require('futils');</code></pre><h2>Step 4: Modeling functions</h2><p>So now we have types, let's think about the functions we need. The <strong>lambda</strong> namespace of futils grants access to utilities for combining and manipulating functions. </p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} ,
-        lambda: {curry, pipe} } = require('futils');
-</code></pre><h4>Text processing</h4><p>First off, we need a way to take a complete text, transform it into lines of text, transform the lines into individual words and transform these words into separate characters. JavaScript implements the <code>split</code> method for <code>String</code>s, and we are going to use it. Let's create a pure <code>split</code> function we can toss around. The function takes a &quot;mark&quot; argument which can either be a string or a regular expression.</p>
-<pre class="prettyprint source lang-javascript"><code>// split :: String|Regex -> String -> Array String
-const split = curry((mark, str) => str.split(mark));
-
-// toChars :: String -> Array (Array (Array String))
-//            ^         ^      ^      ^
-//            Text      Lines  Words  Chars
-const toChars = pipe(
-    split(/\r|\n|\r\n/g),
-    lines => lines.map(split(/\s+/g)),
-    lines => lines.map(words => words.map(split(''))));</code></pre><p>With it, we can build a pipeline of operations (<code>toChar</code>) we want to perform on a given string to split it into lines, words and characters while preserving the correct nesting as <code>Array</code> structure. This structure is the reason why we have to dot chain <code>.map</code> all the way down. It looks a bit ugly, mainly because we havn't written it in a point-free form. Let's change it.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} ,
-        lambda: {curry, pipe},
-        operation: {map, prop} } = require('futils');</code></pre><p>With the help of the <code>map</code> function from <strong>operation</strong>, we can omit specifying the (cognitive) type of data we are working with. This helps us to not tie a function to a specific problem domain and therefor increase the chance for us to reuse it in other parts of our program.</p>
-<pre class="prettyprint source lang-javascript"><code>// split :: String|Regex -> String -> Array String
-const split = curry((mark, str) => str.split(mark));
-
-// toChars :: String -> Array (Array (Array String))
-const toChars = pipe(
-    split(/\r|\n|\r\n/g),
-    map(split(/\s+/g)),
-    map(map(split(''))));</code></pre><h4>Homomorphisms</h4><p>Complementing to <code>split</code> and <code>toChars</code>, let's write two other functions <code>join</code> and <code>fromChars</code>. The <code>split</code> and <code>join</code> functions are symmetrical and in conjuction form a homomorphism, the same goes for <code>toChars</code> and <code>fromChars</code>. This means if you put a text into <code>toChars</code> and the output of <code>toChars</code> into <code>fromChars</code>, you get the initial input back.</p>
-<p><code>fromChars(toChars('hello world')) === 'hello world'</code>.</p>
-<p>Here is the implementation:</p>
-<pre class="prettyprint source lang-javascript"><code>// join :: String -> Array String -> String
-const join = curry((mark, xs) => xs.join(mark));
-
-// fromChars :: Array (Array (Array String)) -> String
-const fromChars = pipe(
-    map(map(join(''))),
-    map(join(' ')),
-    join('\n'));</code></pre><h4>The parser</h4><p>It's time we create our &quot;parser&quot;. As you know, a parser is a piece of software that takes an AST and transforms it into machine code. To some extend, our parser works in the same way, although it is much simpler. Have a look at the code below: </p>
-<pre class="prettyprint source lang-javascript"><code>// Parser :: Object (String : String -> Fn (Number -> Number))
-const Parser = {
-    '=': val => Fn(() => Number(val.replace('=', ''))),
-    '+': val => Fn(n => n + Number(val.replace('+', ''))),
-    '-': val => Fn(n => n - Number(val.replace('-', ''))),
-    '*': val => Fn(n => n * Number(val.replace('*', ''))),
-    '/': val => Fn(n => n / Number(val.replace('/', '')))
-}</code></pre><p>Basically, our parser is just an assignment of some mathematical symbols to functions that return a <code>Fn</code> monoid as a result.</p>
-<p>The final pieces we have to write utilize the <code>foldMap</code> function of the <strong>operation</strong> namespace, so we have to import it:</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} ,
-        lambda: {curry, pipe},
-        operation: {map, prop, foldMap} } = require('futils');</code></pre><p>In general, the signature of <code>foldMap</code> looks like this:</p>
-<p><code>foldMap :: Functor F, Semigroup S =&gt; (a -&gt; S a) -&gt; F a -&gt; S a</code></p>
-<p>So it takes a function from some type <code>a</code> to a <code>Semigroup a</code>, then a <code>Functor a</code> and it finally returns a <code>Semigroup a</code>. Knowing that every monoid is also a valid semigroup, it is useful to conflate the <code>Fn</code> monoids from our parser into a single monoid while simultaneously mapping the parser over a given matrix.</p>
-<pre class="prettyprint source lang-javascript"><code>// interpreterFrom :: (Matrix, Parser) -> Fn (Number -> Number)
-const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
-
-// convert :: Matrix -> Parser -> String -> String
-const convert = curry((m, parser, str) => {
-    const interpreter = interpreterFrom(m, parser);
-    const transformer = pipe(Char.of, map(interpreter.run), prop('value'));
-    return fromChars(toChars(str).map(map(map(transformer))));
-});</code></pre><p>The <code>convert</code> function just glues all the pieces together. </p>
-<h2>Step 5: Done</h2><p>It's time to do a quick test. Just create two matrices for encoding and decoding, the corresponding encoder and decoder and try it:</p>
-<pre class="prettyprint source lang-javascript"><code>const encoderMatrix = Matrix(['*2', '+2', '/2']);
-const decoderMatrix = Matrix(['*2', '-2', '/2']);
-
-const myEncoder = convert(encoderMatrix, Parser);
-const myDecoder = convert(decoderMatrix, Parser);
-
-const encData = myEncoder('Hello world');
-console.log(`Encoded: ${encData}`);
-console.log(`Decoded: ${myDecoder(encData)}`);</code></pre><p>You can see the complete code below.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn},
-        lambda: {curry, pipe},
-        operation: {map, prop, foldMap} } = require('futils');
+const {Cons, Nil} = List;
+List.fn.head = null;
+List.fn.tail = Nil();
 
 
 
-/********** DATA TYPES **********/
+/* Utilities */
+const BREAK = Symbol('BREAK');
 
-// data Matrix = Matrix (Array String)
-const Matrix = Type('Matrix', ['value']);
+const foldl = (f, a, ls) => {
+    let r = a, s = ls;
+    while (!Nil.is(s)) {
+        r = f(r, s.head, s);
+        s = s.tail;
+    }
+    return r;
+}
 
-Matrix.fn.map = function (f) {
-    return Matrix(this.value.map(f));
+const breakableFoldl = (f, a, ls) => {
+    let r = a, s = ls;
+    while (!Nil.is(s)) {
+        let [cmd, _r] = f(r, s.head, s);
+        r = _r;
+        if (cmd === BREAK) { break; }
+        s = s.tail;
+    }
+    return r;
+}
+
+const foldr = (f, a, ls) => {
+    return foldl(f, a, foldl((x,y) => Cons(y, x), Nil(), ls));
 }
 
 
-// data Char = Char String
-const Char = Type('Char', ['value']);
+/**
+ * Lifts one or more values into a List
+ * @method of
+ * @static
+ * @memberof module:data.List
+ * @param {...any} a The value or values to lift
+ * @return {List} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.of(1); // -> Cons(1, Nil)
+ */
+List.of = (a) => Cons(a, Nil());
+/**
+ * Monoid implementation for List. Returns a List without values
+ * @method empty
+ * @static
+ * @memberof module:data.List
+ * @return {List} A List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.empty(); // -> Nil
+ */
+List.empty = Nil;
+/**
+ * Lifts a value into a List. Somewhat similiar to List.of, but only accepts a
+ * single value and puts it in a array if it is not an array itself. Useful to
+ * transform array-like objects on the fly
+ * @method from
+ * @static
+ * @memberof module:data.List
+ * @param {any} a The value to lift
+ * @return {List} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.from(1);    // -> Cons(1, Nil)
+ * List.from([1]);  // -> Cons(1, Nil)
+ * List.from(null); // -> Nil
+ */
+List.from = (a) => a == null ? Nil() : Array.isArray(a) ? List.fromArray(a) : Cons(a, Nil());
+/**
+ * A natural transformation from an array into a List
+ * @method fromArray
+ * @static
+ * @memberof module:data.List
+ * @param {Array} a The array to transform
+ * @return {List} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.fromArray([1, 2, 3]); // -> Cons(1, Cons(2, Cons(3, Nil)))
+ */
+List.fromArray = (a) => a.reduceRight((x, y) => Cons(y, x), Nil());
+/**
+ * A natural transformation from an Id to a List
+ * @method fromId
+ * @static
+ * @memberof module:data.List
+ * @param {Id} a The Id to transform
+ * @return {List} A new List
+ *
+ * @example
+ * const {List, Id} = require('futils').data;
+ *
+ * const id = Id('a value');
+ *
+ * List.fromId(id); // -> Cons('a value', Nil)
+ */
+List.fromId = (a) => List.from(a.value);
+/**
+ * A natural transformation from a Maybe.Some or Maybe.None into a List
+ * @method fromMaybe
+ * @static
+ * @memberof module:data.List
+ * @param {Some|None} a The Maybe to transform
+ * @return {List} A List with the value of a Maybe.Some and an empty List for Maybe.None
+ *
+ * @example
+ * const {List, Maybe} = require('futils').data;
+ *
+ * const some = Maybe.Some('a value');
+ * const none = Maybe.None();
+ *
+ * List.fromMaybe(some); // -> Cons('a value', Nil)
+ * List.fromMaybe(none); // -> Nil
+ */
+List.fromMaybe = (a) => a.isSome() ? List.from(a.value) : List.empty();
+/**
+ * A natural transformation from an Either.Left or Either.Right into a List
+ * @method fromEither
+ * @static
+ * @memberof module:data.List
+ * @param {Left|Right} a The Either to transform
+ * @return {List} List with value(s) for Either.Right, empty List for Either.Left
+ *
+ * @example
+ * const {List, Either} = require('futils').data;
+ *
+ * const l = Either.Left('a left');
+ * const r = Either.Right('a right');
+ *
+ * List.fromEither(l); // -> Nil
+ * List.fromEither(r); // -> Cons('a right', Nil)
+ */
+List.fromEither = (a) => a.isRight() ? List.from(a.value) : List.empty();
 
-Char.fn.map = function (f) {
-    return Char(String.fromCharCode(f(this.value.charCodeAt(0))));
+
+
+List.fn[Symbol.iterator] = function () {
+    return this.caseOf({
+        Nil: () => ({done: true, next() { return void 0; }}),
+        Cons: () => this.toArray()[Symbol.iterator]()
+    });
+}
+List.fn.toString = function () {
+    return this.caseOf({
+        Nil: () => 'Nil',
+        Cons: () => this.reduceRight((ls, a) => `Cons(${showT(a)}, ${ls})`, 'Nil')
+    });
 }
 
-
-
-/********** PARSER **********/
-
-// Parser :: Object (String : String -> Fn (Number -> Number))
-const Parser = {
-    '=': val => Fn(() => Number(val.replace('=', ''))),
-    '+': val => Fn(n => n + Number(val.replace('+', ''))),
-    '-': val => Fn(n => n - Number(val.replace('-', ''))),
-    '*': val => Fn(n => n * Number(val.replace('*', ''))),
-    '/': val => Fn(n => n / Number(val.replace('/', '')))
+/**
+ * A natural transformation from a List into an array
+ * @method toArray
+ * @memberof module:data.List
+ * @instance
+ * @return {Array} Array of values
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.of(2).cons(1).toArray(); // -> [1, 2]
+ */
+List.fn.toArray = function () {
+    return this.reduce((a, x) => a.concat(x), []);
 }
-
-
-
-/********** FUNCTIONS **********/
-
-// split :: String|Regex -> String -> Array String
-const split = curry((mark, str) => str.split(mark));
-
-// join :: String -> Array String -> String
-const join = curry((mark, xs) => xs.join(mark));
-
-
-// toChars :: String -> Array (Array (Array String))
-const toChars = pipe(
-    split(/\r|\n|\r\n/g),
-    map(split(/\s+/g)),
-    map(map(split(''))));
-
-// fromChars :: Array (Array (Array String)) -> String
-const fromChars = pipe(
-    map(map(join(''))),
-    map(join(' ')),
-    join('\n'));
-
-
-
-// interpreterFrom :: (Matrix, Parser) -> Fn a
-const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
-
-// convert :: Matrix -> Parser -> String -> String
-const convert = curry((m, parser, str) => {
-    const interpreter = interpreterFrom(m, parser);
-    const transformer = pipe(Char.of, map(interpreter.run), prop('value'));
-    return fromChars(toChars(str).map(map(map(transformer))));
-});
-
-
-
-module.exports = {Matrix, Parser, convert};</code></pre></article>
+/**
+ * Concatenates a List with another List
+ * @method concat
+ * @memberof module:data.List
+ * @instance
+ * @param {List} a The List instance to concatenate with
+ * @return {List} A List containing all values from both Lists
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const ls = List.of(1);
+ *
+ * ls.concat(List.of(2)); // -> Cons(1, Cons(2, Nil))
+ */
+List.fn.concat = function (a) {
+    if (List.is(a)) {
+        return this.caseOf({
+            Nil: () => this,
+            Cons: () => Nil.is(a) ? a : this.reduceRight((ls, x) => Cons(x, ls), a)
+        });
+    }
+    throw `List::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
+}
+/**
+ * Maps a function over each value in the List
+ * @method map
+ * @memberof module:data.List
+ * @instance
+ * @param {Function} f The function to map
+ * @return {List} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const ls = List.of(1);
+ * 
+ * const inc = (n) => n + 1;
+ *
+ * ls.map(inc); // -> Cons(2, Nil)
+ */
+List.fn.map = function (f) {
+    return this.reduceRight((ls, x) => Cons(f(x), ls), Nil());
+}
+/**
+ * Flattens a nested List one level
+ * @method flat
+ * @memberof module:data.List
+ * @instance
+ * @return {List} A List flattened
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const ls = List.of(List.of(1));
+ *
+ * ls.flat(); // -> Cons(1, Nil)
+ */
+List.fn.flat = function () {
+    return this.reduceRight((ls, x) => {
+        return x.reduceRight((ks, y) => Cons(y, ks), ls);
+    }, Nil());
+}
+/**
+ * Maps a List returning function over each value in the List and flattens the result
+ * @method flatMap
+ * @memberof module:data.List
+ * @instance
+ * @param {Function} f A List returning function to map
+ * @return {List} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const ls = List.of(1);
+ *
+ * const inc = (n) => List.of(n + 1);
+ *
+ * ls.flatMap(inc); // -> Cons(2, Nil)
+ */
+List.fn.flatMap = function (f) {
+    return this.map(f).flat();
+}
+/**
+ * Extracts the head value from a List. For Nil instances, it returns null
+ * @method extract
+ * @memberof module:data.List
+ * @instance
+ * @return {any|null} The head element
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.of(1).extract();   // -> 1
+ * List.empty().extract(); // -> null
+ */
+List.fn.extract = function () {
+    return this.head;
+}
+/**
+ * If given a function that takes a List and returns a value, returns a List
+ * @method extend
+ * @memberof module:data.List
+ * @instance
+ * @param {Function} f A function taking a List
+ * @return {List} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const ls = List.of(3).cons(2).cons(1);
+ *
+ * ls.extend(({head, tail}) => head + tail.head || 0); // -> Cons(6, Cons(5, Cons(3, Nil)))
+ */
+List.fn.extend = function (f) {
+    return this.caseOf({
+        Nil: () => this,
+        Cons: () => this.reduceRight((x, _, y) => Cons(f(y), x), Nil())
+    });
+}
+/**
+ * Applies a function in a List to the values in another List
+ * @method ap
+ * @memberof module:data.List
+ * @instance
+ * @param {List} a The List that holds the values
+ * @return {List} List which contains the results of applying the function
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const ls = List.of(1);
+ *
+ * const mInc = List.of((n) => n + 1);
+ *
+ * mInc.ap(ls); // -> Cons(2, Nil)
+ */
+List.fn.ap = function (a) {
+    return this.caseOf({
+        Nil: () => this,
+        Cons: (h) => a.map(h)
+    });
+}
+/**
+ * Works like the Array.reduce method. If given a function and an initial value,
+ * reduces the values in the List to a final value
+ * @method reduce
+ * @memberof module:data.List
+ * @instance
+ * @param {Function} f The function to reduce with
+ * @param {any} x The seed value to reduce into
+ * @return {any} All values reduced into the seed
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const ls = List.of(1);
+ *
+ * const reducer = (a, b) => a + b;
+ *
+ * ls.reduce(reducer, 1); // -> 2
+ */
+List.fn.reduce = function (f, x) {
+    return this.caseOf({
+        Nil: () => x,
+        Cons: () => foldl(f, x, this)
+    });
+}
+/**
+ * Works like the Array.reduceRight method. If given a function and an initial
+ * value, reduces the values in the List to a final value
+ * @method reduceRight
+ * @memberof module:data.List
+ * @instance
+ * @param {Function} f The function to reduce with
+ * @param {any} x The seed value to reduce into
+ * @return {any} All values reduced into the seed
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const ls = List.of(1);
+ *
+ * const reducer = (a, b) => a + b;
+ *
+ * ls.reduceRight(reducer, 1); // -> 2
+ */
+List.fn.reduceRight = function (f, x) {
+    return this.caseOf({
+        Nil: () => x,
+        Cons: () => foldr(f, x, this)
+    })
+}
+/**
+ * Takes a function with signature (Applicable f) => a -> f a and an Applicative
+ * constructor and traverses the List into the applicative
+ * @method traverse
+ * @memberof data/List.List
+ * @param {Function} f Function to traverse with
+ * @param {Applicative} A A constructor with of and ap methods
+ * @return {Applicative} A List wrapped in the applicative
+ *
+ * @example
+ * const {List, Maybe} = require('futils').data;
+ * 
+ * const ls = List.of(1)
+ *
+ * const fn = (n) => Maybe.of(n);
+ *
+ * ls.traverse(fn, Maybe); // -> Some(Cons(1, Nil))
+ */
+List.fn.traverse = function (f, A) {
+    return this.caseOf({
+        Nil: () => A.of(this),
+        Cons: () => this.reduceRight(
+            (xs, x) => xs.flatMap(a => f(x).map(b => Cons(b, a))),
+            A.of(Nil())
+        )
+    });
+}
+/**
+ * Sequences a List into another applicative Type
+ * @method sequence
+ * @memberof module:data.List
+ * @instance
+ * @param {Applicative} A A constructor with of and ap methods
+ * @return {Applicative} A List wrapped in the applicative
+ *
+ * @example
+ * const {List, Maybe} = require('futils').data;
+ *
+ * const ls = List.of(Maybe.of(1));
+ *
+ * ls.sequence(Maybe); // -> Some(Cons(1, Nil))
+ */
+List.fn.sequence = function (A) {
+    return this.traverse(x => x, A);
+}
+/**
+ * Alternative implementation, allows to swap a empty List
+ * @method alt
+ * @memberof data/List.List
+ * @param {List} a The alternative List
+ * @return {List} Choosen alternative
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const ls = List.of(1);
+ * const ns = List.empty();
+ *
+ * ls.alt(List.of(4));    // -> Cons(1, Nil)
+ * ls.alt(List.empty());  // -> Cons(1, Nil)
+ * ns.alt(List.of(4));    // -> Cons(4, Nil)
+ * ns.alt(List.empty());  // -> Nil
+ */
+List.fn.alt = function (a) {
+    return this.caseOf({
+        Nil: () => a,
+        Cons: () => this
+    });
+}
+/**
+ * Takes function which returns a Monoid and folds the List with it into a Monoid
+ * @method foldMap
+ * @memberof module:data.List
+ * @instance
+ * @param {Function} f The Monoid returning function
+ * @return {Monoid} A Monoid of the type the function returns
+ *
+ * @example
+ * const {List} = require('futils').data;
+ * const {Sum} = require('futils').monoid;
+ *
+ * const fn = (n) => Sum.of(n);
+ *
+ * List.of(1).cons(2).foldMap(fn); // -> Sum(3)
+ */
+List.fn.foldMap = function (f) {
+    return this.reduceRight((m, x) => m == null ? f(x) : m.concat(f(x)), null);
+}
+/**
+ * Takes a Monoid and folds the List into it
+ * @method fold
+ * @memberof module:data.List
+ * @instance
+ * @param {Monoid} A The Monoid type constructor
+ * @return {Monoid} A Monoid of the type the function returns
+ *
+ * @example
+ * const {List} = require('futils').data;
+ * const {Sum} = require('futils').monoid;
+ *
+ * List.of(1).cons(2).fold(Sum); // -> Sum(3)
+ */
+List.fn.fold = function (A) {
+    return this.foldMap(A.of);
+}
+/**
+ * Takes a function which returns a Boolean and filters the List with it. Works
+ * much like the Array.filter function
+ * @method filter
+ * @memberof module:data.List
+ * @instance
+ * @param {Function} f The function to filter with
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const even = (n) => n % 2 === 0;
+ *
+ * List.of(3).cons(2).cons(1).filter(even); // -> Cons(2, Nil)
+ */
+List.fn.filter = function (f) {
+    return this.reduceRight((ls, x) => !!f(x) ? Cons(x, ls) : ls, Nil());
+}
+/**
+ * Takes a value and puts it between each entry in the List
+ * @method intersperse
+ * @memberof module:data.List
+ * @instance
+ * @param {any} a The value to put in between
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.of(2).cons(1).intersperse(0.5); // -> Cons(1, Cons(0.5, Cons(2, Nil)))
+ */
+List.fn.intersperse = function (a) {
+    return this.reduceRight((ls, x) => Nil.is(ls) ? Cons(x, ls) : Cons(x, Cons(a, ls)), Nil());
+}
+/**
+ * Sets the given value to the head position of a List, making the current List
+ * the new tail
+ * @method cons
+ * @memberof module:data.List
+ * @instance
+ * @param {any} a The value to set
+ * @return {Cons} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.of(2).cons(1); // -> Cons(1, Cons(2, Nil));
+ */
+List.fn.cons = function (a) {
+    return Cons(a, this);
+}
+/**
+ * Sets a given value to the tail position of a List
+ * @method snoc
+ * @memberof module:data.List
+ * @instance
+ * @param {any} a The value to set
+ * @return {Cons} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.of(1).snoc(2); // -> Cons(1, Cons(2, Nil))
+ */
+List.fn.snoc = function (a) {
+    return this.reduceRight((ls, x) => Cons(x, ls), Cons(a, Nil()));
+}
+/**
+ * If given a number N, returns the first N items from the List
+ * @method take
+ * @memberof module:data.List
+ * @instance
+ * @param {Number} n Amount of elements to take from the beginning of the List
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.of(2).cons(1).cons(0).take(2); // -> Cons(0, Cons(1, Nil))
+ */
+List.fn.take = function (n) {
+    return this.caseOf({
+        Nil: () => this,
+        Cons: (h, t) => n > 0 ? Cons(h, t.take(n - 1)) : Nil()
+    });
+}
+/**
+ * If given a number N, drops the first N items from the List
+ * @method drop
+ * @memberof module:data.List
+ * @instance
+ * @param {Number} n Amount of elements to drop from the beginning of the List
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.of(2).cons(1).cons(0).drop(2); // -> Cons(2, Nil)
+ */
+List.fn.drop = function (n) {
+    return this.caseOf({
+        Nil: () => this,
+        Cons: (_, t) => n > 1 ? t.drop(n - 1) : t
+    });
+}
+/**
+ * Given a predicate function, returns the first element for which the
+ * predicate returns true. If no element passes the predicate, null is returned
+ * @method find
+ * @memberof module:data.List
+ * @instance
+ * @param {Function} f The predicate function
+ * @return {any|null} The first match or null
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const even = (n) => n % 2 === 0;
+ * 
+ * List.of(3).cons(2).cons(1).find(even); // -> 2
+ */
+List.fn.find = function (f) {
+    return this.caseOf({
+        Nil: () => null,
+        Cons: () => breakableFoldl((x, a) => !!f(a) ? [BREAK, a] : [null, x], null, this)
+    });
+}
+/**
+ * Given a predicate function, removes all duplicates from the List for which the
+ * predicate function returns true
+ * @method nubBy
+ * @memberof module:data.List
+ * @instance
+ * @param {Function} f The predicate function
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * const eq = (a, b) => a === b;
+ *
+ * List.of(3).cons(2).cons(2).cons(1).nubBy(eq); // -> Cons(1, Cons(2, Cons(3, Nil)))
+ */
+List.fn.nubBy = function (f) {
+    return this.reduce((x, a) => {
+        return x.find(b => f(a, b)) != null ? x : x.snoc(a);
+    }, Nil());
+}
+/**
+ * Removes all duplicates from the List. Uses deep equality for comparison
+ * @method nub
+ * @memberof module:data.List
+ * @instance
+ * @return {Cons|Nil} A new List
+ *
+ * @example
+ * const {List} = require('futils').data;
+ *
+ * List.of(3).cons(2).cons(2).cons(1).nub(); // -> Cons(1, Cons(2, Cons(3, Nil)))
+ */
+List.fn.nub = function () {
+    return this.nubBy(compareEq);
+}</code></pre>
+        </article>
     </section>
-
-
 
 
 

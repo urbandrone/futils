@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>State - futils Docs</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/atelier-estuary-light.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <style type="text/css">
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    }
+
+    h1.page-title {
+        padding-bottom: 0.75em;
+        border-bottom: 1px solid #e9e9e9;
+        color: #9e9e9e;
+    }
+
+    footer {
+        padding: 30px;
+    }
+
+    .prettyprint,
+    .prettyprint code,
+    .prettyprint.linenums li {
+        background-color: #f6f6fa;
+    }
+
+    .typ {
+        color: #1c79e5;
+    }
+    .kwd {
+        color: #646469;
+    }
+    .str,
+    .lit {
+        color: #eb5d31;
+    }
+    .com {
+        color: #8c8c91;
+    }
+
+    .name,
+    .container-overview + .subsection-title {
+        margin-top: 5em;
+    }
+    .name:first-child,
+    .subsection-title + .name {
+        margin-top: 0;
+    }
+
+    span.param-type,
+    .name code {
+        display: inline-block;
+        background-color: #f6f6fa;
+        border: 1px solid #e9e9ec;
+        padding: 5px;
+        line-height: 1;
+        border-radius: 0.33em;
+    }
+
+    a, a:active,
+    nav ul a:hover,
+    nav ul a:active {
+        color: #1c79e5;
+    }
+
+    nav > h2 > a {
+        color: #1c79e5 !important;
+    }
+
+
+    .readme h1,
+    .readme h2,
+    .readme h3,
+    .readme h4,
+    .readme h5,
+    .readme h6 {
+        color: #9e9e9e;
+        margin: 2em 0 -16px 0;
+    }
+    .readme h1 { font-size: 2.4rem; }
+    .readme h2 { font-size: 2.1rem; }
+    .readme h3 { font-size: 1.8rem; }
+    .readme h4 { font-size: 1.5rem; }
+    .readme h5 { font-size: 1.2rem; }
+    .readme h6 { font-weight: bold; }
+
+    .readme p {
+        margin: 32px 0;
+    }
+    .readme p:first-of-type {
+        font-size: 1.1rem;
+    }
+
+    .readme table {
+        table-layout: fixed;
+        border-collapse: collapse;
+        margin: 32px 0;
+        border: 1px solid #1c1c1f;
+    }
+    .readme th, .readme td {
+        padding: 5px 10px;
+        border: 1px solid #1c1c1f;
+        vertical-align: top;
+        text-align: left;
+    }
+    .readme th {
+        background-color: #1c1c1f;
+        color: #f6f6f6;
+        font-size: 10px;
+    }
+
+    .readme_logo {
+        padding: 30px 0 60px 0;
+    }
+    .readme_logo img {
+        display: block;
+    }
+    </style>
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-adt.html">adt</a><ul class='methods'><li data-type='method'><a href="module-adt.html#~Type">Type</a></li><li data-type='method'><a href="module-adt.html#~UnionType">UnionType</a></li></ul></li><li><a href="module-data.html">data</a></li><li><a href="module-generics.html">generics</a></li><li><a href="module-lambda.html">lambda</a><ul class='methods'><li data-type='method'><a href="module-lambda.html#.compose">compose</a></li><li data-type='method'><a href="module-lambda.html#.constant">constant</a></li><li data-type='method'><a href="module-lambda.html#.curry">curry</a></li><li data-type='method'><a href="module-lambda.html#.curryRight">curryRight</a></li><li data-type='method'><a href="module-lambda.html#.fixed">fixed</a></li><li data-type='method'><a href="module-lambda.html#.flip">flip</a></li><li data-type='method'><a href="module-lambda.html#.id">id</a></li><li data-type='method'><a href="module-lambda.html#.memoize">memoize</a></li><li data-type='method'><a href="module-lambda.html#.not">not</a></li><li data-type='method'><a href="module-lambda.html#.partial">partial</a></li><li data-type='method'><a href="module-lambda.html#.partialRight">partialRight</a></li><li data-type='method'><a href="module-lambda.html#.pipe">pipe</a></li></ul></li><li><a href="module-monoid.html">monoid</a></li><li><a href="module-operation.html">operation</a><ul class='methods'><li data-type='method'><a href="module-operation.html#.ap">ap</a></li><li data-type='method'><a href="module-operation.html#.concat">concat</a></li><li data-type='method'><a href="module-operation.html#.doM">doM</a></li><li data-type='method'><a href="module-operation.html#.drop">drop</a></li><li data-type='method'><a href="module-operation.html#.equals">equals</a></li><li data-type='method'><a href="module-operation.html#.filter">filter</a></li><li data-type='method'><a href="module-operation.html#.find">find</a></li><li data-type='method'><a href="module-operation.html#.flat">flat</a></li><li data-type='method'><a href="module-operation.html#.flatMap">flatMap</a></li><li data-type='method'><a href="module-operation.html#.fold">fold</a></li><li data-type='method'><a href="module-operation.html#.foldMap">foldMap</a></li><li data-type='method'><a href="module-operation.html#.head">head</a></li><li data-type='method'><a href="module-operation.html#.liftA">liftA</a></li><li data-type='method'><a href="module-operation.html#.map">map</a></li><li data-type='method'><a href="module-operation.html#.nub">nub</a></li><li data-type='method'><a href="module-operation.html#.nubBy">nubBy</a></li><li data-type='method'><a href="module-operation.html#.prop">prop</a></li><li data-type='method'><a href="module-operation.html#.reduce">reduce</a></li><li data-type='method'><a href="module-operation.html#.reduceRight">reduceRight</a></li><li data-type='method'><a href="module-operation.html#.sequence">sequence</a></li><li data-type='method'><a href="module-operation.html#.tail">tail</a></li><li data-type='method'><a href="module-operation.html#.take">take</a></li><li data-type='method'><a href="module-operation.html#.traverse">traverse</a></li></ul></li><li><a href="module-optic.html">optic</a><ul class='methods'><li data-type='method'><a href="module-optic.html#.createLens">createLens</a></li><li data-type='method'><a href="module-optic.html#.lenses">lenses</a></li><li data-type='method'><a href="module-optic.html#.mapped">mapped</a></li><li data-type='method'><a href="module-optic.html#.over">over</a></li><li data-type='method'><a href="module-optic.html#.set">set</a></li><li data-type='method'><a href="module-optic.html#.view">view</a></li></ul></li><li><a href="module-trampoline.html">trampoline</a><ul class='methods'><li data-type='method'><a href="module-trampoline.html#.again">again</a></li><li data-type='method'><a href="module-trampoline.html#.recur">recur</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="module-data.Either.html">Either</a><ul class='methods'><li data-type='method'><a href="module-data.Either.html#.empty">empty</a></li><li data-type='method'><a href="module-data.Either.html#.from">from</a></li><li data-type='method'><a href="module-data.Either.html#.fromList">fromList</a></li><li data-type='method'><a href="module-data.Either.html#.fromMaybe">fromMaybe</a></li><li data-type='method'><a href="module-data.Either.html#.of">of</a></li><li data-type='method'><a href="module-data.Either.html#.try">try</a></li><li data-type='method'><a href="module-data.Either.html#alt">alt</a></li><li data-type='method'><a href="module-data.Either.html#ap">ap</a></li><li data-type='method'><a href="module-data.Either.html#biMap">biMap</a></li><li data-type='method'><a href="module-data.Either.html#concat">concat</a></li><li data-type='method'><a href="module-data.Either.html#extend">extend</a></li><li data-type='method'><a href="module-data.Either.html#extract">extract</a></li><li data-type='method'><a href="module-data.Either.html#flat">flat</a></li><li data-type='method'><a href="module-data.Either.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.Either.html#isRight">isRight</a></li><li data-type='method'><a href="module-data.Either.html#map">map</a></li><li data-type='method'><a href="module-data.Either.html#reduce">reduce</a></li><li data-type='method'><a href="module-data.Either.html#sequence">sequence</a></li><li data-type='method'><a href="module-data.Either.html#swap">swap</a></li><li data-type='method'><a href="module-data.Either.html#traverse">traverse</a></li></ul></li><li><a href="module-data.Free.html">Free</a><ul class='methods'><li data-type='method'><a href="module-data.Free.html#.from">from</a></li><li data-type='method'><a href="module-data.Free.html#.liftM">liftM</a></li><li data-type='method'><a href="module-data.Free.html#.of">of</a></li><li data-type='method'><a href="module-data.Free.html#ap">ap</a></li><li data-type='method'><a href="module-data.Free.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.Free.html#interpret">interpret</a></li><li data-type='method'><a href="module-data.Free.html#map">map</a></li></ul></li><li><a href="module-data.Id.html">Id</a><ul class='methods'><li data-type='method'><a href="module-data.Id.html#.from">from</a></li><li data-type='method'><a href="module-data.Id.html#.fromEither">fromEither</a></li><li data-type='method'><a href="module-data.Id.html#.fromList">fromList</a></li><li data-type='method'><a href="module-data.Id.html#.fromMaybe">fromMaybe</a></li><li data-type='method'><a href="module-data.Id.html#.of">of</a></li><li data-type='method'><a href="module-data.Id.html#ap">ap</a></li><li data-type='method'><a href="module-data.Id.html#concat">concat</a></li><li data-type='method'><a href="module-data.Id.html#extend">extend</a></li><li data-type='method'><a href="module-data.Id.html#extract">extract</a></li><li data-type='method'><a href="module-data.Id.html#flat">flat</a></li><li data-type='method'><a href="module-data.Id.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.Id.html#map">map</a></li><li data-type='method'><a href="module-data.Id.html#reduce">reduce</a></li><li data-type='method'><a href="module-data.Id.html#sequence">sequence</a></li><li data-type='method'><a href="module-data.Id.html#traverse">traverse</a></li></ul></li><li><a href="module-data.IO.html">IO</a><ul class='methods'><li data-type='method'><a href="module-data.IO.html#.empty">empty</a></li><li data-type='method'><a href="module-data.IO.html#.from">from</a></li><li data-type='method'><a href="module-data.IO.html#.fromEither">fromEither</a></li><li data-type='method'><a href="module-data.IO.html#.fromId">fromId</a></li><li data-type='method'><a href="module-data.IO.html#.fromList">fromList</a></li><li data-type='method'><a href="module-data.IO.html#.fromMaybe">fromMaybe</a></li><li data-type='method'><a href="module-data.IO.html#.of">of</a></li><li data-type='method'><a href="module-data.IO.html#ap">ap</a></li><li data-type='method'><a href="module-data.IO.html#concat">concat</a></li><li data-type='method'><a href="module-data.IO.html#contraMap">contraMap</a></li><li data-type='method'><a href="module-data.IO.html#flat">flat</a></li><li data-type='method'><a href="module-data.IO.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.IO.html#map">map</a></li><li data-type='method'><a href="module-data.IO.html#proMap">proMap</a></li></ul></li><li><a href="module-data.List.html">List</a><ul class='methods'><li data-type='method'><a href="module-data.List.html#.empty">empty</a></li><li data-type='method'><a href="module-data.List.html#.from">from</a></li><li data-type='method'><a href="module-data.List.html#.fromArray">fromArray</a></li><li data-type='method'><a href="module-data.List.html#.fromEither">fromEither</a></li><li data-type='method'><a href="module-data.List.html#.fromId">fromId</a></li><li data-type='method'><a href="module-data.List.html#.fromMaybe">fromMaybe</a></li><li data-type='method'><a href="module-data.List.html#.of">of</a></li><li data-type='method'><a href="module-data.List.html#ap">ap</a></li><li data-type='method'><a href="module-data.List.html#concat">concat</a></li><li data-type='method'><a href="module-data.List.html#cons">cons</a></li><li data-type='method'><a href="module-data.List.html#drop">drop</a></li><li data-type='method'><a href="module-data.List.html#extend">extend</a></li><li data-type='method'><a href="module-data.List.html#extract">extract</a></li><li data-type='method'><a href="module-data.List.html#filter">filter</a></li><li data-type='method'><a href="module-data.List.html#find">find</a></li><li data-type='method'><a href="module-data.List.html#flat">flat</a></li><li data-type='method'><a href="module-data.List.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.List.html#fold">fold</a></li><li data-type='method'><a href="module-data.List.html#foldMap">foldMap</a></li><li data-type='method'><a href="module-data.List.html#intersperse">intersperse</a></li><li data-type='method'><a href="module-data.List.html#map">map</a></li><li data-type='method'><a href="module-data.List.html#nub">nub</a></li><li data-type='method'><a href="module-data.List.html#nubBy">nubBy</a></li><li data-type='method'><a href="module-data.List.html#reduce">reduce</a></li><li data-type='method'><a href="module-data.List.html#reduceRight">reduceRight</a></li><li data-type='method'><a href="module-data.List.html#sequence">sequence</a></li><li data-type='method'><a href="module-data.List.html#snoc">snoc</a></li><li data-type='method'><a href="module-data.List.html#take">take</a></li><li data-type='method'><a href="module-data.List.html#toArray">toArray</a></li></ul></li><li><a href="module-data.Maybe.html">Maybe</a><ul class='methods'><li data-type='method'><a href="module-data.Maybe.html#.empty">empty</a></li><li data-type='method'><a href="module-data.Maybe.html#.from">from</a></li><li data-type='method'><a href="module-data.Maybe.html#.fromEither">fromEither</a></li><li data-type='method'><a href="module-data.Maybe.html#.fromId">fromId</a></li><li data-type='method'><a href="module-data.Maybe.html#.fromList">fromList</a></li><li data-type='method'><a href="module-data.Maybe.html#.of">of</a></li><li data-type='method'><a href="module-data.Maybe.html#alt">alt</a></li><li data-type='method'><a href="module-data.Maybe.html#ap">ap</a></li><li data-type='method'><a href="module-data.Maybe.html#biMap">biMap</a></li><li data-type='method'><a href="module-data.Maybe.html#concat">concat</a></li><li data-type='method'><a href="module-data.Maybe.html#extend">extend</a></li><li data-type='method'><a href="module-data.Maybe.html#extract">extract</a></li><li data-type='method'><a href="module-data.Maybe.html#flat">flat</a></li><li data-type='method'><a href="module-data.Maybe.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.Maybe.html#isSome">isSome</a></li><li data-type='method'><a href="module-data.Maybe.html#map">map</a></li><li data-type='method'><a href="module-data.Maybe.html#reduce">reduce</a></li><li data-type='method'><a href="module-data.Maybe.html#sequence">sequence</a></li><li data-type='method'><a href="module-data.Maybe.html#traverse">traverse</a></li></ul></li><li><a href="module-data.State.html">State</a><ul class='methods'><li data-type='method'><a href="module-data.State.html#.get">get</a></li><li data-type='method'><a href="module-data.State.html#.modify">modify</a></li><li data-type='method'><a href="module-data.State.html#.of">of</a></li><li data-type='method'><a href="module-data.State.html#.put">put</a></li><li data-type='method'><a href="module-data.State.html#ap">ap</a></li><li data-type='method'><a href="module-data.State.html#exec">exec</a></li><li data-type='method'><a href="module-data.State.html#flat">flat</a></li><li data-type='method'><a href="module-data.State.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.State.html#map">map</a></li><li data-type='method'><a href="module-data.State.html#run">run</a></li></ul></li><li><a href="module-data.State.Result.html">Result</a></li><li><a href="module-data.Task.html">Task</a><ul class='methods'><li data-type='method'><a href="module-data.Task.html#.empty">empty</a></li><li data-type='method'><a href="module-data.Task.html#.fromEither">fromEither</a></li><li data-type='method'><a href="module-data.Task.html#.fromId">fromId</a></li><li data-type='method'><a href="module-data.Task.html#.fromIO">fromIO</a></li><li data-type='method'><a href="module-data.Task.html#.fromList">fromList</a></li><li data-type='method'><a href="module-data.Task.html#.fromMaybe">fromMaybe</a></li><li data-type='method'><a href="module-data.Task.html#.of">of</a></li><li data-type='method'><a href="module-data.Task.html#.reject">reject</a></li><li data-type='method'><a href="module-data.Task.html#.resolve">resolve</a></li><li data-type='method'><a href="module-data.Task.html#.timeout">timeout</a></li><li data-type='method'><a href="module-data.Task.html#alt">alt</a></li><li data-type='method'><a href="module-data.Task.html#ap">ap</a></li><li data-type='method'><a href="module-data.Task.html#concat">concat</a></li><li data-type='method'><a href="module-data.Task.html#flat">flat</a></li><li data-type='method'><a href="module-data.Task.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.Task.html#map">map</a></li><li data-type='method'><a href="module-data.Task.html#swap">swap</a></li><li data-type='method'><a href="module-data.Task.html#toPromise">toPromise</a></li></ul></li><li><a href="module-generics.Eq.html">Eq</a></li><li><a href="module-generics.Ord.html">Ord</a></li><li><a href="module-generics.Show.html">Show</a></li><li><a href="module-monoid.All.html">All</a><ul class='methods'><li data-type='method'><a href="module-monoid.All.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.All.html#.of">of</a></li><li data-type='method'><a href="module-monoid.All.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Any.html">Any</a><ul class='methods'><li data-type='method'><a href="module-monoid.Any.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Any.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Any.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Char.html">Char</a><ul class='methods'><li data-type='method'><a href="module-monoid.Char.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Char.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Char.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Fn.html">Fn</a><ul class='methods'><li data-type='method'><a href="module-monoid.Fn.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Fn.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Fn.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Max.html">Max</a><ul class='methods'><li data-type='method'><a href="module-monoid.Max.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Max.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Max.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Min.html">Min</a><ul class='methods'><li data-type='method'><a href="module-monoid.Min.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Min.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Min.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Product.html">Product</a><ul class='methods'><li data-type='method'><a href="module-monoid.Product.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Product.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Product.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Record.html">Record</a><ul class='methods'><li data-type='method'><a href="module-monoid.Record.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Record.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Record.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Sum.html">Sum</a><ul class='methods'><li data-type='method'><a href="module-monoid.Sum.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Sum.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Sum.html#concat">concat</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">State</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="module-data.html">data</a>.</span>
+        
+        State
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="State"><span class="type-signature"></span>new State<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    The State data structure is used to describe computations with intermediatestates
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>3.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line24">line 24</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;const state = State((s) => State.Result(1, s));state.run(0);           // -> 1state.exec(0);          // -> 0state.compute(0).value; // -> 1state.compute(0).state; // -> 0</code></pre>
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="module-data.State.Result.html">Result</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".get"><span class="type-signature">(static) </span>get<span class="signature">()</span><span class="type-signature"> &rarr; {State}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns a State which drops intermediate values and copies the intermediatestate as the value and the state of the computation
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line71">line 71</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A new State with the intermediate state copied to the value
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">State</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;const state = State.get();state.run(0);  // -> 0state.exec(0); // -> 0</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".modify"><span class="type-signature">(static) </span>modify<span class="signature">(f)</span><span class="type-signature"> &rarr; {State}</span></h4>
+
+    
+
+
+
+<div class="description">
+    If given a function, uses the function to modify the intermediate state anddrops the current value
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>f</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A function which returns a new intermediate state from the current one</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line106">line 106</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A new State
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">State</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;const state = State.modify((n) => n + 1);state.run(0);  // -> nullstate.exec(0); // -> 1</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".of"><span class="type-signature">(static) </span>of<span class="signature">(a)</span><span class="type-signature"> &rarr; {State}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Lifts a value into a State
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The value to lift</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line54">line 54</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A new State structure
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">State</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;const state = State.of(1);state.run(0);  // -> 1state.exec(0); // -> 0</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".put"><span class="type-signature">(static) </span>put<span class="signature">(s)</span><span class="type-signature"> &rarr; {State}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Puts whatever is given as the new intermediate state, replacing the currentvalue with null and dropping the current intermediate state
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>s</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whatever should be the new intermediate state</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line88">line 88</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A new State
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">State</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;const state = State.put(1);state.run(0);  // -> nullstate.exec(0); // -> 1</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="ap"><span class="type-signature"></span>ap<span class="signature">(a)</span><span class="type-signature"> &rarr; {State}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Applies a function as the current value of a State to a value in another State
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">State</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The State which has the current value</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line190">line 190</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    State which contains the result of applying the function
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">State</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;const state = State.of(1);const mInc = State.of((n) => n + 1);mInc.ap(state); // -> State(2, ?)</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="exec"><span class="type-signature"></span>exec<span class="signature">(s)</span><span class="type-signature"> &rarr; {any}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Given an initial state, computes the final state and returns it
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>s</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The initial state</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line226">line 226</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The final state of the computation
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">any</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;State.of(1).run(0); // -> 0</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="flat"><span class="type-signature"></span>flat<span class="signature">()</span><span class="type-signature"> &rarr; {State}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Flattens a nested State one level
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line150">line 150</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A new State
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">State</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;const state = State.of(State.of(1));state.flat();  // -> State(1, ?)</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="flatMap"><span class="type-signature"></span>flatMap<span class="signature">(f)</span><span class="type-signature"> &rarr; {State}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Maps a State returning function over a State and flattens the result
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>f</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A State returning function to map</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line170">line 170</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A new State
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">State</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;const state = State.of(1);const inc = (n) => State.of(n + 1);state.flatMap(inc); // -> State(2, ?)</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="map"><span class="type-signature"></span>map<span class="signature">(f)</span><span class="type-signature"> &rarr; {State}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Maps a function over the current value of a State
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>f</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The function to map</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line127">line 127</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A new State
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">State</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;const state = State.of(1);const inc = (n) => n + 1;state.map(inc); // -> State(2, ?)</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="run"><span class="type-signature"></span>run<span class="signature">(s)</span><span class="type-signature"> &rarr; {any}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Given an initial state, computes the final value and returns it
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>s</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The initial state</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="data_State.js.html">data/State.js</a>, <a href="data_State.js.html#line210">line 210</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The final value of the computation
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">any</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const {State} = require('futils').data;State.of(1).run(0); // -> 1</code></pre>
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> using the Minami theme as a base.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

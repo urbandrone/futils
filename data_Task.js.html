@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Home - futils Docs</title>
+    <title>data/Task.js - futils Docs</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -141,12 +141,44 @@
 
 <div id="main">
     
+    <h1 class="page-title">data/Task.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
+The MIT License (MIT)
+Copyright (c) 2018 David Hofmann &lt;the.urban.drone@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+import {typeOf} from '../core/typeof';
+import {Type} from '../adt';
+import {Show} from '../generics/Show';
+import {Eq} from '../generics/Eq';
+
+
+
+/* Utilities */
+const delay = (f) => typeof setImmediate !== 'undefined' ? setImmediate(f) :
+              typeof process !== 'undefined' ? process.nextTick(f) :
+              setTimeout(f, 0);
+
+const voids = () => void 0;
+
+
+
+
+/*
+ * @module data
+ */
 
 
 
@@ -154,267 +186,447 @@
 
 
 
+/**
+ * The Task data structure. Use Task to encapsulate asynchronous
+ * logic to avoid having to deal with callback hell. In contrast to a Promise, a
+ * Task is evaluated lazy
+ * @class module:data.Task
+ * @extends module:generics.Show
+ * @extends module:generics.Eq
+ * @version 3.0.0
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const one = Task((rej, res) => res(1));
+ *
+ * one.run(
+ *     (err) => { console.error(err); },
+ *     (num) => { console.log(num); }
+ * )
+ */
+export const Task = Type('Task', ['run']).
+    deriving(Show, Eq);
 
-
-    
-
-
-    <section class="readme">
-        <article><div class="readme_logo"><img src="logo.jpg?raw=true," alt="futils Logo" title="futils Logo"></div>
-
-<h1>About futils</h1><p>Welcome to the futils documentation. Here you'll find detailed information about everything the library provides. Each explanation is accompanied by short example codes to give brief introductions.</p>
-<h2>How this library is organized</h2><p>The library itself is divided into several packages or modules, and the documentation is organized the same way. Here is a short list of all modules of futils.</p>
-<table>
-<thead>
-<tr>
-<th>Package</th>
-<th>Namespace</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Trampoline</td>
-<td><code>.trampoline</code></td>
-<td>Useful to create tail recursive functions in a not tail recursive language.</td>
-</tr>
-<tr>
-<td>Operation</td>
-<td><code>.operation</code></td>
-<td>Functions that allow to operate with various data structures in a Point-Free form.</td>
-</tr>
-<tr>
-<td>Lambda</td>
-<td><code>.lambda</code></td>
-<td>Contains helpers for working with functions, like <code>curry</code>, <code>flip</code> and <code>compose</code>.</td>
-</tr>
-<tr>
-<td>ADT</td>
-<td><code>.adt</code></td>
-<td>Allows easy creation of algebraic single and union data types.</td>
-</tr>
-<tr>
-<td>Generics</td>
-<td><code>.generics</code></td>
-<td>Building blocks for new data structures which can derive generic methods.</td>
-</tr>
-<tr>
-<td>Monoid</td>
-<td><code>.monoid</code></td>
-<td>A collection of some of the most common monoidal structures like <code>Sum</code> and <code>All</code>.</td>
-</tr>
-<tr>
-<td>Data</td>
-<td><code>.data</code></td>
-<td>Pre-made data structures. All of these implement various interface contracts (typeclasses).</td>
-</tr>
-<tr>
-<td>Optic</td>
-<td><code>.optic</code></td>
-<td>van Laarhoven based lenses for <code>Object</code> and <code>Array</code> structures.</td>
-</tr>
-</tbody>
-</table>
-<h1>Quickstart</h1><p>To help you get started, here's a quick start guide to get you up and running the library in a browser environment. Throughout, you'll be introduced to the structure of the library and to some of it's most common functions and structures. It is written in ES6/ES2015 but should easily be portable to ES5.</p>
-<h2>Step 1: Download</h2><p>The library can be loaded either by downloading it from <a href="https://www.npmjs.com/package/futils">NPM</a>, by getting it from a <a href="https://unpkg.com/futils@latest">CDN</a> or by downloading it from <a href="https://raw.githubusercontent.com/urbandrone/futils/dist/futils.js">Github</a>. This quickstart uses NPM.</p>
-<table>
-<thead>
-<tr>
-<th>Source</th>
-<th>Snippet</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>NPM</strong></td>
-<td><code>npm i futils</code></td>
-</tr>
-<tr>
-<td><strong>CDN</strong></td>
-<td><code>&lt;script src=&quot;https://unpkg.com/futils@latest&quot;&gt;&lt;/script&gt;</code></td>
-</tr>
-<tr>
-<td><strong>Github</strong></td>
-<td><code>&lt;script src=&quot;local/path/to/futils.js&quot;&gt;&lt;/script&gt;</code></td>
-</tr>
-</tbody>
-</table>
-<h2>Step 2: The expected result</h2><p>By completing the tutorial, you should have a working text processor which allows to obfuscate the contents of a text file with the help of a parser.</p>
-<h2>Step 3: Modeling types</h2><p>To model the types, we make use of the <strong>ADT</strong> package.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type} } = require('futils');</code></pre><h4>Matrix</h4><p>We start by creating a <code>Matrix</code> data type with the <code>Type</code> function. You can use <code>Type</code> and <code>UnionType</code> in your programs to add more clarity to it and create your own data types and enumeration types. The signature of <code>Type</code> looks like this:</p>
-<p><code>Type :: String -&gt; Array String -&gt; Constructor</code>.</p>
-<p>The <code>Matrix</code> data type is going to carry the individual shifting matrix for the characters of a given string.</p>
-<pre class="prettyprint source lang-javascript"><code>// data Matrix = Matrix (Array String)
-const Matrix = Type('Matrix', ['value']);
-
-Matrix.fn.map = function (f) {
-    return Matrix(this.value.map(f));
-}</code></pre><p>Also, let's make <code>Matrix</code> a part of the <code>Functor</code> family by providing a <code>map</code> method for it. Because <code>Matrix</code> is a container for an <code>Array</code> of <code>Array</code>s of <code>String</code>s, the <code>map</code> method takes a single function and projects it over each <code>String</code> in the inner <code>Array</code>s, then returning a new <code>Matrix</code> of the results.</p>
-<h4>Char</h4><p>Each character of the text will be presented in a special type <code>Char</code>. The purpose of char is to provide the possibility to manipulate characters in terms of their character code. We make <code>Char</code> part of the family of <code>Functor</code>s to provide it with the necessary capability.</p>
-<pre class="prettyprint source lang-javascript"><code>// data Char = Char String
-const Char = Type('Char', ['value']);
-
-Char.fn.map = function (f) {
-    return Char(String.fromCharCode(f(this.value.charCodeAt(0))));
-}</code></pre><h4>Operation</h4><p>To represent the shifting operations, introduce a typeclass <code>Operation</code> which takes a function and allows classifies it as operation. To accomplish building chains of operations with this, let's make <code>Operation</code> a part of the family of <code>Monoid</code> type classes with the <code>concat</code> method being designed to perform function composition.</p>
-<pre class="prettyprint source lang-javascript"><code>// data Operation = Operation (a -> a)
-const Operation = Type('Operation', ['run']);
-
-Operation.empty = () => Operation(a => a);
-
-Operation.fn.concat = function (f) {
-    return Operation(x => f.run(this.run(x)));
-}</code></pre><p>As it turns out, that's exactly what the <code>Fn</code> monoid from futils is designed to do. You will find it in the <strong>monoid</strong> namespace. This means, we can get rid of <code>Operation</code> and just use <code>Fn</code>.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} } = require('futils');</code></pre><h2>Step 4: Modeling functions</h2><p>So now we have types, let's think about the functions we need. The <strong>lambda</strong> namespace of futils grants access to utilities for combining and manipulating functions. </p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} ,
-        lambda: {curry, pipe} } = require('futils');
-</code></pre><h4>Text processing</h4><p>First off, we need a way to take a complete text, transform it into lines of text, transform the lines into individual words and transform these words into separate characters. JavaScript implements the <code>split</code> method for <code>String</code>s, and we are going to use it. Let's create a pure <code>split</code> function we can toss around. The function takes a &quot;mark&quot; argument which can either be a string or a regular expression.</p>
-<pre class="prettyprint source lang-javascript"><code>// split :: String|Regex -> String -> Array String
-const split = curry((mark, str) => str.split(mark));
-
-// toChars :: String -> Array (Array (Array String))
-//            ^         ^      ^      ^
-//            Text      Lines  Words  Chars
-const toChars = pipe(
-    split(/\r|\n|\r\n/g),
-    lines => lines.map(split(/\s+/g)),
-    lines => lines.map(words => words.map(split(''))));</code></pre><p>With it, we can build a pipeline of operations (<code>toChar</code>) we want to perform on a given string to split it into lines, words and characters while preserving the correct nesting as <code>Array</code> structure. This structure is the reason why we have to dot chain <code>.map</code> all the way down. It looks a bit ugly, mainly because we havn't written it in a point-free form. Let's change it.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} ,
-        lambda: {curry, pipe},
-        operation: {map, prop} } = require('futils');</code></pre><p>With the help of the <code>map</code> function from <strong>operation</strong>, we can omit specifying the (cognitive) type of data we are working with. This helps us to not tie a function to a specific problem domain and therefor increase the chance for us to reuse it in other parts of our program.</p>
-<pre class="prettyprint source lang-javascript"><code>// split :: String|Regex -> String -> Array String
-const split = curry((mark, str) => str.split(mark));
-
-// toChars :: String -> Array (Array (Array String))
-const toChars = pipe(
-    split(/\r|\n|\r\n/g),
-    map(split(/\s+/g)),
-    map(map(split(''))));</code></pre><h4>Homomorphisms</h4><p>Complementing to <code>split</code> and <code>toChars</code>, let's write two other functions <code>join</code> and <code>fromChars</code>. The <code>split</code> and <code>join</code> functions are symmetrical and in conjuction form a homomorphism, the same goes for <code>toChars</code> and <code>fromChars</code>. This means if you put a text into <code>toChars</code> and the output of <code>toChars</code> into <code>fromChars</code>, you get the initial input back.</p>
-<p><code>fromChars(toChars('hello world')) === 'hello world'</code>.</p>
-<p>Here is the implementation:</p>
-<pre class="prettyprint source lang-javascript"><code>// join :: String -> Array String -> String
-const join = curry((mark, xs) => xs.join(mark));
-
-// fromChars :: Array (Array (Array String)) -> String
-const fromChars = pipe(
-    map(map(join(''))),
-    map(join(' ')),
-    join('\n'));</code></pre><h4>The parser</h4><p>It's time we create our &quot;parser&quot;. As you know, a parser is a piece of software that takes an AST and transforms it into machine code. To some extend, our parser works in the same way, although it is much simpler. Have a look at the code below: </p>
-<pre class="prettyprint source lang-javascript"><code>// Parser :: Object (String : String -> Fn (Number -> Number))
-const Parser = {
-    '=': val => Fn(() => Number(val.replace('=', ''))),
-    '+': val => Fn(n => n + Number(val.replace('+', ''))),
-    '-': val => Fn(n => n - Number(val.replace('-', ''))),
-    '*': val => Fn(n => n * Number(val.replace('*', ''))),
-    '/': val => Fn(n => n / Number(val.replace('/', '')))
-}</code></pre><p>Basically, our parser is just an assignment of some mathematical symbols to functions that return a <code>Fn</code> monoid as a result.</p>
-<p>The final pieces we have to write utilize the <code>foldMap</code> function of the <strong>operation</strong> namespace, so we have to import it:</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} ,
-        lambda: {curry, pipe},
-        operation: {map, prop, foldMap} } = require('futils');</code></pre><p>In general, the signature of <code>foldMap</code> looks like this:</p>
-<p><code>foldMap :: Functor F, Semigroup S =&gt; (a -&gt; S a) -&gt; F a -&gt; S a</code></p>
-<p>So it takes a function from some type <code>a</code> to a <code>Semigroup a</code>, then a <code>Functor a</code> and it finally returns a <code>Semigroup a</code>. Knowing that every monoid is also a valid semigroup, it is useful to conflate the <code>Fn</code> monoids from our parser into a single monoid while simultaneously mapping the parser over a given matrix.</p>
-<pre class="prettyprint source lang-javascript"><code>// interpreterFrom :: (Matrix, Parser) -> Fn (Number -> Number)
-const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
-
-// convert :: Matrix -> Parser -> String -> String
-const convert = curry((m, parser, str) => {
-    const interpreter = interpreterFrom(m, parser);
-    const transformer = pipe(Char.of, map(interpreter.run), prop('value'));
-    return fromChars(toChars(str).map(map(map(transformer))));
-});</code></pre><p>The <code>convert</code> function just glues all the pieces together. </p>
-<h2>Step 5: Done</h2><p>It's time to do a quick test. Just create two matrices for encoding and decoding, the corresponding encoder and decoder and try it:</p>
-<pre class="prettyprint source lang-javascript"><code>const encoderMatrix = Matrix(['*2', '+2', '/2']);
-const decoderMatrix = Matrix(['*2', '-2', '/2']);
-
-const myEncoder = convert(encoderMatrix, Parser);
-const myDecoder = convert(decoderMatrix, Parser);
-
-const encData = myEncoder('Hello world');
-console.log(`Encoded: ${encData}`);
-console.log(`Decoded: ${myDecoder(encData)}`);</code></pre><p>You can see the complete code below.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn},
-        lambda: {curry, pipe},
-        operation: {map, prop, foldMap} } = require('futils');
+Task.fn.cleanUp = voids;
 
 
 
-/********** DATA TYPES **********/
-
-// data Matrix = Matrix (Array String)
-const Matrix = Type('Matrix', ['value']);
-
-Matrix.fn.map = function (f) {
-    return Matrix(this.value.map(f));
-}
 
 
-// data Char = Char String
-const Char = Type('Char', ['value']);
-
-Char.fn.map = function (f) {
-    return Char(String.fromCharCode(f(this.value.charCodeAt(0))));
-}
-
-
-
-/********** PARSER **********/
-
-// Parser :: Object (String : String -> Fn (Number -> Number))
-const Parser = {
-    '=': val => Fn(() => Number(val.replace('=', ''))),
-    '+': val => Fn(n => n + Number(val.replace('+', ''))),
-    '-': val => Fn(n => n - Number(val.replace('-', ''))),
-    '*': val => Fn(n => n * Number(val.replace('*', ''))),
-    '/': val => Fn(n => n / Number(val.replace('/', '')))
-}
-
-
-
-/********** FUNCTIONS **********/
-
-// split :: String|Regex -> String -> Array String
-const split = curry((mark, str) => str.split(mark));
-
-// join :: String -> Array String -> String
-const join = curry((mark, xs) => xs.join(mark));
-
-
-// toChars :: String -> Array (Array (Array String))
-const toChars = pipe(
-    split(/\r|\n|\r\n/g),
-    map(split(/\s+/g)),
-    map(map(split(''))));
-
-// fromChars :: Array (Array (Array String)) -> String
-const fromChars = pipe(
-    map(map(join(''))),
-    map(join(' ')),
-    join('\n'));
-
-
-
-// interpreterFrom :: (Matrix, Parser) -> Fn a
-const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
-
-// convert :: Matrix -> Parser -> String -> String
-const convert = curry((m, parser, str) => {
-    const interpreter = interpreterFrom(m, parser);
-    const transformer = pipe(Char.of, map(interpreter.run), prop('value'));
-    return fromChars(toChars(str).map(map(map(transformer))));
+/**
+ * Lifts a value into a Task. The resulting Task always resolves with the given
+ * value
+ * @method of
+ * @static
+ * @memberof module:data.Task
+ * @param {any} a The value to lift
+ * @return {Task} The value wrapped in a Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.of(1); // -> Task(_, 1)
+ */
+Task.of = (a) => Task((_, ok) => { ok(a); });
+/**
+ * Monoid implementation for Task. Returns a Task which neither resolves nor rejects
+ * @method empty
+ * @static
+ * @memberof module:data.Task
+ * @return {Task} A Task that is pending forever
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.empty(); // -> Task(?, ?)
+ */
+Task.empty = () => Task(voids);
+/**
+ * Lifts a value into a Task. The resulting Task always resolves with the given
+ * value
+ * @method resolve
+ * @static
+ * @memberof module:data.Task
+ * @param {any} a The value to lift
+ * @return {Task} The value wrapped in a Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.resolve(1); // -> Task(_, 1)
+ */
+Task.resolve = Task.of;
+/**
+ * Lifts a value into a Task. The resulting Task always fails with the given
+ * value
+ * @method reject
+ * @static
+ * @memberof module:data.Task
+ * @param {any} a The value to lift
+ * @return {Task} The value wrapped in a Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.reject(1); // -> Task(1, _)
+ */
+Task.reject = (a) => Task(fail => { fail(a); });
+/**
+ * Creates a Task which resolves a function after the given amount of milliseconds
+ * @method timeout
+ * @static
+ * @memberof module:data.Task
+ * @param {Number} ms Delay in milliseconds
+ * @param {Function} f The function to call after the timeout
+ * @return {Task} A Task that resolves with the result of the function
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const delayed = () => 1;
+ *
+ * Task.timeout(400, delayed); // -> Task(_, 1) 
+ */
+Task.timeout = (ms, f) => Task((_, ok) => {
+    setTimeout(() => ok(f()), ms);
 });
+/**
+ * Converts a Promise returning function into a Task returning form
+ * @method fromPromiseFunction
+ * @static
+ * @memberof module:data.task
+ * @param {Function} f A function which returns a Promise
+ * @return {Function} A function which returns a Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ * const fs = require('fs').promises;
+ *
+ * const readFile = Task.fromPromiseFunction(fs.readFile.bind(fs));
+ *
+ * readFile('example.txt', 'utf8'); // -> Task(Error, String)
+ */
+Task.fromPromiseFunction = f => (...a) => Task((fail, ok) => {
+    f(...a).then(ok).catch(fail);
+});
+/**
+ * Converts a Node style continuation passing function into a Task returning form
+ * @method fromNodeFunction
+ * @static
+ * @memberof module:data.task
+ * @param {Function} f A function in the Node CPS form
+ * @return {Function} A function which returns a Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ * const fs = require('fs');
+ *
+ * const readFile = Task.fromNodeFunction(fs.readFile.bind(fs));
+ *
+ * readFile('example.txt', 'utf8'); // -> Task(Error, String)
+ */
+Task.fromNodeFunction = f => (...a) => Task((fail, ok) => {
+    f(...a, (err, v) => { if (err) { fail(err); } else { ok(v); } });
+});
+/**
+ * A natural transformation from an Id into a Task
+ * @method  fromId
+ * @static
+ * @memberof module:data.Task
+ * @param {Id} a The Id to transform
+ * @return {Task} The Task which resolves to the value of the Id
+ *
+ * @example
+ * const {Task, Id} = require('futils').data;
+ *
+ * const id = Id('a value');
+ *
+ * Task.fromId(id); // -> Task(_, 'a value')
+ */
+Task.fromId = a => Task.of(a.value);
+/**
+ * A natural transformation from a Maybe.Some or Maybe.None into a Task. If the
+ * Maybe is a Maybe.None, the resulting Task rejects
+ * @method fromMaybe
+ * @static
+ * @memberof module:data.Task
+ * @param {Some|None} a The Maybe structure
+ * @return {Task} A Task which rejects Maybe.None and resolves Maybe.Some
+ *
+ * @example
+ * const {Task, Maybe} = require('futils').data;
+ *
+ * const some = Maybe.Some('a value');
+ * const none = Maybe.None();
+ *
+ * Task.fromMaybe(some); // -> Task(_, 'a value')
+ * Task.fromMaybe(none); // -> Task(null, _)
+ */
+Task.fromMaybe = a => Task((fail, ok) => { if (a.isSome()) { ok(a.value); } else { fail(null); } });
+/**
+ * A natural transformation from a Either.Right or Either.Left into a Task. If the
+ * Either is a Either.Left, the resulting Task rejects
+ * @method fromEither
+ * @static
+ * @memberof module:data.Task
+ * @param {Right|Left} a The Either structure
+ * @return {Task} A Task which rejects Either.Left and resolves Either.Right
+ *
+ * @example
+ * const {Task, Either} = require('futils').data;
+ *
+ * const r = Either.Right('a value');
+ * const l = Either.Left('fallback');
+ *
+ * Task.fromEither(r); // -> Task(_, 'a value')
+ * Task.fromEither(l); // -> Task('fallback', _)
+ */
+Task.fromEither = a => Task((fail, ok) => { a.cata({Left: fail, Right: ok}); });
+/**
+ * A natural transformation from a List into a Task. Please note that this
+ * transformation looses data, because only the first element of the list is
+ * taken. If the first element is null or undefined, a rejecting Task is returned
+ * @method fromList
+ * @static
+ * @memberof module:data.Task
+ * @param {List} a The List structure
+ * @return {Task} A Task of the first element
+ *
+ * @example
+ * const {Task, List} = require('futils').data;
+ *
+ * const ls = List.of(2).cons(1);
+ *
+ * Task.fromList(ls); // -> Task(_, 1)
+ */
+Task.fromList = a => a.head == null ? Task.reject(a.head) : Task.of(a.head);
+/**
+ * A natural transformation from an IO into a Task. If the IO results in an Error,
+ * the resulting Task fails with the exception
+ * @method fromIO
+ * @static
+ * @memberof module:data.Task
+ * @param {IO} a The IO structure
+ * @return {Task} A Task which resolves with the result of the IO
+ *
+ * @example
+ * const {Task, IO} = require('futils').data;
+ *
+ * const env = k => IO(() => process[k]);
+ *
+ * Task.fromIO(env('arch')); // -> Task(_, &lt;architecture>)
+ */
+Task.fromIO = a => Task((fail, ok) => { try { ok(a.run()); } catch (exc) { fail(exc); }});
 
 
+/**
+ * A natural transformation from a Task into a Promise
+ * @method toPromise
+ * @memberof module:data.Task
+ * @instance
+ * @return {Promise} A Promise which runs the Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.of(1).toPromise(); // -> Promise(1)
+ */
+Task.fn.toPromise = function () {
+    return new Promise((ok, fail) => { this.run(fail, ok); });
+}
+/**
+ * Concatenates a Task with another. Resolves with the Task which resolves faster
+ * or rejects if either of both fail
+ * @method concat
+ * @memberof module:data.Task
+ * @instance
+ * @param {Task} a The Task to concatenate with
+ * @return {Task} Result of the concattenation
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const ms300 = Task.timeout(300, () => 1);
+ * const ms500 = Task.timeout(500, () => 2);
+ *
+ * ms500.concat(ms300); // -> Task(_, 1)
+ */
+Task.fn.concat = function (a) {
+    if (Task.is(a)) {
+        const clean = (x, y) => { this.cleanUp(x); a.cleanUp(y); };
+        const task = Task((fail, ok) => {
+            let done = false,
+                states = [];
 
-module.exports = {Matrix, Parser, convert};</code></pre></article>
+            const g = f => v => {
+                if (!done) {
+                    done = true;
+                    delay(() => clean(states[0], states[1]));
+                    f(v);
+                }
+            }
+
+            states[0] = this.run(g(fail), g(ok));
+            states[1] = a.run(g(fail), g(ok));
+            return states;
+        });
+        task.cleanUp = clean;
+        return task;
+    }
+    throw `Task::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
+}
+/**
+ * Maps a function over the value and resolves with the result
+ * @method map
+ * @memberof module:data.Task
+ * @instance
+ * @param {Function} f The function to map
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const one = Task.of(1);
+ *
+ * one.map((n) => n + 1); // -> Task(_, 2)
+ */
+Task.fn.map = function (f) {
+    const task = Task((fail, ok) => { this.run(fail, v => ok(f(v))); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}
+/**
+ * Flattens a nested Task one level
+ * @method flat
+ * @memberof module:data.Task
+ * @instance
+ * @return {Task} A Task flattened
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const tasks = Task.of(Task.of(1));
+ *
+ * tasks.flat(); // -> Task(_, 1)
+ */
+Task.fn.flat = function () {
+    const task = Task((fail, ok) => { this.run(fail, a => a.run(fail, ok)); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}
+/**
+ * Maps a Task returning function over a Task and flattens the result
+ * @method flatMap
+ * @static
+ * @memberof module:data.Task
+ * @instance
+ * @param {Function} f The function to map
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const task = Task.of(1);
+ *
+ * const inc = (n) => Task.of(n + 1);
+ *
+ * task.flatMap(inc); // -> Task(_, 2)
+ */
+Task.fn.flatMap = function (f) {
+    const task = Task((fail, ok) => { this.run(fail, v => f(v).run(fail, ok)); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}
+/**
+ * Applies a Task with a function to another Task. Resolves when both resolve or
+ * fails if either of both fails
+ * @method ap
+ * @memberof module:data.Task
+ * @instance
+ * @param {Task} a Task with a value
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const task = Task.of(1);
+ *
+ * const apply = Task.of((n) => n + 1);
+ *
+ * apply.ap(task); // -> Task(_, 2)
+ */
+Task.fn.ap = function (a) {
+    const clean = (x, y) => { this.cleanUp(x); a.cleanUp(y); };
+    const task = Task((fail, ok) => {
+        let aOk = false,
+            aLoad = false,
+            bOk = false,
+            bLoad = false,
+            rej = false,
+            states = [];
+
+        const gRej = v => { if (!rej) { rej = true; fail(v); } }
+        const gRes = f => v => {
+            if (rej) { return; }
+            f(v);
+            if (aLoad &amp;&amp; bLoad) {
+                delay(() => clean(states[0], states[1]));
+                return ok(aOk(bOk));
+            } else {
+                return v;
+            }
+        }
+
+        states[0] = this.run(gRej, gRes(w => { aLoad = true; aOk = w; }));
+        states[1] = a.run(gRej, gRes(w => { bLoad = true; bOk = w; }));
+        return states;
+    });
+    task.cleanUp = clean;
+    return task;
+}
+/**
+ * Swaps the disjunction of a Task, meaning if it normally resolves it fails and
+ * if it normally fails it resolves
+ * @method swap
+ * @memberof module:data.Task
+ * @instance
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const ok = Task.of(1);
+ * const fail = Task.reject(1);
+ *
+ * ok.swap(); // -> Task(1, _)
+ * fail.swap(); // -> Task(_, 1)
+ */
+Task.fn.swap = function () {
+    const task = Task((fail, ok) => { this.run(ok, fail); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}
+/**
+ * Alt implementation, allows to swap a failing Task
+ * @method alt
+ * @memberof module:data.Task
+ * @instance
+ * @param {Task} a An optional Task
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.reject(0).alt(Task.of(1)); // -> Task(_, 1)
+ */
+Task.fn.alt = function (a) {
+    const task = Task((fail, ok) => { this.run(() => a.run(fail, ok), ok); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}</code></pre>
+        </article>
     </section>
-
-
 
 
 
