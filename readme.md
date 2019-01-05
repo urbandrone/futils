@@ -26,7 +26,7 @@ futils is a small (around 10 Kilobytes when minimized and gzipped) library for g
 Find the complete documentation as well as a quickstart [online](https://urbandrone.github.io/futils/).
 
 # Download
-The library can be loaded either by downloading it from [NPM](https://www.npmjs.com/package/futils), by getting it from a [CDN](https://unpkg.com/futils@latest) or by downloading it from [Github](https://raw.githubusercontent.com/urbandrone/futils/dist/futils.js).
+The library can be loaded either by downloading it from [NPM](https://www.npmjs.com/package/futils), by getting it from a [CDN](https://unpkg.com/futils@latest) or by downloading it from [Github](https://raw.githubusercontent.com/urbandrone/futils/master/dist/futils.js).
 
 | Source     | Snippet                                                                  |
 | -----------|--------------------------------------------------------------------------|
