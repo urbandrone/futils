@@ -64,15 +64,14 @@ const fromChars = pipe(
 
 
 
-// interpreterFrom :: (Matrix, Parser) -> Fn a
-const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
+// interpret :: (Matrix, Parser) -> (Number -> Number)
+const interpret = (m, p) => foldMap(x => p[x[0]](x), m).value;
 
-// convert :: Matrix -> Parser -> String -> String
-const convert = curry((m, parser, str) => {
-    const interpreter = interpreterFrom(m, parser);
-    const transformer = pipe(Char, map(interpreter.value), prop('value'));
-    return fromChars(toChars(str).map(map(map(transformer))));
-});
+// transform :: (Matrix, Parser) -> (String -> String)
+const transform = (m, p) => pipe(Char, map(interpret(m, p)), prop('value'));
+
+// convert :: Matrix -> Parser -> (String -> String)
+const convert = curry((m, p) => pipe(toChars, map(map(map(transform(m, p)))), fromChars));
 
 
 
@@ -80,9 +79,8 @@ const convert = curry((m, parser, str) => {
 const encoderMatrix = Matrix(['*2', '+2', '/2']);
 const decoderMatrix = Matrix(['*2', '-2', '/2']);
 
-const myEncoder = convert(encoderMatrix, Parser);
-const myDecoder = convert(decoderMatrix, Parser);
+const encoder = convert(encoderMatrix, Parser);
+const decoder = convert(decoderMatrix, Parser);
 
-const encData = myEncoder('Hello world');
-console.log(`Encoded: ${encData}`);
-console.log(`Decoded: ${myDecoder(encData)}`);
+console.log(`Encoded 'Hello world': ${encoder('Hello world')}`);
+console.log(`Homomorphism? ${encoder(decoder('Hello world')) === 'Hello world'}`);
