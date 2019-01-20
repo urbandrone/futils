@@ -12,7 +12,8 @@ import {arity} from './core/arity';
 
 
 /**
- * Allows to create tagged ADT constructors of normal types and union types
+ * Allows to create tagged ADT constructors of normal types and union types. Have a look at the
+ * [Quickstart Final Solution]{@tutorial Quickstart-Final} tutorial
  * @module adt
  */
 
@@ -51,12 +52,7 @@ const initT = (t, f, v, p) => {
 }
 
 const makeCtor = (t, vs, p) => {
-    switch (vs.length) {
-        case 0:
-            return () => initT(t, vs, [], p);
-        default:
-            return arity(vs.length, (...xs) => initT(t, vs, xs, p));
-    }
+    return !vs.length ? () => initT(t, vs, [], p) : arity(vs.length, (...xs) => initT(t, vs, xs, p));
 }
 
 const ctorOfT = (u, x, ys) => {
@@ -143,12 +139,12 @@ export const UnionType = (type, defs) => {
         caseOf(o) { return caseOfT(this, o); },
         cata(o) { return caseOfT(this, o); }
     };
-    def(union, 'is', x => x != null && x[TYPE_TAG] === type);
+    def(union, 'is', x => !!x && x[TYPE_TAG] === type);
     def(union, 'deriving', deriveT(union));
     union.fn.constructor = function (...xs) { return ctorOfT(union, this, xs); }
     Object.keys(defs).forEach(d => {
         const ctor = makeCtor(d, defs[d], union.prototype);
-        def(ctor, 'is', (x) => x != null && x[TYPE] === d);
+        def(ctor, 'is', (x) => !!x && x[TYPE] === d);
         union[d] = ctor;
     });
     return union;

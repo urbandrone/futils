@@ -18,6 +18,7 @@
         "encoding": "utf8",
         "private": false,
         "recurse": true,
-        "template": "./docs/_tpl/minami"
+        "template": "./docsrc/_tpl/minami",
+        "tutorials": "./docsrc/tutorials"
     }
 }
