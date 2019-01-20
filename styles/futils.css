@@ -1,0 +1,248 @@
+html {
+    font-size: 10px;
+}
+
+body {
+    font-size: 1.6rem;
+    line-height: 1.5;
+    font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    color: #1c1c1f;
+}
+
+h1, h2, h3, h4 {
+    line-height: 1.325;
+}
+
+h1.page-title {
+    padding-bottom: 0.75em;
+    border-bottom: 1px solid #e9e9e9;
+    color: #1c1c1f;
+}
+
+
+
+footer {
+    padding: 30px;
+}
+
+.prettyprint,
+.prettyprint code,
+.prettyprint.linenums li {
+    background-color: #f6f6fa;
+}
+
+.typ {
+    color: #1c79e5;
+}
+.kwd {
+    color: #646469;
+}
+.str,
+.lit {
+    color: #eb5d31;
+}
+.com {
+    color: #8c8c91;
+}
+
+.name,
+.container-overview + .subsection-title {
+    margin-top: 5em;
+}
+.name:first-child,
+.subsection-title + .name {
+    margin-top: 0;
+}
+
+span.param-type,
+.name code {
+    display: inline-block;
+    background-color: #f6f6fa;
+    border: 1px solid #e9e9ec;
+    padding: 5px;
+    line-height: 1;
+    border-radius: 0.33em;
+}
+
+a, a:active,
+nav ul a:hover,
+nav ul a:active {
+    color: #1c79e5;
+}
+
+.nav-item {
+    padding-left: 10px;
+}
+
+.nav-item + .nav-heading,
+.nav-heading + .nav-heading {
+    margin-top: 15px;
+    border-top: 1px solid #e9e9ec;
+    padding-top: 8px;
+}
+
+.nav-heading.nav-heading--section {
+    margin: 25px 0 5px 0;
+    border-top: 0 none;
+    padding: 3px 8px;
+    background: #1c1c1f;
+    color: #f6f6fa;
+}
+
+.nav-heading--section + .nav-heading {
+    margin-top: 0;
+    border-top: 0 none;
+}
+
+
+.readme h1, .readme h2, .readme h3, .readme h4, .readme h5, .readme h6,
+.tutorial h1, .tutorial h2, .tutorial h3, .tutorial h4, .tutorial h5, .tutorial h6  {
+    color: #1c1c1f;
+    margin: 2em 0 -16px 0;
+}
+.readme h1, .tutorial h1 { font-size: 2.4rem; font-weight: lighter; }
+.readme h2, .tutorial h2 { font-size: 2.1rem; font-weight: lighter; }
+.readme h3, .tutorial h3 { font-size: 1.8rem; font-weight: lighter; }
+.readme h4, .tutorial h4 { font-size: 1.5rem; }
+.readme h5, .tutorial h5 { font-size: 1.2rem; }
+.readme h6, .tutorial h6 { font-weight: bold; }
+
+.readme p,
+.tutorial p {
+    margin: 32px 0;
+    max-width: 55ex;
+}
+@media (min-width: 1000px) {
+    .readme p,
+    .tutorial p {
+        max-width: 80ex;
+    }
+}
+@media (min-width: 1300px) {
+    .readme p,
+    .tutorial p {
+        max-width: 96ex;
+    }
+}
+.readme p:first-of-type,
+.tutorial p:first-of-type {
+    font-size: 1.1em;
+}
+
+.readme table,
+.tutorial table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin: 32px 0;
+    border: 1px solid #1c1c1f;
+}
+.readme th, .readme td,
+.tutorial th, .tutorial td {
+    padding: 5px 10px;
+    border: 1px solid #1c1c1f;
+    vertical-align: top;
+    text-align: left;
+}
+.readme th,
+.tutorial th {
+    background-color: #1c1c1f;
+    color: #f6f6f6;
+    font-size: 1.4rem;
+}
+
+.readme_logo {
+    padding: 30px 0 60px 0;
+}
+.readme_logo img {
+    display: block;
+}
+
+.readme pre > code,
+.tutorial pre > code,
+.readme blockquote p,
+.tutorial blockquote p,
+.readme blockquote p:first-of-type,
+.tutorial blockquote p:first-of-type {
+    font-size: 1.4rem;
+}
+
+.readme blockquote strong,
+.tutorial blockquote strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+
+
+@supports (display: grid) and (grid-auto-flow: dense) {
+    .grid {
+        display: grid;
+        grid-auto-rows: minmax(1.6rem, auto);
+        grid-auto-flow: dense;
+    }
+
+    @media (min-width: 1150px) {
+        .grid--1of8 { grid-template-columns: 1fr 7fr; }
+        .grid--1of6 { grid-template-columns: 1fr 5fr; }
+        .grid--1of4 { grid-template-columns: 1fr 3fr; }
+        .grid--1of3 { grid-template-columns: 1fr 2fr; }
+        .grid--1of2 { grid-template-columns: 1fr 1fr; }
+
+        .grid--1of8.reverse { grid-template-columns: 7fr 1fr; }
+        .grid--1of6.reverse { grid-template-columns: 5fr 1fr; }
+        .grid--1of4.reverse { grid-template-columns: 3fr 1fr; }
+        .grid--1of3.reverse { grid-template-columns: 2fr 1fr; }
+        .grid--1of2.reverse { grid-template-columns: 1fr 1fr; }    }
+}
+
+
+
+.icon {
+    display: none;
+    padding: 10px;
+    background-repeat: no-repeat;
+    background-size: 90%;
+    background-position: 50% 50%;
+}
+@media (min-width: 1150px) {
+    .icon { display: inline-block; }
+}
+
+.icon--whale1 {
+    background-image: url('../media/spermwhale.png');
+}
+
+.icon--whale2 {
+    background-image: url('../media/kit.png');
+}
+
+.icon--whale3 {
+    background-image: url('../media/orca.png');
+}
+
+.icon--shark {
+    background-image: url('../media/shark.png');
+}
+
+
+
+#topwhale {
+    position: absolute;
+    top: 131px;
+    left: 641px;
+    width: 367px;
+    height: 282px;
+    background-size: contain;
+    transform: rotate(21deg);
+}
+
+
+
+#footerwhale {
+    position: relative;
+    top: -51px;
+    left: 0;
+    width: 148px;
+    height: 116px;
+    background-size: contain;
+}

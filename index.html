@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Home - futils Docs</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="keywords" content="Javascript, JS, Ecmascript, ES6, Functional Programming, Pointfree, Tacit, NPM">
+    <meta name="description" content="">
+    <title>Home - futils docs</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -10,121 +13,9 @@
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    <link type="text/css" rel="stylesheet" href="styles/atelier-estuary-light.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-    <style type="text/css">
-    h1, h2, h3, h4, h5, h6 {
-        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-    }
-
-    h1.page-title {
-        padding-bottom: 0.75em;
-        border-bottom: 1px solid #e9e9e9;
-        color: #9e9e9e;
-    }
-
-    footer {
-        padding: 30px;
-    }
-
-    .prettyprint,
-    .prettyprint code,
-    .prettyprint.linenums li {
-        background-color: #f6f6fa;
-    }
-
-    .typ {
-        color: #1c79e5;
-    }
-    .kwd {
-        color: #646469;
-    }
-    .str,
-    .lit {
-        color: #eb5d31;
-    }
-    .com {
-        color: #8c8c91;
-    }
-
-    .name,
-    .container-overview + .subsection-title {
-        margin-top: 5em;
-    }
-    .name:first-child,
-    .subsection-title + .name {
-        margin-top: 0;
-    }
-
-    span.param-type,
-    .name code {
-        display: inline-block;
-        background-color: #f6f6fa;
-        border: 1px solid #e9e9ec;
-        padding: 5px;
-        line-height: 1;
-        border-radius: 0.33em;
-    }
-
-    a, a:active,
-    nav ul a:hover,
-    nav ul a:active {
-        color: #1c79e5;
-    }
-
-    nav > h2 > a {
-        color: #1c79e5 !important;
-    }
-
-
-    .readme h1,
-    .readme h2,
-    .readme h3,
-    .readme h4,
-    .readme h5,
-    .readme h6 {
-        color: #9e9e9e;
-        margin: 2em 0 -16px 0;
-    }
-    .readme h1 { font-size: 2.4rem; }
-    .readme h2 { font-size: 2.1rem; }
-    .readme h3 { font-size: 1.8rem; }
-    .readme h4 { font-size: 1.5rem; }
-    .readme h5 { font-size: 1.2rem; }
-    .readme h6 { font-weight: bold; }
-
-    .readme p {
-        margin: 32px 0;
-    }
-    .readme p:first-of-type {
-        font-size: 1.1rem;
-    }
-
-    .readme table {
-        table-layout: fixed;
-        border-collapse: collapse;
-        margin: 32px 0;
-        border: 1px solid #1c1c1f;
-    }
-    .readme th, .readme td {
-        padding: 5px 10px;
-        border: 1px solid #1c1c1f;
-        vertical-align: top;
-        text-align: left;
-    }
-    .readme th {
-        background-color: #1c1c1f;
-        color: #f6f6f6;
-        font-size: 10px;
-    }
-
-    .readme_logo {
-        padding: 30px 0 60px 0;
-    }
-    .readme_logo img {
-        display: block;
-    }
-    </style>
+    <link rel="stylesheet" href="styles/futils.css">
 </head>
 <body>
 
@@ -136,7 +27,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-adt.html">adt</a><ul class='methods'><li data-type='method'><a href="module-adt.html#~Type">Type</a></li><li data-type='method'><a href="module-adt.html#~UnionType">UnionType</a></li></ul></li><li><a href="module-data.html">data</a></li><li><a href="module-generics.html">generics</a></li><li><a href="module-lambda.html">lambda</a><ul class='methods'><li data-type='method'><a href="module-lambda.html#.compose">compose</a></li><li data-type='method'><a href="module-lambda.html#.constant">constant</a></li><li data-type='method'><a href="module-lambda.html#.curry">curry</a></li><li data-type='method'><a href="module-lambda.html#.curryRight">curryRight</a></li><li data-type='method'><a href="module-lambda.html#.fixed">fixed</a></li><li data-type='method'><a href="module-lambda.html#.flip">flip</a></li><li data-type='method'><a href="module-lambda.html#.id">id</a></li><li data-type='method'><a href="module-lambda.html#.memoize">memoize</a></li><li data-type='method'><a href="module-lambda.html#.not">not</a></li><li data-type='method'><a href="module-lambda.html#.partial">partial</a></li><li data-type='method'><a href="module-lambda.html#.partialRight">partialRight</a></li><li data-type='method'><a href="module-lambda.html#.pipe">pipe</a></li></ul></li><li><a href="module-monoid.html">monoid</a></li><li><a href="module-operation.html">operation</a><ul class='methods'><li data-type='method'><a href="module-operation.html#.ap">ap</a></li><li data-type='method'><a href="module-operation.html#.concat">concat</a></li><li data-type='method'><a href="module-operation.html#.doM">doM</a></li><li data-type='method'><a href="module-operation.html#.drop">drop</a></li><li data-type='method'><a href="module-operation.html#.equals">equals</a></li><li data-type='method'><a href="module-operation.html#.filter">filter</a></li><li data-type='method'><a href="module-operation.html#.find">find</a></li><li data-type='method'><a href="module-operation.html#.flat">flat</a></li><li data-type='method'><a href="module-operation.html#.flatMap">flatMap</a></li><li data-type='method'><a href="module-operation.html#.fold">fold</a></li><li data-type='method'><a href="module-operation.html#.foldMap">foldMap</a></li><li data-type='method'><a href="module-operation.html#.head">head</a></li><li data-type='method'><a href="module-operation.html#.liftA">liftA</a></li><li data-type='method'><a href="module-operation.html#.map">map</a></li><li data-type='method'><a href="module-operation.html#.nub">nub</a></li><li data-type='method'><a href="module-operation.html#.nubBy">nubBy</a></li><li data-type='method'><a href="module-operation.html#.prop">prop</a></li><li data-type='method'><a href="module-operation.html#.reduce">reduce</a></li><li data-type='method'><a href="module-operation.html#.reduceRight">reduceRight</a></li><li data-type='method'><a href="module-operation.html#.sequence">sequence</a></li><li data-type='method'><a href="module-operation.html#.tail">tail</a></li><li data-type='method'><a href="module-operation.html#.take">take</a></li><li data-type='method'><a href="module-operation.html#.traverse">traverse</a></li></ul></li><li><a href="module-optic.html">optic</a><ul class='methods'><li data-type='method'><a href="module-optic.html#.createLens">createLens</a></li><li data-type='method'><a href="module-optic.html#.lenses">lenses</a></li><li data-type='method'><a href="module-optic.html#.mapped">mapped</a></li><li data-type='method'><a href="module-optic.html#.over">over</a></li><li data-type='method'><a href="module-optic.html#.set">set</a></li><li data-type='method'><a href="module-optic.html#.view">view</a></li></ul></li><li><a href="module-trampoline.html">trampoline</a><ul class='methods'><li data-type='method'><a href="module-trampoline.html#.again">again</a></li><li data-type='method'><a href="module-trampoline.html#.recur">recur</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="module-data.Either.html">Either</a><ul class='methods'><li data-type='method'><a href="module-data.Either.html#.empty">empty</a></li><li data-type='method'><a href="module-data.Either.html#.from">from</a></li><li data-type='method'><a href="module-data.Either.html#.fromList">fromList</a></li><li data-type='method'><a href="module-data.Either.html#.fromMaybe">fromMaybe</a></li><li data-type='method'><a href="module-data.Either.html#.of">of</a></li><li data-type='method'><a href="module-data.Either.html#.try">try</a></li><li data-type='method'><a href="module-data.Either.html#alt">alt</a></li><li data-type='method'><a href="module-data.Either.html#ap">ap</a></li><li data-type='method'><a href="module-data.Either.html#biMap">biMap</a></li><li data-type='method'><a href="module-data.Either.html#concat">concat</a></li><li data-type='method'><a href="module-data.Either.html#extend">extend</a></li><li data-type='method'><a href="module-data.Either.html#extract">extract</a></li><li data-type='method'><a href="module-data.Either.html#flat">flat</a></li><li data-type='method'><a href="module-data.Either.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.Either.html#isRight">isRight</a></li><li data-type='method'><a href="module-data.Either.html#map">map</a></li><li data-type='method'><a href="module-data.Either.html#reduce">reduce</a></li><li data-type='method'><a href="module-data.Either.html#sequence">sequence</a></li><li data-type='method'><a href="module-data.Either.html#swap">swap</a></li><li data-type='method'><a href="module-data.Either.html#traverse">traverse</a></li></ul></li><li><a href="module-data.Free.html">Free</a><ul class='methods'><li data-type='method'><a href="module-data.Free.html#.from">from</a></li><li data-type='method'><a href="module-data.Free.html#.liftM">liftM</a></li><li data-type='method'><a href="module-data.Free.html#.of">of</a></li><li data-type='method'><a href="module-data.Free.html#ap">ap</a></li><li data-type='method'><a href="module-data.Free.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.Free.html#interpret">interpret</a></li><li data-type='method'><a href="module-data.Free.html#map">map</a></li></ul></li><li><a href="module-data.Id.html">Id</a><ul class='methods'><li data-type='method'><a href="module-data.Id.html#.from">from</a></li><li data-type='method'><a href="module-data.Id.html#.fromEither">fromEither</a></li><li data-type='method'><a href="module-data.Id.html#.fromList">fromList</a></li><li data-type='method'><a href="module-data.Id.html#.fromMaybe">fromMaybe</a></li><li data-type='method'><a href="module-data.Id.html#.of">of</a></li><li data-type='method'><a href="module-data.Id.html#ap">ap</a></li><li data-type='method'><a href="module-data.Id.html#concat">concat</a></li><li data-type='method'><a href="module-data.Id.html#extend">extend</a></li><li data-type='method'><a href="module-data.Id.html#extract">extract</a></li><li data-type='method'><a href="module-data.Id.html#flat">flat</a></li><li data-type='method'><a href="module-data.Id.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.Id.html#map">map</a></li><li data-type='method'><a href="module-data.Id.html#reduce">reduce</a></li><li data-type='method'><a href="module-data.Id.html#sequence">sequence</a></li><li data-type='method'><a href="module-data.Id.html#traverse">traverse</a></li></ul></li><li><a href="module-data.IO.html">IO</a><ul class='methods'><li data-type='method'><a href="module-data.IO.html#.empty">empty</a></li><li data-type='method'><a href="module-data.IO.html#.from">from</a></li><li data-type='method'><a href="module-data.IO.html#.fromEither">fromEither</a></li><li data-type='method'><a href="module-data.IO.html#.fromId">fromId</a></li><li data-type='method'><a href="module-data.IO.html#.fromList">fromList</a></li><li data-type='method'><a href="module-data.IO.html#.fromMaybe">fromMaybe</a></li><li data-type='method'><a href="module-data.IO.html#.of">of</a></li><li data-type='method'><a href="module-data.IO.html#ap">ap</a></li><li data-type='method'><a href="module-data.IO.html#concat">concat</a></li><li data-type='method'><a href="module-data.IO.html#contraMap">contraMap</a></li><li data-type='method'><a href="module-data.IO.html#flat">flat</a></li><li data-type='method'><a href="module-data.IO.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.IO.html#map">map</a></li><li data-type='method'><a href="module-data.IO.html#proMap">proMap</a></li></ul></li><li><a href="module-data.List.html">List</a><ul class='methods'><li data-type='method'><a href="module-data.List.html#.empty">empty</a></li><li data-type='method'><a href="module-data.List.html#.from">from</a></li><li data-type='method'><a href="module-data.List.html#.fromArray">fromArray</a></li><li data-type='method'><a href="module-data.List.html#.fromEither">fromEither</a></li><li data-type='method'><a href="module-data.List.html#.fromId">fromId</a></li><li data-type='method'><a href="module-data.List.html#.fromMaybe">fromMaybe</a></li><li data-type='method'><a href="module-data.List.html#.of">of</a></li><li data-type='method'><a href="module-data.List.html#ap">ap</a></li><li data-type='method'><a href="module-data.List.html#concat">concat</a></li><li data-type='method'><a href="module-data.List.html#cons">cons</a></li><li data-type='method'><a href="module-data.List.html#drop">drop</a></li><li data-type='method'><a href="module-data.List.html#extend">extend</a></li><li data-type='method'><a href="module-data.List.html#extract">extract</a></li><li data-type='method'><a href="module-data.List.html#filter">filter</a></li><li data-type='method'><a href="module-data.List.html#find">find</a></li><li data-type='method'><a href="module-data.List.html#flat">flat</a></li><li data-type='method'><a href="module-data.List.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.List.html#fold">fold</a></li><li data-type='method'><a href="module-data.List.html#foldMap">foldMap</a></li><li data-type='method'><a href="module-data.List.html#intersperse">intersperse</a></li><li data-type='method'><a href="module-data.List.html#map">map</a></li><li data-type='method'><a href="module-data.List.html#nub">nub</a></li><li data-type='method'><a href="module-data.List.html#nubBy">nubBy</a></li><li data-type='method'><a href="module-data.List.html#reduce">reduce</a></li><li data-type='method'><a href="module-data.List.html#reduceRight">reduceRight</a></li><li data-type='method'><a href="module-data.List.html#sequence">sequence</a></li><li data-type='method'><a href="module-data.List.html#snoc">snoc</a></li><li data-type='method'><a href="module-data.List.html#take">take</a></li><li data-type='method'><a href="module-data.List.html#toArray">toArray</a></li></ul></li><li><a href="module-data.Maybe.html">Maybe</a><ul class='methods'><li data-type='method'><a href="module-data.Maybe.html#.empty">empty</a></li><li data-type='method'><a href="module-data.Maybe.html#.from">from</a></li><li data-type='method'><a href="module-data.Maybe.html#.fromEither">fromEither</a></li><li data-type='method'><a href="module-data.Maybe.html#.fromId">fromId</a></li><li data-type='method'><a href="module-data.Maybe.html#.fromList">fromList</a></li><li data-type='method'><a href="module-data.Maybe.html#.of">of</a></li><li data-type='method'><a href="module-data.Maybe.html#alt">alt</a></li><li data-type='method'><a href="module-data.Maybe.html#ap">ap</a></li><li data-type='method'><a href="module-data.Maybe.html#biMap">biMap</a></li><li data-type='method'><a href="module-data.Maybe.html#concat">concat</a></li><li data-type='method'><a href="module-data.Maybe.html#extend">extend</a></li><li data-type='method'><a href="module-data.Maybe.html#extract">extract</a></li><li data-type='method'><a href="module-data.Maybe.html#flat">flat</a></li><li data-type='method'><a href="module-data.Maybe.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.Maybe.html#isSome">isSome</a></li><li data-type='method'><a href="module-data.Maybe.html#map">map</a></li><li data-type='method'><a href="module-data.Maybe.html#reduce">reduce</a></li><li data-type='method'><a href="module-data.Maybe.html#sequence">sequence</a></li><li data-type='method'><a href="module-data.Maybe.html#traverse">traverse</a></li></ul></li><li><a href="module-data.State.html">State</a><ul class='methods'><li data-type='method'><a href="module-data.State.html#.get">get</a></li><li data-type='method'><a href="module-data.State.html#.modify">modify</a></li><li data-type='method'><a href="module-data.State.html#.of">of</a></li><li data-type='method'><a href="module-data.State.html#.put">put</a></li><li data-type='method'><a href="module-data.State.html#ap">ap</a></li><li data-type='method'><a href="module-data.State.html#exec">exec</a></li><li data-type='method'><a href="module-data.State.html#flat">flat</a></li><li data-type='method'><a href="module-data.State.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.State.html#map">map</a></li><li data-type='method'><a href="module-data.State.html#run">run</a></li></ul></li><li><a href="module-data.State.Result.html">Result</a></li><li><a href="module-data.Task.html">Task</a><ul class='methods'><li data-type='method'><a href="module-data.Task.html#.empty">empty</a></li><li data-type='method'><a href="module-data.Task.html#.fromEither">fromEither</a></li><li data-type='method'><a href="module-data.Task.html#.fromId">fromId</a></li><li data-type='method'><a href="module-data.Task.html#.fromIO">fromIO</a></li><li data-type='method'><a href="module-data.Task.html#.fromList">fromList</a></li><li data-type='method'><a href="module-data.Task.html#.fromMaybe">fromMaybe</a></li><li data-type='method'><a href="module-data.Task.html#.of">of</a></li><li data-type='method'><a href="module-data.Task.html#.reject">reject</a></li><li data-type='method'><a href="module-data.Task.html#.resolve">resolve</a></li><li data-type='method'><a href="module-data.Task.html#.timeout">timeout</a></li><li data-type='method'><a href="module-data.Task.html#alt">alt</a></li><li data-type='method'><a href="module-data.Task.html#ap">ap</a></li><li data-type='method'><a href="module-data.Task.html#concat">concat</a></li><li data-type='method'><a href="module-data.Task.html#flat">flat</a></li><li data-type='method'><a href="module-data.Task.html#flatMap">flatMap</a></li><li data-type='method'><a href="module-data.Task.html#map">map</a></li><li data-type='method'><a href="module-data.Task.html#swap">swap</a></li><li data-type='method'><a href="module-data.Task.html#toPromise">toPromise</a></li></ul></li><li><a href="module-generics.Eq.html">Eq</a></li><li><a href="module-generics.Ord.html">Ord</a></li><li><a href="module-generics.Show.html">Show</a></li><li><a href="module-monoid.All.html">All</a><ul class='methods'><li data-type='method'><a href="module-monoid.All.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.All.html#.of">of</a></li><li data-type='method'><a href="module-monoid.All.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Any.html">Any</a><ul class='methods'><li data-type='method'><a href="module-monoid.Any.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Any.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Any.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Char.html">Char</a><ul class='methods'><li data-type='method'><a href="module-monoid.Char.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Char.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Char.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Fn.html">Fn</a><ul class='methods'><li data-type='method'><a href="module-monoid.Fn.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Fn.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Fn.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Max.html">Max</a><ul class='methods'><li data-type='method'><a href="module-monoid.Max.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Max.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Max.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Min.html">Min</a><ul class='methods'><li data-type='method'><a href="module-monoid.Min.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Min.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Min.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Product.html">Product</a><ul class='methods'><li data-type='method'><a href="module-monoid.Product.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Product.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Product.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Record.html">Record</a><ul class='methods'><li data-type='method'><a href="module-monoid.Record.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Record.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Record.html#concat">concat</a></li></ul></li><li><a href="module-monoid.Sum.html">Sum</a><ul class='methods'><li data-type='method'><a href="module-monoid.Sum.html#.empty">empty</a></li><li data-type='method'><a href="module-monoid.Sum.html#.of">of</a></li><li data-type='method'><a href="module-monoid.Sum.html#concat">concat</a></li></ul></li></ul>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading nav-heading--section">Tutorials</li><li class="nav-item"><a href="tutorial-Quickstart-Basic.html">Quickstart-Basic</a></li><li class="nav-item"><a href="tutorial-Quickstart-Final.html">Quickstart-Final</a></li><li class="nav-heading nav-heading--section">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-adt.html">adt</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-adt.html#~Type">Type</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-adt.html#~UnionType">UnionType</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-data.html">data</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-generics.html">generics</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-lambda.html">lambda</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.compose">compose</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.constant">constant</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.curry">curry</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.curryRight">curryRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.fixed">fixed</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.flip">flip</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.id">id</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.memoize">memoize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.not">not</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.partial">partial</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.partialRight">partialRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.pipe">pipe</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-monoid.html">monoid</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-operation.html">operation</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.doM">doM</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.drop">drop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.equals">equals</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.filter">filter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.find">find</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.fold">fold</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.foldMap">foldMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.head">head</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.liftA">liftA</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.nub">nub</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.nubBy">nubBy</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.prop">prop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.reduce">reduce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.reduceRight">reduceRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.sequence">sequence</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.tail">tail</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.take">take</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.traverse">traverse</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-optic.html">optic</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.createLens">createLens</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.lenses">lenses</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.mapped">mapped</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.over">over</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.set">set</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.view">view</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-trampoline.html">trampoline</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-trampoline.html#.again">again</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-trampoline.html#.recur">recur</a></span></li><li class="nav-heading nav-heading--section">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Either.html">Either</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.fromList">fromList</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.fromMaybe">fromMaybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.try">try</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#alt">alt</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#biMap">biMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#extend">extend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#extract">extract</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#isRight">isRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#reduce">reduce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#sequence">sequence</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#swap">swap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#traverse">traverse</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Free.html">Free</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#.liftM">liftM</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#interpret">interpret</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#map">map</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Id.html">Id</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#.fromEither">fromEither</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#.fromList">fromList</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#.fromMaybe">fromMaybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#extend">extend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#extract">extract</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#reduce">reduce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#sequence">sequence</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#traverse">traverse</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.IO.html">IO</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.fromEither">fromEither</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.fromId">fromId</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.fromList">fromList</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.fromMaybe">fromMaybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#contraMap">contraMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#proMap">proMap</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.List.html">List</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.fromArray">fromArray</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.fromEither">fromEither</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.fromId">fromId</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.fromMaybe">fromMaybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#cons">cons</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#drop">drop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#extend">extend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#extract">extract</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#filter">filter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#find">find</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#fold">fold</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#foldMap">foldMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#intersperse">intersperse</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#nub">nub</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#nubBy">nubBy</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#reduce">reduce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#reduceRight">reduceRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#sequence">sequence</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#snoc">snoc</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#take">take</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#toArray">toArray</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Maybe.html">Maybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.fromEither">fromEither</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.fromId">fromId</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.fromList">fromList</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#alt">alt</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#biMap">biMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#extend">extend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#extract">extract</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#isSome">isSome</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#reduce">reduce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#sequence">sequence</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#traverse">traverse</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.State.html">State</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#.get">get</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#.modify">modify</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#.put">put</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#exec">exec</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#run">run</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.State.Result.html">Result</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Task.html">Task</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromEither">fromEither</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromId">fromId</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromIO">fromIO</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromList">fromList</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromMaybe">fromMaybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.reject">reject</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.resolve">resolve</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.timeout">timeout</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#alt">alt</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#swap">swap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#toPromise">toPromise</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-generics.Eq.html">Eq</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-generics.Ord.html">Ord</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-generics.Show.html">Show</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.All.html">All</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.All.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.All.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.All.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Any.html">Any</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Any.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Any.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Any.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Char.html">Char</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Char.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Char.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Char.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Fn.html">Fn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Fn.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Fn.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Fn.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Max.html">Max</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Max.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Max.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Max.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Min.html">Min</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Min.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Min.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Min.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Product.html">Product</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Product.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Product.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Product.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Record.html">Record</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Record.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Record.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Record.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Sum.html">Sum</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Sum.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Sum.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Sum.html#concat">concat</a></span></li>
 </nav>
 
 <div id="main">
@@ -160,63 +51,48 @@
 
 
     <section class="readme">
-        <article><div class="readme_logo"><img src="logo.jpg?raw=true," alt="futils Logo" title="futils Logo"></div>
+        <article><div class="readme_logo"><img src="media/logo.jpg?raw=true," alt="futils Logo" title="futils Logo"></div>
+<div class="icon icon--whale1" id="topwhale"></div>
 
-<h1>About futils</h1><p>Welcome to the futils documentation. Here you'll find detailed information about everything the library provides. Each explanation is accompanied by short example codes to give brief introductions.</p>
-<h2>How this library is organized</h2><p>The library itself is divided into several packages or modules, and the documentation is organized the same way. Here is a short list of all modules of futils.</p>
-<table>
-<thead>
-<tr>
-<th>Package</th>
-<th>Namespace</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Trampoline</td>
-<td><code>.trampoline</code></td>
-<td>Useful to create tail recursive functions in a not tail recursive language.</td>
-</tr>
-<tr>
-<td>Operation</td>
-<td><code>.operation</code></td>
-<td>Functions that allow to operate with various data structures in a Point-Free form.</td>
-</tr>
-<tr>
-<td>Lambda</td>
-<td><code>.lambda</code></td>
-<td>Contains helpers for working with functions, like <code>curry</code>, <code>flip</code> and <code>compose</code>.</td>
-</tr>
-<tr>
-<td>ADT</td>
-<td><code>.adt</code></td>
-<td>Allows easy creation of algebraic single and union data types.</td>
-</tr>
-<tr>
-<td>Generics</td>
-<td><code>.generics</code></td>
-<td>Building blocks for new data structures which can derive generic methods.</td>
-</tr>
-<tr>
-<td>Monoid</td>
-<td><code>.monoid</code></td>
-<td>A collection of some of the most common monoidal structures like <code>Sum</code> and <code>All</code>.</td>
-</tr>
-<tr>
-<td>Data</td>
-<td><code>.data</code></td>
-<td>Pre-made data structures. All of these implement various interface contracts (typeclasses).</td>
-</tr>
-<tr>
-<td>Optic</td>
-<td><code>.optic</code></td>
-<td>van Laarhoven based lenses for <code>Object</code> and <code>Array</code> structures.</td>
-</tr>
-</tbody>
-</table>
-<h1>Quickstart</h1><p>To help you get started, here's a quick start guide to get you up and running the library in a browser environment. Throughout, you'll be introduced to the structure of the library and to some of it's most common functions and structures. It is written in ES6/ES2015 but should easily be portable to ES5.</p>
-<h2>Step 1: Download</h2><p>The library can be loaded either by downloading it from <a href="https://www.npmjs.com/package/futils">NPM</a>, by getting it from a <a href="https://unpkg.com/futils@latest">CDN</a> or by downloading it from <a href="https://raw.githubusercontent.com/urbandrone/futils/dist/futils.js">Github</a>. This quickstart uses NPM.</p>
+<p><a href="https://badge.fury.io/js/futils"><img src="https://badge.fury.io/js/futils.svg" alt="Current NPM version"></a>
+<a href="https://travis-ci.org/urbandrone/futils"><img src="https://travis-ci.org/urbandrone/futils.svg?branch=master" alt="Build Status"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a></p>
+<h1>What this is all about</h1><p>The futils library is designed to allow you to incorporate various aspects of <em>functional programming</em> techniques into your JavaScript code. It ships basic building blocks as well as advanced data structures and also the tools to create your own ones. It allows you to use <em>tacit programming</em> with functional composition, partial application and other function(al) operations. Or maybe you want to express the intend of your code with custom data types and to work with powerful data structures like <code>Either</code>, <code>Task</code> and <code>IO</code>. </p>
+<p>If that doesn't convince you to give it a go, here's an example that should spark your imagination. This is some code for the <a href="https://en.wikipedia.org/wiki/SCUMM">SCUMM</a> engine, which <a href="https://en.wikipedia.org/wiki/Ron_Gilbert">Ron Gilbert</a> has shown in 2011:</p>
+<pre class="prettyprint source"><code>cut-scene {
+    ...
+    actor nurse-edna in-room edna-bedroom at 60,20
+    camera-follow nurse-edna
+    actor nurse-edna walk-to 30,20
+    wait-for-actor nurse-edna
+    say-line nurse-edna &quot;WHATS'S YOUR POINT ED!!!&quot;
+    wait-for-talking nurse-edna
+    ...
+}</code></pre><p>It's a beautiful little piece of <em>declarative</em> code. And it's quite easy to understand, right? The first line says it's a &quot;cut-scene&quot;, the curly brackets denote everything inside it as part of a block (or group), and each line in the block reads like an instruction. futils tries to give you the tools at hand you need to write your day-to-day JavaScript code with equal expressive power. Get rid of those messy <code>if</code> statements, <code>for</code> loops and clutter and instead develop and use a beautiful API you've build almost alongside your application.</p>
+<h4>Further readings:</h4><p>It is recommended to have a basic understanding about what functional programming in JavaScript looks like and how it is done. In case you have little experience with it, these should get you going:</p>
+<ul>
+<li><a href="https://jrsinclair.com/articles/2016/gentle-introduction-to-functional-javascript-style/">A Gentle Introduction to Functional JavaScript Style</a></li>
+<li><a href="https://github.com/MostlyAdequate/mostly-adequate-guide">Professor Frisby's Mostly Adequate Guide to Functional Programming</a>
+<em>Note: <code>chain</code> is <code>flatMap</code> in futils</em></li>
+<li><a href="http://www.tomharding.me/fantasy-land/">Fantas, eel and specification</a>
+<em>Note: <code>chain</code> is <code>flatMap</code> in futils</em></li>
+<li><a href="https://curiosity-driven.org/monads-in-javascript">Monads in JavaScript</a>
+<em>Note: <code>unit</code> is the type constructor and <code>bind</code> is <code>flatMap</code> in futils</em></li>
+</ul>
+<div class="grid grid--1of6">
+    <div class="icon icon--whale2"></div>
+
+<blockquote>
+<p><strong>Why is <code>flatMap</code> chosen over <code>bind</code> or <code>chain</code>?</strong>
+Mostly in favor to have a unified interface with the native <code>Array.prototype.flatMap</code> and <code>Array.prototype.flat</code> methods. Read more about it:
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap"><code>Array.prototype.flatMap</code></a>,
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat"><code>Array.prototype.flat</code></a>,
+<a href="https://github.com/tc39/proposal-flatMap">EcmaScript Proposal</a>. Not only does it cause less friction when reading your code, it also makes
+porting function compositions easier because it frees you from having to distinguish your functions based on the fact that they either utilize
+<code>chain</code> when working with monads, or <code>flatMap</code> when working with arrays.
+</div></p>
+</blockquote>
+<h1>Download</h1><p>The library can be loaded either by downloading it from <a href="https://www.npmjs.com/package/futils">NPM</a>, by getting it from a <a href="https://unpkg.com/futils@latest">CDN</a> or by downloading it from <a href="https://raw.githubusercontent.com/urbandrone/futils/master/dist/futils.js">Github</a>.</p>
 <table>
 <thead>
 <tr>
@@ -239,179 +115,18 @@
 </tr>
 </tbody>
 </table>
-<h2>Step 2: The expected result</h2><p>By completing the tutorial, you should have a working text processor which allows to obfuscate the contents of a text file with the help of a parser.</p>
-<h2>Step 3: Modeling types</h2><p>To model the types, we make use of the <strong>ADT</strong> package.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type} } = require('futils');</code></pre><h4>Matrix</h4><p>We start by creating a <code>Matrix</code> data type with the <code>Type</code> function. You can use <code>Type</code> and <code>UnionType</code> in your programs to add more clarity to it and create your own data types and enumeration types. The signature of <code>Type</code> looks like this:</p>
-<p><code>Type :: String -&gt; Array String -&gt; Constructor</code>.</p>
-<p>The <code>Matrix</code> data type is going to carry the individual shifting matrix for the characters of a given string.</p>
-<pre class="prettyprint source lang-javascript"><code>// data Matrix = Matrix (Array String)
-const Matrix = Type('Matrix', ['value']);
-
-Matrix.fn.map = function (f) {
-    return Matrix(this.value.map(f));
-}</code></pre><p>Also, let's make <code>Matrix</code> a part of the <code>Functor</code> family by providing a <code>map</code> method for it. Because <code>Matrix</code> is a container for an <code>Array</code> of <code>Array</code>s of <code>String</code>s, the <code>map</code> method takes a single function and projects it over each <code>String</code> in the inner <code>Array</code>s, then returning a new <code>Matrix</code> of the results.</p>
-<h4>Char</h4><p>Each character of the text will be presented in a special type <code>Char</code>. The purpose of char is to provide the possibility to manipulate characters in terms of their character code. We make <code>Char</code> part of the family of <code>Functor</code>s to provide it with the necessary capability.</p>
-<pre class="prettyprint source lang-javascript"><code>// data Char = Char String
-const Char = Type('Char', ['value']);
-
-Char.fn.map = function (f) {
-    return Char(String.fromCharCode(f(this.value.charCodeAt(0))));
-}</code></pre><h4>Operation</h4><p>To represent the shifting operations, introduce a typeclass <code>Operation</code> which takes a function and allows classifies it as operation. To accomplish building chains of operations with this, let's make <code>Operation</code> a part of the family of <code>Monoid</code> type classes with the <code>concat</code> method being designed to perform function composition.</p>
-<pre class="prettyprint source lang-javascript"><code>// data Operation = Operation (a -> a)
-const Operation = Type('Operation', ['run']);
-
-Operation.empty = () => Operation(a => a);
-
-Operation.fn.concat = function (f) {
-    return Operation(x => f.run(this.run(x)));
-}</code></pre><p>As it turns out, that's exactly what the <code>Fn</code> monoid from futils is designed to do. You will find it in the <strong>monoid</strong> namespace. This means, we can get rid of <code>Operation</code> and just use <code>Fn</code>.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} } = require('futils');</code></pre><h2>Step 4: Modeling functions</h2><p>So now we have types, let's think about the functions we need. The <strong>lambda</strong> namespace of futils grants access to utilities for combining and manipulating functions. </p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} ,
-        lambda: {curry, pipe} } = require('futils');
-</code></pre><h4>Text processing</h4><p>First off, we need a way to take a complete text, transform it into lines of text, transform the lines into individual words and transform these words into separate characters. JavaScript implements the <code>split</code> method for <code>String</code>s, and we are going to use it. Let's create a pure <code>split</code> function we can toss around. The function takes a &quot;mark&quot; argument which can either be a string or a regular expression.</p>
-<pre class="prettyprint source lang-javascript"><code>// split :: String|Regex -> String -> Array String
-const split = curry((mark, str) => str.split(mark));
-
-// toChars :: String -> Array (Array (Array String))
-//            ^         ^      ^      ^
-//            Text      Lines  Words  Chars
-const toChars = pipe(
-    split(/\r|\n|\r\n/g),
-    lines => lines.map(split(/\s+/g)),
-    lines => lines.map(words => words.map(split(''))));</code></pre><p>With it, we can build a pipeline of operations (<code>toChar</code>) we want to perform on a given string to split it into lines, words and characters while preserving the correct nesting as <code>Array</code> structure. This structure is the reason why we have to dot chain <code>.map</code> all the way down. It looks a bit ugly, mainly because we havn't written it in a point-free form. Let's change it.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} ,
-        lambda: {curry, pipe},
-        operation: {map, prop} } = require('futils');</code></pre><p>With the help of the <code>map</code> function from <strong>operation</strong>, we can omit specifying the (cognitive) type of data we are working with. This helps us to not tie a function to a specific problem domain and therefor increase the chance for us to reuse it in other parts of our program.</p>
-<pre class="prettyprint source lang-javascript"><code>// split :: String|Regex -> String -> Array String
-const split = curry((mark, str) => str.split(mark));
-
-// toChars :: String -> Array (Array (Array String))
-const toChars = pipe(
-    split(/\r|\n|\r\n/g),
-    map(split(/\s+/g)),
-    map(map(split(''))));</code></pre><h4>Homomorphisms</h4><p>Complementing to <code>split</code> and <code>toChars</code>, let's write two other functions <code>join</code> and <code>fromChars</code>. The <code>split</code> and <code>join</code> functions are symmetrical and in conjuction form a homomorphism, the same goes for <code>toChars</code> and <code>fromChars</code>. This means if you put a text into <code>toChars</code> and the output of <code>toChars</code> into <code>fromChars</code>, you get the initial input back.</p>
-<p><code>fromChars(toChars('hello world')) === 'hello world'</code>.</p>
-<p>Here is the implementation:</p>
-<pre class="prettyprint source lang-javascript"><code>// join :: String -> Array String -> String
-const join = curry((mark, xs) => xs.join(mark));
-
-// fromChars :: Array (Array (Array String)) -> String
-const fromChars = pipe(
-    map(map(join(''))),
-    map(join(' ')),
-    join('\n'));</code></pre><h4>The parser</h4><p>It's time we create our &quot;parser&quot;. As you know, a parser is a piece of software that takes an AST and transforms it into machine code. To some extend, our parser works in the same way, although it is much simpler. Have a look at the code below: </p>
-<pre class="prettyprint source lang-javascript"><code>// Parser :: Object (String : String -> Fn (Number -> Number))
-const Parser = {
-    '=': val => Fn(() => Number(val.replace('=', ''))),
-    '+': val => Fn(n => n + Number(val.replace('+', ''))),
-    '-': val => Fn(n => n - Number(val.replace('-', ''))),
-    '*': val => Fn(n => n * Number(val.replace('*', ''))),
-    '/': val => Fn(n => n / Number(val.replace('/', '')))
-}</code></pre><p>Basically, our parser is just an assignment of some mathematical symbols to functions that return a <code>Fn</code> monoid as a result.</p>
-<p>The final pieces we have to write utilize the <code>foldMap</code> function of the <strong>operation</strong> namespace, so we have to import it:</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn} ,
-        lambda: {curry, pipe},
-        operation: {map, prop, foldMap} } = require('futils');</code></pre><p>In general, the signature of <code>foldMap</code> looks like this:</p>
-<p><code>foldMap :: Functor F, Semigroup S =&gt; (a -&gt; S a) -&gt; F a -&gt; S a</code></p>
-<p>So it takes a function from some type <code>a</code> to a <code>Semigroup a</code>, then a <code>Functor a</code> and it finally returns a <code>Semigroup a</code>. Knowing that every monoid is also a valid semigroup, it is useful to conflate the <code>Fn</code> monoids from our parser into a single monoid while simultaneously mapping the parser over a given matrix.</p>
-<pre class="prettyprint source lang-javascript"><code>// interpreterFrom :: (Matrix, Parser) -> Fn (Number -> Number)
-const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
-
-// convert :: Matrix -> Parser -> String -> String
-const convert = curry((m, parser, str) => {
-    const interpreter = interpreterFrom(m, parser);
-    const transformer = pipe(Char.of, map(interpreter.run), prop('value'));
-    return fromChars(toChars(str).map(map(map(transformer))));
-});</code></pre><p>The <code>convert</code> function just glues all the pieces together. </p>
-<h2>Step 5: Done</h2><p>It's time to do a quick test. Just create two matrices for encoding and decoding, the corresponding encoder and decoder and try it:</p>
-<pre class="prettyprint source lang-javascript"><code>const encoderMatrix = Matrix(['*2', '+2', '/2']);
-const decoderMatrix = Matrix(['*2', '-2', '/2']);
-
-const myEncoder = convert(encoderMatrix, Parser);
-const myDecoder = convert(decoderMatrix, Parser);
-
-const encData = myEncoder('Hello world');
-console.log(`Encoded: ${encData}`);
-console.log(`Decoded: ${myDecoder(encData)}`);</code></pre><p>You can see the complete code below.</p>
-<pre class="prettyprint source lang-javascript"><code>const { adt: {Type},
-        monoid: {Fn},
-        lambda: {curry, pipe},
-        operation: {map, prop, foldMap} } = require('futils');
-
-
-
-/********** DATA TYPES **********/
-
-// data Matrix = Matrix (Array String)
-const Matrix = Type('Matrix', ['value']);
-
-Matrix.fn.map = function (f) {
-    return Matrix(this.value.map(f));
-}
-
-
-// data Char = Char String
-const Char = Type('Char', ['value']);
-
-Char.fn.map = function (f) {
-    return Char(String.fromCharCode(f(this.value.charCodeAt(0))));
-}
-
-
-
-/********** PARSER **********/
-
-// Parser :: Object (String : String -> Fn (Number -> Number))
-const Parser = {
-    '=': val => Fn(() => Number(val.replace('=', ''))),
-    '+': val => Fn(n => n + Number(val.replace('+', ''))),
-    '-': val => Fn(n => n - Number(val.replace('-', ''))),
-    '*': val => Fn(n => n * Number(val.replace('*', ''))),
-    '/': val => Fn(n => n / Number(val.replace('/', '')))
-}
-
-
-
-/********** FUNCTIONS **********/
-
-// split :: String|Regex -> String -> Array String
-const split = curry((mark, str) => str.split(mark));
-
-// join :: String -> Array String -> String
-const join = curry((mark, xs) => xs.join(mark));
-
-
-// toChars :: String -> Array (Array (Array String))
-const toChars = pipe(
-    split(/\r|\n|\r\n/g),
-    map(split(/\s+/g)),
-    map(map(split(''))));
-
-// fromChars :: Array (Array (Array String)) -> String
-const fromChars = pipe(
-    map(map(join(''))),
-    map(join(' ')),
-    join('\n'));
-
-
-
-// interpreterFrom :: (Matrix, Parser) -> Fn a
-const interpreterFrom = (m, p) => foldMap(x => p[x[0]](x), m);
-
-// convert :: Matrix -> Parser -> String -> String
-const convert = curry((m, parser, str) => {
-    const interpreter = interpreterFrom(m, parser);
-    const transformer = pipe(Char.of, map(interpreter.run), prop('value'));
-    return fromChars(toChars(str).map(map(map(transformer))));
-});
-
-
-
-module.exports = {Matrix, Parser, convert};</code></pre></article>
+<h2>Requirements</h2><p>futils requires a few things to be available to function properly. First of all, it needs to have <code>Symbol</code> support. In case you are unsure if the target platform provides it, use a shim from the list below. The same goes for <code>Promise</code> ans <code>Object.assign</code>. Also check out:</p>
+<ul>
+<li><a href="http://kangax.github.io/compat-table/es6/#test-Promise">ES6 compat table: <code>Promise</code></a></li>
+<li><a href="http://kangax.github.io/compat-table/es6/#test-Symbol">ES6 compat table: <code>Symbols</code></a></li>
+<li><a href="http://kangax.github.io/compat-table/es6/#test-Object_static_methods">ES6 compat table: <code>Object.assign</code></a></li>
+</ul>
+<h4>Shims:</h4><p>You can use either of these shims if needed:</p>
+<ul>
+<li>core-js (<strong>recommended</strong>): <a href="https://github.com/zloirock/core-js">Github</a> | <a href="https://unpkg.com/core-js-bundle@3.0.0-beta.9/minified.js">CDN</a></li>
+<li>es6-shim: <a href="https://github.com/paulmillr/es6-shim">Github</a> | <a href="https://cdnjs.com/libraries/es6-shim">CDN</a></li>
+</ul>
+<h1>Quickstart</h1><p>Start with this <a href="tutorial-Quickstart-Basic.html">quickstart tutorial</a> if you haven't used futils before. Otherwise, have fun exploring the other tutorials or reading the docs for interesting functionality!</p></article>
     </section>
 
 
@@ -423,8 +138,11 @@ module.exports = {Matrix, Parser, convert};</code></pre></article>
 
 <br class="clear">
 
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> using the Minami theme as a base.
+<footer class="grid grid--1of4 reverse">
+    <div class="footertext">
+        Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> using the Minami theme as a base.
+    </div>
+    <div id="footerwhale" class="icon icon--whale3"></div>
 </footer>
 
 <script>prettyPrint();</script>
