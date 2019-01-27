@@ -16,12 +16,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 /**
- * The ap function
+ * The ap function allows to apply a function inside a Applicative to a value in
+ * another Functor. Because the .then function of a Promise flattens a returned
+ * Promise, ap can be used with Promise, too
  * @method ap
  * @memberof module:operation
- * @param {Applicative} af The Applicative to apply
- * @param {Functor} a A Functor interface implementing type
- * @return {Functor} A new instance of the Functor
+ * @param {Applicative|Promise} af The Applicative or Promise to apply
+ * @param {Functor|Promise} a A Functor interface implementing type or a Promise
+ * @return {Functor|Promise} A new instance of the Functor or Promise
  *
  * @example
  * const {Id} = require('futils').data;

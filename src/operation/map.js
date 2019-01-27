@@ -17,7 +17,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 /**
  * The map function. Map takes a function and maps it over the value(s)
- * of a data structure. It returns a new structure of the same type
+ * of a data structure. It returns a new structure of the same type. 
+ * This is the natural behaviour of Promises when using the .then function,
+ * except that if you return a Promise with the value inside it,
+ * the returned Promise has only a single level. (it naturally flattens)
  * @method map
  * @memberof module:operation
  * @param {Function} f The function to map with

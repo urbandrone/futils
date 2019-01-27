@@ -17,7 +17,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 /**
  * The flatMap function which maps a function which returns a data
- * structure over a structure of the same type and flattens the result one level
+ * structure over a structure of the same type and flattens the result one level.
+ * This is the natural behaviour of Promises when using the .then function,
+ * because if you return a Promise, the returned Promise has only a single level.
  * @method flatMap
  * @memberof module:operation
  * @param {Function} f The function to flatMap with

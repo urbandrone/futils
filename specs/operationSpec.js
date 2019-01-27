@@ -3,8 +3,8 @@ const {Id, List} = require('../dist/futils').data;
 const {Sum} = require('../dist/futils').monoid;
 
 
-const timeout = ms => new Promise((res, rej) => {
-    setTimeout(() => { res(true); }, ms);
+const timeout = (ms, x) => new Promise((res, rej) => {
+    setTimeout(() => { res(x); }, ms);
 });
 
 
@@ -15,6 +15,20 @@ describe('Operation', () => {
             expect(O.ap(mf, Id.of(1)).value).toBe(2);
             expect(O.ap(mf)(Id.of(1)).value).toBe(2);
         });
+
+        it('should work with Promises', () => {
+            let v = null;
+            runs(function() {
+                let mf = Promise.resolve(x => x + 1);
+                O.ap(mf, Promise.resolve(1)).then(x => { v = x; })
+            });
+
+            waitsFor(() => v === 2, 'v should be 2', 500);
+
+            runs(function() {
+              expect(v).toBe(2);
+            });
+        })
     });
 
     describe('concat', () => {
@@ -22,6 +36,19 @@ describe('Operation', () => {
             expect(O.concat(Id.of('b'), Id.of('a')).value).toBe('ab');
             expect(O.concat(Id.of('b'))(Id.of('a')).value).toBe('ab');
         });
+
+        it('should work with Promises', () => {
+            let v = null;
+            runs(function() {
+                O.concat(timeout(100, 1), timeout(10, 3)).then(x => { v = x; });
+            });
+
+            waitsFor(() => v === 3, 'v should be 3', 500);
+
+            runs(function() {
+              expect(v).toBe(3);
+            });
+        })
     });
 
     describe('doM', () => {
@@ -46,7 +73,7 @@ describe('Operation', () => {
                 s.then(x => { v = x; });
             });
 
-            waitsFor(() => v === 3, 'v should be 1', 500);
+            waitsFor(() => v === 3, 'v should be 3', 500);
 
             runs(function() {
               expect(v).toBe(3);
@@ -118,6 +145,20 @@ describe('Operation', () => {
             expect(O.flatMap(f(Array))([1, 2, 3])).toEqual([2, 3, 4]);
             expect(O.flatMap(f(Id), Id.of(1)).value).toBe(2);
         });
+
+        it('should work with Promises', () => {
+            let v = null;
+            let f = x => Promise.resolve(x * 3);
+            runs(function() {
+                O.flatMap(f, Promise.resolve(1)).then(x => { v = x; });
+            });
+
+            waitsFor(() => v === 3, 'v should be 3', 500);
+
+            runs(function() {
+              expect(v).toBe(3);
+            });
+        });
     });
 
     describe('fold', () => {
@@ -161,6 +202,20 @@ describe('Operation', () => {
             expect(O.map(f, [1, 2, 3])).toEqual([2, 3, 4]);
             expect(O.map(f)([1, 2, 3])).toEqual([2, 3, 4]);
             expect(O.map(f, Id.of(1)).value).toBe(2);
+        });
+
+        it('should work with Promises', () => {
+            let v = null;
+            let f = x => x * 3;
+            runs(function() {
+                O.map(f, Promise.resolve(1)).then(x => { v = x; });
+            });
+
+            waitsFor(() => v === 3, 'v should be 3', 500);
+
+            runs(function() {
+              expect(v).toBe(3);
+            });
         });
     });
 
