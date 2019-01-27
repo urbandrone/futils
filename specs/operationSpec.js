@@ -3,6 +3,11 @@ const {Id, List} = require('../dist/futils').data;
 const {Sum} = require('../dist/futils').monoid;
 
 
+const timeout = ms => new Promise((res, rej) => {
+    setTimeout(() => { res(true); }, ms);
+});
+
+
 describe('Operation', () => {
     describe('ap', () => {
         it('should be able to apply a function in a structure', () => {
@@ -29,6 +34,24 @@ describe('Operation', () => {
 
             expect(r.value).toBe(3);
         });
+
+        it('should work with Promises', () => {
+            let v = null;
+            runs(function() {
+                let s = O.doM(function * () {
+                    let a = yield Promise.resolve(1);
+                    let b = yield Promise.resolve(a + 1);
+                    return Promise.resolve(b + 1);
+                });
+                s.then(x => { v = x; });
+            });
+
+            waitsFor(() => v === 3, 'v should be 1', 500);
+
+            runs(function() {
+              expect(v).toBe(3);
+            });
+        })
     });
 
     describe('drop', () => {

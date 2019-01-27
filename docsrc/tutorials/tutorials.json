@@ -1,0 +1,13 @@
+{
+  "01-quickstart": {
+    "title": "Quickstart",
+    "children": {
+      "011-quickstart-alternative": {
+        "title": "Quickstart: Alternative solution"
+      }
+    }
+  },
+  "02-monoids": {
+    "title": "Combining things"
+  }
+}

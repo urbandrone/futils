@@ -19,9 +19,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * The foldMap function
  * @method foldMap
  * @memberof module:operation
- * @param {Function} A function returning a Monoid to fold into
+ * @param {Function} A function returning a Semigroup to fold into
  * @param {Foldable} a The values to fold
- * @return {Monoid} All values folded into the Monoid
+ * @return {Semigroup} All values folded into the Semigroup
  *
  * @example
  * const {Sum} = require('futils').monoid;

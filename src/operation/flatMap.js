@@ -21,8 +21,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * @method flatMap
  * @memberof module:operation
  * @param {Function} f The function to flatMap with
- * @param {Monad|Array} a Any Array and/or Monad interface implementing type
- * @return {Monad|Array} A new instance of the Array or Monad
+ * @param {Monad|Array|Promise} a Any Array and/or Monad interface implementing type, as well as Promise
+ * @return {Monad|Array|Promise} A new instance of the Array or Monad or Promise
  *
  * @example
  * const {flatMap} = require('futils').operation;
@@ -32,6 +32,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  */
 export const flatMap = (f, a) => {
     return a == null ? (b) => flatMap(f, b) :
-            a.flatMap ? a.flatMap(f) :
+            typeof a.flatMap === 'function' ? a.flatMap(f) :
+            typeof a.then === 'function' ? a.then(f, x => x) :
             a.reduce((x, y) => x.concat(f(y)), []);
 }

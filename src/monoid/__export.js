@@ -17,5 +17,13 @@ import {Record} from './Record';
  */
 
 export default {
-    Sum, Product, Min, Max, Char, Fn, Any, All, Record
+    Sum, 
+    Product,
+    Min, 
+    Max, 
+    Char, 
+    Fn,
+    Any, 
+    All, 
+    Record
 };

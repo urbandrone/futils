@@ -64,6 +64,11 @@ const ctorOfT = (u, x, ys) => {
 
 const deriveT = a => (...Gs) => Gs.reduce((t, g) => g.derive(t), a);
 
+const callOf = t => (...xs) => {
+    if (t.of) { return t.of(...xs); }
+    return t.constructor(...xs);
+}
+
 
 
 /**
@@ -84,7 +89,7 @@ const deriveT = a => (...Gs) => Gs.reduce((t, g) => g.derive(t), a);
  * }
  *
  *
- * const p = Point(100, 200);
+ * const p = Point.of(100, 200);
  * p.move(50, 100).x; // -> 150
  * Point.is(p); // -> true
  */
@@ -95,6 +100,7 @@ export const Type = (type, vals) => {
     def(ctor, 'deriving', deriveT(ctor));
     ctor.fn = ctor.prototype = proto;
     ctor.prototype.constructor = ctor;
+    ctor.prototype.constructor.of = ctor;
     return ctor;
 }
 
@@ -126,10 +132,10 @@ export const Type = (type, vals) => {
  * }
  *
  *
- * const rect = Rect(Point(100, 200), Point(200, 300));
+ * const rect = Rect.of(Point.of(100, 200), Point.of(200, 300));
  * rect.move(-50, -50);
  *
- * const line = Circle(50, Point(200, 200));
+ * const line = Circle.of(50, Point.of(200, 200));
  * line.move(-50, -50);
  */
 export const UnionType = (type, defs) => {
@@ -142,6 +148,7 @@ export const UnionType = (type, defs) => {
     def(union, 'is', x => !!x && x[TYPE_TAG] === type);
     def(union, 'deriving', deriveT(union));
     union.fn.constructor = function (...xs) { return ctorOfT(union, this, xs); }
+    union.fn.constructor.of = callOf(union);
     Object.keys(defs).forEach(d => {
         const ctor = makeCtor(d, defs[d], union.prototype);
         def(ctor, 'is', (x) => !!x && x[TYPE] === d);

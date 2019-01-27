@@ -254,7 +254,7 @@ IO.fn.flatMap = function (f) {
  * mInc.ap(io); // -> IO(_ -> 2)
  */
 IO.fn.ap = function (a) {
-    return a.map(this.run);
+    return a.map(x => this.run(x));
 }
 /**
  * Contravariant functor implementation, contramaps a function over the value 

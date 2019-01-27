@@ -66,7 +66,7 @@ export const map = (f, a) => {
                 });
             case 'GeneratorFunction':
                 return function * (...args) {
-                    yield f(a(...args));
+                    yield * f(a(...args));
                 }
             case 'Promise':
                 return a.then(f);
@@ -87,7 +87,7 @@ export const map = (f, a) => {
  * throw errors.
  * @class module:generics.Functor
  * @static
- * @version 3.1.0
+ * @version 3.2.0
  *
  * @example
  * const {Type} = require('futils').adt;

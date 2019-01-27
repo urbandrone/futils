@@ -16,12 +16,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 /**
- * The concat function
+ * The concat function is used to combine two Semigroup instances. This also works for
+ * Promises and will result in a Promise where the first resolving/rejecting promise
+ * succeeds/fails, meaning it acts like Promise.race
  * @method concat
  * @memberof module:operation
- * @param {Semigroup} a The Semigroup to concat
- * @param {Semigroup} b The Semigroup to concatenate with
- * @return {Semigroup} Both Semigroup instances combined
+ * @param {Semigroup|Promise} a The Semigroup to concat
+ * @param {Semigroup|Promise} b The Semigroup to concatenate with
+ * @return {Semigroup|Promise} Both Semigroup instances combined
  *
  * @example
  * const {concat} = require('futils').operation;
@@ -31,4 +33,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * concat([4, 5, 6], nums); // -> [1, 2, 3, 4, 5, 6]
  * concat([4, 5, 6]);       // -> (Semigroup -> Semigroup)
  */
-export const concat = (a, b) => b == null ? (c) => concat(a, c) : b.concat(a);
+export const concat = (a, b) => b == null ? (c) => concat(a, c) :
+                                typeof b.then === 'function' ? Promise.race([a, b]) :
+                                b.concat(a);

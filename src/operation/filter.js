@@ -15,6 +15,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
+const resRejBy = f => x => !!f(x) ? Promise.resolve(x) : Promise.reject(x);
+
 /**
  * The filter function. Filter takes a function which returns a Boolean
  * and a Filterable collection and keeps only the items for which the function
@@ -22,8 +24,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * @method filter
  * @memberof module:operation
  * @param {Function} f The function to filter with
- * @param {Filterable} a A Filterable interface implementing type
- * @return {Filterable} A new instance of the Filterable
+ * @param {Filterable|Promise} a A Filterable interface implementing type or a Promise
+ * @return {Filterable|Promise} A new instance of the Filterable or Promise
  *
  * @example
  * const {filter} = require('futils').operation;
@@ -34,5 +36,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * filter(even);            // -> (Filterable -> Filterable)
  */
 export const filter = (f, a) => {
-    return a == null ? (b) => filter(f, b) : a.filter(f);
+    return a == null ? (b) => filter(f, b) : 
+           typeof a.then === 'function' ? a.then(resRejBy(f), x => x) :
+           a.filter(f);
 }

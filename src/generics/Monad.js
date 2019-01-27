@@ -48,8 +48,6 @@ export const flat = (a) => {
         // case 'GeneratorFunction':
         // case 'Promise':
         //     return a;
-        case 'Array':
-            return a.flat ? a.flat() : a.reduce((b, x) => b.concat(x), []);
         case 'Id':
         case 'IO':
         case 'Task':
@@ -59,7 +57,8 @@ export const flat = (a) => {
         case 'None':
         case 'Left':
         case 'Right':
-            return a.flat();
+        case 'Array':
+            return a.flat ? a.flat() : a.reduce((b, x) => b.concat(x), []);
         default:
             return 'value' in a ? a.value :
                    a.__values__ == null || a.__values__.length !== 1 ? a :
@@ -77,7 +76,7 @@ export const flat = (a) => {
  * @summary Works only for types which have a single data field!
  * @class module:generics.Monad
  * @static
- * @version 3.1.0
+ * @version 3.2.0
  *
  * @example
  * const {Type} = require('futils').adt;

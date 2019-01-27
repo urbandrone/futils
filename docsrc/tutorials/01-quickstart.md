@@ -1,8 +1,8 @@
-# Quickstart
 To help you get started, here's a quick start guide to get you up and running the library in a node based environment. Throughout, you'll be introduced to the structure of the library and to some of it's most common functions and data containers.
 
 ### The expected result
-By completing the tutorial, you should have a working text processor which allows to obfuscate the contents of a text file with the help of a parser in just 31 lines of actual code. It can process single words, lines of words or complete paragraphs with linebreaks. In case you want to have a peek at what we are striving for: [futils at npm.runkit.com](https://npm.runkit.com/futils)
+By completing the tutorial, you should have a working text processor which allows to obfuscate the contents of a text file with the help of a parser in just 31 lines of actual code. It can process single words, lines of words or complete paragraphs with linebreaks. In case you want to have a peek at what we are striving for:  
+[futils at npm.runkit.com](https://npm.runkit.com/futils)
 
 
 
@@ -31,6 +31,11 @@ The library can be loaded either by downloading it from [NPM](https://www.npmjs.
 | **CDN**    | `<script src="https://unpkg.com/futils@latest"></script>`                |
 | **Github** | `<script src="local/path/to/futils.js"></script>`                        |
 
+
+> **Before you start**
+> This quickstart assumes you are familier with the concepts of `curry`, `compose/pipe`, `map` and `reduce`. It further assumes you have a basic
+> understanding of `Monoid` and `Functor`. In case you haven't any clue, feel free to read on but keep in mind that some things will make more
+> sense if you know these terms and understand their meaning. 
 
 
 ## Step 2: Modeling types
@@ -90,6 +95,14 @@ As it turns out, that's exactly what the `Fn` monoid from futils is designed to 
 const { adt: {Type},
         monoid: {Fn} } = require('futils');
 ```
+
+> **When should I use a library data structure instead of my own data types?**
+> This greatly depends on the use case. For example:
+>
+> You have to build a classic "Todo" application. For this, you know you will have to interface with a lot of stuff like logging, network and
+> DOM access, as well as accessing and manipulating the `localStorage`.  
+> You decide to use the `IO` monad, the `Task` monad and the `Either`/`Maybe` monad to build connections with these APIs and use custom types
+> only to describe the data inside the standard structures or to model the core logic of your application.
 
 
 ## Step 3: Modeling functions
@@ -186,82 +199,10 @@ So it takes a function from some type `a` to a `Semigroup a`, then a `Functor a`
 const interpreter = (m, p) => foldMap(x => p[x[0]](x), m).value;
 ```
 
-The hidden beauty of this design is this: The `interpreter` function allows us to use _any parser as well as any kind of matrix that implements `Foldable`_. This means we can use it with other parsers and/or setups, too!
-```javascript
-// NOTE: THE Matrix TYPE IS REUSED
-// ===============================
+The hidden beauty of this design is this: The `interpreter` function allows us to use _any parser which returns monoids as well as any kind of matrix that implements `Foldable`_. This means we can use it with other parsers and/or setups, too!
 
-// data Word = Word String
-const Word = Type('Word', ['val']);
-
-Word.fn.map = function (f) {
-    return Word(f(this.val));
-}
-
-
-
-// data Sentence = Line (Array Word)
-//               | EmptyString
-const Sentence = Union({Line: ['ws'], EmptyString: []});
-const {Line, EmptyString} = Sentence;
-
-Sentence.of = function (ws) {
-    return Line(ws);
-}
-
-Sentence.from = function (string) {
-    return string.trim() !== '' ? Line(string.split(/\s+/)) : EmptyString();
-}
-
-Sentence.fn.map = function (f) {
-    return this.caseOf({
-        Line: ws => Line(ws.map(w => w.map(f))),
-        EmptyString: () => this
-    });
-}
-
-Sentence.fn.reduce = function (f, a) {
-    return this.caseOf({
-        Line: ws => ws.reduce(f, a),
-        EmptyString: () => a
-    });
-}
-
-Sentence.fn.join = function (sep) {
-    return this.reduce((a, w) => !a ? w.val : `${a}${sep}${w.val}`, '');
-}
-
-
-
-
-
-// Parser :: Object (String : () -> Fn (String -> String))
-const Parser = {
-    '^': _ => Fn(s => s[0].toUpperCase() + s.slice(1)),
-    '!': _ => Fn(s => '-.+/=*'.includes(s) ? s : s + '!'),
-    '<': _ => Fn(s => s.length < 2 ? s : s.split('').reverse().join('')),
-    '"': _ => Fn(s => s.trim())
-}
-
-
-
-// matrix :: Matrix (Array String)
-const matrix = Matrix(['^', '!', '<']);
-
-// interpret :: String -> String
-const interpret = interpreter(matrix, Parser);
-
-
-// result :: Sentence
-const result = Sentence.
-    from('hello world - how are you today?').
-    map(interpret);
-
-
-console.log(result.join(' '));
-
-// logs "!olleH !dlroW - !woH !erA !uoY !?yadoT"
-``` 
+> **Portability demo**
+> There's a different solution which uses the same function available in the [alternative solution]{@tutorial 011-quickstart-alternative}. 
 
 With this at our fingertips, we can generalise the way how the interpreter functions we create with `interpreter` will be applied to a character unit inside a `Char`:
 ```javascript
@@ -373,19 +314,12 @@ module.exports = {Matrix, Parser, convert};
 ```
 
 
-
-------------
-
-## Alternative solution (Step 5, FYI)
-If you are interested, there is an [alternative solution]{@tutorial Quickstart-Final} in the tutorials section, which allows for this final syntax:
+## Alternative solution
+If you are interested, there is an [alternative solution]{@tutorial 011-quickstart-alternative} in the tutorials section, which allows for this final syntax:
 ```javascript
-const matrix = Matrix(['^', '!', '<']);
-
-const interpret = interpreter(matrix, Parser);
-
-// result :: Sentence
+// result :: Sentence a
 const result = Sentence.
-    from('hello world - how are you today?').
+    fromString('hello world - how are you today?').
     map(interpret);
 
 result.join(' '); // -> "!olleH !dlroW - !woH !erA !uoY !?yadoT"

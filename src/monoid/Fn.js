@@ -22,7 +22,6 @@ import {Eq} from '../generics/Eq';
 
 /**
  * The Fn monoid. Fn can be used to combine multiple functions
- * into a single function
  * @class module:monoid.Fn
  * @extends module:generics/Show
  * @extends module:generics/Eq
@@ -34,7 +33,8 @@ import {Eq} from '../generics/Eq';
  *
  * Fn((a) => a); // -> Fn(a -> a)
  *
- * Fn((a) => a).value; // -> (a -> a)
+ * Fn((a) => a).value;  // -> (a -> a)
+ * Fn((a) => a).run(1); // -> 1
  */
 export const Fn = Type('Fn', ['value']).
     deriving(Show, Eq);
@@ -94,4 +94,9 @@ Fn.fn.concat = function (a) {
         return Fn(x => a.value(this.value(x)));
     }
     throw `Fn::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
+}
+
+// Polyfill the `.run()`, too. This often makes for better readability
+Fn.fn.run = function (a) {
+  return this.value(a);
 }

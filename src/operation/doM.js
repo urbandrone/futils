@@ -16,7 +16,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 /**
- * The doM function, inspired by Haskell do notation
+ * The doM function, inspired by Haskell do notation. Works with all Monads as
+ * well as with Promises
  * @method doM
  * @memberof module:operation
  * @param {Generator} f A generator function describing the computations
@@ -37,8 +38,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 export const doM = (f) => {
     const compute = f();
     const step = v => {
-        const r = compute.next(v);
-        return r.done ? r.value : r.value.flatMap(step);
+        const {done, value} = compute.next(v);
+        return done ? value :
+               typeof value.then === 'function' ? value.then(step, x => x) :
+               value.flatMap(step);
     }
     return step();
 }

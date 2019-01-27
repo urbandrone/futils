@@ -100,7 +100,7 @@ export const concat = (a, b) => {
  * @summary Works only for types which have a single data field!
  * @class module:generics.Semigroup
  * @static
- * @version 3.1.0
+ * @version 3.2.0
  *
  * @example
  * const {Type} = require('futils').adt;

@@ -21,8 +21,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * @method map
  * @memberof module:operation
  * @param {Function} f The function to map with
- * @param {Functor} a A Functor interface implementing type
- * @return {Functor} A new instance of the Functor
+ * @param {Functor|Promise} a A Functor interface implementing type or a Promise
+ * @return {Functor|Promise} A new instance of the Functor or Promise
  *
  * @example
  * const {map} = require('futils').operation;
@@ -31,5 +31,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * map((a) => a.toUpperCase());             // -> (Functor -> Functor)
  */
 export const map = (f, a) => {
-    return a == null ? (b) => map(f, b) : a.map(f);
+    return a == null ? (b) => map(f, b) :
+           typeof a.then === 'function' ? a.then(f, x => x) :
+           a.map(f);
 }

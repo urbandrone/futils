@@ -4,7 +4,7 @@
         "dictionaries": ["jsdoc"]
     },
     "source": {
-        "include": ["src", "package.json", "readme_jsdoc.md"],
+        "include": ["src", "package.json"],
         "includePattern": ".js$",
         "excludePattern": "(node_modules/|specs/|docs/|dist/)"
     },
@@ -13,12 +13,25 @@
         "monospaceLinks": true,
         "useLongnameInNav": false
     },
+    "plugins": [
+        "plugins/markdown"
+    ],
     "opts": {
         "destination": "./docs/",
         "encoding": "utf8",
         "private": false,
         "recurse": true,
-        "template": "./docsrc/_tpl/minami",
+        "template": "./docsrc/template/futils",
+        "readme": "./docsrc/home.md",
         "tutorials": "./docsrc/tutorials"
+    },
+    "templates": {
+        "default": {
+            "staticFiles": {
+                "include": [
+                    "./docsrc/template/static"
+                ]
+            }
+        }
     }
 }
