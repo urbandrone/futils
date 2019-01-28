@@ -1,4 +1,4 @@
-By reading the title of this tutorial, the more experienced functional programmer thinks `Semigroup` and – as a result – hopes for `Monoid`. And this is exactly what this tutorial is all about.
+This tutorial, we'll see how to combine multiple pieces of data into a single piece by concatenation, define a custom `Semigroup` and learn about `Monoid`.
 
 #### Further readings
 - [Fantas, eel and specification](http://www.tomharding.me/fantasy-land/)
@@ -93,7 +93,7 @@ They will be marked as a `Complete` set of data.
 Although this `concat` function does look a bit complicated, it is perfectly valid and obeys all laws which are associated with `concat`. The `Customer` type therefor is part of the `Semigroup` typeclass.
 
 > **Using `generics`**
-> The example uses the **generics** namespace of futils to automatically _derive_ functionality. There are some generic typeclasses shipping with 
+> The example uses the generics namespace of futils to automatically _derive_ functionality. There are some generic typeclasses shipping with 
 > futils, which allows you to implement the required protocols automatically. Here, the `Show` typeclass implements a special `.toString` function
 > and the `Eq` typeclass implements a way to check for (deep) equality via `.equals`.
 >
@@ -294,7 +294,18 @@ httpCustomerById(123).                // <-- Retrieve Customer
 
 
 ## Monoids
+For good measure we can make the `Customer` data type also implement the `Monoid` protocol. What do we need for it? Easy, we need a way to represent an _empty value_ of a `Semigroup`. Do we have a way to represent an "empty" `Customer`? Of couse, with `Incomplete({})`! 
 
+> **Emptyness**
+> Unfortunatly, not everything has an empty value. For a type to be able to be part of the `Monoid` typeclass, it must possess a way to combine
+> two of them with the exact same result. For example, a `String` can be wrapped by a monoidal type, because there is a way to represent a
+> "nothing" `String` called the empty string `''` and it doesn't matter if you concatenate something to the left or right side of the empty string,
+> the results will be equal.
+
+To make it spec compliant, we have to add a static `empty` method to the type constructor. The `empty` function must have this signature:  
+`empty :: () -> Monoid`
+
+This means, all we have to do is:
 ```javascript
 const { adt: {UnionType},
         generics: {Show, Eq},
@@ -308,6 +319,8 @@ const { adt: {UnionType},
 // #empty :: () -> Customer a
 Customer.empty = () => Incomplete({});
 ```
+
+This already affects the rest of the code, because we can _refactor_ immediatly and get rid of `foldMap` with `fold`, which it makes the code a bit less scarier to read by expressing the exact intend: Combine all pieces of information into a `Customer`.
 
 ```javascript
 const { adt: {UnionType},

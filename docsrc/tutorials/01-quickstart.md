@@ -78,7 +78,7 @@ Char.fn.map = function (f) {
 ```
 
 #### Operation
-To represent the shifting operations, introduce a typeclass `Operation` which takes a function and allows classifies it as operation. To accomplish building chains of operations with this, let's make `Operation` a part of the family of `Monoid` type classes with the `concat` method being designed to perform function composition.
+To represent the shifting operations, introduce a typeclass `Operation` which takes a function and allows classifies it as operation. To accomplish building chains of operations with this, let's make `Operation` a part of the family of `Monoid` typeclasses with the `concat` method being designed to perform function composition.
 ```javascript
 // data Operation = Operation (a -> a)
 const Operation = Type('Operation', ['run']);
