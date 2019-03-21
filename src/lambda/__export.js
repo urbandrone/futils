@@ -10,6 +10,7 @@ import {partialRight} from './partialr';
 import {memoize} from './memoize';
 import {not} from './not';
 import {flip} from './flip';
+import {upon} from './upon';
 
 /**
  * @module lambda
@@ -27,5 +28,6 @@ export default {
     partialRight,
     memoize,
     not,
-    flip
+    flip,
+    upon
 }

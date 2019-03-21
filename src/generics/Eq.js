@@ -21,31 +21,33 @@ export const compareEq = (a, b) => {
     let tA = typeOf(a), tB = typeOf(b);
     if (tA !== tB) { return false; }
     switch (tA) {
-        case 'Null':
-        case 'Void':
-        case 'Boolean':
-        case 'String':
-        case 'Number':
-        case 'Function':
-        case 'GeneratorFunction':
-        case 'Promise':
-        case 'Proxy':
-        case 'Symbol':
-        case 'IO':
-        case 'Task':
-        case 'State':
-        case 'State.Value':
-        case 'DataBuffer':
-        case 'ArrayBuffer':
-        case 'SharedArrayBuffer':
-        case 'UInt8Array':
-        case 'UInt8ClampedArray':
-        case 'UInt16Array':
-        case 'UInt64Array':
-        case 'Float32Array':
-        case 'Float64Array':
-        case 'TypedArray':
-            return a === b;
+        case 'NaN':
+            return isNaN(a) && isNaN(b);
+        // case 'Null':
+        // case 'Void':
+        // case 'Boolean':
+        // case 'String':
+        // case 'Number':
+        // case 'Function':
+        // case 'GeneratorFunction':
+        // case 'Promise':
+        // case 'Proxy':
+        // case 'Symbol':
+        // case 'IO':
+        // case 'Task':
+        // case 'State':
+        // case 'State.Value':
+        // case 'DataBuffer':
+        // case 'ArrayBuffer':
+        // case 'SharedArrayBuffer':
+        // case 'UInt8Array':
+        // case 'UInt8ClampedArray':
+        // case 'UInt16Array':
+        // case 'UInt64Array':
+        // case 'Float32Array':
+        // case 'Float64Array':
+        // case 'TypedArray':
+        //     return a === b;
         case 'Date':
             return b.valueOf() === a.valueOf();
         case 'RegExp':
@@ -66,13 +68,13 @@ export const compareEq = (a, b) => {
         case 'ReferenceError':
             return a.name === b.name && a.message === b.message;
         default:
-            return 'value' in a ?
-                    compareEq(a.value, b.value) :
-                    a.__values__.reduce((c, av) => {
+            return a.hasOwnProperty('value') ? compareEq(a.value, b.value) :
+                    a.__values__ !== void 0 ? a.__values__.reduce((c, av) => {
                         return b.__values__.reduce((d, bv) => {
                             return !!d && compareEq(a[av], b[bv]);
                         }, c);
-                    }, true);
+                    }, true) :
+                    a === b;
     }
 }
 

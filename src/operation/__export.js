@@ -11,6 +11,9 @@ import {reduce} from './reduce';
 import {reduceRight} from './reducer';
 import {traverse} from './traverse';
 import {sequence} from './sequence';
+import {caseOf} from './caseOf';
+import {biMap} from './biMap';
+import {proMap} from './proMap';
 import {doM} from './doM';
 import {liftA} from './liftA';
 import {head} from './head';
@@ -21,6 +24,7 @@ import {find} from './find';
 import {nubBy} from './nubby';
 import {nub} from './nub';
 import {prop} from './prop';
+import {alt} from './alt';
 
 
 
@@ -43,6 +47,9 @@ export default {
     reduceRight,
     traverse,
     sequence,
+    caseOf,
+    biMap,
+    proMap,
     doM,
     liftA,
     head,
@@ -52,5 +59,6 @@ export default {
     find,
     nubBy,
     nub,
-    prop
+    prop,
+    alt
 }

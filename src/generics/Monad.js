@@ -24,6 +24,7 @@ export const flat = (a) => {
         case 'Number':
         case 'Boolean':
             return a.valueOf();
+        // case 'NaN':
         // case 'Null':
         // case 'Void':
         // case 'Object':
@@ -48,21 +49,22 @@ export const flat = (a) => {
         // case 'GeneratorFunction':
         // case 'Promise':
         //     return a;
-        case 'Id':
-        case 'IO':
-        case 'Task':
-        case 'State':
-        case 'List':
-        case 'Some':
-        case 'None':
-        case 'Left':
-        case 'Right':
+        // case 'Id':
+        // case 'IO':
+        // case 'Task':
+        // case 'State':
+        // case 'List':
+        // case 'Some':
+        // case 'None':
+        // case 'Left':
+        // case 'Right':
         case 'Array':
             return a.flat ? a.flat() : a.reduce((b, x) => b.concat(x), []);
         default:
-            return 'value' in a ? a.value :
-                   a.__values__ == null || a.__values__.length !== 1 ? a :
-                   a[a.__values__[0]];
+            return a && a.flat ? a.flat() :
+                   a && 'value' in a ? a.value :
+                   a && a.__values__ !== void 0 && a.__values__.length > 0? a[a.__values__[0]] :
+                   a;
     }
 }
 

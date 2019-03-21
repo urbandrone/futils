@@ -9,42 +9,31 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import {arity} from '../core/arity';
 
 
-
 /*
  * @module lambda
  */
 
 
 
-
-function _curriedr (f, xs) {
-    return arity(f.length - xs.length, (...ys) => {
-        let a = [...xs, ...ys].filter(v => v !== void 0);
-        if (a.length >= f.length) { return f(...a.reverse()); }
-        return _curriedr(f, a);
-    });
-}
-
-
-
 /**
- * The curryRight function. Takes a function and returns a variant of it which takes
- * arguments until enough arguments to execute the given function are consumed.
- * It can be used to turn a function which takes multiple arguments at once
- * into a function which takes its arguments in multiple steps
- * @method curryRight
+ * The upon function takes two functions and returns the result of calling the
+ * first one with the second. This is much similar to a map operation.
+ * @method upon
+ * @since 3.1.0
  * @memberof module:lambda
- * @param {Function} f The function to curryRight
- * @return {Function} The curried variant
+ * @param {Function} f The function to operate upon
+ * @param {Function} g The operating function
+ * @return {any} The result of g applied to f
  *
  * @example
- * const {curryRight} = require('futils').lambda;
+ * const {upon} = require('futils').lambda;
  *
- * const add = (a, b) => a + b;
- * const cAdd = curryRight(add);
+ * const safe = f => n => typeof n !== 'number' || isNaN(n) ? 0 : f(n);
+ * const double = n => n * 2;
  *
- * add(1);     // -> NaN
- * cAdd(1);    // -> (n -> n + 1)
- * cAdd(1)(2); // -> 3
+ * const safeDouble = upon(double, safe);
+ *
+ * safeDouble(2);    // -> 4
+ * safeDouble(null); // -> 0
  */
-export const curryRight = f => f.length <= 1 ? f : _curriedr(f, []);
+export const upon = (f, g) => g == null ? h => upon(f, h) : g(f);

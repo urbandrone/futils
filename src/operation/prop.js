@@ -42,4 +42,4 @@ const gets = (a, m) => m.has(a) ? m.get(a) : null;
  */
 export const prop = (a, b) => b == null ? (c) => prop(a, c) :
                             b.constructor.name === 'Map' ? gets(a, b) :
-                            b.hasOwnProperty(a) ? b[a] : null;
+                            b[a] == null ? null : b[a];

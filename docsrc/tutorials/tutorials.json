@@ -9,5 +9,8 @@
   },
   "02-monoids": {
     "title": "Combining things"
+  },
+  "03-reactjs": {
+    "title": "Usage with React"
   }
 }

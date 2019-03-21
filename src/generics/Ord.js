@@ -33,44 +33,46 @@ export const compareOrd = (a, b) => {
             case 'Set':
             case 'Map':
                 return compareOrd([...a.entries()], [...b.entries()]);
-            case 'Null':
-            case 'Void':
-            case 'Boolean':
-            case 'RegExp':
-            case 'Error':
-            case 'EvalError':
-            case 'TypeError':
-            case 'RangeError':
-            case 'SyntaxError':
-            case 'ReferenceError':
-            case 'Function':
-            case 'GeneratorFunction':
-            case 'Promise':
-            case 'Proxy':
-            case 'Symbol':
-            case 'IO':
-            case 'Task':
-            case 'State':
-            case 'State.Value':
-            case 'DataBuffer':
-            case 'ArrayBuffer':
-            case 'SharedArrayBuffer':
-            case 'UInt8Array':
-            case 'UInt8ClampedArray':
-            case 'UInt16Array':
-            case 'UInt64Array':
-            case 'Float32Array':
-            case 'Float64Array':
-            case 'TypedArray':
+            case 'NaN':
                 return false;
+            // case 'Null':
+            // case 'Void':
+            // case 'Boolean':
+            // case 'RegExp':
+            // case 'Error':
+            // case 'EvalError':
+            // case 'TypeError':
+            // case 'RangeError':
+            // case 'SyntaxError':
+            // case 'ReferenceError':
+            // case 'Function':
+            // case 'GeneratorFunction':
+            // case 'Promise':
+            // case 'Proxy':
+            // case 'Symbol':
+            // case 'IO':
+            // case 'Task':
+            // case 'State':
+            // case 'State.Value':
+            // case 'DataBuffer':
+            // case 'ArrayBuffer':
+            // case 'SharedArrayBuffer':
+            // case 'UInt8Array':
+            // case 'UInt8ClampedArray':
+            // case 'UInt16Array':
+            // case 'UInt64Array':
+            // case 'Float32Array':
+            // case 'Float64Array':
+            // case 'TypedArray':
+            //     return false;
             default:
-                return 'value' in a ?
-                        compareOrd(a.value, b.value) :
-                        a.__values__.reduce((c, av) => {
+                return a.hasOwnProperty('value') ? compareOrd(a.value, b.value) :
+                        a.__values__ !== void 0 ? a.__values__.reduce((c, av) => {
                             return b.__values__.reduce((d, bv) => {
                                 return !!d && compareOrd(a[av], b[bv]);
                             }, c);
-                        }, true);
+                        }, true) :
+                        false;
         }
     }
     throw `Cannot order value of type ${tA} with value of type ${tB}`;

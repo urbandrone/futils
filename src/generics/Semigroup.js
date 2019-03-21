@@ -22,6 +22,7 @@ export const concat = (a, b) => {
     let tA = typeOf(a);
     if (typeOf(b) === tA) {
         switch (tA) {
+            case 'NaN':
             case 'Null':
             case 'Void':
             case 'State':
@@ -45,17 +46,17 @@ export const concat = (a, b) => {
             // case 'TypedArray':
             // case 'State.Result':
             //     return [b, a];
-            case 'String':
-            case 'Array':
-            case 'Id':
-            case 'IO':
-            case 'Task':
-            case 'List':
-            case 'Some':
-            case 'None':
-            case 'Left':
-            case 'Right':
-                return b.concat(a);
+            // case 'String':
+            // case 'Array':
+            // case 'Id':
+            // case 'IO':
+            // case 'Task':
+            // case 'List':
+            // case 'Some':
+            // case 'None':
+            // case 'Left':
+            // case 'Right':
+            //     return b.concat(a);
             case 'Object':
                 return Object.assign(Object.create(null), b, a);
             case 'Set':
@@ -66,7 +67,7 @@ export const concat = (a, b) => {
                     return m;
                 }, new Map());
             case 'Function':
-                return arity(b.length, function concatenate (...args) {
+                return arity(b.length, (...args) => {
                     return a(b(...args));
                 });
             case 'GeneratorFunction':

@@ -6,45 +6,49 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {arity} from '../core/arity';
 
 
 
 /*
- * @module lambda
+ * @module operation
  */
-
-
-
-
-function _curriedr (f, xs) {
-    return arity(f.length - xs.length, (...ys) => {
-        let a = [...xs, ...ys].filter(v => v !== void 0);
-        if (a.length >= f.length) { return f(...a.reverse()); }
-        return _curriedr(f, a);
-    });
-}
 
 
 
 /**
- * The curryRight function. Takes a function and returns a variant of it which takes
- * arguments until enough arguments to execute the given function are consumed.
- * It can be used to turn a function which takes multiple arguments at once
- * into a function which takes its arguments in multiple steps
- * @method curryRight
- * @memberof module:lambda
- * @param {Function} f The function to curryRight
- * @return {Function} The curried variant
+ * The caseOf function is useful to apply pattern matching to union types
+ * @method caseOf
+ * @memberof module:operation
+ * @version 3.1.0
+ * @param {Object} a A mapping of types to functions
+ * @param {ADT} b The union type to pattern match against
+ * @return {any} Returns the result of the matching function
  *
  * @example
- * const {curryRight} = require('futils').lambda;
+ * const {caseOf} = require('futils').operation;
+ * const {UnionType} = require('futils').adt;
  *
- * const add = (a, b) => a + b;
- * const cAdd = curryRight(add);
+ * const Num = UnionType('Num', { OK: ['value'], Err: ['desc'] });
+ * const {OK, Err} = Num;
  *
- * add(1);     // -> NaN
- * cAdd(1);    // -> (n -> n + 1)
- * cAdd(1)(2); // -> 3
+ * 
+ * const safeFunc = f => (a, b) => caseOf({
+ *   OK: x => caseOf({ OK: y => f(x + y), Err: () => b }, b),
+ *   Err: () => a
+ * }, a);
+ *
+ * const safeAdd = safeFunc((x, y) => OK(x + y));
+ *
+ * const safeDiv = safeFunc((x, y) => x === 0 ? Err(`ZeroDiv ${y} / ${x}`) : OK(y / x));
+ *
+ * 
+ *
+ * const nums = [1, 3, 0, 2];
+ *
+ * const sum = nums.map(OK).reduce(safeAdd, OK(0));
+ * const err = num.map(OK).reduce(safeDiv, OK(3));
+ *
+ * sum; // -> OK(6)
+ * err; // -> Err({ desc: 'ZeroDiv 1 / 0' })
  */
-export const curryRight = f => f.length <= 1 ? f : _curriedr(f, []);
+export const caseOf = (a, b) => b == null ? c => caseOf(a, c) : b.caseOf(a);

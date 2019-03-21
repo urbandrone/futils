@@ -24,6 +24,7 @@ export const ap = (f, a) => {
     if (tF === 'Function') {
         switch (tA) {
             // case 'Null':
+            // case 'NaN':
             // case 'Void':
             // case 'String':
             // case 'Number':

@@ -21,8 +21,7 @@ import {UnionType} from '../adt';
 /**
  * The Free union type can be used to transform any
  * structure into a monad. This means, Free can be used to create DSLs or custom
- * interpreters for actions. It is hard to understand Free just by looking at it's
- * documentation, so make sure to also read the tutorial on github
+ * interpreters for actions.
  * @class module:data.Free
  * @static
  * @version 3.0.0
@@ -53,7 +52,7 @@ const {Cont, Return} = Free;
  * @example
  * const {Free} = require('futils').data;
  *
- * // TODO
+ * Free.of(1); // -> Return(1)
  */
 Free.of = Return;
 /**
@@ -65,9 +64,16 @@ Free.of = Return;
  * @return {Cont} A Free.Cont instance
  *
  * @example
+ * const {UnionType} = require('futils').adt;
  * const {Free} = require('futils').data;
  *
- * // TODO
+ * const Num = UnionType('Num', {Int: ['value'], Float: ['value']});
+ * const {Int, Float} = Num;
+ *
+ * const asInt = n => Free.liftM(Int(parseInt(n, 10)));
+ * const asFloat = n => Free.liftM(Float(parseFloat(n)));
+ *
+ * const prog = asInt(100.25).map(n => n.toFixed(2)).flatMap(asFloat);
  */
 Free.liftM = a => Cont(a, Return);
 /**
@@ -80,9 +86,18 @@ Free.liftM = a => Cont(a, Return);
  * @return {Cont} A Free.Cont instance
  *
  * @example
+ * const {UnionType} = require('futils').adt;
  * const {Free} = require('futils').data;
  *
- * // TODO
+ * const Num = UnionType('Num', {Int: ['value'], Float: ['value']});
+ * const {Int, Float} = Num;
+ *
+ * const cmp = (f, g) => x => f(g(x));
+ *
+ * const asInt = cmp(Free.from(Int), parseInt);
+ * const asFloat = cmp(Free.from(Float), parseFloat);
+ *
+ * const prog = asInt(100.25).map(n => n.toFixed(2)).flatMap(asFloat);
  */
 Free.from = F => arity(F.length, (...xs) => Free.liftM(F(...xs)));
 
@@ -99,7 +114,7 @@ Free.from = F => arity(F.length, (...xs) => Free.liftM(F(...xs)));
  * @example
  * const {Free} = require('futils').data;
  *
- * // TODO
+ * Free.of(1).map(n => n + 1); // -> Return(2)
  */
 Free.fn.map = function (f) {
     return this.caseOf({
@@ -119,7 +134,7 @@ Free.fn.map = function (f) {
  * @example
  * const {Free} = require('futils').data;
  *
- * // TODO
+ * Free.of(1).flatMap(n => Free.of(n + 1)); // -> Return(2)
  */
 Free.fn.flatMap = function (f) {
     return this.caseOf({
@@ -139,7 +154,7 @@ Free.fn.flatMap = function (f) {
  * @example
  * const {Free} = require('futils').data;
  *
- * // TODO
+ * Free.of(n => n + 1).ap(Free.of(1)); // -> Return(2)
  */
 Free.fn.ap = function (a) {
     return this.caseOf({
@@ -149,7 +164,7 @@ Free.fn.ap = function (a) {
 }
 /**
  * If given a interpreter function, which should be a natural transformation,
- * interprets the computation build with Free
+ * interprets the computation build with Free. This method is aliased to traverse.
  * @method interpret
  * @memberof module:data.Free
  * @instance
@@ -158,9 +173,27 @@ Free.fn.ap = function (a) {
  * @return {ApplicativeMonad} A data structure which holds the result
  *
  * @example
+ * const {UnionType} = require('futils').adt;
  * const {Free, Id} = require('futils').data;
  *
- * // TODO
+ * const Num = UnionType('Num', {Int: ['value'], Float: ['value']});
+ * const {Int, Float} = Num;
+ *
+ * const cmp = (f, g) => x => f(g(x));
+ *
+ * const asInt = cmp(Free.from(Int), parseInt);
+ * const asFloat = cmp(Free.from(Float), parseFloat);
+ *
+ * const prog = asInt(100.25).map(n => n.toFixed(2)).flatMap(asFloat);
+ *
+ * const nt = num => num.caseOf({
+ *     Int: n => isNaN(n) ? Id.of(0) : Id.of(Math.round(n)),
+ *     Float: n => isNaN(n) ? Id.of(0) : Id.of(n)
+ * });
+ *
+ * prog.interpret(nt, Id); // -> Id(100.00)
+ * 
+ * // or: prog.traverse(nt, Id); // -> Id(100.00)
  */
 Free.fn.interpret = function (transform, A) {
     return this.caseOf({
@@ -170,3 +203,5 @@ Free.fn.interpret = function (transform, A) {
                 transform(v).flatMap(x => run(x).interpret(transform, A))
     });
 }
+
+Free.fn.traverse = Free.fn.interpret;

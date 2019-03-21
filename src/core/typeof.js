@@ -8,9 +8,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 
 
-export const typeOf = (a) => {
+export const typeOf = a => {
     if (a === null) { return 'Null'; }
     if (a === void 0) { return 'Void'; }
     if (a.__type__ !== void 0) { return a.__type__; }
-    return a.constructor.name;
+    return isNaN(a) ? 'NaN' : a.constructor.name;
 }

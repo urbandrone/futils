@@ -6,45 +6,31 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-import {arity} from '../core/arity';
 
 
 
 /*
- * @module lambda
+ * @module operation
  */
-
-
-
-
-function _curriedr (f, xs) {
-    return arity(f.length - xs.length, (...ys) => {
-        let a = [...xs, ...ys].filter(v => v !== void 0);
-        if (a.length >= f.length) { return f(...a.reverse()); }
-        return _curriedr(f, a);
-    });
-}
 
 
 
 /**
- * The curryRight function. Takes a function and returns a variant of it which takes
- * arguments until enough arguments to execute the given function are consumed.
- * It can be used to turn a function which takes multiple arguments at once
- * into a function which takes its arguments in multiple steps
- * @method curryRight
- * @memberof module:lambda
- * @param {Function} f The function to curryRight
- * @return {Function} The curried variant
+ * The alt function allows to swap any data structure which might be invalid with
+ * a fallback data structure of the same type
+ * @method alt
+ * @memberof module:operation
+ * @since 3.1.0
+ * @param {Alt} o The optional Alt
+ * @param {Alt} a The Alt which might be invalid
+ * @return {Alt} A new instance of the Alt
  *
  * @example
- * const {curryRight} = require('futils').lambda;
+ * const {Maybe} = require('futils').data;
+ * const {alt} = require('futils').operation;
  *
- * const add = (a, b) => a + b;
- * const cAdd = curryRight(add);
- *
- * add(1);     // -> NaN
- * cAdd(1);    // -> (n -> n + 1)
- * cAdd(1)(2); // -> 3
+ * alt(Maybe.of(1), Maybe.empty()); // -> Some(1)
  */
-export const curryRight = f => f.length <= 1 ? f : _curriedr(f, []);
+export const alt = (o, a) => {
+    return a == null ? (b) => alt(o, b) : a.alt(o);
+}

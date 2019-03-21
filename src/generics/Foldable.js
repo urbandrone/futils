@@ -7,7 +7,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {typeOf} from '../core/typeof';
-import {arity} from '../core/arity';
 
 
 
@@ -18,16 +17,14 @@ import {arity} from '../core/arity';
 
 
 
-export const map = (f, a) => {
-    let tA = typeOf(a);
+export const reduce = (f, a, b) => {
+    let tB = typeOf(b);
     if (typeOf(f) === 'Function') {
-        switch (tA) {
-            // case 'NaN':
-            // case 'Null':
-            // case 'Void':
-            // case 'String':
-            // case 'Number':
-            // case 'Boolean':
+        switch (tB) {
+            case 'NaN':
+            case 'Null':
+            case 'Void':
+                return a;
             // case 'Proxy':
             // case 'Symbol':
             // case 'DataBuffer':
@@ -41,40 +38,40 @@ export const map = (f, a) => {
             // case 'Float64Array':
             // case 'TypedArray':
             // case 'State.Result':
-            //     return f(a);
+            //     return [b, a];
+            // case 'Number':
+            // case 'Boolean':
+            // case 'String':
             // case 'Array':
             // case 'Id':
-            // case 'IO':
-            // case 'Task':
-            // case 'State':
             // case 'List':
+            // case 'State':
             // case 'Some':
             // case 'None':
             // case 'Left':
-            // case 'Right':
-            // case 'Cont':
             // case 'Return':
-            //     return a.map(f);
+            //     return b.concat(a);
             case 'Object':
-                return Object.keys(a).reduce((r, k) => { r[k] = map(f, a[k]); return r; }, Object.create(null));
+                return Object.keys(b).reduce((x, k) => f(x, b[k], k), a);
             case 'Set':
-                return new Set([...a.values()].map(f));
+                return [...b.values()].reduce(f, a);
             case 'Map':
-                return new Map([...a.entries()].map(([k, v]) => [k, map(f, v)]));
+                return [...b.entries()].reduce((x, [k, v]) => f(x, v, k), a);
             case 'Function':
-                return arity(a.length, (...args) => {
-                    return f(a(...args));
-                });
             case 'GeneratorFunction':
-                return function * (...args) {
-                    yield * f(a(...args));
-                }
             case 'Promise':
-                return a.then(f);
+            case 'IO':
+            case 'Task':
+            case 'Cont':
+            case 'Return':
+                return b;
             default:
-                return a && typeOf(a.map) === 'Function' ? a.map(f) :
-                    a && a.__values__ !== void 0 ? a.constructor(...a.__values__.map(v => map(f, a[v]))) :
-                    f(a);
+                if (b.reduce) { return b.reduce(f, a); }
+                if ('value' in b) { return reduce(f, a, b.value); }
+                if (b.__values__ != null) {
+                    return b.__values__.reduce((x, v) => f(x, b[v]), a);
+                }
+                return f(a, b);
         }
     }
     return a;
@@ -83,33 +80,31 @@ export const map = (f, a) => {
 
 
 /*
- * The generics Functor class. Provides a generic map method for all data structures
- * which derive from it. Deriving Functor with a type already implementing it will
+ * The generics Foldable class. Provides a generic reduce method for all data structures
+ * which derive from it. Deriving Foldable with a type already implementing it will
  * throw errors.
- * @class module:generics.Functor
+ * @summary Works only for types which have a single data field!
+ * @class module:generics.Foldable
  * @static
  * @version 3.2.0
  *
  * @example
  * const {Type} = require('futils').adt;
- * const {Functor} = require('futils').generics;
+ * const {Foldable} = require('futils').generics;
  *
- * const Int = Type('Int', ['value']).
- *     deriving(Functor);
+ * const Char = Type('Char', ['value']).
+ *     deriving(Foldable);
  *
- * const increment = a => a + 1;
- *
- * const one = Int(1);
- * one.map(increment); // -> Int(2)
+ * Char('a').reduce((x, a) => `${x}: ${a}`, 'Char is'); // -> 'Char is: a'
  */
-export class Functor {
+export class Foldable {
     static derive (ctor) {
-        if (ctor && ctor.prototype && !ctor.prototype.map) {
-            ctor.prototype.map = function (f) {
-                return map(f, this);
+        if (ctor && ctor.prototype && !ctor.prototype.reduce) {
+            ctor.prototype.reduce = function (f, a) {
+                return reduce(f, a, this);
             }
             return ctor;
         }
-        throw `Cannot derive Functor from ${typeOf(ctor)}`;
+        throw `Cannot derive Foldable from ${typeOf(ctor)}`;
     }
 }

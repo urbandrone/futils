@@ -14,7 +14,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * @private
  */
 
-export const Recur = (f, a) => ({
+export const Recur = (f, ...a) => ({
     isRecur: true,
-    run() { return f(...a); }
+    run() { return ((g, xs) => g(...xs))(f, a); }
 });
