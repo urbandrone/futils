@@ -142,7 +142,7 @@ Task.timeout = (ms, f) => Task((_, ok) => {
  * Converts a Promise returning function into a Task returning form
  * @method fromPromiseFunction
  * @static
- * @memberof module:data.task
+ * @memberof module:data.Task
  * @param {Function} f A function which returns a Promise
  * @return {Function} A function which returns a Task
  *
@@ -161,7 +161,7 @@ Task.fromPromiseFunction = f => (...a) => Task((fail, ok) => {
  * Converts a Node style continuation passing function into a Task returning form
  * @method fromNodeFunction
  * @static
- * @memberof module:data.task
+ * @memberof module:data.Task
  * @param {Function} f A function in the Node CPS form
  * @return {Function} A function which returns a Task
  *
@@ -420,9 +420,8 @@ Task.fn.ap = function (a) {
             if (aLoad && bLoad) {
                 delay(() => clean(states[0], states[1]));
                 return ok(aOk(bOk));
-            } else {
-                return v;
             }
+            return v;
         }
 
         states[0] = this.run(gRej, gRes(w => { aLoad = true; aOk = w; }));

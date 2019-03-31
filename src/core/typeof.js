@@ -12,5 +12,5 @@ export const typeOf = a => {
     if (a === null) { return 'Null'; }
     if (a === void 0) { return 'Void'; }
     if (a.__type__ !== void 0) { return a.__type__; }
-    return isNaN(a) ? 'NaN' : a.constructor.name;
+    return typeof a === 'number' && isNaN(a) ? 'NaN' : a.constructor.name;
 }

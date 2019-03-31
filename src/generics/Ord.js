@@ -66,8 +66,8 @@ export const compareOrd = (a, b) => {
             // case 'TypedArray':
             //     return false;
             default:
-                return a.hasOwnProperty('value') ? compareOrd(a.value, b.value) :
-                        a.__values__ !== void 0 ? a.__values__.reduce((c, av) => {
+                return a && a.hasOwnProperty('value') ? compareOrd(a.value, b.value) :
+                        a && a.__values__ !== void 0 ? a.__values__.reduce((c, av) => {
                             return b.__values__.reduce((d, bv) => {
                                 return !!d && compareOrd(a[av], b[bv]);
                             }, c);

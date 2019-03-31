@@ -6,6 +6,7 @@ import {IO} from './IO';
 import {State} from './State';
 import {Task} from './Task';
 import {Free} from './Free';
+import {Pair} from './Pair';
 
 /**
  * 
@@ -24,5 +25,6 @@ export default {
     IO,
     State,
     Task,
-    Free
+    Free,
+    Pair
 }

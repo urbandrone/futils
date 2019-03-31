@@ -68,8 +68,8 @@ export const compareEq = (a, b) => {
         case 'ReferenceError':
             return a.name === b.name && a.message === b.message;
         default:
-            return a.hasOwnProperty('value') ? compareEq(a.value, b.value) :
-                    a.__values__ !== void 0 ? a.__values__.reduce((c, av) => {
+            return a && a.hasOwnProperty('value') ? compareEq(a.value, b.value) :
+                    a && a.__values__ !== void 0 ? a.__values__.reduce((c, av) => {
                         return b.__values__.reduce((d, bv) => {
                             return !!d && compareEq(a[av], b[bv]);
                         }, c);
@@ -104,7 +104,7 @@ export const compareEq = (a, b) => {
  */
 export class Eq {
     static derive (ctor) {
-        if (ctor && ctor.prototype) {
+        if (ctor && ctor.prototype && !ctor.prototype.equals) {
             ctor.prototype.equals = function (a) {
                 return compareEq(this, a);
             }

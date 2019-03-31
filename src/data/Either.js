@@ -95,7 +95,9 @@ Either.empty = () => Left(null);
  * Either.from(null);                // -> Left(null)
  * Either.from(new Error('failed')); // -> Left(Error)
  */
-Either.from = (a) => a == null || Error.prototype.isPrototypeOf(a) ? Left(a || null) : Right(a);
+Either.from = (a) => a == null ? Left(null) :
+                     a instanceof Error || Error.prototype.isPrototypeOf(a) ? Left(a.message) :
+                     Right(a);
 /**
  * A natural transformation from a Maybe.Some or Maybe.None into a Either
  * @method fromMaybe
@@ -374,6 +376,29 @@ Either.fn.ap = function (a) {
     });
 }
 /**
+ * Maps a function over the value in a Left
+ * @method mapLeft
+ * @memberof module:data.Either
+ * @instance
+ * @param {Function} f The function to map
+ * @return {Left|Right} A new Either
+ *
+ * @example
+ * const {Either} = require('futils').data;
+ *
+ * const l = Either.Left(null);
+ *
+ * const noValueErr = a => a === null || a === undefined ? 'NoValue' : a;
+ *                                                     
+ * l.mapLeft(noValueErr);  // -> Left('NoValue')
+ */
+Either.fn.mapLeft = function (f) {
+    return this.caseOf({
+        Left: a => Left(f(a)),
+        Right: () => this
+    });
+}
+/**
  * Bifunctor interface, maps either of two functions over the value inside a Either
  * @method biMap
  * @memberof module:data.Either
@@ -386,7 +411,7 @@ Either.fn.ap = function (a) {
  * const {Either} = require('futils').data;
  *
  * const r = Either.Right('a');
- * const l = Either.Left('z')
+ * const l = Either.Left(null);
  *
  * const upperCase = (v) => v.toUpperCase();
  * const defaultChar = () => 'X';

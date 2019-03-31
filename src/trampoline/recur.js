@@ -7,6 +7,8 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {arity} from '../core/arity';
+import {typeOf} from '../core/typeof';
+import {IS_RECUR} from './again';
 
 
 
@@ -28,16 +30,16 @@ import {arity} from '../core/arity';
  * @example
  * const {recur, again} = require('futils').trampoline;
  *
- * const factorial = recur((n, m = 1) => {
- *     return n <= 1 ? m : again(factorial, n - 1, n * m);
+ * const factorial = recur(function factLoop (n, m) {
+ *     return n <= 1 ? m : again(factLoop, n - 1, n * m);
  * });
  *
- * factorial(5); // -> 120
+ * factorial(5, 1); // -> 120
  */
 export const recur = f => arity(f.length, (...a) => {
     let r = f(...a);
-    while (r && r.isRecur) {
-        r = r.run();
+    while (typeOf(r) === 'Function' && r[IS_RECUR]) {
+        r = r();
     }
     return r;
 });

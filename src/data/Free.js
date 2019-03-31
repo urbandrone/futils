@@ -88,14 +88,13 @@ Free.liftM = a => Cont(a, Return);
  * @example
  * const {UnionType} = require('futils').adt;
  * const {Free} = require('futils').data;
+ * const {compose} = require('futils').lambda;
  *
  * const Num = UnionType('Num', {Int: ['value'], Float: ['value']});
  * const {Int, Float} = Num;
  *
- * const cmp = (f, g) => x => f(g(x));
- *
- * const asInt = cmp(Free.from(Int), parseInt);
- * const asFloat = cmp(Free.from(Float), parseFloat);
+ * const asInt = compose(Free.from(Int), parseInt);
+ * const asFloat = compose(Free.from(Float), parseFloat);
  *
  * const prog = asInt(100.25).map(n => n.toFixed(2)).flatMap(asFloat);
  */

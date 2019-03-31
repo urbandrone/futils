@@ -1,5 +1,5 @@
 const O = require('../dist/futils').operation;
-const {Id, List} = require('../dist/futils').data;
+const {Id, List, Maybe, IO} = require('../dist/futils').data;
 const {Sum} = require('../dist/futils').monoid;
 
 
@@ -9,6 +9,13 @@ const timeout = (ms, x) => new Promise((res, rej) => {
 
 
 describe('Operation', () => {
+    describe('alt', () => {
+        let n = Maybe.None();
+        let m = Maybe.Some(1);
+        expect(n.alt(m).value).toBe(1);
+        expect(m.alt(n).value).toBe(1);
+    });
+
     describe('ap', () => {
         it('should be able to apply a function in a structure', () => {
             let mf = Id.of(a => a + 1);
@@ -175,6 +182,33 @@ describe('Operation', () => {
             expect(O.foldMap(a => Sum.of(a))([1, 2, 3]).value).toBe(6);
             expect(O.foldMap(a => Sum.of(Number(a)), ['1', 'a', NaN]).value).toBe(1);
             expect(O.foldMap(a => Sum.of(a), List.of(3).cons(2).cons(1)).value).toBe(6);
+        });
+    });
+
+    describe('biMap', () => {
+        it('should be able to biMap functions over both sides of a union data type', () => {
+            expect(O.biMap(_ => 'Err', a => a, Maybe.of(1)).value).toBe(1);
+            expect(O.biMap(_ => 'Err')(a => a, Maybe.of(1)).value).toBe(1);
+            expect(O.biMap(_ => 'Err')(a => a)(Maybe.of(1)).value).toBe(1);
+            expect(O.biMap(_ => 'Err', a => a, Maybe.None()).value).toBe('Err');
+        });
+    });
+
+    describe('proMap', () => {
+        it('should be able to proMap functions over both sides of a function holding data type', () => {
+            expect(O.proMap(_ => 1, a => `Got: ${a}`, IO(a => a + 1)).run()).toBe('Got: 2');
+            expect(O.proMap(_ => 1)(a => `Got: ${a}`, IO(a => a + 1)).run()).toBe('Got: 2');
+            expect(O.proMap(_ => 1)(a => `Got: ${a}`)(IO(a => a + 1)).run()).toBe('Got: 2');
+            expect(O.proMap(_ => 1, a => `Got: ${a}`, a => a + 1)()).toBe('Got: 2')
+        });
+    });
+
+    describe('caseOf', () => {
+        it('should be able to pattern match', () => {
+            let n = Maybe.None();
+            let m = Maybe.Some(1);
+            expect(O.caseOf({ None: _ => 'Err', Some: a => a}, m)).toBe(1);
+            expect(O.caseOf({ None: _ => 'Err', Some: a => a}, n)).toBe('Err');
         });
     });
 

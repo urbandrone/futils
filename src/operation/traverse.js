@@ -37,5 +37,5 @@ export const traverse = (f, A, a) => {
     return A == null ? (T, d) => traverse(f, T, d) :
            a == null ? (c) => traverse(f, A, c) :
            a.traverse ? a.traverse(f, A) :
-           a.reduce((x, y) => x.concat(f(y)), A.of([]));
+           a.reduce((v, w) => f(w).map(x => y => y.concat(x)).ap(v), A.of([]));
 }

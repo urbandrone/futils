@@ -480,7 +480,7 @@ List.fn.alt = function (a) {
     });
 }
 /**
- * Takes function which returns a Monoid and folds the List with it into a Monoid
+ * Takes a function which returns a Monoid and folds the List with it into a Monoid
  * @method foldMap
  * @memberof module:data.List
  * @instance

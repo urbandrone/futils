@@ -25,11 +25,11 @@ export const showT = (a) => {
         case 'Number':
         case 'RegExp':
         case 'Symbol':
-        case 'Function':
             return a.toString();
         // case 'NaN':
         // case 'Null':
         // case 'Void':
+        // case 'Function':
         // case 'GeneratorFunction':
         // case 'Promise':
         // case 'Proxy':
@@ -61,7 +61,7 @@ export const showT = (a) => {
         case 'Map':
             return 'Map(' + [...a.entries()].map(([k, v]) => `${k}: ${showT(v)}`).join(', ') + ')';
         default:
-            return  a.__values__ ?
+            return  a && a.__values__ ?
                         a.__values__.length < 1 ?
                             a.__type__ :
                             `${a.__type__}(${a.__values__.map(v => showT(a[v])).join(', ')})` :
