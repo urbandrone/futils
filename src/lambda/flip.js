@@ -7,6 +7,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {arity} from '../core/arity';
+import {typeOf} from '../core/typeof';
 
 
 
@@ -14,6 +15,16 @@ import {arity} from '../core/arity';
  * @module lambda
  */
 
+
+const _flipped = f => {
+    let t = typeOf(f);
+    if (t === 'Function') {
+        return f.length < 2 ? f :
+               f.length < 3 ? (a, b) => f(b, a) :
+               arity(f.length, (a, b, ...xs) => f(b, a, ...xs));
+    }
+    throw `flip :: Expected argument to be of type function but saw ${t}`;
+}
 
 
 /**
@@ -33,6 +44,4 @@ import {arity} from '../core/arity';
  * ordered(1, 2, 3); // -> '123'
  * flipped(1, 2, 3); // -> '213'
  */
-export const flip = f => f.length < 2 ? f :
-                        f.length < 3 ? (a, b) => f(b, a) :
-                        arity(f.length, (a, b, ...xs) => f(b, a, ...xs))
+export const flip = f => f === void 0 ? flip : _flipped(f);

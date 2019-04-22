@@ -33,9 +33,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * traverse(even, Id, [1, 2, 3]); // -> Id([false, true, false])
  * traverse(even);                // -> (Applicative -> Traversable -> Applicative)
  */
-export const traverse = (f, A, a) => {
-    return A == null ? (T, d) => traverse(f, T, d) :
-           a == null ? (c) => traverse(f, A, c) :
-           a.traverse ? a.traverse(f, A) :
-           a.reduce((v, w) => f(w).map(x => y => y.concat(x)).ap(v), A.of([]));
-}
+export const traverse = (f, A, a) => f === void 0 ? traverse :
+                                     A === void 0 ? (T, d) => traverse(f, T, d) :
+                                     a === void 0 ? (c) => traverse(f, A, c) :
+                                     a === null ? null :
+                                     a.traverse ? a.traverse(f, A) :
+                                     a.reduce((v, w) => f(w).map(x => y => y.concat(x)).ap(v), A.of([]));

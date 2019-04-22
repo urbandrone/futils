@@ -8,6 +8,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 import {typeOf} from '../core/typeof';
 import {arity} from '../core/arity';
+import {VALS, NIL} from '../core/constants';
 
 
 
@@ -78,10 +79,9 @@ export const concat = (a, b) => {
                 return Promise.race([a, b]);
             default:
                 if (b.concat) { return b.concat(a); }
-                if ('value' in b) { return concat(a.value, b.value); }
-                if (b.__values__ != null) {
-                    return b.__values__.reduce((x, v) => {
-                       if (x[v] != null) { x[v] = concat(x[v], b[v]); }
+                if (b[VALS] !== void 0) {
+                    return b[VALS].reduce((x, v) => {
+                       if (!NIL(x[v])) { x[v] = concat(x[v], b[v]); }
                        else { x[v] = b[v]; }
                        return x; 
                    }, a);

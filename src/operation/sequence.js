@@ -32,8 +32,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * sequence(Id, ids); // -> Id([1, 2, 3])
  * sequence(Id);      // -> (Traversable -> Applicative)
  */
-export const sequence = (A, a) => {
-    return a == null ? (b) => sequence(A, b) :
-           a.sequence ? a.sequence(A) :
-           a.reduce((x, y) => x.concat(y), A.of([]));
-}
+export const sequence = (A, a) => A === void 0 ? sequence :
+                                  a === void 0 ? (b) => sequence(A, b) :
+                                  a === null ? null :
+                                  a.sequence ? a.sequence(A) :
+                                  a.reduce((x, y) => x.concat(y), A.of([]));

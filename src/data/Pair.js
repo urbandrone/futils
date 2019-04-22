@@ -34,7 +34,7 @@ import {Show} from '../generics/Show';
  * Pair(1, 2)._1; // -> 1
  * Pair(1, 2)._2; // -> 2
  */
-export const Pair = UnionType('Pair', ['_1', '_2']).
+export const Pair = Type('Pair', ['_1', '_2']).
     deriving(Show);
 
 

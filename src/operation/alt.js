@@ -31,6 +31,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  *
  * alt(Maybe.of(1), Maybe.empty()); // -> Some(1)
  */
-export const alt = (o, a) => {
-    return a == null ? (b) => alt(o, b) : a.alt(o);
-}
+export const alt = (o, a) => o === void 0 ? alt :
+                             a === void 0 ? (b) => alt(o, b) :
+                             a === null ? null :
+                             a.alt(o);

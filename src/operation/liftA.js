@@ -33,8 +33,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * liftA(add, Id.of(1), Id.of(2), Id.of(3)); // -> Id(6)
  * liftA(add);                               // -> (Apply -> Apply -> Apply -> Apply)
  */
-export const liftA = (f, a, ...as) => {
-    return a == null ? (b, ...bs) => liftA(f, b, ...bs) :
-            as.length < 1 ? (...bs) => liftA(f, a, ...bs) :
-            as.reduce((x, y) => x.ap(y), a.map(f));
-}
+export const liftA = (f, a, ...as) => f === void 0 ? liftA :
+                                      a === void 0 ? (b, ...bs) => liftA(f, b, ...bs) :
+                                      as.length < 1 ? (...bs) => liftA(f, a, ...bs) :
+                                      as.reduce((x, y) => x.ap(y), a.map(f));

@@ -35,6 +35,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * biMap(err, succ, Maybe.of(1));  // -> Some('Value: 1')
  * biMap(err, succ, Maybe.None()); // -> Some('No value')
  */
-export const biMap = (f, g, a) => g == null ? (h, b) => biMap(f, h, b) :
-                                  a == null ? b => biMap(f, g, b) :
+export const biMap = (f, g, a) => f === void 0 ? biMap :
+                                  g === void 0 ? (h, b) => biMap(f, h, b) :
+                                  a === void 0 ? (b) => biMap(f, g, b) :
+                                  a === null ? null :
                                   a.biMap(f, g);

@@ -7,6 +7,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {arity} from './core/arity';
+import {TYPE, VALS, TYPE_TAG} from './core/constants';
 
 
 
@@ -16,10 +17,6 @@ import {arity} from './core/arity';
  * [Quickstart Final Solution]{@tutorial Quickstart-Final} tutorial
  * @module adt
  */
-
-const TYPE = Symbol('@@type');
-const VALS = Symbol('@@values');
-const TYPE_TAG = Symbol('@@type_tag');
 
 
 

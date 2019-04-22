@@ -17,7 +17,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 /**
  * The fixed function. For a given function f, returns a function g which
- * represents the fixed point of f
+ * represents the fixed point of f. Note: The returned function isn't stack safe.
+ * If you need stack safety, use the functions in the [trampoline]{@link module:trampoline}
+ * package
  * @method fixed
  * @memberof module:lambda
  * @param {Function} f the initial function

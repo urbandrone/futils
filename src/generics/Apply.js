@@ -8,6 +8,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 import {typeOf} from '../core/typeof';
 import {arity} from '../core/arity';
+import {VALS} from '../core/constants';
 
 
 
@@ -107,12 +108,12 @@ export class Apply {
     static derive (ctor) {
         if (ctor && ctor.prototype && (ctor.prototype.map || ctor.prototype.then) && !ctor.prototype.ap) {
             ctor.prototype.ap = function (F) {
-                if (typeOf(this) === typeOf(F)) {
-                    return this.hasOwnProperty('value') ? ap(this.value, F) :
-                       this.__values__ != null ? ap(this[this.__values__[0]], F) :
-                       this instanceof Function ? ap(this, F) :
-                       Promise.prototype.isPrototypeOf(this) ? this.then(f => ap(f, F)) :
-                       F;
+                const t = typeOf(this);
+                if (t === typeOf(F)) {
+                    return this[VALS] !== void 0 ? ap(this[this[VALS][0]], F) :
+                           t === 'Function' ? ap(this, F) :
+                           t === 'Promise' ? this.then(f => ap(f, F)) :
+                           F;
                 }
                 return F;
             }

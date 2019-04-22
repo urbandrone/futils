@@ -32,7 +32,13 @@ import {arity} from '../core/arity';
  *
  * inc(double(1)) === fc(1); // -> true
  */
-export const pipe = (...f) => arity(
-    f[0].length,
-    f.reduce((a, b) => (...xs) => b(a(...xs)))
-);
+export const pipe = (...f) => {
+  const l = f.length;
+  if (l > 1) {
+    return arity(f[0].length, f.reduce((a, b) => (...xs) => b(a(...xs))));
+  }
+  if (l > 0) {
+    return f[0];
+  }
+  throw 'pipe :: Expected to see one or more functions, but saw nothing';
+}

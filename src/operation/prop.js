@@ -40,6 +40,9 @@ const gets = (a, m) => m.has(a) ? m.get(a) : null;
  * prop(0, arr);   // -> 1
  * prop('a');      // -> (b -> b.a)
  */
-export const prop = (a, b) => b == null ? (c) => prop(a, c) :
-                            b.constructor.name === 'Map' ? gets(a, b) :
-                            b[a] == null ? null : b[a];
+export const prop = (a, b) => a === void 0 ? prop :
+                              b === void 0 ? (c) => prop(a, c) :
+                              b === null ? null :
+                              b.constructor === Map ? gets(a, b) :
+                              b[a] === void 0 ? null :
+                              b[a];

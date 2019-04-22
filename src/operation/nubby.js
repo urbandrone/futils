@@ -37,6 +37,8 @@ const _uniq = f => (a, b) => a.find(x => f(b, x)) != null ? a : a.concat(b);
  * nubBy(eq, ['a', 'b', 'a']); // -> ['a', 'b']
  * nubBy(eq, []);              // -> []
  */
-export const nubBy = (f, a) => a == null ? (b) => nubBy(f, b) :
-                    a.nubBy ? a.nubBy(f) :
-                    a.reduce(_uniq(f), []);
+export const nubBy = (f, a) => f === void 0 ? nubBy :
+                               a === void 0 ? (b) => nubBy(f, b) :
+                               a === null ? a :
+                               a.nubBy ? a.nubBy(f) :
+                               a.reduce(_uniq(f), []);

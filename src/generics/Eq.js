@@ -7,6 +7,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {typeOf} from '../core/typeof';
+import {VALS} from '../core/constants';
 
 
 
@@ -68,9 +69,8 @@ export const compareEq = (a, b) => {
         case 'ReferenceError':
             return a.name === b.name && a.message === b.message;
         default:
-            return a && a.hasOwnProperty('value') ? compareEq(a.value, b.value) :
-                    a && a.__values__ !== void 0 ? a.__values__.reduce((c, av) => {
-                        return b.__values__.reduce((d, bv) => {
+            return a && a[VALS] !== void 0 ? a[VALS].reduce((c, av) => {
+                        return b[VALS].reduce((d, bv) => {
                             return !!d && compareEq(a[av], b[bv]);
                         }, c);
                     }, true) :

@@ -35,7 +35,10 @@ import {compareEq} from '../generics/Eq';
  * equals(1);                    // -> (a -> 1 == a)
  */
 export const equals = function (a, b) {
-    return arguments.length < 2 ? (c) => equals(a, c) :
-            b != null && typeof b.equals === 'function' ? b.equals(a) :
-            compareEq(a, b);
-};
+    // note: leave this as a named function because we need to have access to
+    // the arguments object
+    return arguments.length < 1 ? equals :
+           arguments.length < 2 ? (c) => equals(a, c) :
+           b && typeof b.equals === 'function' ? b.equals(a) :
+           compareEq(a, b);
+}

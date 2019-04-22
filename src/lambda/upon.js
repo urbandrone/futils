@@ -7,12 +7,21 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {arity} from '../core/arity';
+import {typeOf} from '../core/typeof';
 
 
 /*
  * @module lambda
  */
 
+
+const _upon = (f, g) => {
+    let tF = typeOf(f), tG = typeOf(g);
+    if (tF === 'Function' && tG === 'Function') {
+      return g(f);
+    }
+    throw `upon :: Expected all arguments to be of type function but saw ${tF} & ${tG}`;
+}
 
 
 /**
@@ -36,4 +45,6 @@ import {arity} from '../core/arity';
  * safeDouble(2);    // -> 4
  * safeDouble(null); // -> 0
  */
-export const upon = (f, g) => g == null ? h => upon(f, h) : g(f);
+export const upon = (f, g) => f === void 0 ? upon :
+                              g === void 0 ? (h) => upon(f, h) :
+                              _upon(f, g);

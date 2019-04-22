@@ -6,6 +6,8 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+import {typeOf} from '../core/typeof';
+import {NIL} from '../core/constants';
 
 
 
@@ -13,6 +15,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * @module operation
  */
 
+
+const _concat = (a, b) => {
+    if (!NIL(b)) {
+        if (typeOf(b.then) === 'Function') {
+          return Promise.race([a, b]);
+        }
+        if (typeOf(b.concat) === 'Function') {
+          return b.concat(a);
+        }
+    }
+    throw `concat :: Cannot append ${a} to ${b}`;
+}
 
 
 /**
@@ -33,6 +47,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * concat([4, 5, 6], nums); // -> [1, 2, 3, 4, 5, 6]
  * concat([4, 5, 6]);       // -> (Semigroup -> Semigroup)
  */
-export const concat = (a, b) => b == null ? (c) => concat(a, c) :
-                                typeof b.then === 'function' ? Promise.race([a, b]) :
-                                b.concat(a);
+export const concat = (a, b) => a === void 0 ? concat :
+                                b === void 0 ? (c) => concat(a, c) :
+                                _concat(a, b);

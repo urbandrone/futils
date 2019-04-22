@@ -8,6 +8,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 import {typeOf} from '../core/typeof';
 import {arity} from '../core/arity';
+import {VALS} from '../core/constants';
 
 
 
@@ -73,8 +74,8 @@ export const map = (f, a) => {
                 return a.then(f);
             default:
                 return a && typeOf(a.map) === 'Function' ? a.map(f) :
-                    a && a.__values__ !== void 0 ? a.constructor(...a.__values__.map(v => map(f, a[v]))) :
-                    f(a);
+                       a && a[VALS] !== void 0 ? a.constructor(...a[VALS].map(v => map(f, a[v]))) :
+                       f(a);
         }
     }
     return a;

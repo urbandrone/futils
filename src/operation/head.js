@@ -6,6 +6,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+import {NIL, TYPE} from '../core/constants';
 
 
 
@@ -16,7 +17,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 const _fst = a => typeof a === 'string' || isNaN(a.length) ? a :
-                    a[0] == null ? null : a[0];
+                  NIL(a[0]) ? null :
+                  a[0];
 
 
 
@@ -35,6 +37,7 @@ const _fst = a => typeof a === 'string' || isNaN(a.length) ? a :
  * head(['a', 'b']); // -> 'a'
  * head([]);         // -> null
  */
-export const head = a => a == null ? null :
-                        a.__type__ === 'Cons' || a.__type__ === 'Nil' ? a.head :
-                        _fst(a);
+export const head = a => a === void 0 ? head :
+                         a === null ? null :
+                         a[TYPE] === 'Cons' || a[TYPE] === 'Nil' ? a.head :
+                         _fst(a);

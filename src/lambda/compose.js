@@ -32,7 +32,13 @@ import {arity} from '../core/arity';
  *
  * double(inc(1)) === fc(1); // -> true
  */
-export const compose = (...f) => arity(
-    f[f.length - 1].length,
-    f.reduceRight((a, b) => (...xs) => b(a(...xs)))
-);
+export const compose = (...f) => {
+  const l = f.length;
+  if (l > 1) {
+    return arity(f[l - 1].length, f.reduceRight((a, b) => (...xs) => b(a(...xs))));
+  }
+  if (l > 0) {
+    return f[0];
+  }
+  throw 'compose :: Expected to see one or more functions, but saw nothing';
+}

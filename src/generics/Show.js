@@ -7,6 +7,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {typeOf} from '../core/typeof';
+import {VALS, TYPE} from '../core/constants';
 
 
 
@@ -61,10 +62,10 @@ export const showT = (a) => {
         case 'Map':
             return 'Map(' + [...a.entries()].map(([k, v]) => `${k}: ${showT(v)}`).join(', ') + ')';
         default:
-            return  a && a.__values__ ?
-                        a.__values__.length < 1 ?
-                            a.__type__ :
-                            `${a.__type__}(${a.__values__.map(v => showT(a[v])).join(', ')})` :
+            return  a && a[VALS] ?
+                        a[VALS].length < 1 ?
+                            a[TYPE] :
+                            `${a[TYPE]}(${a[VALS].map(v => showT(a[v])).join(', ')})` :
                     tA;
     }
 }

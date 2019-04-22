@@ -7,6 +7,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {typeOf} from '../core/typeof';
+import {VALS} from '../core/constants';
 
 
 
@@ -25,32 +26,8 @@ export const reduce = (f, a, b) => {
             case 'Null':
             case 'Void':
                 return a;
-            // case 'Proxy':
-            // case 'Symbol':
-            // case 'DataBuffer':
-            // case 'ArrayBuffer':
-            // case 'SharedArrayBuffer':
-            // case 'UInt8Array':
-            // case 'UInt8ClampedArray':
-            // case 'UInt16Array':
-            // case 'UInt64Array':
-            // case 'Float32Array':
-            // case 'Float64Array':
-            // case 'TypedArray':
-            // case 'State.Result':
-            //     return [b, a];
-            // case 'Number':
-            // case 'Boolean':
-            // case 'String':
-            // case 'Array':
-            // case 'Id':
-            // case 'List':
-            // case 'State':
-            // case 'Some':
-            // case 'None':
-            // case 'Left':
-            // case 'Return':
-            //     return b.concat(a);
+            case 'Array':
+                return b.reduce(f, a);
             case 'Object':
                 return Object.keys(b).reduce((x, k) => f(x, b[k], k), a);
             case 'Set':
@@ -66,12 +43,8 @@ export const reduce = (f, a, b) => {
             case 'Return':
                 return b;
             default:
-                if (b.reduce) { return b.reduce(f, a); }
-                if ('value' in b) { return reduce(f, a, b.value); }
-                if (b.__values__ != null) {
-                    return b.__values__.reduce((x, v) => f(x, b[v]), a);
-                }
-                return f(a, b);
+                return b[VALS] !== void 0 ? b[VALS].reduce((x, v) => f(x, b[v]), a) :
+                                            f(a, b);
         }
     }
     return a;

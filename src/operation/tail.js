@@ -6,6 +6,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+import {TYPE} from '../core/constants';
 
 
 
@@ -16,7 +17,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 const _rst = a => typeof a === 'string' || isNaN(a.length) ? [a] :
-                    Array.from(a).slice(1);
+                  Array.from(a).slice(1);
 
 
 
@@ -34,6 +35,7 @@ const _rst = a => typeof a === 'string' || isNaN(a.length) ? [a] :
  * tail(['a', 'b']); // -> ['b']
  * tail([]);         // -> []
  */
-export const tail = a => a == null ? [] : 
-                        a.__type__ === 'Cons' || a.__type__ === 'Nil' ? a.tail :
-                        _rst(a);
+export const tail = a => a === void 0 ? tail :
+                         a === null ? [] : 
+                         a[TYPE] === 'Cons' || a[TYPE] === 'Nil' ? a.tail :
+                         _rst(a);

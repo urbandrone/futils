@@ -33,6 +33,8 @@ const _take = (n, a) => typeof a === 'string' || isNaN(a.length) ? [a] :
  * take(1, ['a', 'b']); // -> ['a']
  * take(1);             // -> (Array/Cons -> Array/Cons)
  */
-export const take = (n, a) => a == null ? (b) => take(n, b) :
-                                a.take ? a.take(n) :
-                                _take(n, a);
+export const take = (n, a) => n === void 0 ? take :
+                              a === void 0 ? (b) => take(n, b) :
+                              a === null ? null :
+                              a.take ? a.take(n) :
+                              _take(n, a);

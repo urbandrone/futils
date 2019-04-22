@@ -7,6 +7,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {arity} from '../core/arity';
+import {typeOf} from '../core/typeof';
 
 
 
@@ -18,11 +19,15 @@ import {arity} from '../core/arity';
 
 
 function _curriedr (f, xs) {
-    return arity(f.length - xs.length, (...ys) => {
-        let a = [...xs, ...ys].filter(v => v !== void 0);
-        if (a.length >= f.length) { return f(...a.reverse()); }
-        return _curriedr(f, a);
-    });
+    let t = typeOf(f);
+    if (t === 'Function') {
+        return f.length <= 1 ? f : arity(f.length - xs.length, (...ys) => {
+            let a = [...xs, ...ys].filter(v => v !== void 0);
+            if (a.length >= f.length) { return f(...a.reverse()); }
+            return _curriedr(f, a);
+        });
+    }
+    throw `curryRight :: Expected argument to be of type function but saw ${t}`;
 }
 
 
@@ -47,4 +52,4 @@ function _curriedr (f, xs) {
  * cAdd(1);    // -> (n -> n + 1)
  * cAdd(1)(2); // -> 3
  */
-export const curryRight = f => f.length <= 1 ? f : _curriedr(f, []);
+export const curryRight = f => f === void 0 ? curryRight : _curriedr(f, []);

@@ -6,6 +6,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+import {typeOf} from '../core/typeof';
 
 
 
@@ -35,13 +36,17 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  *
  * result.value; // -> 3
  */
-export const doM = (f) => {
-    const compute = f();
-    const step = v => {
-        const {done, value} = compute.next(v);
-        return done ? value :
-               typeof value.then === 'function' ? value.then(step, x => x) :
-               value.flatMap(step);
+export const doM = f => {
+    let t = typeOf(f);
+    if (t === 'GeneratorFunction') {
+        const compute = f();
+        const step = v => {
+            const {done, value} = compute.next(v);
+            return done ? value :
+                   typeof value.then === 'function' ? value.then(step, x => x) :
+                   value.flatMap(step);
+        }
+        return step();
     }
-    return step();
+    throw `doM :: Expected argument to be a generator function but saw ${t}`;  
 }

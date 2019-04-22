@@ -34,8 +34,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * ap(upper, Id.of('a')); // -> Id('A')
  * ap(upper);             // -> (Functor -> Functor)
  */
-export const ap = (af, a) => {
-    return a == null ? (b) => ap(af, b) : 
-    typeof af.then === 'function' ? af.then(f => a.then(f, x => x), x => x) :
-    af.ap(a);
-}
+export const ap = (af, a) => af === void 0 ? ap :
+                             a === void 0 ? (b) => ap(af, b) : 
+                             a === null ? null :
+                             typeof af.then === 'function' ? af.then(f => a.then(f, x => x), x => x) :
+                             af.ap(a);

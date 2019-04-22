@@ -14,9 +14,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  */
 
 
-
-const resRejBy = f => x => !!f(x) ? Promise.resolve(x) : Promise.reject(x);
-
 /**
  * The filter function. Filter takes a function which returns a Boolean
  * and a Filterable collection and keeps only the items for which the function
@@ -35,6 +32,6 @@ const resRejBy = f => x => !!f(x) ? Promise.resolve(x) : Promise.reject(x);
  * filter(even, [1, 2, 3]); // -> [2]
  * filter(even);            // -> (Filterable -> Filterable)
  */
-export const filter = (f, a) => {
-    return a == null ? (b) => filter(f, b) : a.filter(f);
-}
+export const filter = (f, a) => f === void 0 ? filter :
+                                a === void 0 ? (b) => filter(f, b) :
+                                a.filter(f);

@@ -7,6 +7,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 import {arity} from '../core/arity';
+import {typeOf} from '../core/typeof';
 
 
 
@@ -14,6 +15,14 @@ import {arity} from '../core/arity';
  * @module lambda
  */
 
+
+const _notted = f => {
+    let t = typeOf(f);
+    if (t === 'Function') {
+      return arity(f.length, (...xs) => !f(...xs));
+    }
+    throw `not :: Expected argument to be of type function but saw ${t}`;
+}
 
 
 /**
@@ -34,4 +43,4 @@ import {arity} from '../core/arity';
  * isNull(null);   // -> true
  * isntNull(null); // -> false
  */
-export const not = f => arity(f.length, (...xs) => !f(...xs));
+export const not = f => f === void 0 ? not : _notted(f);

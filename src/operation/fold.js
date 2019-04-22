@@ -31,8 +31,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * fold(Sum, [1, 2, 3, 4]); // -> Sum(10)
  * fold(Sum);               // -> (Foldable -> Sum)
  */
-export const fold = (M, a) => {
-    return a == null ? (b) => fold(M, b) :
-            a.fold ? a.fold(M) :
-            a.reduce((x, y) => x.concat(M.of(y)), M.empty());
-}
+export const fold = (M, a) => M === void 0 ? fold :
+                              a === void 0 ? (b) => fold(M, b) :
+                              a === null ? null :
+                              a.fold ? a.fold(M) :
+                              a.reduce((x, y) => x.concat(M.of(y)), M.empty());

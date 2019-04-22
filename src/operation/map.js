@@ -20,7 +20,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * of a data structure. It returns a new structure of the same type. 
  * This is the natural behaviour of Promises when using the .then function,
  * except that if you return a Promise with the value inside it,
- * the returned Promise has only a single level. (it naturally flattens)
+ * the returned Promise has only a single level (it naturally flattens).
  * @method map
  * @memberof module:operation
  * @param {Function} f The function to map with
@@ -33,8 +33,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * map((a) => a.toUpperCase(), ['a', 'b']); // -> ['A', 'B']
  * map((a) => a.toUpperCase());             // -> (Functor -> Functor)
  */
-export const map = (f, a) => {
-    return a == null ? (b) => map(f, b) :
-           typeof a.then === 'function' ? a.then(f, x => x) :
-           a.map(f);
-}
+export const map = (f, a) => f === void 0 ? map :
+                             a === void 0 ? (b) => map(f, b) :
+                             a === null ? a :
+                             typeof a.then === 'function' ? a.then(f, x => x) :
+                             typeof a.map === 'function' ? a.map(f) :
+                             f(a);

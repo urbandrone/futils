@@ -17,7 +17,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 const _find = (f, a) => {
     let r = a.find(f);
-    return r == null ? null : r;
+    return r === null || r === void 0 ? null : r;
 }
 
 
@@ -40,8 +40,7 @@ const _find = (f, a) => {
  * find(even, [1, 2, 3]); // -> 2
  * find(even);            // -> (Filterable -> any)
  */
-export const find = (f, a) => {
-    return a == null ? (b) => find(f, b) :
-            Array.isArray(a) ? _find(f, a) :
-            a.find(f);
-}
+export const find = (f, a) => f === void 0 ? find :
+                              a === void 0 ? (b) => find(f, b) :
+                              Array.isArray(a) ? _find(f, a) :
+                              a.find(f);

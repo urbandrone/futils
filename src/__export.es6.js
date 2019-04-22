@@ -8,7 +8,6 @@ import Optic from './optic/__export';
 import Trampoline from './trampoline/__export';
 
 
-
 export const adt = ADT;
 export const lambda = Lambda;
 export const operation = Operation;

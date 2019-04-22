@@ -31,8 +31,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * reduceRight((a, b) => a + b, '', ['a', 'b']); // -> 'ba'
  * reduceRight((a, b) => a + b);                 // -> (a -> Foldable -> a)
  */
-export const reduceRight = (f, b, a) => {
-    return b == null ? (c, d) => reduceRight(f, c, d) :
-           a == null ? (c) => reduceRight(f, b, c) :
-           a.reduceRight(f, b);
-}
+export const reduceRight = (f, b, a) => f === void 0 ? reduceRight :
+                                        b === void 0 ? (c, d) => reduceRight(f, c, d) :
+                                        a === void 0 ? (c) => reduceRight(f, b, c) :
+                                        a === null ? null :
+                                        a.reduceRight ? a.reduceRight(f, b) :
+                                        f(b, a);

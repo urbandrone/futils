@@ -40,12 +40,14 @@ import {arity} from '../core/arity';
  * // removeChars :: [Char] -> [Char] -> [Char]
  * const removeChars = bs -> as -> as.filter(a => bs.every(b => a !== b));
  *
- * // prog :: IO([Chars] -> [Chars])
+ * // prog :: IO([Char] -> [Char])
  * const prog = IO(removeChars(['a', 'e', 'i', 'o', 'u']));
  * 
  * proMap(strToChars, countChars, prog);  // -> IO(String -> Number)
  */
-export const proMap = (f, g, a) => g == null ? (h, b) => proMap(f, h, b) :
-                                  a == null ? b => proMap(f, g, b) :
-                                  a.proMap ? a.proMap(f, g) :
-                                  arity(a.length, (...args) => g(a(f(...args))));
+export const proMap = (f, g, a) => f === void 0 ? proMap :
+                                   g === void 0 ? (h, b) => proMap(f, h, b) :
+                                   a === void 0 ? b => proMap(f, g, b) :
+                                   a === null ? a :
+                                   a.proMap ? a.proMap(f, g) :
+                                   arity(a.length, (...args) => g(a(f(...args))));

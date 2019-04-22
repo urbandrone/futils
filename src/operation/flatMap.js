@@ -32,9 +32,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  * flatMap((a) => [a.toUpperCase()], ['a', 'b']); // -> ['A', 'B']
  * flatMap((a) => [a.toUpperCase()]);             // -> (Monad -> Monad)
  */
-export const flatMap = (f, a) => {
-    return a == null ? (b) => flatMap(f, b) :
-            typeof a.flatMap === 'function' ? a.flatMap(f) :
-            typeof a.then === 'function' ? a.then(f, x => x) :
-            a.reduce((x, y) => x.concat(f(y)), []);
-}
+export const flatMap = (f, a) => f === void 0 ? flatMap :
+                                 a === void 0 ? (b) => flatMap(f, b) :
+                                 a === null ? null :
+                                 typeof a.flatMap === 'function' ? a.flatMap(f) :
+                                 typeof a.then === 'function' ? a.then(f, x => x) :
+                                 a.reduce((x, y) => x.concat(f(y)), []);

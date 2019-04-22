@@ -98,6 +98,9 @@ describe('Operation', () => {
 
     describe('equals', () => {
         it('should be able to check for equality', () => {
+            const fnA = a => a;
+            const fnB = b => b;
+
             expect(O.equals(1, 1)).toBe(true);
             expect(O.equals(1)(1)).toBe(true);
             expect(O.equals(1, 2)).toBe(false);
@@ -109,7 +112,7 @@ describe('Operation', () => {
             expect(O.equals([1, 2], [2, 3])).toBe(false);
             expect(O.equals(Id.of(1), Id.of(1))).toBe(true);
             expect(O.equals(Id.of(1), Id.of(2))).toBe(false);
-            expect(O.equals(a => a, b => b)).toBe(false);
+            expect(O.equals(fnA, fnB)).toBe(false);
             expect(O.equals(new Date(2000,0,1), new Date(2000,0,1))).toBe(true);
             expect(O.equals(new Date(2000,0,1), new Date(2000,1,1))).toBe(false);
             expect(O.equals({a: 1}, {a: 1})).toBe(true);
