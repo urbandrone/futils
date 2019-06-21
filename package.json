@@ -33,10 +33,11 @@
   "homepage": "https://github.com/urbandrone/futils#readme",
   "tonicExampleFilename": "example.js",
   "devDependencies": {
-    "babel-cli": "^6.11.4",
+    "babel-cli": "^6.26.0",
     "babel-preset-es2015-rollup": "^3.0.0",
+    "braces": "^2.3.1",
     "jasmine-node": "^1.15.0",
-    "jsdoc": "^3.4.0",
+    "jsdoc": "^3.6.2",
     "minami": "^1.1.1",
     "rollup": "^0.64.1",
     "rollup-plugin-babel": "^3.0.7",
