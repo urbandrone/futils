@@ -19,11 +19,10 @@ const _memoized = f => {
     if (t === 'Function') {
         const cache = Object.create(null);
         return arity(f.length, (...xs) => {
-            let k = JSON.stringify(xs);
-            if (cache[k] === void 0) {
-                cache[k] = f(...xs);
+           if (!cache[xs]) {
+                cache[xs] = f(...xs);
             }
-            return cache[k];
+            return cache[xs];
         });
     }
     throw `memoize :: Expected argument to be of type function but saw ${t}`;
