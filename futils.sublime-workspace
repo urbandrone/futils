@@ -4,6 +4,34 @@
 		"selected_items":
 		[
 			[
+				"Def",
+				"DEFAULT_DATA"
+			],
+			[
+				"remove",
+				"removeFile"
+			],
+			[
+				"remo",
+				"removeDir"
+			],
+			[
+				"S",
+				"SPACE_UNIONS"
+			],
+			[
+				"const",
+				"constructor"
+			],
+			[
+				"f6",
+				"f6f6fa"
+			],
+			[
+				"fle",
+				"inline-flex\tdisplay"
+			],
+			[
 				"val",
 				"value"
 			],
@@ -32,10 +60,6 @@
 				"isString〔variable〕"
 			],
 			[
-				"fle",
-				"flex-direction"
-			],
-			[
 				"html",
 				"html5\tHTML5 Document Skeleton"
 			],
@@ -60,64 +84,62 @@
 	"buffers":
 	[
 		{
-			"file": "readme_jsdoc.md",
+			"contents": "{\n  \"01-quickstart\": {\n    \"title\": \"Quickstart\",\n    \"children\": {\n      \"011-quickstart-alternative\": {\n        \"title\": \"Quickstart: Alternative solution\"\n      }\n    }\n  },\n  \"02-monoids\": {\n    \"title\": \"Monoid examples\"\n  },\n  \"03-data\": {\n    \"title\": \"Using data structures\"\n  }\n}",
+			"file": "docsrc/tutorials/tutorials.json",
+			"file_size": 303,
+			"file_write_time": 132055991928311350,
 			"settings":
 			{
-				"buffer_size": 17692,
+				"buffer_size": 288,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "example.js",
+			"contents": "A selection of examples of `Monoids` and their use cases.\n\n#### Further readings\n- [Fantas, eel and specification](http://www.tomharding.me/fantasy-land/)\n\n\n\n# Common use cases\n\n## Sum and Product\n\nExamples of using the `Sum` and `Product` monoids with an array of numbers. \n\n**Sum**\n```javascript\nconst { monoid: {Sum}, operation: {fold, foldMap} } = require('futils');\n\nconst DATA = [1, 2, 3, 4, 5];\n\n// equivalent\nfold(Sum, DATA);                                      // -> Sum(15)\nfoldMap(Sum, DATA);                                   // -> Sum(15)\nDATA.reduce((a, b) => a.concat(Sum(b)), Sum.empty()); // -> Sum(15)\n```\n\n**Product**\n```javascript\nconst { monoid: {Product}, operation: {fold, foldMap} } = require('futils');\n\nconst DATA = [1, 2, 3, 4, 5];\n\n// equivalent\nfold(Product, DATA);                                          // -> Product(120)\nfoldMap(Product, DATA);                                       // -> Product(120)\nDATA.reduce((a, b) => a.concat(Product(b)), Product.empty()); // -> Product(120)\n```\n\n## Min and Max\n\n`Min` and `Max` monoids used to find the lowest and hightest number in a array. \n\n**Min**\n```javascript\nconst { monoid: {Min}, operation: {fold, foldMap} } = require('futils');\n\nconst DATA = [2, 5, 4, 1, 3];\n\n// equivalent\nfold(Min, DATA);                                      // -> Min(1)\nfoldMap(Min, DATA);                                   // -> Min(1)\nDATA.reduce((a, b) => a.concat(Min(b)), Min.empty()); // -> Min(1)\n```\n\n**Max**\n```javascript\nconst { monoid: {Max}, operation: {fold, foldMap} } = require('futils');\n\nconst DATA = [2, 5, 4, 1, 3];\n\n// equivalent\nfold(Max, DATA);                                      // -> Max(5)\nfoldMap(Max, DATA);                                   // -> Max(5)\nDATA.reduce((a, b) => a.concat(Max(b)), Max.empty()); // -> Max(5)\n```\n\n## Any and All\n\nDetermining if any value is true or if all values are true with the `Any` and\n`All` monoids. \n\n**Any**\n```javascript\nconst { monoid: {Any}, operation: {fold, foldMap} } = require('futils');\n\nconst DATA = [true, false, true, true];\n\n// equivalent\nfold(Any, DATA);                                      // -> Any(true)\nfoldMap(Any, DATA);                                   // -> Any(true)\nDATA.reduce((a, b) => a.concat(Any(b)), Any.empty()); // -> Any(true)\n```\n\n**All**\n```javascript\nconst { monoid: {All}, operation: {fold, foldMap} } = require('futils');\n\nconst DATA = [true, false, true, true];\n\n// equivalent\nfold(All, DATA);                                      // -> All(false)\nfoldMap(All, DATA);                                   // -> All(false)\nDATA.reduce((a, b) => a.concat(All(b)), All.empty()); // -> All(false)\n```\n\n## Char\n\nUsing `Char` to combine an array of `String`s into a single `String`. \n\n**Char**\n```javascript\nconst { monoid: {Char}, operation: {fold, foldMap} } = require('futils');\n\nconst DATA = ['Hello', ' ', 'world'];\n\n// equivalent\nfold(Char, DATA);                                       // -> Char('Hello world')\nfoldMap(Char, DATA);                                    // -> Char('Hello world')\nDATA.reduce((a, b) => a.concat(Char(b)), Char.empty()); // -> Char('Hello world')\n```\n\n## Fn\n\nFunction composition with the `Fn` monoid.\n\n**Fn**\n```javascript\nconst { monoid: {Fn}, operation: {fold, foldMap} } = require('futils');\n\nconst DATA = [\n  x => x.split(','),\n  x => x.map(Number)\n];\n\n// equivalent\nfold(Fn, DATA);                                     // -> Fn(x => x.split(',').map(Number))\nfoldMap(Fn, DATA);                                  // -> Fn(x => x.split(',').map(Number))\nDATA.reduce((a, b) => a.concat(Fn(b)), Fn.empty()); // -> Fn(x => x.split(',').map(Number))\n```\n\n## Record\n\nUse `Record` to merge objects together. Overrides existing properties. Original\nvalues are kept intact.\n\n**Record**\n```javascript\nconst { monoid: {Record}, operation: {fold, foldMap} } = require('futils');\n\nconst DATA = [\n  { a: 1 },\n  { b: 2, c: 4 },\n  { c: 3 }\n];\n\n// equivalent\nfold(Record, DATA);                                         // -> Record({ a: 1, b: 2, c: 3 })\nfoldMap(Record, DATA);                                      // -> Record({ a: 1, b: 2, c: 3 })\nDATA.reduce((a, b) => a.concat(Record(b)), Record.empty()); // -> Record({ a: 1, b: 2, c: 3 })\n```\n\n\n\n# Custom monoids\n\nExample of custom `Date` monoids.\n\n```javascript\nconst { adt: {Type}, generics: {Show, Eq, Ord} } = require('futils');\n\n\nconst Earliest = Type('Earliest', ['date']).\n  deriving(Show, Eq, Ord);\n\nEarliest.empty = () => Earliest(new Date(Date.now()));\n\nEarliest.fn.concat = function (E) {\n  return Number(this.date) < Number(E.date) ? this : E;\n}\n\n\nconst MostRecent = Type('MostRecent', ['date']).\n  deriving(Show, Eq, Ord);\n\nMostRecent.empty = () => MostRecent(new Date(0, 0, 0, 0, 0, 0));\n\nMostRecent.fn.concat = function (E) {\n  return Number(this.date) < Number(E.date) ? E : this;\n}\n```\n\n",
+			"file": "docsrc/tutorials/02-monoids.md",
+			"file_size": 5017,
+			"file_write_time": 132054003892207156,
 			"settings":
 			{
-				"buffer_size": 2287,
+				"buffer_size": 4837,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Examples of data structures found in the `data` namespace.\n\n\n# Common use cases\n\n## Avoid `null/undefined` checks\n\n```javascript\nconst { data: {Maybe} } = require('futils');\n\nconst DATA = {\n  a: { b: 3 }\n}\n\nconst safeGet = prop => x =>\n  prop in x\n    ? Maybe.from(x[prop])\n    : Maybe.empty();\n\nsafeGet('a')(DATA).flatMap(safeGet('b')); // -> Some(3)\nsafeGet('a')(DATA).flatMap(safeGet('c')); // -> None()\n```\n\n```javascript\nconst { data: {IO, Maybe} } = require('futils');\n\n\nconst queryDOM = selector => x => IO(() =>\n   x.flatMap(y => Maybe.from(y.querySelector(selector)))\n);\n\n\nqueryDOM('main')\n  .flatMap(queryDOM('.main-article'));  // -> IO (Some <article>)\n\nqueryDOM('main')\n  .flatMap(queryDOM('.not-exisiting')); // -> IO (None)\n```\n\n## Pretty `Error` handling\n\n```javascript\nconst { data: {Either} } = require('futils');\n\n\nconst isNum = x => typeof x === 'number' && !isNaN(x);\n\nconst multiply = x => y =>\n  isNum(x) && isNum(y)\n    ? Either.Right(x * y)\n    : Either.Left(`Cannot multiply ${y} with ${x}`);\n\nconst divide = x => y =>\n  isNum(x) && isNum(y)\n    ? x !== 0\n        ? Either.Right(y / x)\n        : Either.Left(`Division by zero ${y}/${x}`)\n    : Either.Left(`Cannot divide ${y} by ${x}`);\n\n\nmultiply(2)(2)\n  .flatMap(divide(4));   // -> Right(1)\n\nmultiply(2)(NaN)\n  .flatMap(divide(4));   // -> Left('Cannot multiply NaN with 2')\n\nmultiply(2)(2)\n  .flatMap(divide(0));   // -> Left('Division by zero 4/0')\n\nmultiply(2)(2)\n  .flatMap(divide(NaN)); // -> Left('Cannot divide 4 by NaN')\n```\n\n\n## Modify local state\n\n```javascript\nconst { data: {State} } = require('futils');\n\n\nconst shiftArray = mask => State.get()\n  .flatMap(xs => {\n    if (mask.length < 1) {\n      return State.of(xs);\n    }\n\n    let ys = [...xs];\n    let shift = mask[0];\n    let temp = ys[shift[0]];\n    ys[shift[0]] = ys[shift[1]];\n    ys[shift[1]] = temp;\n    return State.put(ys).flatMap(() => shiftArray(mask.slice(1)));\n  });\n\n\nshiftArray([ [0, 3], [2, 3], [3, 1] ])\n  .run(['a', 'b', 'c', 'd']); // -> State(['d', 'c', 'a', 'b'])\n```\n\n\n## Synchronous I/O and side effects\n\n```javascript\nconst { data: {IO} } = require('futils');\n\n\nconst localStore = IO.of(window.localStorage);\n\nconst read = key => IO(storage => storage.getItem(key));\n\nconst write = key => data => IO(storage => {\n  storage.setItem(key, data);\n  return storage;\n});\n\n\n\n// TODOS_DATA :: [ Todo ]\nconst TODOS_DATA = [\n  { id: 0, title: 'Test todo 1', closed: false },\n  { id: 1, title: 'Test todo 2', closed: true }\n]\n\nconst saveAs = slot => todos =>\n  read(slot).flatMap(oldTodos =>\n    write(slot)(JSON.stringify(todos))\n      .map(_ => !oldTodos ? [] : JSON.parse(oldTodos))\n  );\n\n\nsaveAs('my-todo-app')(TODOS_DATA)\n  .ap(localStore); // -> IO ([ Todo ])\n```\n\n\n## Async code\n\n```javascript\nconst { data: {Task} } = require('futils');\n\n\nconst getJSON = url => Task((reject, resolve) => {\n  fetch(url).then(r => r.json())\n    .then(resolve)\n    .catch(reject);\n});\n\n\nconst getUsers = getJSON('my/api/users'); // -> Task Error [User]\n\ngetUsers.run(\n  err => console.error('Error occured', err),\n  users => console.log('Received data', users)\n);\n```",
+			"file": "docsrc/tutorials/03-data.md",
+			"file_size": 3267,
+			"file_write_time": 132056098859089140,
+			"settings":
+			{
+				"buffer_size": 3113,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "conf.json",
+			"contents": "// The MIT License (MIT)\n// Copyright (c) 2016 – 2019 David Hofmann <the.urban.drone@gmail.com>\n//\n// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n// THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\nimport {typeOf} from '../core/typeof';\nimport {UnionType} from '../adt';\nimport {showT} from '../generics/Show';\nimport {compareEq} from '../generics/Eq';\n\n\n\n\n/*\n * @module data\n */\n\n\n\n/**\n * The List data type. List is implemented as a linked\n * list, where each part has a head and a tail. The end of the list is marked\n * with Nil\n * @class module:data.List\n * @extends module:generics.Show\n * @static\n * @version 3.0.0\n *\n * @example\n * const {List} = require('futils').data;\n * const {Cons, Nil} = List;\n * \n * List.Cons(1, List.Nil());               // -> Cons(1, Nil)\n * Cons(1, Nil());                         // -> Cons(1, Nil)\n *\n * List.Cons(1, List.Cons(2, List.Nil())); // -> Cons(1, Cons(2, Nil))\n * Cons(1, Cons(2, Nil()));                // -> Cons(1, Cons(2, Nil))\n */\nexport const List = UnionType('List', {Cons: ['head', 'tail'], Nil: []});\n\nconst {Cons, Nil} = List;\nList.fn.head = null;\nList.fn.tail = Nil();\n\n\n\n/* Utilities */\nconst BREAK = Symbol('BREAK');\n\nconst foldl = (f, a, ls) => {\n    let r = a, s = ls;\n    while (!Nil.is(s)) {\n        r = f(r, s.head, s);\n        s = s.tail;\n    }\n    return r;\n}\n\nconst breakableFoldl = (f, a, ls) => {\n    let r = a, s = ls;\n    while (!Nil.is(s)) {\n        let [cmd, _r] = f(r, s.head, s);\n        r = _r;\n        if (cmd === BREAK) { break; }\n        s = s.tail;\n    }\n    return r;\n}\n\nconst foldr = (f, a, ls) => {\n    return foldl(f, a, foldl((x,y) => Cons(y, x), Nil(), ls));\n}\n\n\n/**\n * Lifts one or more values into a List\n * @method of\n * @static\n * @memberof module:data.List\n * @param {...any} a The value or values to lift\n * @return {List} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.of(1); // -> Cons(1, Nil)\n */\nList.of = (a) => Cons(a, Nil());\n/**\n * Monoid implementation for List. Returns a List without values\n * @method empty\n * @static\n * @memberof module:data.List\n * @return {List} A List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.empty(); // -> Nil\n */\nList.empty = Nil;\n/**\n * Lifts a value into a List. Somewhat similiar to List.of, but only accepts a\n * single value and puts it in a array if it is not an array itself. Useful to\n * transform array-like objects on the fly\n * @method from\n * @static\n * @memberof module:data.List\n * @param {any} a The value to lift\n * @return {List} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.from(1);    // -> Cons(1, Nil)\n * List.from([1]);  // -> Cons(1, Nil)\n * List.from(null); // -> Nil\n */\nList.from = (a) => a == null ? Nil() : Array.isArray(a) ? List.fromArray(a) : Cons(a, Nil());\n/**\n * A natural transformation from an array into a List\n * @method fromArray\n * @static\n * @memberof module:data.List\n * @param {Array} a The array to transform\n * @return {List} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.fromArray([1, 2, 3]); // -> Cons(1, Cons(2, Cons(3, Nil)))\n */\nList.fromArray = (a) => a.reduceRight((x, y) => Cons(y, x), Nil());\n/**\n * A natural transformation from an Id to a List\n * @method fromId\n * @static\n * @memberof module:data.List\n * @param {Id} a The Id to transform\n * @return {List} A new List\n *\n * @example\n * const {List, Id} = require('futils').data;\n *\n * const id = Id('a value');\n *\n * List.fromId(id); // -> Cons('a value', Nil)\n */\nList.fromId = (a) => List.from(a.value);\n/**\n * A natural transformation from a Maybe.Some or Maybe.None into a List\n * @method fromMaybe\n * @static\n * @memberof module:data.List\n * @param {Some|None} a The Maybe to transform\n * @return {List} A List with the value of a Maybe.Some and an empty List for Maybe.None\n *\n * @example\n * const {List, Maybe} = require('futils').data;\n *\n * const some = Maybe.Some('a value');\n * const none = Maybe.None();\n *\n * List.fromMaybe(some); // -> Cons('a value', Nil)\n * List.fromMaybe(none); // -> Nil\n */\nList.fromMaybe = (a) => a.isSome() ? List.from(a.value) : List.empty();\n/**\n * A natural transformation from an Either.Left or Either.Right into a List\n * @method fromEither\n * @static\n * @memberof module:data.List\n * @param {Left|Right} a The Either to transform\n * @return {List} List with value(s) for Either.Right, empty List for Either.Left\n *\n * @example\n * const {List, Either} = require('futils').data;\n *\n * const l = Either.Left('a left');\n * const r = Either.Right('a right');\n *\n * List.fromEither(l); // -> Nil\n * List.fromEither(r); // -> Cons('a right', Nil)\n */\nList.fromEither = (a) => a.isRight() ? List.from(a.value) : List.empty();\n\n\n\nList.fn[Symbol.iterator] = function () {\n    return this.caseOf({\n        Nil: () => ({done: true, next() { return void 0; }}),\n        Cons: () => this.toArray()[Symbol.iterator]()\n    });\n}\nList.fn.toString = function () {\n    return this.caseOf({\n        Nil: () => 'Nil',\n        Cons: () => this.reduceRight((ls, a) => `Cons(${showT(a)}, ${ls})`, 'Nil')\n    });\n}\n\n/**\n * A natural transformation from a List into an array\n * @method toArray\n * @memberof module:data.List\n * @instance\n * @return {Array} Array of values\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.of(2).cons(1).toArray(); // -> [1, 2]\n */\nList.fn.toArray = function () {\n    return this.reduce((a, x) => a.concat(x), []);\n}\n/**\n * Concatenates a List with another List\n * @method concat\n * @memberof module:data.List\n * @instance\n * @param {List} a The List instance to concatenate with\n * @return {List} A List containing all values from both Lists\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const ls = List.of(1);\n *\n * ls.concat(List.of(2)); // -> Cons(1, Cons(2, Nil))\n */\nList.fn.concat = function (a) {\n    if (List.is(a)) {\n        return this.caseOf({\n            Nil: () => this,\n            Cons: () => Nil.is(a) ? a : this.reduceRight((ls, x) => Cons(x, ls), a)\n        });\n    }\n    throw `List::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;\n}\n/**\n * Maps a function over each value in the List\n * @method map\n * @memberof module:data.List\n * @instance\n * @param {Function} f The function to map\n * @return {List} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const ls = List.of(1);\n * \n * const inc = (n) => n + 1;\n *\n * ls.map(inc); // -> Cons(2, Nil)\n */\nList.fn.map = function (f) {\n    return this.reduceRight((ls, x) => Cons(f(x), ls), Nil());\n}\n/**\n * Flattens a nested List one level\n * @method flat\n * @memberof module:data.List\n * @instance\n * @return {List} A List flattened\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const ls = List.of(List.of(1));\n *\n * ls.flat(); // -> Cons(1, Nil)\n */\nList.fn.flat = function () {\n    return this.reduceRight((ls, x) => {\n        return x.reduceRight((ks, y) => Cons(y, ks), ls);\n    }, Nil());\n}\n/**\n * Maps a List returning function over each value in the List and flattens the result\n * @method flatMap\n * @memberof module:data.List\n * @instance\n * @param {Function} f A List returning function to map\n * @return {List} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const ls = List.of(1);\n *\n * const inc = (n) => List.of(n + 1);\n *\n * ls.flatMap(inc); // -> Cons(2, Nil)\n */\nList.fn.flatMap = function (f) {\n    return this.reduceRight((ls, x) => {\n        return f(x).reduceRight((ks, y) => Cons(y, ks), ls);\n    }, Nil());\n}\n/**\n * Extracts the head value from a List. For Nil instances, it returns null\n * @method extract\n * @memberof module:data.List\n * @instance\n * @return {any|null} The head element\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.of(1).extract();   // -> 1\n * List.empty().extract(); // -> null\n */\nList.fn.extract = function () {\n    return this.head;\n}\n/**\n * If given a function that takes a List and returns a value, returns a List\n * @method extend\n * @memberof module:data.List\n * @instance\n * @param {Function} f A function taking a List\n * @return {List} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const ls = List.of(3).cons(2).cons(1);\n *\n * ls.extend(({head, tail}) => head + tail.head || 0); // -> Cons(6, Cons(5, Cons(3, Nil)))\n */\nList.fn.extend = function (f) {\n    return this.caseOf({\n        Nil: () => this,\n        Cons: () => this.reduceRight((x, _, y) => Cons(f(y), x), Nil())\n    });\n}\n/**\n * Applies a function in a List to the values in another List\n * @method ap\n * @memberof module:data.List\n * @instance\n * @param {List} a The List that holds the values\n * @return {List} List which contains the results of applying the function\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const ls = List.of(1);\n *\n * const mIncDouble = List.of((n) => n + 1).cons((n) => n * 2);\n *\n * mIncDouble.ap(ls); // -> Cons(4, Nil)\n */\nList.fn.ap = function (L) {\n    return L.reduceRight((ls, x) => this.reduceRight((ks, f) => Cons(f(x), ks), ls), Nil());\n}\n/**\n * Works like the Array.reduce method. If given a function and an initial value,\n * reduces the values in the List to a final value\n * @method reduce\n * @memberof module:data.List\n * @instance\n * @param {Function} f The function to reduce with\n * @param {any} x The seed value to reduce into\n * @return {any} All values reduced into the seed\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const ls = List.of(1);\n *\n * const reducer = (a, b) => a + b;\n *\n * ls.reduce(reducer, 1); // -> 2\n */\nList.fn.reduce = function (f, x) {\n    return this.caseOf({\n        Nil: () => x,\n        Cons: () => foldl(f, x, this)\n    });\n}\n/**\n * Works like the Array.reduceRight method. If given a function and an initial\n * value, reduces the values in the List to a final value\n * @method reduceRight\n * @memberof module:data.List\n * @instance\n * @param {Function} f The function to reduce with\n * @param {any} x The seed value to reduce into\n * @return {any} All values reduced into the seed\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const ls = List.of(1);\n *\n * const reducer = (a, b) => a + b;\n *\n * ls.reduceRight(reducer, 1); // -> 2\n */\nList.fn.reduceRight = function (f, x) {\n    return this.caseOf({\n        Nil: () => x,\n        Cons: () => foldr(f, x, this)\n    })\n}\n/**\n * Takes a function with signature (Applicable f) => a -> f a and an Applicative\n * constructor and traverses the List into the applicative\n * @method traverse\n * @memberof data/List.List\n * @param {Function} f Function to traverse with\n * @param {Applicative} A A constructor with of and ap methods\n * @return {Applicative} A List wrapped in the applicative\n *\n * @example\n * const {List, Maybe} = require('futils').data;\n * \n * const ls = List.of(1)\n *\n * const fn = (n) => Maybe.of(n);\n *\n * ls.traverse(fn, Maybe); // -> Some(Cons(1, Nil))\n */\nList.fn.traverse = function (f, A) {\n    return this.caseOf({\n        Nil: () => A.of(this),\n        Cons: () => this.reduceRight(\n            (xs, x) => xs.flatMap(a => f(x).map(b => Cons(b, a))),\n            A.of(Nil())\n        )\n    });\n}\n/**\n * Sequences a List into another applicative Type\n * @method sequence\n * @memberof module:data.List\n * @instance\n * @param {Applicative} A A constructor with of and ap methods\n * @return {Applicative} A List wrapped in the applicative\n *\n * @example\n * const {List, Maybe} = require('futils').data;\n *\n * const ls = List.of(Maybe.of(1));\n *\n * ls.sequence(Maybe); // -> Some(Cons(1, Nil))\n */\nList.fn.sequence = function (A) {\n    return this.traverse(x => x, A);\n}\n/**\n * Alternative implementation, allows to swap a empty List\n * @method alt\n * @memberof data/List.List\n * @param {List} a The alternative List\n * @return {List} Choosen alternative\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const ls = List.of(1);\n * const ns = List.empty();\n *\n * ls.alt(List.of(4));    // -> Cons(1, Nil)\n * ls.alt(List.empty());  // -> Cons(1, Nil)\n * ns.alt(List.of(4));    // -> Cons(4, Nil)\n * ns.alt(List.empty());  // -> Nil\n */\nList.fn.alt = function (a) {\n    return this.caseOf({\n        Nil: () => a,\n        Cons: () => this\n    });\n}\n/**\n * Takes a function which returns a Monoid and folds the List with it into a Monoid\n * @method foldMap\n * @memberof module:data.List\n * @instance\n * @param {Function} f The Monoid returning function\n * @return {Monoid} A Monoid of the type the function returns\n *\n * @example\n * const {List} = require('futils').data;\n * const {Sum} = require('futils').monoid;\n *\n * const fn = (n) => Sum.of(n);\n *\n * List.of(1).cons(2).foldMap(fn); // -> Sum(3)\n */\nList.fn.foldMap = function (f) {\n    return this.reduceRight((m, x) => m == null ? f(x) : m.concat(f(x)), null);\n}\n/**\n * Takes a Monoid and folds the List into it\n * @method fold\n * @memberof module:data.List\n * @instance\n * @param {Monoid} A The Monoid type constructor\n * @return {Monoid} A Monoid of the type the function returns\n *\n * @example\n * const {List} = require('futils').data;\n * const {Sum} = require('futils').monoid;\n *\n * List.of(1).cons(2).fold(Sum); // -> Sum(3)\n */\nList.fn.fold = function (A) {\n    return this.foldMap(A.of);\n}\n/**\n * Takes a function which returns a Boolean and filters the List with it. Works\n * much like the Array.filter function\n * @method filter\n * @memberof module:data.List\n * @instance\n * @param {Function} f The function to filter with\n * @return {Cons|Nil} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const even = (n) => n % 2 === 0;\n *\n * List.of(3).cons(2).cons(1).filter(even); // -> Cons(2, Nil)\n */\nList.fn.filter = function (f) {\n    return this.reduceRight((ls, x) => !!f(x) ? Cons(x, ls) : ls, Nil());\n}\n/**\n * Takes a value and puts it between each entry in the List\n * @method intersperse\n * @memberof module:data.List\n * @instance\n * @param {any} a The value to put in between\n * @return {Cons|Nil} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.of(2).cons(1).intersperse(0.5); // -> Cons(1, Cons(0.5, Cons(2, Nil)))\n */\nList.fn.intersperse = function (a) {\n    return this.reduceRight((ls, x) => Nil.is(ls) ? Cons(x, ls) : Cons(x, Cons(a, ls)), Nil());\n}\n/**\n * Sets the given value to the head position of a List, making the current List\n * the new tail\n * @method cons\n * @memberof module:data.List\n * @instance\n * @param {any} a The value to set\n * @return {Cons} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.of(2).cons(1); // -> Cons(1, Cons(2, Nil));\n */\nList.fn.cons = function (a) {\n    return Cons(a, this);\n}\n/**\n * Sets a given value to the tail position of a List\n * @method snoc\n * @memberof module:data.List\n * @instance\n * @param {any} a The value to set\n * @return {Cons} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.of(1).snoc(2); // -> Cons(1, Cons(2, Nil))\n */\nList.fn.snoc = function (a) {\n    return this.reduceRight((ls, x) => Cons(x, ls), Cons(a, Nil()));\n}\n/**\n * If given a number N, returns the first N items from the List\n * @method take\n * @memberof module:data.List\n * @instance\n * @param {Number} n Amount of elements to take from the beginning of the List\n * @return {Cons|Nil} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.of(2).cons(1).cons(0).take(2); // -> Cons(0, Cons(1, Nil))\n */\nList.fn.take = function (n) {\n    return this.caseOf({\n        Nil: () => this,\n        Cons: (h, t) => n > 0 ? Cons(h, t.take(n - 1)) : Nil()\n    });\n}\n/**\n * If given a number N, drops the first N items from the List\n * @method drop\n * @memberof module:data.List\n * @instance\n * @param {Number} n Amount of elements to drop from the beginning of the List\n * @return {Cons|Nil} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.of(2).cons(1).cons(0).drop(2); // -> Cons(2, Nil)\n */\nList.fn.drop = function (n) {\n    return this.caseOf({\n        Nil: () => this,\n        Cons: (_, t) => n > 1 ? t.drop(n - 1) : t\n    });\n}\n/**\n * Given a predicate function, returns the first element for which the\n * predicate returns true. If no element passes the predicate, null is returned\n * @method find\n * @memberof module:data.List\n * @instance\n * @param {Function} f The predicate function\n * @return {any|null} The first match or null\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const even = (n) => n % 2 === 0;\n * \n * List.of(3).cons(2).cons(1).find(even); // -> 2\n */\nList.fn.find = function (f) {\n    return this.caseOf({\n        Nil: () => null,\n        Cons: () => breakableFoldl((x, a) => !!f(a) ? [BREAK, a] : [null, x], null, this)\n    });\n}\n/**\n * Given a predicate function, removes all duplicates from the List for which the\n * predicate function returns true\n * @method nubBy\n * @memberof module:data.List\n * @instance\n * @param {Function} f The predicate function\n * @return {Cons|Nil} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * const eq = (a, b) => a === b;\n *\n * List.of(3).cons(2).cons(2).cons(1).nubBy(eq); // -> Cons(1, Cons(2, Cons(3, Nil)))\n */\nList.fn.nubBy = function (f) {\n    return this.reduce((x, a) => {\n        return x.find(b => f(a, b)) != null ? x : x.snoc(a);\n    }, Nil());\n}\n/**\n * Removes all duplicates from the List. Uses deep equality for comparison\n * @method nub\n * @memberof module:data.List\n * @instance\n * @return {Cons|Nil} A new List\n *\n * @example\n * const {List} = require('futils').data;\n *\n * List.of(3).cons(2).cons(2).cons(1).nub(); // -> Cons(1, Cons(2, Cons(3, Nil)))\n */\nList.fn.nub = function () {\n    return this.nubBy(compareEq);\n}",
+			"file": "src/data/List.js",
+			"file_size": 19273,
+			"file_write_time": 132056148261940007,
 			"settings":
 			{
-				"buffer_size": 573,
+				"buffer_size": 18594,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "docsrc/_tpl/minami/tmpl/layout.tmpl",
+			"contents": "// The MIT License (MIT)\n// Copyright (c) 2016 – 2019 David Hofmann <the.urban.drone@gmail.com>\n//\n// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n// THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\nimport {typeOf} from '../core/typeof';\n\n\n\n/*\n * @module operation\n */\n\n\nconst _zipWith = (f, a, b) => {\n  let u = typeOf(f), t = typeOf(a), s = typeOf(b);\n  if (u === 'Function') {\n    if (t === 'Array' && s === t) {\n      return a.length > b.length ? b.map((x, i) => f(a[i], x)) : a.map((x, i) => f(x, b[i]));\n    }\n    throw `zipWith :: Expected second and third arguments to be arrays but saw ${t} & ${s}`;\n  }\n  throw `zipWith :: Expected first argument to be function but saw ${u}`;\n}\n\n\n/**\n * The zipWith function allows to combine the contents of two arrays with the\n * help of a combiner function.\n * @method zipWith\n * @since 3.1.2\n * @memberof module:operation\n * @param {Function} f The function to map with\n * @param {Array} a The first array of values\n * @param {Array} b The second array of values\n * @return {Array} A new array of combined values from a and b\n *\n * @example\n * const {zipWith} = require('futils').operation;\n *\n * const zipper = (a, b) => a + b;\n * \n * zipWith(zipper, [1, 2], [3, 4]); // -> [4, 6]\n * zipWith(zipper);                 // -> (Array a -> Array b -> Array c)\n */\nexport const zipWith = (f, a, b) => f === void 0 ? zipWith :\n                                    a === void 0 ? (c, d) => zipWith(f, c, d) :\n                                    b === void 0 ? (c) => zipWith(f, a, c) :\n                                    _zipWith(f, a, b);",
+			"file": "src/operation/zipWith.js",
+			"file_size": 2561,
+			"file_write_time": 132055932083984580,
 			"settings":
 			{
-				"buffer_size": 3677,
+				"buffer_size": 2510,
 				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "docsrc/_tpl/minami/tmpl/container.tmpl",
-			"settings":
-			{
-				"buffer_size": 6014,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "docsrc/_tpl/minami/tmpl/mainpage.tmpl",
-			"settings":
-			{
-				"buffer_size": 171,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/F/SublimeLinters/.eslintrc",
-			"settings":
-			{
-				"buffer_size": 2612,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
+				"line_ending": "Windows"
 			}
 		}
 	],
@@ -179,74 +201,48 @@
 	"expanded_folders":
 	[
 		"/F/node-packages/futils",
-		"/F/node-packages/futils/docs",
-		"/F/node-packages/futils/docs/futils",
-		"/F/node-packages/futils/docsrc",
-		"/F/node-packages/futils/docsrc/_tpl",
-		"/F/node-packages/futils/docsrc/_tpl/minami",
-		"/F/node-packages/futils/docsrc/_tpl/minami/tmpl",
-		"/F/node-packages/futils/src",
-		"/F/node-packages/futils/src/data"
+		"/F/node-packages/futils/docsrc"
 	],
 	"file_history":
 	[
-		"/F/node-packages/futils/docsrc/_tpl/minami/tmpl/container.tmpl",
-		"/F/node-packages/futils/docsrc/_tpl/minami/tmpl/mainpage.tmpl",
-		"/F/node-packages/futils/docsrc/_tpl/minami/logo.jpg",
-		"/F/node-packages/futils/index.html",
-		"/F/node-packages/futils/readme_jsdoc.md",
-		"/F/node-packages/futils/example.js",
-		"/F/node-packages/futils/readme.md",
-		"/F/node-packages/futils/src/generics/Monad.js",
-		"/F/node-packages/futils/src/generics/Ord.js",
-		"/F/node-packages/futils/src/generics/Apply.js",
-		"/F/node-packages/futils/src/generics/Semigroup.js",
-		"/F/node-packages/futils/src/generics/Pointed.js",
-		"/F/node-packages/futils/src/generics/Show.js",
-		"/F/node-packages/futils/package.json",
-		"/F/node-packages/futils/src/generics/Functor.js",
-		"/F/node-packages/futils/src/adt.js",
-		"/F/node-packages/futils/src/core/values.js",
-		"/F/node-packages/futils/src/core/arity.js",
-		"/F/node-packages/futils/docs/_tpl/minami/tmpl/layout.tmpl",
-		"/C/Users/David/AppData/Roaming/Sublime Text 3/Packages/User/SideBarEnhancements/Open With/Side Bar.sublime-menu",
-		"/F/node-packages/futils/.npmignore",
-		"/F/node-packages/futils/specs/adtSpec.js",
-		"/F/node-packages/futils/specs/dataEitherSpec.js",
-		"/F/node-packages/futils/specs/dataIdSpec.js",
-		"/F/node-packages/futils/specs/dataIOSpec.js",
-		"/F/node-packages/futils/specs/dataListSpec.js",
-		"/F/node-packages/futils/specs/dataMaybeSpec.js",
-		"/F/node-packages/futils/specs/dataStateSpec.js",
-		"/F/node-packages/futils/specs/dataTaskSpec.js",
-		"/F/node-packages/futils/specs/lambdaSpec.js",
-		"/F/node-packages/futils/specs/monoidAllSpec.js",
-		"/F/node-packages/futils/specs/monoidAnySpec.js",
-		"/F/node-packages/futils/specs/monoidCharSpec.js",
-		"/F/node-packages/futils/specs/monoidFnSpec.js",
-		"/F/node-packages/futils/specs/monoidMaxSpec.js",
-		"/F/node-packages/futils/specs/monoidMinSpec.js",
-		"/F/node-packages/futils/specs/monoidProductSpec.js",
-		"/F/node-packages/futils/specs/monoidRecordSpec.js",
-		"/F/node-packages/futils/specs/monoidSumSpec.js",
-		"/F/node-packages/futils/specs/operationSpec.js",
-		"/F/node-packages/futils/specs/opticSpec.js",
-		"/F/node-packages/futils/specs/trampolineSpec.js",
-		"/F/node-packages/futils/rollup.config.js",
-		"/F/node-packages/futils/.gitignore",
-		"/F/node-packages/futils/src/data/Free.js",
+		"/F/node-packages/futils/src/lambda/flip.js",
+		"/F/node-packages/futils/src/lambda/memoize.js",
 		"/F/node-packages/futils/src/data/Id.js",
+		"/F/node-packages/futils/specs/dataIdSpec.js",
+		"/F/node-packages/futils/src/core/arity.js",
+		"/F/node-packages/futils/src/data/Either.js",
+		"/F/node-packages/futils/src/data/Free.js",
 		"/F/node-packages/futils/src/data/IO.js",
 		"/F/node-packages/futils/src/data/List.js",
+		"/F/node-packages/futils/src/operation/ap.js",
+		"/F/node-packages/futils/specs/operationSpec.js",
+		"/F/node-packages/futils/specs/lambdaSpec.js",
 		"/F/node-packages/futils/src/data/Maybe.js",
 		"/F/node-packages/futils/src/data/State.js",
-		"/F/node-packages/futils/src/data/Task.js",
-		"/F/node-packages/futils/src/generics/Eq.js",
-		"/F/node-packages/futils/src/lambda/compose.js",
+		"/F/node-packages/futils/src/operation/zipWith.js",
+		"/F/node-packages/futils/src/operation/zip.js",
+		"/F/node-packages/futils/src/data/Pair.js",
+		"/F/node-packages/futils/src/generics/Monad.js",
+		"/F/node-packages/futils/docsrc/tutorials/tutorials.json",
+		"/F/node-packages/futils/docsrc/tutorials/02-monoids.md",
+		"/F/node-packages/futils/src/operation/__export.js",
+		"/F/node-packages/futils/src/adt.js",
+		"/F/node-packages/futils/src/lambda/converge.js",
+		"/F/node-packages/futils/src/lambda/__export.js",
+		"/C/Users/David/Desktop/Shuttlebus.txt",
+		"/F/node-packages/futils/LICENSE",
+		"/F/node-packages/futils/src/operation/reducer.js",
+		"/F/node-packages/futils/src/lambda/concur.js",
 		"/F/node-packages/futils/src/lambda/constant.js",
 		"/F/node-packages/futils/src/lambda/curry.js",
 		"/F/node-packages/futils/src/lambda/curryr.js",
 		"/F/node-packages/futils/src/lambda/fixed.js",
+		"/F/node-packages/futils/src/lambda/id.js",
+		"/F/node-packages/futils/src/lambda/not.js",
+		"/F/node-packages/futils/src/lambda/partial.js",
+		"/F/node-packages/futils/src/lambda/partialr.js",
+		"/F/node-packages/futils/src/lambda/pipe.js",
+		"/F/node-packages/futils/src/lambda/upon.js",
 		"/F/node-packages/futils/src/monoid/All.js",
 		"/F/node-packages/futils/src/monoid/Any.js",
 		"/F/node-packages/futils/src/monoid/Char.js",
@@ -256,29 +252,9 @@
 		"/F/node-packages/futils/src/monoid/Product.js",
 		"/F/node-packages/futils/src/monoid/Record.js",
 		"/F/node-packages/futils/src/monoid/Sum.js",
-		"/F/node-packages/futils/src/optic/create.js",
-		"/F/node-packages/futils/src/optic/lenses.js",
-		"/F/node-packages/futils/src/optic/mapped.js",
-		"/F/node-packages/futils/src/optic/over.js",
-		"/F/node-packages/futils/src/optic/set.js",
-		"/F/node-packages/futils/src/optic/view.js",
-		"/F/node-packages/futils/src/trampoline/again.js",
-		"/F/node-packages/futils/src/trampoline/recur.js",
-		"/F/node-packages/futils/src/operation/fold.js",
-		"/F/node-packages/futils/src/operation/foldMap.js",
-		"/F/node-packages/futils/src/operation/head.js",
-		"/F/node-packages/futils/src/operation/liftA.js",
-		"/F/node-packages/futils/src/operation/map.js",
-		"/F/node-packages/futils/src/operation/nub.js",
-		"/F/node-packages/futils/src/operation/nubby.js",
-		"/F/node-packages/futils/src/operation/prop.js",
-		"/F/node-packages/futils/src/operation/reduce.js",
-		"/F/node-packages/futils/src/operation/reducer.js",
-		"/F/node-packages/futils/src/operation/sequence.js",
-		"/F/node-packages/futils/src/operation/tail.js",
-		"/F/node-packages/futils/src/operation/take.js",
-		"/F/node-packages/futils/src/operation/traverse.js",
-		"/F/node-packages/futils/src/operation/ap.js",
+		"/F/node-packages/futils/src/operation/alt.js",
+		"/F/node-packages/futils/src/operation/biMap.js",
+		"/F/node-packages/futils/src/operation/caseOf.js",
 		"/F/node-packages/futils/src/operation/concat.js",
 		"/F/node-packages/futils/src/operation/doM.js",
 		"/F/node-packages/futils/src/operation/drop.js",
@@ -287,50 +263,87 @@
 		"/F/node-packages/futils/src/operation/find.js",
 		"/F/node-packages/futils/src/operation/flat.js",
 		"/F/node-packages/futils/src/operation/flatMap.js",
-		"/F/node-packages/futils/src/lambda/flip.js",
-		"/F/node-packages/futils/src/lambda/id.js",
-		"/F/node-packages/futils/src/lambda/memoize.js",
-		"/F/node-packages/futils/src/lambda/not.js",
-		"/F/node-packages/futils/src/lambda/partial.js",
-		"/F/node-packages/futils/src/lambda/partialr.js",
-		"/F/node-packages/futils/src/lambda/pipe.js",
-		"/F/node-packages/futils/src/data/__export.js",
-		"/F/node-packages/futils/src/data/Either.js",
-		"/F/node-packages/futils-test/package.json",
-		"/F/node-packages/futils/.babelrc",
-		"/F/node-packages/futils/conf.json",
-		"/F/node-packages/futils/docs/_tpl/minami/static/logo.jpg",
-		"/F/node-packages/futils/docs/_tpl/minami/publish.js",
-		"/F/node-packages/futils/src/operation/__export.js",
-		"/F/node-packages/futils/src/optic/__export.js",
+		"/F/node-packages/futils/src/operation/fold.js",
+		"/F/node-packages/futils/src/operation/foldMap.js",
+		"/F/node-packages/futils/src/operation/head.js",
+		"/F/node-packages/futils/src/operation/liftA.js",
+		"/F/node-packages/futils/src/operation/map.js",
+		"/F/node-packages/futils/src/operation/nub.js",
+		"/F/node-packages/futils/src/operation/nubby.js",
+		"/F/node-packages/futils/src/operation/proMap.js",
+		"/F/node-packages/futils/src/operation/prop.js",
+		"/F/node-packages/futils/src/operation/reduce.js",
+		"/F/node-packages/futils/src/operation/sequence.js",
+		"/F/node-packages/futils/src/operation/tail.js",
+		"/F/node-packages/futils/src/operation/take.js",
+		"/F/node-packages/futils/src/operation/traverse.js",
 		"/F/node-packages/futils/src/optic/_Const.js",
 		"/F/node-packages/futils/src/optic/_Val.js",
-		"/F/node-packages/futils/src/trampoline/__export.js",
-		"/F/node-packages/futils/src/trampoline/_Recur.js",
+		"/F/node-packages/futils/src/optic/create.js",
+		"/F/node-packages/futils/src/optic/lenses.js",
+		"/F/node-packages/futils/src/optic/mapped.js",
+		"/F/node-packages/futils/src/optic/over.js",
+		"/F/node-packages/futils/src/optic/set.js",
+		"/F/node-packages/futils/src/optic/view.js",
+		"/F/node-packages/futils/src/trampoline/again.js",
+		"/F/node-packages/futils/src/trampoline/recur.js",
+		"/F/node-packages/futils/src/core/constants.js",
+		"/F/node-packages/futils/src/core/typeof.js",
+		"/F/node-packages/futils/src/data/Task.js",
+		"/F/node-packages/futils/src/generics/Apply.js",
+		"/F/node-packages/futils/src/generics/Eq.js",
+		"/F/node-packages/futils/src/generics/Foldable.js",
+		"/F/node-packages/futils/src/generics/Functor.js",
+		"/F/node-packages/futils/src/generics/Ord.js",
+		"/F/node-packages/futils/src/generics/Semigroup.js",
+		"/F/node-packages/futils/src/generics/Show.js",
+		"/F/node-packages/futils/src/lambda/compose.js",
+		"/F/node-packages/futils/package.json",
+		"/F/node-packages/futils/src/core/autocurry.js",
+		"/F/node-packages/futils/src/core/__export.js",
+		"/F/node-packages/futils/src/__export.es6.js",
+		"/F/node-packages/futils/specs/_coreSpec.js",
+		"/F/node-packages/futils/specs/adtSpec.js",
+		"/F/node-packages/docwrite/src/architecture/store.js",
+		"/F/node-packages/docwrite/index.js",
+		"/F/node-packages/docwrite/src/helpers/filesys.js",
+		"/F/node-packages/docwrite/src/data/Stream.js",
+		"/F/node-packages/docwrite/src/helpers/language.js",
+		"/F/node-packages/docwrite/src/helpers/console.js",
+		"/F/node-packages/docwrite/src/helpers/unsafe.js",
+		"/F/node-packages/docwrite/src/helpers/strings.js",
+		"/F/node-packages/docwrite/src/app/token.js",
+		"/F/node-packages/docwrite/src/app/parsedoc.js",
+		"/F/SublimeLinters/.eslintrc",
+		"/F/node-packages/docwrite/src/data/Parser.js",
+		"/F/node-packages/docwrite/src/data/Tree.js",
+		"/F/node-packages/docwrite/src/bindings/inquirer.js",
+		"/F/node-packages/docwrite/src/unsafe.js",
+		"/F/node-packages/docwrite/src/console.js",
+		"/F/node-packages/docwrite/src/filesys.js",
+		"/F/node-packages/docwrite/src/numbers.js",
+		"/F/node-packages/docwrite/src/strings.js",
+		"/F/node-packages/futils/docsrc/tutorials/03-reactjs.md",
+		"/F/node-packages/futils/src/generics/BiFunctor.js",
+		"/F/node-packages/futils/docsrc/template/futils/static/styles/futils.css",
+		"/F/node-packages/futils/docsrc/home.md",
+		"/F/node-packages/futils/docsrc/tutorials/011-quickstart-alternative.md",
+		"/F/node-packages/futils/docsrc/tutorials/01-quickstart.md",
 		"/F/node-packages/futils/src/monoid/__export.js",
-		"/F/node-packages/futils/src/generics/__export.js",
-		"/F/node-packages/futils/src/lambda/__export.js",
-		"/F/node-packages/futils/src/operators.js",
-		"/F/node-packages/futils/docs/_tpl/minami/README.md",
-		"/F/node-packages/futils/src/operation/union.js",
-		"/F/node-packages/futils/src/operation/difference.js",
-		"/F/node-packages/futils/src/operation/findr.js",
-		"/F/node-packages/futils/src/data/Series.js",
-		"/F/node-packages/futils/specs/dataSeriesSpec.js",
-		"/F/node-packages/futils/src/core/typeof.js"
+		"/F/node-packages/futils/src/data/__export.js",
+		"/F/node-packages/futils/src/core/spec-compat.js",
+		"/F/node-packages/futils/docsrc/template/futils/tmpl/layout.tmpl"
 	],
 	"find":
 	{
-		"height": 26.0
+		"height": 25.0
 	},
 	"find_in_files":
 	{
-		"height": 121.0,
+		"height": 448.0,
 		"where_history":
 		[
-			"F:\\node-packages\\futils\\specs",
-			"F:\\node-packages\\futils\\src",
-			"<project>"
+			"F:\\node-packages\\futils\\src"
 		]
 	},
 	"find_state":
@@ -338,159 +351,77 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"havn",
-			"myDecoder",
-			"myEncoder",
-			"         |",
-			"         ",
-			"interpretWith",
-			"Monoid",
-			", foldMap",
-			"tokenize",
-			"Fn(x => x",
-			"encoder",
-			"tokenize",
-			"= futils;",
-			"futils",
-			"Operation",
-			"matrixVal",
-			"**",
-			"parseMatrix",
-			"Operator",
-			"Int",
-			"Apply",
-			"ap",
-			"Apply",
-			"f(...arguments);",
-			"f(a,b,c,d,e,g,h,i,j,k,l,m,o,p,q,r)",
-			"f\\([\\w,]+\\)",
-			" =>",
-			":\n            return",
-			"return",
-			"Monad",
-			"Functor",
-			"lift",
-			"compose",
-			"Matrix",
-			"*",
-			"require('../dist/trampoline')",
-			"require('../dist/optic')",
-			"require('../dist/operation')",
-			"require('../dist/monoid')",
-			"require('../dist/lambda')",
-			"require('../dist/data')",
-			"require('futils/trampoline')",
-			"require('futils/optic')",
-			"require('futils/data')",
-			"require('futils/operation')",
-			"require('futils/monoid')",
-			"require('futils/lambda')",
-			"require('futils/generics')",
-			"require('futils/adt')",
-			"equals",
-			"Ord",
-			"require('futils/data');",
-			"*",
-			"buildMemberNav",
-			"2",
-			"f4f3ec",
-			"21bc36",
-			"@memberof module:data.Free",
-			"module:data/Free.Free",
-			"/",
-			"@memberof module:data.Task",
-			"module:data/Task.Task",
-			"module:data/Task.task",
-			"module:data/Task.Task",
-			"@memberof module:data.State",
-			"module:data/State.State",
-			"@memberof module:data.Maybe",
-			"module:data/Maybe.Maybe",
-			"@memberof module:data.List",
-			"module:data/List.List",
-			"data/IO.IO",
-			"module:data/Id.Id",
-			"module:data/Either.Either",
-			"lambda/partialr",
-			"lambda/partial",
-			"monoid/Sum",
-			"monoid/Record",
-			"monoid/Product",
-			"monoid/Min",
-			"monoid/Max",
-			"monoid/Fn",
-			"module:monoid",
-			"\n * @memberof module:monoid/All",
-			"module:monoid/",
-			"module:monoid/Sum.Sum",
-			"module:monoid/Record.Record",
-			"module:monoid/Product.Product",
-			"module:monoid/Min.Min",
-			"module:monoid/Max.Max",
-			"module:monoid/Fn.Fn",
-			"module:monoid/Char.Char",
-			"module:monoid/Any.Any",
-			"module:monoid/All.All",
-			"operation/head",
-			"operation/foldMap",
-			"head",
-			"equals",
-			"reduce",
-			"filter",
-			"B",
-			"Eq",
-			"Return(1))",
-			"<a>",
-			"mapGet",
-			"concat",
-			".foo",
-			"set",
-			"v",
-			"2",
-			"1",
-			"2",
-			"1",
-			"toBe",
-			"Sum",
-			"Product",
-			"Min",
-			"Max",
-			"value('a')",
-			"value()",
-			"Fn",
-			"a => a",
-			"() => 'b'",
-			"() => 'a'",
-			"'b'",
-			"'a'",
-			".value",
+			"saveTodos",
+			"newIndex",
+			"divide",
+			"multiply",
+			"queryEffectful",
+			"impureQuery",
+			"mInc",
+			"map",
+			"E.date",
+			"this.date",
+			"# ",
+			"x => x.split(',').map(Number)",
 			"Char",
-			"true"
+			"x => x.split(',').map(Number)",
+			"Char",
+			"Fn",
+			"true",
+			"Any",
+			"120",
+			"Product",
+			"Sum",
+			"15",
+			"Sum",
+			"15",
+			"Sum",
+			"4, 6",
+			"zipWith",
+			"With",
+			"zipWith",
+			"_b",
+			"_a, _b",
+			"concur",
+			"/*\nThe MIT License (MIT)\nCopyright (c) 2018 David Hofmann <the.urban.drone@gmail.com>\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n*/",
+			"y",
+			"fullName",
+			"upon",
+			"proMap",
+			".__type__",
+			".__values__",
+			"__type__",
+			"E_ARG",
+			" = E_ARG",
+			"E_ARG",
+			" = E_ARG",
+			"E_ARG",
+			" = E_ARG",
+			"E_ARG",
+			" = E_ARG",
+			"E_ARG",
+			" = E_ARG",
+			"__type__",
+			"E_ARG",
+			" = E_ARG",
+			"E_ARG",
+			" = E_ARG",
+			"E_ARG",
+			" = E_ARG",
+			"E_ARG",
+			" = E_ARG",
+			"E_ARG",
+			" = E_ARG",
+			"E_ARG",
+			"void 0"
 		],
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": true,
+		"regex": false,
 		"replace_history":
 		[
-			"f(...arguments)",
-			"require('../dist/futils').trampoline",
-			"require('../dist/futils').optic",
-			"require('../dist/futils').operation",
-			"require('../dist/futils').monoid",
-			"require('../dist/futils').lambda",
-			"require('../dist/futils').data",
-			"require('futils').trampoline",
-			"require('futils').optic",
-			"require('futils').data",
-			"require('futils').operation",
-			"require('futils').monoid",
-			"require('futils').lambda",
-			"require('futils').generics",
-			"require('futils').adt",
-			"oncatenate",
-			"@memberof",
-			"List"
+			"// The MIT License (MIT)\n// Copyright (c) 2016 – 2019 David Hofmann <the.urban.drone@gmail.com>\n//\n// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n// THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
 		],
 		"reverse": false,
 		"show_context": true,
@@ -501,37 +432,62 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "readme_jsdoc.md",
+					"file": "docsrc/tutorials/tutorials.json",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 17692,
+						"buffer_size": 288,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4471,
-								4471
+								267,
+								267
 							]
 						],
 						"settings":
 						{
-							"SL.13.region_keys":
-							[
-							],
-							"SL.29.region_keys":
-							[
-							],
-							"syntax": "Packages/Markdown/Markdown.sublime-syntax",
-							"tab_size": 4,
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "docsrc/tutorials/02-monoids.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4837,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"SL.38.region_keys":
+							[
+							],
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -541,198 +497,111 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "example.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2287,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								402,
-								402
-							]
-						],
-						"settings":
-						{
-							"SL.14.region_keys":
-							[
-								"SL.eslint.Highlights.|672b1bf3f4c5ac8dd05a7d22bbc09384f588208de235b3411c03ed819828655c|region.yellowish markup.warning.sublime_linter|32",
-								"sublime_linter.protected_regions",
-								"SL.eslint.Highlights.|79acee52789e4ccaaf00add22f30187c41fb46924450e13df4e0d3abfa7f15fc|region.yellowish markup.warning.sublime_linter|32",
-								"SL.eslint.Gutter.|region.yellowish markup.warning.sublime_linter|dot"
-							],
-							"SL.31.region_keys":
-							[
-								"SL.eslint.Highlights.|672b1bf3f4c5ac8dd05a7d22bbc09384f588208de235b3411c03ed819828655c|region.yellowish markup.warning.sublime_linter|32",
-								"SL.eslint.Gutter.|region.yellowish markup.warning.sublime_linter|dot",
-								"sublime_linter.protected_regions",
-								"SL.eslint.Highlights.|79acee52789e4ccaaf00add22f30187c41fb46924450e13df4e0d3abfa7f15fc|region.yellowish markup.warning.sublime_linter|32"
-							],
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 632.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
 					"buffer": 2,
-					"file": "conf.json",
+					"file": "docsrc/tutorials/03-data.md",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 573,
+						"buffer_size": 3113,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								388,
-								388
+								3113,
+								3113
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "docsrc/_tpl/minami/tmpl/layout.tmpl",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3677,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2864,
-								2864
-							]
-						],
-						"settings":
-						{
-							"SL.19.region_keys":
+							"SL.15.region_keys":
 							[
 							],
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
+							"SL.37.region_keys":
+							[
+								"sublime_linter.protected_regions"
+							],
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax",
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2040.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "docsrc/_tpl/minami/tmpl/container.tmpl",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 6014,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2499.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "docsrc/_tpl/minami/tmpl/mainpage.tmpl",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 171,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1632.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
-					"file": "/F/SublimeLinters/.eslintrc",
+					"buffer": 3,
+					"file": "src/data/List.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2612,
+						"buffer_size": 18594,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2557,
-								2557
+								18594,
+								18594
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"SL.24.region_keys":
+							[
+								"SL.eslint.Gutter.|region.yellowish markup.warning.sublime_linter|dot",
+								"SL.eslint.Highlights.|2dc21950be6af05e9bda17e9f9bb5552b8757e013d3a426a78d55ca460c67d99|region.yellowish markup.warning.sublime_linter|32",
+								"SL.eslint.Highlights.|d434d46f42961f4a8ade4ad3218b98330ec120b31e538840b0cc5a5038aa431a|region.yellowish markup.warning.sublime_linter|32",
+								"sublime_linter.protected_regions",
+								"SL.eslint.Highlights.|507c48c46da7bd27b615138d867ba44109c0a1ce488596631a301fd1d76d6f00|region.yellowish markup.warning.sublime_linter|32"
+							],
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 10426.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/operation/zipWith.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2510,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"SL.25.region_keys":
+							[
+							],
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 408.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -740,7 +609,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 26.0
+		"height": 25.0
 	},
 	"input":
 	{
@@ -793,7 +662,7 @@
 	"project": "futils.sublime-project",
 	"replace":
 	{
-		"height": 48.0
+		"height": 46.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -831,7 +700,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 289.0,
+	"side_bar_width": 284.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
