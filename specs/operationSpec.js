@@ -19,8 +19,10 @@ describe('Operation', () => {
     describe('ap', () => {
         it('should be able to apply a function in a structure', () => {
             let mf = Id.of(a => a + 1);
+            let mg = [a => a + 1, a => a * 2]
             expect(O.ap(mf, Id.of(1)).value).toBe(2);
             expect(O.ap(mf)(Id.of(1)).value).toBe(2);
+            expect(O.ap(mg, [1, 2]).join(',')).toBe('4,6');
         });
 
         it('should work with Promises', () => {
@@ -339,6 +341,20 @@ describe('Operation', () => {
             expect(O.traverse(a => Id.of(a))(Id, [1, 2, 3]).toString()).toBe('Id([1, 2, 3])');
             expect(O.traverse(a => Id.of(a), Id)([1, 2, 3]).toString()).toBe('Id([1, 2, 3])');
             expect(O.traverse(a => [a], Array, Id.of(1)).join(',')).toBe('Id(1)');
+        });
+    });
+
+    describe('zipWith', () => {
+        it('should combine arrays with a zipper function', () => {
+            expect(O.zipWith((a, b) => a + b, [1, 2], [3, 4, 5])).toEqual([4, 6]);
+            expect(O.zipWith((a, b) => a + b)([1, 2])([3, 4, 5])).toEqual([4, 6]);
+        });
+    });
+
+    describe('zip', () => {
+        it('should combine arrays into an array of arrays of values', () => {
+            expect(O.zip([1, 2], [3, 4, 5])).toEqual([[1, 3], [2, 4]]);
+            expect(O.zip([1, 2])([3, 4, 5])).toEqual([[1, 3], [2, 4]]);
         });
     });
 });

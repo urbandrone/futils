@@ -11,6 +11,7 @@ import {memoize} from './memoize';
 import {not} from './not';
 import {flip} from './flip';
 import {upon} from './upon';
+import {converge} from './converge';
 
 /**
  * @module lambda
@@ -29,5 +30,6 @@ export default {
     memoize,
     not,
     flip,
-    upon
+    upon,
+    converge
 }

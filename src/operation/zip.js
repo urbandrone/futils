@@ -4,30 +4,31 @@
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import {curry} from '../lambda/curry';
-import {map} from '../operation/map';
-import {Val} from './_Val';
+import {typeOf} from '../core/typeof';
+import {zipWith} from './zipWith';
+
+
 
 /*
- * @module optic
+ * @module operation
  */
 
 
 
 /**
- * The mapped function, which is a special lens for arrays.
- * @method mapped
- * @memberof module:optic
- * @version 3.0.0
- * @param {Function} f Data transformation function
- * @param {Array} a The nested data structure
- * @return {LensVal} A LensVal
+ * The zip function combines the contents of two arrays into pairs of a single
+ * array.
+ * @method zip
+ * @since 3.1.2
+ * @memberof module:operation
+ * @param {Array} a The first array of values
+ * @param {Array} b The second array of values
+ * @return {Array} A new array of combined values from a and b
  *
  * @example
- * const {mapped, over} = require('futils').optic;
- *
- * const even = (n) => n % 2 === 0;
- *
- * over(mapped, even, [1, 2, 3]); // -> [false, true, false]
+ * const {zip} = require('futils').operation;
+ * 
+ * zip([1, 2], [3, 4, 5]); // -> [[1, 3], [2, 4]]
+ * zip([1, 2]);                 // -> (Array a -> Array [Number, a]
  */
-export const mapped = curry((f, a) => Val(map(x => f(x).value, a)));
+export const zip = zipWith((a, b) => [a, b]);

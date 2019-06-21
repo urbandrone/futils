@@ -1,11 +1,9 @@
-/*
-The MIT License (MIT)
-Copyright (c) 2018 David Hofmann <the.urban.drone@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+// The MIT License (MIT)
+// Copyright (c) 2016 – 2019 David Hofmann <the.urban.drone@gmail.com>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import {arity} from './core/arity';
 import {TYPE, VALS, TYPE_TAG} from './core/constants';
 
@@ -88,6 +86,7 @@ const deriveT = a => (...Gs) => Gs.reduce((t, g) => g.derive(t), a);
 export const Type = (type, vals) => {
     const proto = {[TYPE]: type};
     const ctor = makeCtor(type, vals, proto);
+    def(ctor, 'name', type);
     def(ctor, 'is', (x) => { return x && x[TYPE] === type; });
     def(ctor, 'deriving', deriveT(ctor));
     ctor.fn = ctor.prototype = proto;
@@ -139,8 +138,10 @@ export const UnionType = (type, defs) => {
     def(union, 'is', x => !!x && x[TYPE_TAG] === type);
     def(union, 'deriving', deriveT(union));
     union.fn.constructor = function (...xs) { return ctorOfT(union, this, xs); }
+    def(union.fn.constructor, 'name', type);
     Object.keys(defs).forEach(d => {
         const ctor = makeCtor(d, defs[d], union.prototype);
+        def(ctor, 'name', d);
         def(ctor, 'is', (x) => !!x && x[TYPE] === d);
         union[d] = ctor;
     });

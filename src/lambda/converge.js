@@ -8,46 +8,48 @@ import {arity} from '../core/arity';
 import {typeOf} from '../core/typeof';
 
 
-
 /*
  * @module lambda
  */
 
 
 
-
-function _curriedr (f, xs) {
-    let t = typeOf(f);
-    if (t === 'Function') {
-        return f.length <= 1 ? f : arity(f.length - xs.length, (...ys) => {
-            let a = [...xs, ...ys].filter(v => v !== void 0);
-            if (a.length >= f.length) { return f(...a.reverse()); }
-            return _curriedr(f, a);
-        });
+const _combinator = (f, gs) => {
+    let tF = typeOf(f), tG = typeOf(gs), tH = gs.every(h => typeOf(h) === 'Function');
+    if (tF === 'Function' && tG === 'Array' && tH) {
+      return arity(gs.reduce((n, g) => Math.max(n, g.length), 0), (...args) => {
+        return f(...gs.map(g => g(...args)));
+      });
     }
-    throw `curryRight :: Expected argument to be of type function but saw ${t}`;
+    throw `converge :: Expected arguments to be of type function and array of functions but saw ${tF} & ${tG}`;
 }
 
 
 
 /**
- * The curryRight function. Takes a function and returns a variant of it which takes
- * arguments until enough arguments to execute the given function are consumed.
- * It can be used to turn a function which takes multiple arguments at once
- * into a function which takes its arguments in multiple steps
- * @method curryRight
+ * The converge function 
+ * @method converge
+ * @since 3.1.2
  * @memberof module:lambda
- * @param {Function} f The function to curryRight
- * @return {Function} The curried variant
+ * @param {Function} f The function to converge into
+ * @param {Array} gs An array of branching functions
+ * @return {Function} A function which applies the results of the branching functions to f
  *
  * @example
- * const {curryRight} = require('futils').lambda;
+ * const {converge} = require('futils').lambda;
+ * const {prop} = require('futils').operation;
  *
- * const add = (a, b) => a + b;
- * const cAdd = curryRight(add);
+ * const Person = {
+ *   firstName: 'John',
+ *   lastName: 'Doe'
+ * };
  *
- * add(1);     // -> NaN
- * cAdd(1);    // -> (n -> n + 1)
- * cAdd(1)(2); // -> 3
+ * const greet = (first, last) => `Hello ${first} ${last}`;
+ *
+ * const greetPerson = converge(greet, [prop('firstName'), prop('lastName')]);
+ *
+ * greetPerson(Person); // -> 'Hello John Doe'
  */
-export const curryRight = f => f === void 0 ? curryRight : _curriedr(f, []);
+export const converge = (f, gs) => f === void 0 ? converge :
+                                 gs === void 0 ? (hs) => converge(f, hs) :
+                                 _combinator(f, gs);

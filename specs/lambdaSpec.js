@@ -165,4 +165,25 @@ describe('Lambda', () => {
             expect(f('a')()('b')).toBe('ba');
         });
     });
+
+    describe('upon', () => {
+        it('should allow to map a function upon another function', () => {
+            let f = L.upon(x => x + 1, g => x => typeof x === 'number' && !isNaN(x) ? g(x) : 0);
+            expect(f(0)).toBe(1);
+            expect(f(null)).toBe(0);
+            expect(f(NaN)).toBe(0);
+        });
+    });
+
+    describe('converge', () => {
+        it('should converge many function into one', () => {
+            let f = L.converge((x, y) => x + y, [x => x.n, (y, z) => z + y.m]);
+            expect(f({n: 1, m: 1}, 1)).toBe(3);
+        });
+
+        it('should preserve the arity of the longest branch', () => {
+            let f = L.converge((x, y) => x + y, [x => x.n, (y, z) => z + y.m]);
+            expect(f.length).toBe(2);
+        });
+    });
 });

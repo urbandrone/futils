@@ -25,6 +25,8 @@ import {nubBy} from './nubby';
 import {nub} from './nub';
 import {prop} from './prop';
 import {alt} from './alt';
+import {zipWith} from './zipWith';
+import {zip} from './zip';
 
 
 
@@ -60,5 +62,7 @@ export default {
     nubBy,
     nub,
     prop,
-    alt
+    alt,
+    zipWith,
+    zip
 }
