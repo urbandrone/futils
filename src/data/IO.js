@@ -161,7 +161,7 @@ IO.fromId = (a) => IO.of(a.value);
  * @memberof module:data.IO
  * @instance
  * @param {IO} a The IO to concatenate with
- * @return {IO} Result of concattening the IO with the given one
+ * @return {IO} Result of concatening the IO with the given one
  *
  * @example
  * const {IO} = require('futils').data;
@@ -212,7 +212,7 @@ IO.fn.map = function (f) {
  * io.flat(); // -> IO(_ -> 1)
  */
 IO.fn.flat = function () {
-    return this.run();
+    return IO((v) => this.run(v).run(v));
 }
 /**
  * Maps a IO returning function over a IO and flattens the result
@@ -232,7 +232,7 @@ IO.fn.flat = function () {
  * io.flatMap(inc); // -> IO(_ -> 2)
  */
 IO.fn.flatMap = function (f) {
-    return IO(v => f(this.run(v)).run());
+    return IO((v) => f(this.run(v)).run(v));
 }
 /**
  * Applies a function in an IO to a value in another IO

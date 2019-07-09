@@ -1,6 +1,10 @@
 const L = require('../dist/futils').lambda;
 
-
+// stub
+const Monad = v => ({
+    value: v,
+    flatMap: f => f(v)
+});
 
 describe('Lambda', () => {
     describe('compose', () => {
@@ -25,13 +29,44 @@ describe('Lambda', () => {
             let g = a => a.toUpperCase();
             let h = L.pipe(g, f);
             expect(h('hello')).toBe('OLLEH');
-            expect(h.length).toBe(1);
         });
 
         it('should preserve the arity', () => {
             let f = a => a;
             let g = (a, _) => a;
             let h = L.pipe(g, f);
+            expect(h.length).toBe(2);
+        });
+    });
+
+    describe('mcompose', () => {
+        it('should be able to compose multiple monad returning functions', () => {
+            let f = a => Monad(a + 1);
+            let g = a => Monad(a * 2);
+            let h = L.mcompose(g, f);
+            expect(h(1).value).toBe(4);
+        });
+
+        it('should preserve the arity', () => {
+            let f = (a, _) => Monad(a + 1);
+            let g = a => Monad(a * 2);
+            let h = L.mcompose(g, f);
+            expect(h.length).toBe(2);
+        });
+    });
+
+    describe('mpipe', () => {
+        it('should be able to compose multiple monad returning functions', () => {
+            let f = a => Monad(a + 1);
+            let g = a => Monad(a * 2);
+            let h = L.mpipe(f, g);
+            expect(h(1).value).toBe(4);
+        });
+
+        it('should preserve the arity', () => {
+            let f = (a, _) => Monad(a + 1);
+            let g = a => Monad(a * 2);
+            let h = L.mpipe(f, g);
             expect(h.length).toBe(2);
         });
     });

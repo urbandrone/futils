@@ -14,28 +14,35 @@ import {arity} from '../core/arity';
 
 
 /**
- * The pipe function combines multiple functions from left to right
- * @method pipe
+ * The mpipe function combines multiple monad returning functions from left to right
+ * @method mpipe
+ * @since 3.1.3
  * @memberof module:lambda
  * @param {Function} ...f The function to pipe
  * @return {Function} The result of the composition
  *
  * @example
- * const {pipe} = require('futils').lambda;
+ * const {mpipe} = require('futils').lambda;
+ * const {Maybe} = require('futils').data;
  *
- * const inc = (n) => n + 1;
- * const double = (n) => n * 2;
+ * const {Some, None} = Maybe;
+ * 
+ * const isNumber = (n) => typeof n === 'number' && !isNaN(n);
+ * 
+ * const inc = (n) => isNumber(n) ? Some(n + 1) : None();
+ * const double = (n) => isNumber(n) ? Some(n * 2) : None();
  *
- * const fc = pipe(double, inc);
+ * const fc = mpipe(inc, double);
  *
- * inc(double(1)) === fc(1); // -> true
+ * fc(1);   // -> Some(4)
+ * fc(NaN); // -> None
  */
-export const pipe = (...f) => {
+export const mpipe = (...f) => {
   if (f.length > 1) {
-    return arity(f[0].length, f.reduce((a, b) => (...xs) => b(a(...xs))));
+    return arity(f[0].length, f.reduce((a, b) => (...xs) => a(...xs).flatMap(b)));
   }
   if (f.length > 0) {
     return f[0];
   }
-  throw 'pipe :: Expected to see one or more functions, but saw nothing';
+  throw 'mpipe :: Expected to see one or more functions, but saw nothing';
 }

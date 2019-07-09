@@ -208,9 +208,9 @@ Either.fn.isRight = function () {
     });
 }
 /**
- * Concatenates a Either.Right with another. Concattenation with Either.Left will
+ * Concatenates a Either.Right with another. concatenation with Either.Left will
  * result in Either.Left. Please note, that the inner values have to be part of a
- * Semigroup as well for concattenation to succeed
+ * Semigroup as well for concatenation to succeed
  * @method concat
  * @memberof module:data.Either
  * @instance

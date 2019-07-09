@@ -11,6 +11,9 @@
     "title": "Monoid examples"
   },
   "03-data": {
-    "title": "Using data structures"
+    "title": "Data structures"
+  },
+  "04-trampolines": {
+    "title": "Tail recursion"
   }
 }

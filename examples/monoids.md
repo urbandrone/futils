@@ -9,7 +9,7 @@ There are some new things we will learn in this tutorial. First of all, the `fol
 // foldMap :: Monoid M a, [a] => M -> [a] -> m a
 ```
 
-It reads as this: `foldMap` is a function which takes a monoid of `a` and a list of as, and returns a monoid of all the as concattenated together with the empty element (also called the unit).
+It reads as this: `foldMap` is a function which takes a monoid of `a` and a list of as, and returns a monoid of all the as concatenated together with the empty element (also called the unit).
 
 ```javascript
 const {foldMap, Additive, id} = require('futils');
@@ -156,7 +156,7 @@ It works in three steps:
 
 1. It takes 3 arguments: A monoidal constructor, a function with the signature `(a -> [b])` and a Hashmap/Object. And it returns a monoid of `b`. When given all arguments, it maps over the keys of the Object and reduces/folds the object into a single value.
 2. By mapping over the keys, it passes the value of the Objects key and the key into the validation function and foldMaps the whole result list (the signature of the validation function passed in was `(a -> [b])`) into the given Monoid.
-3. The result is a list of Monoids. It can fold this list into a single Monoid again by concatting each item with the next one, starting with the unit/empty element. The result is a single Monoid.
+3. The result is a list of Monoids. It can fold this list into a single Monoid again by concating each item with the next one, starting with the unit/empty element. The result is a single Monoid.
 
 
 ### Using it

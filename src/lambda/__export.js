@@ -2,6 +2,8 @@ import {id} from './id';
 import {constant} from './constant';
 import {compose} from './compose';
 import {pipe} from './pipe';
+import {mcompose} from './mcompose';
+import {mpipe} from './mpipe';
 import {fixed} from './fixed';
 import {curry} from './curry';
 import {curryRight} from './curryr';
@@ -22,6 +24,8 @@ export default {
     constant,
     compose,
     pipe,
+    mcompose,
+    mpipe,
     fixed,
     curry,
     curryRight,

@@ -1,9 +1,15 @@
-Examples of data structures found in the `data` namespace.
+Examples of the data structures found in the `data` namespace.
+
+#### Further readings
+- [Fantas, eel and specification](http://www.tomharding.me/fantasy-land/)
 
 
-# Common use cases
 
-## Avoid `null/undefined` checks
+# Examples
+
+### Avoid `null/undefined` checks
+
+Using `Maybe` allows to avoid `null` and `undefined` checks. 
 
 ```javascript
 const { data: {Maybe} } = require('futils');
@@ -12,32 +18,41 @@ const DATA = {
   a: { b: 3 }
 }
 
+
 const safeGet = prop => x =>
   prop in x
     ? Maybe.from(x[prop])
     : Maybe.empty();
 
+
 safeGet('a')(DATA).flatMap(safeGet('b')); // -> Some(3)
 safeGet('a')(DATA).flatMap(safeGet('c')); // -> None()
 ```
 
+Use `Maybe` to implement a safe query function for DOM elements.
+
 ```javascript
-const { data: {IO, Maybe} } = require('futils');
+const { data: {Maybe} } = require('futils');
 
 
-const queryDOM = selector => x => IO(() =>
-   x.flatMap(y => Maybe.from(y.querySelector(selector)))
-);
+const safeQuery = selector => x =>
+  Maybe.from(x && x.querySelector ? x.querySelector(selector) : null);
 
 
-queryDOM('main')
-  .flatMap(queryDOM('.main-article'));  // -> IO (Some <article>)
+safeQuery('main')(document)
+  .flatMap(safeQuery('.main-article'));  // -> Some(<article>)
 
-queryDOM('main')
-  .flatMap(queryDOM('.not-exisiting')); // -> IO (None)
+safeQuery('main')(document)
+  .flatMap(safeQuery('.not-exisiting')); // -> None()
 ```
 
-## Pretty `Error` handling
+
+
+### Pretty `Error` handling
+
+The `Either` structure makes it easy to provide a much nicer handling of `Error`s
+and/or to short-circuit a `Error` producing operation with an appropriate failure
+description.
 
 ```javascript
 const { data: {Either} } = require('futils');
@@ -72,10 +87,23 @@ multiply(2)(2)
 ```
 
 
-## Modify local state
+
+### Modify local state
+
+To modify some local state in place, the `State` data structure can be utilized.
+The example below shows how it is used to modify the index positions of items in
+an `Array`.
 
 ```javascript
 const { data: {State} } = require('futils');
+
+
+const DATA = ['a', 'b', 'c', 'd'];
+const INDEX_MASK = [
+    [0, 3], // switch first and forth in place   => ['d', 'b', 'c', 'a']
+    [2, 3], // switch third and fourth in place  => ['d', 'b', 'a', 'c'] 
+    [3, 1]  // switch fourth and second in place => ['d', 'c', 'a', 'b']
+  ];
 
 
 const shiftArray = mask => State.get()
@@ -84,56 +112,73 @@ const shiftArray = mask => State.get()
       return State.of(xs);
     }
 
-    let ys = [...xs];
+    // === MODIFY ARRAY ===
     let shift = mask[0];
-    let temp = ys[shift[0]];
-    ys[shift[0]] = ys[shift[1]];
-    ys[shift[1]] = temp;
-    return State.put(ys).flatMap(() => shiftArray(mask.slice(1)));
+    let temp = xs[shift[0]];
+    xs[shift[0]] = xs[shift[1]];
+    xs[shift[1]] = temp;
+    // === MODIFY ARRAY ===
+
+    return State.put(xs).flatMap(() => shiftArray(mask.slice(1)));
   });
 
 
-shiftArray([ [0, 3], [2, 3], [3, 1] ])
-  .run(['a', 'b', 'c', 'd']); // -> State(['d', 'c', 'a', 'b'])
+shiftArray(INDEX_MASK)
+  .run([...DATA]); // -> ['d', 'c', 'a', 'b']
 ```
 
 
-## Synchronous I/O and side effects
+
+### Synchronous I/O and side effects
+
+The `IO` data structure is used to write a simple API for `window.localStorage`.
 
 ```javascript
 const { data: {IO} } = require('futils');
 
 
-const localStore = IO.of(window.localStorage);
+// type Todo = { id :: Number, title :: String, closed :: Boolean }
 
-const read = key => IO(storage => storage.getItem(key));
-
-const write = key => data => IO(storage => {
-  storage.setItem(key, data);
-  return storage;
-});
-
-
-
-// TODOS_DATA :: [ Todo ]
-const TODOS_DATA = [
+// DATA :: [ Todo ]
+const DATA = [
   { id: 0, title: 'Test todo 1', closed: false },
   { id: 1, title: 'Test todo 2', closed: true }
 ]
 
-const saveAs = slot => todos =>
-  read(slot).flatMap(oldTodos =>
-    write(slot)(JSON.stringify(todos))
-      .map(_ => !oldTodos ? [] : JSON.parse(oldTodos))
+
+
+const localStore = IO.of(window.localStorage);
+
+const read = key => IO(storage =>
+  !storage.has(key)
+    ? null
+    : JSON.parse(storage.getItem(key))
+);
+
+const write = key => data => IO(storage => {
+  storage.setItem(key, JSON.stringify(data));
+  return storage;
+});
+
+const saveAs = slot => todos => store =>
+  store.concat(
+    read(slot).flatMap(oldTodos =>
+      store.concat(write(slot)(JSON.stringify(todos))
+        .map(_ => !oldTodos ? [] : JSON.parse(oldTodos))
+      )
+    )
   );
 
 
-saveAs('my-todo-app')(TODOS_DATA)
-  .ap(localStore); // -> IO ([ Todo ])
+
+saveAs('my-todo-app')(DATA)(localStore); // -> IO ([ Todo ])
 ```
 
 
-## Async code
+
+### Async code
+
+Using `Task` to make a lazy `Promise`.
 
 ```javascript
 const { data: {Task} } = require('futils');
@@ -146,10 +191,46 @@ const getJSON = url => Task((reject, resolve) => {
 });
 
 
-const getUsers = getJSON('my/api/users'); // -> Task Error [User]
+const getUsers = getJSON('https://reqres.in/api/users?page=2'); // -> Task Error JSON
 
 getUsers.run(
   err => console.error('Error occured', err),
   users => console.log('Received data', users)
 );
+```
+
+Using `Task` to wrap node's `fs` module.
+
+```javascript
+const { data: {Task} } = require('futils');
+const fs = require('fs');
+
+
+const readFile = path => Task((reject, resolve) =>
+  fs.readFile(path, 'utf8', (err, data) => {
+    if (err) {
+      return reject(err);
+    }
+    resolve(data);
+  })
+);
+
+const writeFile = path => data => Task((reject, resolve) =>
+  fs.writeFile(path, 'utf8', data, err => {
+    if (err) {
+      return reject(err);
+    }
+    resolve(path);
+  })
+);
+
+const copyFile = path => destination =>
+  readFile(path).flatMap(writeFile(destination));
+
+
+copyFile('myfile.txt')('mycopy.txt')
+  .run(
+    err => console.error('Error whily copying', err),
+    path => console.log('Copied to', path)
+  );
 ```

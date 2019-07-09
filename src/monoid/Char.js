@@ -75,7 +75,7 @@ Char.empty = () => Char('');
 
 
 /**
- * Concatenates a Char with another using string concattenation
+ * Concatenates a Char with another using string concatenation
  * @method concat
  * @memberof module:monoid.Char
  * @instance

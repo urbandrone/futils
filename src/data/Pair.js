@@ -80,7 +80,7 @@ Pair.fromRight = (b, a) => {
 
 /**
  * Concatenates a Pair with another. Please note, that the inner values have
- * to be part of a Semigroup as well for concattenation to succeed
+ * to be part of a Semigroup as well for concatenation to succeed
  * @method concat
  * @memberof module:data.Pair
  * @instance
@@ -101,4 +101,70 @@ Pair.fn.concat = function (a) {
         return Pair(this._1.concat(a._1), this._2.concat(a._2));
     }
     throw `Pair::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
+}
+/**
+ * Maps a function over the second value of a Pair and returns a new Pair
+ * @method map
+ * @memberof module:data.Pair
+ * @instance
+ * @param {Function} f The function to map
+ * @return {Pair} A new Pair
+ *
+ * @example
+ * const {Pair} = require('futils').data;
+ *
+ * const inc = a => a + 1;
+ *
+ * Pair(1, 1).map(inc); // -> Pair(1, 2)
+ */
+Pair.fn.map = function (f) {
+    return Pair(this._1, f(this._2));
+}
+/**
+ * If given a function that takes a Pair and returns a value, returns a Pair
+ * @method extend
+ * @memberof module:data.Pair
+ * @instance
+ * @param {Function} f A function taking a Pair
+ * @return {Pair} A new Pair
+ *
+ * @example
+ * const {Pair} = require('futils').data;
+ *
+ * const addFstSnd = ({ _1, _2 }) => _1 + _2;
+ *
+ * Pair(1, 1).extend(addFstSnd); // -> Pair(1, 2)
+ */
+Pair.fn.extend = function (f) {
+    return Pair(this._1, f(this));
+}
+/**
+ * Returns the first value of a Pair
+ * @method fst
+ * @memberof module:data.Pair
+ * @instance
+ * @return {any} The first value of the Pair
+ *
+ * @example
+ * const {Pair} = require('futils').data;
+ *
+ * Pair(1, 2).fst(); // -> 1
+ */
+Pair.fn.fst = function () {
+    return this._1;
+}
+/**
+ * Returns the second value of a Pair
+ * @method snd
+ * @memberof module:data.Pair
+ * @instance
+ * @return {any} The second value of the Pair
+ *
+ * @example
+ * const {Pair} = require('futils').data;
+ *
+ * Pair(1, 2).snd(); // -> 2
+ */
+Pair.fn.snd = function () {
+    return this._2;
 }

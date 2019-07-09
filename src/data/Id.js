@@ -128,7 +128,7 @@ Id.fromList = (a) => Id(a.head);
 
 /**
  * Concatenates a Id with another. Please note, that the inner values have
- * to be part of a Semigroup as well for concattenation to succeed
+ * to be part of a Semigroup as well for concatenation to succeed
  * @method concat
  * @memberof module:data.Id
  * @instance

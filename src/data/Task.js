@@ -287,7 +287,7 @@ Task.fn.toPromise = function () {
  * @memberof module:data.Task
  * @instance
  * @param {Task} a The Task to concatenate with
- * @return {Task} Result of the concattenation
+ * @return {Task} Result of the concatenation
  *
  * @example
  * const {Task} = require('futils').data;
@@ -466,6 +466,35 @@ Task.fn.swap = function () {
  */
 Task.fn.alt = function (a) {
     const task = Task((fail, ok) => { this.run(() => a.run(fail, ok), ok); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}
+/**
+ * Bifunctor interface, maps either of two functions over the value inside a Task
+ * @method biMap
+ * @memberof module:data.Task
+ * @instance
+ * @param {Function} f The mapping function for a rejecting Task
+ * @param {Function} g The mapping function for a resolving Task
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task, Either} = require('futils').data;
+ * const {Left, Right} = Either;
+ *
+ * const errToLeft = err =>
+ *     err instanceof Error
+ *         ? Left(err.message)
+ *         : Left(err)
+ * 
+ * const failure = Task.reject(new Error('Should fail'));
+ * const success = Task.of(1);
+ * 
+ * failure.biMap(errToLeft, Right); // -> Task(Left('Should fail'), _)
+ * success.biMap(errToLeft, Right); // -> Task(_, Right(1))
+ */
+Task.fn.biMap = function (f, g) {
+    const task = Task((fail, ok) => { this.run(x => fail(f(x)), v => ok(g(v))); });
     task.cleanUp = this.cleanUp;
     return task;
 }

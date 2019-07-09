@@ -14,28 +14,35 @@ import {arity} from '../core/arity';
 
 
 /**
- * The pipe function combines multiple functions from left to right
- * @method pipe
+ * The mcompose function combines multiple monad returning functions from right to left
+ * @method mcompose
+ * @since 3.1.3
  * @memberof module:lambda
- * @param {Function} ...f The function to pipe
+ * @param {Function} ...f The functions to compose
  * @return {Function} The result of the composition
  *
  * @example
- * const {pipe} = require('futils').lambda;
+ * const {mcompose} = require('futils').lambda;
+ * const {Maybe} = require('futils').data;
  *
- * const inc = (n) => n + 1;
- * const double = (n) => n * 2;
+ * const {Some, None} = Maybe;
+ * 
+ * const isNumber = (n) => typeof n === 'number' && !isNaN(n);
+ * 
+ * const inc = (n) => isNumber(n) ? Some(n + 1) : None();
+ * const double = (n) => isNumber(n) ? Some(n * 2) : None();
  *
- * const fc = pipe(double, inc);
+ * const fc = mcompose(double, inc);
  *
- * inc(double(1)) === fc(1); // -> true
+ * fc(1);   // -> Some(4)
+ * fc(NaN); // -> None
  */
-export const pipe = (...f) => {
+export const mcompose = (...f) => {
   if (f.length > 1) {
-    return arity(f[0].length, f.reduce((a, b) => (...xs) => b(a(...xs))));
+    return arity(f[f.length - 1].length, f.reduceRight((a, b) => (...xs) => a(...xs).flatMap(b)));
   }
   if (f.length > 0) {
     return f[0];
   }
-  throw 'pipe :: Expected to see one or more functions, but saw nothing';
+  throw 'mcompose :: Expected to see one or more functions, but saw nothing';
 }
