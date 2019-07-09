@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="keywords" content="Javascript, JS, Ecmascript, ES6, Functional Programming, Pointfree, Tacit, NPM">
+    <meta name="description" content="">
+    <title>futils.data/Task.js - futils docs</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link rel="stylesheet" href="styles/futils.css">
+</head>
+<body class="futils">
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav class="futils-nav">
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading nav-heading--section">Tutorials</li><li class="nav-item"><a href="tutorial-01-quickstart.html">Quickstart</a></li><li class="nav-item"><a href="tutorial-02-monoids.html">Monoid examples</a></li><li class="nav-item"><a href="tutorial-03-data.html">Data structures</a></li><li class="nav-item"><a href="tutorial-04-trampolines.html">Tail recursion</a></li><li class="nav-heading nav-heading--section">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-adt.html">adt</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-adt.html#~Type">Type</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-adt.html#~UnionType">UnionType</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-data.html">data</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-generics.html">generics</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-lambda.html">lambda</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.compose">compose</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.constant">constant</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.converge">converge</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.curry">curry</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.curryRight">curryRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.fixed">fixed</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.flip">flip</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.id">id</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.mcompose">mcompose</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.memoize">memoize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.mpipe">mpipe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.not">not</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.partial">partial</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.partialRight">partialRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.pipe">pipe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-lambda.html#.upon">upon</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-monoid.html">monoid</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-operation.html">operation</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.alt">alt</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.biMap">biMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.caseOf">caseOf</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.doM">doM</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.drop">drop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.equals">equals</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.filter">filter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.find">find</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.fold">fold</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.foldMap">foldMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.head">head</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.liftA">liftA</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.nub">nub</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.nubBy">nubBy</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.proMap">proMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.prop">prop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.reduce">reduce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.reduceRight">reduceRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.sequence">sequence</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.tail">tail</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.take">take</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.traverse">traverse</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.zip">zip</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-operation.html#.zipWith">zipWith</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-optic.html">optic</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.createLens">createLens</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.lenses">lenses</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.mapped">mapped</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.over">over</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.set">set</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-optic.html#.view">view</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-trampoline.html">trampoline</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-trampoline.html#.again">again</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-trampoline.html#.recur">recur</a></span></li><li class="nav-heading nav-heading--section">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Either.html">Either</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.fromList">fromList</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.fromMaybe">fromMaybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#.try">try</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#alt">alt</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#biMap">biMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#extend">extend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#extract">extract</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#isRight">isRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#mapLeft">mapLeft</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#reduce">reduce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#sequence">sequence</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#swap">swap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Either.html#traverse">traverse</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Free.html">Free</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#.liftM">liftM</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#interpret">interpret</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Free.html#map">map</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Id.html">Id</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#.fromEither">fromEither</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#.fromList">fromList</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#.fromMaybe">fromMaybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#extend">extend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#extract">extract</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#reduce">reduce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#sequence">sequence</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Id.html#traverse">traverse</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.IO.html">IO</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.fromEither">fromEither</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.fromId">fromId</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.fromList">fromList</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.fromMaybe">fromMaybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#contraMap">contraMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.IO.html#proMap">proMap</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.List.html">List</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.fromArray">fromArray</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.fromEither">fromEither</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.fromId">fromId</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.fromMaybe">fromMaybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#cons">cons</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#drop">drop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#extend">extend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#extract">extract</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#filter">filter</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#find">find</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#fold">fold</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#foldMap">foldMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#intersperse">intersperse</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#nub">nub</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#nubBy">nubBy</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#reduce">reduce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#reduceRight">reduceRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#sequence">sequence</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#snoc">snoc</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#take">take</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.List.html#toArray">toArray</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Maybe.html">Maybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.fromEither">fromEither</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.fromId">fromId</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.fromList">fromList</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#alt">alt</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#biMap">biMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#extend">extend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#extract">extract</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#isSome">isSome</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#reduce">reduce</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#sequence">sequence</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Maybe.html#traverse">traverse</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Pair.html">Pair</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Pair.html#.from">from</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Pair.html#.fromRight">fromRight</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Pair.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Pair.html#extend">extend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Pair.html#fst">fst</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Pair.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Pair.html#snd">snd</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.State.html">State</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#.get">get</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#.modify">modify</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#.put">put</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#exec">exec</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.State.html#run">run</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.State.Result.html">Result</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-data.Task.html">Task</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromEither">fromEither</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromId">fromId</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromIO">fromIO</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromList">fromList</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromMaybe">fromMaybe</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromNodeFunction">fromNodeFunction</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.fromPromiseFunction">fromPromiseFunction</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.reject">reject</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.resolve">resolve</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#.timeout">timeout</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#alt">alt</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#ap">ap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#biMap">biMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#concat">concat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#flat">flat</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#flatMap">flatMap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#map">map</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#swap">swap</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-data.Task.html#toPromise">toPromise</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-generics.Eq.html">Eq</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-generics.Ord.html">Ord</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-generics.Show.html">Show</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.All.html">All</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.All.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.All.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.All.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Any.html">Any</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Any.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Any.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Any.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Char.html">Char</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Char.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Char.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Char.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Fn.html">Fn</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Fn.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Fn.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Fn.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Max.html">Max</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Max.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Max.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Max.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Min.html">Min</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Min.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Min.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Min.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Product.html">Product</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Product.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Product.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Product.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Record.html">Record</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Record.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Record.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Record.html#concat">concat</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module-monoid.Sum.html">Sum</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Sum.html#.empty">empty</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Sum.html#.of">of</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-monoid.Sum.html#concat">concat</a></span></li>
+</nav>
+
+<div id="main" class="futils-main">
+    <div class="futils-head">
+        
+        <h1 class="page-title">data/Task.js<span class="icon icon--whale1"></span></h1>
+        
+    </div>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// The MIT License (MIT)
+// Copyright (c) 2016 – 2019 David Hofmann &lt;the.urban.drone@gmail.com>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+import {typeOf} from '../core/typeof';
+import {Type} from '../adt';
+import {Show} from '../generics/Show';
+import {Eq} from '../generics/Eq';
+
+
+
+/* Utilities */
+const delay = (f) => typeof setImmediate !== 'undefined' ? setImmediate(f) :
+              typeof process !== 'undefined' ? process.nextTick(f) :
+              setTimeout(f, 0);
+
+const voids = () => void 0;
+
+
+
+
+/*
+ * @module data
+ */
+
+
+
+
+
+
+
+/**
+ * The Task data structure. Use Task to encapsulate asynchronous
+ * logic to avoid having to deal with callback hell. In contrast to a Promise, a
+ * Task is evaluated lazy
+ * @class module:data.Task
+ * @extends module:generics.Show
+ * @extends module:generics.Eq
+ * @version 3.0.0
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const one = Task((rej, res) => res(1));
+ *
+ * one.run(
+ *     (err) => { console.error(err); },
+ *     (num) => { console.log(num); }
+ * )
+ */
+export const Task = Type('Task', ['run']).
+    deriving(Show, Eq);
+
+Task.fn.cleanUp = voids;
+
+
+
+
+
+/**
+ * Lifts a value into a Task. The resulting Task always resolves with the given
+ * value
+ * @method of
+ * @static
+ * @memberof module:data.Task
+ * @param {any} a The value to lift
+ * @return {Task} The value wrapped in a Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.of(1); // -> Task(_, 1)
+ */
+Task.of = (a) => Task((_, ok) => { ok(a); });
+/**
+ * Monoid implementation for Task. Returns a Task which neither resolves nor rejects
+ * @method empty
+ * @static
+ * @memberof module:data.Task
+ * @return {Task} A Task that is pending forever
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.empty(); // -> Task(?, ?)
+ */
+Task.empty = () => Task(voids);
+/**
+ * Lifts a value into a Task. The resulting Task always resolves with the given
+ * value
+ * @method resolve
+ * @static
+ * @memberof module:data.Task
+ * @param {any} a The value to lift
+ * @return {Task} The value wrapped in a Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.resolve(1); // -> Task(_, 1)
+ */
+Task.resolve = Task.of;
+/**
+ * Lifts a value into a Task. The resulting Task always fails with the given
+ * value
+ * @method reject
+ * @static
+ * @memberof module:data.Task
+ * @param {any} a The value to lift
+ * @return {Task} The value wrapped in a Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.reject(1); // -> Task(1, _)
+ */
+Task.reject = (a) => Task(fail => { fail(a); });
+/**
+ * Creates a Task which resolves a function after the given amount of milliseconds
+ * @method timeout
+ * @static
+ * @memberof module:data.Task
+ * @param {Number} ms Delay in milliseconds
+ * @param {Function} f The function to call after the timeout
+ * @return {Task} A Task that resolves with the result of the function
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const delayed = () => 1;
+ *
+ * Task.timeout(400, delayed); // -> Task(_, 1) 
+ */
+Task.timeout = (ms, f) => Task((_, ok) => {
+    setTimeout(() => ok(f()), ms);
+});
+/**
+ * Converts a Promise returning function into a Task returning form
+ * @method fromPromiseFunction
+ * @static
+ * @memberof module:data.Task
+ * @param {Function} f A function which returns a Promise
+ * @return {Function} A function which returns a Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ * const fs = require('fs').promises;
+ *
+ * const readFile = Task.fromPromiseFunction(fs.readFile.bind(fs));
+ *
+ * readFile('example.txt', 'utf8'); // -> Task(Error, String)
+ */
+Task.fromPromiseFunction = f => (...a) => Task((fail, ok) => {
+    f(...a).then(ok).catch(fail);
+});
+/**
+ * Converts a Node style continuation passing function into a Task returning form
+ * @method fromNodeFunction
+ * @static
+ * @memberof module:data.Task
+ * @param {Function} f A function in the Node CPS form
+ * @return {Function} A function which returns a Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ * const fs = require('fs');
+ *
+ * const readFile = Task.fromNodeFunction(fs.readFile.bind(fs));
+ *
+ * readFile('example.txt', 'utf8'); // -> Task(Error, String)
+ */
+Task.fromNodeFunction = f => (...a) => Task((fail, ok) => {
+    f(...a, (err, v) => { if (err) { fail(err); } else { ok(v); } });
+});
+/**
+ * A natural transformation from an Id into a Task
+ * @method  fromId
+ * @static
+ * @memberof module:data.Task
+ * @param {Id} a The Id to transform
+ * @return {Task} The Task which resolves to the value of the Id
+ *
+ * @example
+ * const {Task, Id} = require('futils').data;
+ *
+ * const id = Id('a value');
+ *
+ * Task.fromId(id); // -> Task(_, 'a value')
+ */
+Task.fromId = a => Task.of(a.value);
+/**
+ * A natural transformation from a Maybe.Some or Maybe.None into a Task. If the
+ * Maybe is a Maybe.None, the resulting Task rejects
+ * @method fromMaybe
+ * @static
+ * @memberof module:data.Task
+ * @param {Some|None} a The Maybe structure
+ * @return {Task} A Task which rejects Maybe.None and resolves Maybe.Some
+ *
+ * @example
+ * const {Task, Maybe} = require('futils').data;
+ *
+ * const some = Maybe.Some('a value');
+ * const none = Maybe.None();
+ *
+ * Task.fromMaybe(some); // -> Task(_, 'a value')
+ * Task.fromMaybe(none); // -> Task(null, _)
+ */
+Task.fromMaybe = a => Task((fail, ok) => { if (a.isSome()) { ok(a.value); } else { fail(null); } });
+/**
+ * A natural transformation from a Either.Right or Either.Left into a Task. If the
+ * Either is a Either.Left, the resulting Task rejects
+ * @method fromEither
+ * @static
+ * @memberof module:data.Task
+ * @param {Right|Left} a The Either structure
+ * @return {Task} A Task which rejects Either.Left and resolves Either.Right
+ *
+ * @example
+ * const {Task, Either} = require('futils').data;
+ *
+ * const r = Either.Right('a value');
+ * const l = Either.Left('fallback');
+ *
+ * Task.fromEither(r); // -> Task(_, 'a value')
+ * Task.fromEither(l); // -> Task('fallback', _)
+ */
+Task.fromEither = a => Task((fail, ok) => { a.cata({Left: fail, Right: ok}); });
+/**
+ * A natural transformation from a List into a Task. Please note that this
+ * transformation looses data, because only the first element of the list is
+ * taken. If the first element is null or undefined, a rejecting Task is returned
+ * @method fromList
+ * @static
+ * @memberof module:data.Task
+ * @param {List} a The List structure
+ * @return {Task} A Task of the first element
+ *
+ * @example
+ * const {Task, List} = require('futils').data;
+ *
+ * const ls = List.of(2).cons(1);
+ *
+ * Task.fromList(ls); // -> Task(_, 1)
+ */
+Task.fromList = a => a.head == null ? Task.reject(a.head) : Task.of(a.head);
+/**
+ * A natural transformation from an IO into a Task. If the IO results in an Error,
+ * the resulting Task fails with the exception
+ * @method fromIO
+ * @static
+ * @memberof module:data.Task
+ * @param {IO} a The IO structure
+ * @return {Task} A Task which resolves with the result of the IO
+ *
+ * @example
+ * const {Task, IO} = require('futils').data;
+ *
+ * const env = k => IO(() => process[k]);
+ *
+ * Task.fromIO(env('arch')); // -> Task(_, &lt;architecture>)
+ */
+Task.fromIO = a => Task((fail, ok) => { try { ok(a.run()); } catch (exc) { fail(exc); }});
+
+
+/**
+ * A natural transformation from a Task into a Promise
+ * @method toPromise
+ * @memberof module:data.Task
+ * @instance
+ * @return {Promise} A Promise which runs the Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.of(1).toPromise(); // -> Promise(1)
+ */
+Task.fn.toPromise = function () {
+    return new Promise((ok, fail) => { this.run(fail, ok); });
+}
+/**
+ * Concatenates a Task with another. Resolves with the Task which resolves faster
+ * or rejects if either of both fail
+ * @method concat
+ * @memberof module:data.Task
+ * @instance
+ * @param {Task} a The Task to concatenate with
+ * @return {Task} Result of the concatenation
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const ms300 = Task.timeout(300, () => 1);
+ * const ms500 = Task.timeout(500, () => 2);
+ *
+ * ms500.concat(ms300); // -> Task(_, 1)
+ */
+Task.fn.concat = function (a) {
+    if (Task.is(a)) {
+        const clean = (x, y) => { this.cleanUp(x); a.cleanUp(y); };
+        const task = Task((fail, ok) => {
+            let done = false,
+                states = [];
+
+            const g = f => v => {
+                if (!done) {
+                    done = true;
+                    delay(() => clean(states[0], states[1]));
+                    f(v);
+                }
+            }
+
+            states[0] = this.run(g(fail), g(ok));
+            states[1] = a.run(g(fail), g(ok));
+            return states;
+        });
+        task.cleanUp = clean;
+        return task;
+    }
+    throw `Task::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
+}
+/**
+ * Maps a function over the value and resolves with the result
+ * @method map
+ * @memberof module:data.Task
+ * @instance
+ * @param {Function} f The function to map
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const one = Task.of(1);
+ *
+ * one.map((n) => n + 1); // -> Task(_, 2)
+ */
+Task.fn.map = function (f) {
+    const task = Task((fail, ok) => { this.run(fail, v => ok(f(v))); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}
+/**
+ * Flattens a nested Task one level
+ * @method flat
+ * @memberof module:data.Task
+ * @instance
+ * @return {Task} A Task flattened
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const tasks = Task.of(Task.of(1));
+ *
+ * tasks.flat(); // -> Task(_, 1)
+ */
+Task.fn.flat = function () {
+    const task = Task((fail, ok) => { this.run(fail, a => a.run(fail, ok)); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}
+/**
+ * Maps a Task returning function over a Task and flattens the result
+ * @method flatMap
+ * @static
+ * @memberof module:data.Task
+ * @instance
+ * @param {Function} f The function to map
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const task = Task.of(1);
+ *
+ * const inc = (n) => Task.of(n + 1);
+ *
+ * task.flatMap(inc); // -> Task(_, 2)
+ */
+Task.fn.flatMap = function (f) {
+    const task = Task((fail, ok) => { this.run(fail, v => f(v).run(fail, ok)); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}
+/**
+ * Applies a Task with a function to another Task. Resolves when both resolve or
+ * fails if either of both fails
+ * @method ap
+ * @memberof module:data.Task
+ * @instance
+ * @param {Task} a Task with a value
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const task = Task.of(1);
+ *
+ * const apply = Task.of((n) => n + 1);
+ *
+ * apply.ap(task); // -> Task(_, 2)
+ */
+Task.fn.ap = function (a) {
+    const clean = (x, y) => { this.cleanUp(x); a.cleanUp(y); };
+    const task = Task((fail, ok) => {
+        let aOk = false,
+            aLoad = false,
+            bOk = false,
+            bLoad = false,
+            rej = false,
+            states = [];
+
+        const gRej = v => { if (!rej) { rej = true; fail(v); } }
+        const gRes = f => v => {
+            if (rej) { return; }
+            f(v);
+            if (aLoad &amp;&amp; bLoad) {
+                delay(() => clean(states[0], states[1]));
+                return ok(aOk(bOk));
+            }
+            return v;
+        }
+
+        states[0] = this.run(gRej, gRes(w => { aLoad = true; aOk = w; }));
+        states[1] = a.run(gRej, gRes(w => { bLoad = true; bOk = w; }));
+        return states;
+    });
+    task.cleanUp = clean;
+    return task;
+}
+/**
+ * Swaps the disjunction of a Task, meaning if it normally resolves it fails and
+ * if it normally fails it resolves
+ * @method swap
+ * @memberof module:data.Task
+ * @instance
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * const ok = Task.of(1);
+ * const fail = Task.reject(1);
+ *
+ * ok.swap(); // -> Task(1, _)
+ * fail.swap(); // -> Task(_, 1)
+ */
+Task.fn.swap = function () {
+    const task = Task((fail, ok) => { this.run(ok, fail); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}
+/**
+ * Alt implementation, allows to swap a failing Task
+ * @method alt
+ * @memberof module:data.Task
+ * @instance
+ * @param {Task} a An optional Task
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task} = require('futils').data;
+ *
+ * Task.reject(0).alt(Task.of(1)); // -> Task(_, 1)
+ */
+Task.fn.alt = function (a) {
+    const task = Task((fail, ok) => { this.run(() => a.run(fail, ok), ok); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}
+/**
+ * Bifunctor interface, maps either of two functions over the value inside a Task
+ * @method biMap
+ * @memberof module:data.Task
+ * @instance
+ * @param {Function} f The mapping function for a rejecting Task
+ * @param {Function} g The mapping function for a resolving Task
+ * @return {Task} A new Task
+ *
+ * @example
+ * const {Task, Either} = require('futils').data;
+ * const {Left, Right} = Either;
+ *
+ * const errToLeft = err =>
+ *     err instanceof Error
+ *         ? Left(err.message)
+ *         : Left(err)
+ * 
+ * const failure = Task.reject(new Error('Should fail'));
+ * const success = Task.of(1);
+ * 
+ * failure.biMap(errToLeft, Right); // -> Task(Left('Should fail'), _)
+ * success.biMap(errToLeft, Right); // -> Task(_, Right(1))
+ */
+Task.fn.biMap = function (f, g) {
+    const task = Task((fail, ok) => { this.run(x => fail(f(x)), v => ok(g(v))); });
+    task.cleanUp = this.cleanUp;
+    return task;
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer class="futils-footer grid grid--1of4 reverse">
+    <div class="footertext">
+        Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> using the Minami theme as a base.
+    </div>
+    <div class="icon icon--whale3"></div>
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
