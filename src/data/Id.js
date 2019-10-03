@@ -4,20 +4,15 @@
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import {typeOf} from '../core/typeof';
-import {Type} from '../adt';
-import {Show} from '../generics/Show';
-import {Eq} from '../generics/Eq';
-import {Ord} from '../generics/Ord';
-
-
-
+import { typeOf } from '../core/typeof';
+import { Type } from '../adt';
+import { Show } from '../generics/Show';
+import { Eq } from '../generics/Eq';
+import { Ord } from '../generics/Ord';
 
 /*
  * @module data
  */
-
-
 
 /**
  * The Id data type. Id acts like a wrapper
@@ -36,10 +31,7 @@ import {Ord} from '../generics/Ord';
  *
  * Id(1).value; // -> 1
  */
-export const Id = Type('Id', ['value']).
-    deriving(Show, Eq, Ord);
-
-
+export const Id = Type('Id', ['value']).deriving(Show, Eq, Ord);
 
 /**
  * Lifts a value into the Id
@@ -55,6 +47,7 @@ export const Id = Type('Id', ['value']).
  * Id.of(1); // -> Id(1)
  */
 Id.of = Id;
+
 /**
  * Lifts a value into a Id. Similiar to Id.of
  * @method from
@@ -69,6 +62,7 @@ Id.of = Id;
  * Id.from(1); // -> Id(1)
  */
 Id.from = Id;
+
 /**
  * A natural transformation from a Either.Left or Either.Right into a Id
  * @method fromEither
@@ -86,7 +80,8 @@ Id.from = Id;
  * Id.fromEither(r); // -> Id('a right')
  * Id.fromEither(l); // -> Id('a left')
  */
-Id.fromEither = (a) => Id(a.value);
+Id.fromEither = a => Id(a.value);
+
 /**
  * A natural transformation from a Maybe.Some or Maybe.None into a Id
  * @method fromMaybe
@@ -104,7 +99,8 @@ Id.fromEither = (a) => Id(a.value);
  * Id.fromMaybe(some); // -> Id('a value');
  * Id.fromMaybe(none); // -> Id(null)
  */
-Id.fromMaybe = (a) => Id(a.value);
+Id.fromMaybe = a => Id(a.value);
+
 /**
  * A natural transformation from a List into a Id. Please note that this
  * transformation looses data, because only the first element of the list is
@@ -122,9 +118,7 @@ Id.fromMaybe = (a) => Id(a.value);
  *
  * Id.fromList(ls); // -> Id(1)
  */
-Id.fromList = (a) => Id(a.head);
-
-
+Id.fromList = a => a.caseOf({ Nil: () => Id(void 0), Cons: h => Id(h) });
 
 /**
  * Concatenates a Id with another. Please note, that the inner values have
@@ -142,12 +136,13 @@ Id.fromList = (a) => Id(a.head);
  *
  * id.concat(Id('world')); // -> Id('helloworld')
  */
-Id.fn.concat = function (a) {
-    if (Id.is(a)) {
-        return Id(this.value.concat(a.value));
-    }
-    throw `Id::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
-}
+Id.fn.concat = function(a) {
+  if (Id.is(a)) {
+    return Id(this.value.concat(a.value));
+  }
+  throw `Id::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
+};
+
 /**
  * Maps a function over the inner value and wraps the result in a new Id
  * @method map
@@ -165,9 +160,10 @@ Id.fn.concat = function (a) {
  *
  * id.map(upperCase); // -> Id('A')
  */
-Id.fn.map = function (f) {
-    return Id(f(this.value));
-}
+Id.fn.map = function(f) {
+  return Id(f(this.value));
+};
+
 /**
  * Flattens a nested Id one level
  * @method flat
@@ -182,9 +178,10 @@ Id.fn.map = function (f) {
  *
  * id.flat(); // -> Id(1)
  */
-Id.fn.flat = function () {
-    return this.value;
-}
+Id.fn.flat = function() {
+  return this.value;
+};
+
 /**
  * Maps a Id returning function over a Id and flattens the result
  * @method flatMap
@@ -202,9 +199,10 @@ Id.fn.flat = function () {
  *
  * id.flatMap(even); // -> Id(true)
  */
-Id.fn.flatMap = function (f) {
-    return f(this.value);
-}
+Id.fn.flatMap = function(f) {
+  return f(this.value);
+};
+
 /**
  * Extracts the value from a Id
  * @method extract
@@ -217,9 +215,10 @@ Id.fn.flatMap = function (f) {
  *
  * Id.of(1).extract(); // -> 1
  */
-Id.fn.extract = function () {
-    return this.value;
-}
+Id.fn.extract = function() {
+  return this.value;
+};
+
 /**
  * If given a function that takes a Id and returns a value, returns an Id
  * @method extend
@@ -233,9 +232,10 @@ Id.fn.extract = function () {
  *
  * Id.of(1).extend(({value}) => value + 1); // -> Id(2)
  */
-Id.fn.extend = function (f) {
-    return Id.of(f(this));
-}
+Id.fn.extend = function(f) {
+  return Id.of(f(this));
+};
+
 /**
  * Applies a function in a Id to a value in another Id
  * @method ap
@@ -253,9 +253,10 @@ Id.fn.extend = function (f) {
  *
  * mInc.ap(id); // -> Id(2)
  */
-Id.fn.ap = function (a) {
-    return a.map(this.value);
-}
+Id.fn.ap = function(a) {
+  return a.map(this.value);
+};
+
 /**
  * Works much like the Array.reduce method. If given a function and an initial
  * value, calls the function with the initial value and the current value of the
@@ -276,9 +277,10 @@ Id.fn.ap = function (a) {
  *
  * id.reduce(reducer, 1); // -> 2
  */
-Id.fn.reduce = function (f, x) {
-    return f(x, this.value);
-}
+Id.fn.reduce = function(f, x) {
+  return f(x, this.value);
+};
+
 /**
  * Takes a function with the signature (Applicative f) => a -> f a and an Applicative
  * constructor and traverses the Id into the Applicative
@@ -298,11 +300,12 @@ Id.fn.reduce = function (f, x) {
  *
  * id.traverse(fn, Array); // -> [Id(1)]
  */
-Id.fn.traverse = function (f, A) {
-    return A.fn && A.fn.ap ?
-           A.of(Id.of).ap(f(this.value)) :
-           f(this.value).map(Id.of);
-}
+Id.fn.traverse = function(f, A) {
+  return A.fn && A.fn.ap
+    ? A.of(Id.of).ap(f(this.value))
+    : f(this.value).map(Id.of);
+};
+
 /**
  * Sequences a Id into another Applicative type
  * @method sequence
@@ -318,6 +321,6 @@ Id.fn.traverse = function (f, A) {
  *
  * id.sequence(Array); // -> [Id(1)]
  */
-Id.fn.sequence = function (A) {
-    return this.traverse((v) => v, A);
-}
+Id.fn.sequence = function(A) {
+  return this.traverse(v => v, A);
+};

@@ -5,17 +5,12 @@
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-
 /*
  * @module operation
  */
 
-
-
-const _uniq = f => (a, b) => a.find(x => f(b, x)) != null ? a : a.concat(b);
-
-
+const _uniq = f => (a, b) =>
+  a.find(x => f(b, x)) != null ? a : a.concat(b);
 
 /**
  * The nubBy function, which removes duplicates from either a List or an
@@ -31,12 +26,17 @@ const _uniq = f => (a, b) => a.find(x => f(b, x)) != null ? a : a.concat(b);
  * const {nubBy} = require('futils').operation;
  *
  * const eq = (a, b) => a === b;
- * 
+ *
  * nubBy(eq, ['a', 'b', 'a']); // -> ['a', 'b']
- * nubBy(eq, []);              // -> []
+ * nubBy(eq, []);        // -> []
  */
-export const nubBy = (f, a) => f === void 0 ? nubBy :
-                               a === void 0 ? (b) => nubBy(f, b) :
-                               a === null ? a :
-                               a.nubBy ? a.nubBy(f) :
-                               a.reduce(_uniq(f), []);
+export const nubBy = (f, a) =>
+  f === void 0
+    ? nubBy
+    : a === void 0
+    ? b => nubBy(f, b)
+    : a === null
+    ? a
+    : a.nubBy
+    ? a.nubBy(f)
+    : a.reduce(_uniq(f), []);

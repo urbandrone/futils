@@ -26,43 +26,10 @@ import {nub} from './nub';
 import {prop} from './prop';
 import {alt} from './alt';
 import {zipWith} from './zipWith';
-import {zip} from './zip';
-
-
-
-/**
+import {zip} from './zip';  /**
  * @module operation
  */
 
 
-export default {
-    equals,
-    concat,
-    map,
-    ap,
-    flat,
-    flatMap,
-    filter,
-    fold,
-    foldMap,
-    reduce,
-    reduceRight,
-    traverse,
-    sequence,
-    caseOf,
-    biMap,
-    proMap,
-    doM,
-    liftA,
-    head,
-    tail,
-    take,
-    drop,
-    find,
-    nubBy,
-    nub,
-    prop,
-    alt,
-    zipWith,
-    zip
+export default {   equals,   concat,   map,   ap,   flat,   flatMap,   filter,   fold,   foldMap,   reduce,   reduceRight,   traverse,   sequence,   caseOf,   biMap,   proMap,   doM,   liftA,   head,   tail,   take,   drop,   find,   nubBy,   nub,   prop,   alt,   zipWith,   zip
 }

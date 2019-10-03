@@ -5,17 +5,14 @@
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-
 /*
  * @module operation
  */
 
-
-
-const _take = (n, a) => typeof a === 'string' || isNaN(a.length) ? [a] :
-                        Array.from(a).slice(0, n);
-
+const _take = (n, a) =>
+  typeof a === 'string' || isNaN(a.length)
+    ? [a]
+    : Array.from(a).slice(0, n);
 
 /**
  * The take function
@@ -29,10 +26,15 @@ const _take = (n, a) => typeof a === 'string' || isNaN(a.length) ? [a] :
  * const {take} = require('futils').operation;
  *
  * take(1, ['a', 'b']); // -> ['a']
- * take(1);             // -> (Array/Cons -> Array/Cons)
+ * take(1);       // -> (Array/Cons -> Array/Cons)
  */
-export const take = (n, a) => n === void 0 ? take :
-                              a === void 0 ? (b) => take(n, b) :
-                              a === null ? null :
-                              a.take ? a.take(n) :
-                              _take(n, a);
+export const take = (n, a) =>
+  n === void 0
+    ? take
+    : a === void 0
+    ? b => take(n, b)
+    : a === null
+    ? null
+    : a.take
+    ? a.take(n)
+    : _take(n, a);

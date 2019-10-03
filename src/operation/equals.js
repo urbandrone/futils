@@ -4,14 +4,12 @@
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import {compareEq} from '../generics/Eq';
-
+import { compareEq } from '../generics/Eq';
+import { compatEquals as flCompat } from '../core/fl-compat';
 
 /*
  * @module operation
  */
-
-
 
 /**
  * The equals function
@@ -24,19 +22,25 @@ import {compareEq} from '../generics/Eq';
  * @example
  * const {equals} = require('futils').operation;
  *
- * equals(null, null);           // -> true
- * equals(1, 1);                 // -> true
+ * // Note:
+ * // A signature of `X eq? Y` resembles a call to `equals(X, Y)`
+ *
+ * equals(null, null);       // -> true
+ * equals(1, 1);         // -> true
  * equals([1, 2, 3], [1, 2, 3]); // -> true
- * equals(1, 2);                 // -> false
- * equals(null, 0);              // -> false
+ * equals(1, 2);         // -> false
+ * equals(null, 0);        // -> false
  * equals([4, 5, 6], [1, 2, 3]); // -> false
- * equals(1);                    // -> (a -> 1 == a)
+ * equals(1);          // -> (a -> (1 eq? a))
  */
-export const equals = function (a, b) {
-    // note: leave this as a named function because we need to have access to
-    // the arguments object
-    return arguments.length < 1 ? equals :
-           arguments.length < 2 ? (c) => equals(a, c) :
-           b && typeof b.equals === 'function' ? b.equals(a) :
-           compareEq(a, b);
-}
+export const equals = function(a, b) {
+  // note: leave this as a named function because we need to have access to
+  // the arguments object
+  return arguments.length < 1
+    ? equals
+    : arguments.length < 2
+    ? c => equals(a, c)
+    : b && typeof b.equals === 'function'
+    ? flCompat(b, b.equals, a)
+    : compareEq(a, b);
+};

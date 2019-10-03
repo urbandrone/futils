@@ -4,20 +4,15 @@
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import {typeOf} from '../core/typeof';
-import {Type} from '../adt';
-import {Show} from '../generics/Show';
-import {Eq} from '../generics/Eq';
-import {Ord} from '../generics/Ord';
-
-
-
+import { typeOf } from '../core/typeof';
+import { Type } from '../adt';
+import { Show } from '../generics/Show';
+import { Eq } from '../generics/Eq';
+import { Ord } from '../generics/Ord';
 
 /*
  * @module monoid
  */
-
-
 
 /**
  * The Min monoid. Min can be used to find the smallest item
@@ -36,10 +31,7 @@ import {Ord} from '../generics/Ord';
  *
  * Min(1).value; // -> 1
  */
-export const Min = Type('Min', ['value']).
-    deriving(Show, Eq, Ord);
-
-
+export const Min = Type('Min', ['value']).deriving(Show, Eq, Ord);
 
 /**
  * Lifts a value into a Min. Returns a Min of Infinity if the value
@@ -53,11 +45,13 @@ export const Min = Type('Min', ['value']).
  * @example
  * const {Min} = require('futils').monoid;
  *
- * Min.of(1);    // -> Min(1)
+ * Min.of(1);  // -> Min(1)
  * Min.of(null); // -> Min(Infinity)
  * Min.of({});   // -> Min(Infinity)
  */
-Min.of = a => typeof a === 'number' && !isNaN(a) ? Min(a) : Min(Infinity);
+Min.of = a =>
+  typeof a === 'number' && !isNaN(a) ? Min(a) : Min(Infinity);
+
 /**
  * Monoid implementation for Min. Returns a Min of Infinity
  * @method empty
@@ -71,8 +65,6 @@ Min.of = a => typeof a === 'number' && !isNaN(a) ? Min(a) : Min(Infinity);
  * Min.empty(); // -> Min(Infinity)
  */
 Min.empty = () => Min(Infinity);
-
-
 
 /**
  * Concatenates a Min with another using Ord.lt comparison
@@ -89,9 +81,9 @@ Min.empty = () => Min(Infinity);
  *
  * min.concat(Min(2)); // -> Min(2)
  */
-Min.fn.concat = function (a) {
-    if (Min.is(a)) {
-        return this.lt(a) ? this : a;
-    }
-    throw `Min::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
-}
+Min.fn.concat = function(a) {
+  if (Min.is(a)) {
+    return this.lt(a) ? this : a;
+  }
+  throw `Min::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
+};

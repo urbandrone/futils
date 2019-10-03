@@ -7,7 +7,5 @@ import {recur} from './recur';
  */
 
 
-export default {
-    again,
-    recur
+export default {   again,   recur
 }

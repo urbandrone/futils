@@ -1,5 +1,5 @@
-import {typeOf} from './typeof';
+import { typeOf } from './typeof';
 
 export default {
-    typeOf
+  typeOf
 };

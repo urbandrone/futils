@@ -5,16 +5,11 @@
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-
 /*
  * @module trampoline
  */
 
-
 export const IS_RECUR = Symbol('isRecur');
-
-
 
 /**
  * The again function should be used to wrap a
@@ -29,13 +24,19 @@ export const IS_RECUR = Symbol('isRecur');
  * const {recur, again} = require('futils').trampoline;
  *
  * const factorial = recur(function factLoop (n, m) {
- *     return n <= 1 ? m : again(factLoop, n - 1, n * m);
+ *   return n <= 1 ? m : again(factLoop, n - 1, n * m);
  * });
  *
  * factorial(5, 1); // -> 120
  */
 export const again = (f, ...a) => {
-  const g = function () { return f(...a); };
-  Object.defineProperty(g, IS_RECUR, { enumerable: false, writable: false, value: true });
+  const g = function() {
+    return f(...a);
+  };
+  Object.defineProperty(g, IS_RECUR, {
+    enumerable: false,
+    writable: false,
+    value: true
+  });
   return g;
-}
+};

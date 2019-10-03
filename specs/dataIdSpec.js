@@ -6,6 +6,8 @@ describe('Id', () => {
 
     it('should be able to construct Id via of', () => {
         expect(Id.of('r').toString()).toBe('Id(r)');
+        expect(a.constructor.of === Id.of).toBe(true);
+        expect(Id['fantasy-land/of']('r').toString()).toBe('Id(r)');
     });
 
     it('should be able to construct Id via from', () => {
@@ -48,10 +50,12 @@ describe('Id', () => {
 
     it('should be able to concat', () => {
         expect(Id('a').concat(Id('b')).value).toBe('ab');
+        expect(Id('a')['fantasy-land/concat'](Id('b')).value).toBe('ab');
     });
 
     it('should be able to map', () => {
         expect(a.map(x => x + 1).value).toBe(2);
+        expect(a['fantasy-land/map'](x => x + 1).value).toBe(2);
     });
 
     it('should be able to flatten', () => {
@@ -60,6 +64,7 @@ describe('Id', () => {
 
     it('should be able to chain/flatMap', () => {
         expect(a.flatMap(x => Id(x + 1)).value).toBe(2);
+        expect(a['fantasy-land/chain'](x => Id(x + 1)).value).toBe(2);
     });
 
     it('should be able to extract', () => {
@@ -72,17 +77,21 @@ describe('Id', () => {
 
     it('should be able to ap', () => {
         expect(Id(x => x + 1).ap(a).value).toBe(2);
+        expect(a['fantasy-land/ap'](Id(x => x + 1)).value).toBe(2);
     });
 
     it('should be able to reduce', () => {
         expect(a.reduce((x, y) => x + y, 'r')).toBe('r1');
+        expect(a['fantasy-land/reduce']((x, y) => x + y, 'r')).toBe('r1');
     });
 
     it('should be able to traverse', () => {
         expect(a.traverse(x => [x], Array).join('')).toBe('Id(1)');
+        expect(a['fantasy-land/traverse'](Array, x => [x]).join('')).toBe('Id(1)');
     });
 
     it('should be able to sequence', () => {
         expect(Id([1]).sequence(Array).join('')).toBe('Id(1)');
+        expect(Id([1])['fantasy-land/sequence'](Array).join('')).toBe('Id(1)');
     });
 });

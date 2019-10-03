@@ -9,6 +9,8 @@ describe('List', () => {
 
     it('should be able to construct Cons via of', () => {
         expect(List.of('r').toString()).toBe('Cons(r, Nil)');
+        expect(a.constructor.of === Lift.of).toBe(true);
+        expect(List['fantasy-land/of']('r').toString()).toBe('Const(r, Nil)');
     });
 
     it('should be able to construct Nil/Cons via from', () => {
@@ -23,6 +25,7 @@ describe('List', () => {
 
     it('should be able to construct an empty instance', () => {
         expect(Nil.is(List.empty())).toBe(true);
+        expect(Nil.is(List['fantasy-land/empty']())).toBe(true);
     });
 
     it('should be able to construct from Id', () => {
@@ -57,14 +60,20 @@ describe('List', () => {
 
     it('should be able to concat', () => {
         expect(Cons('a', Nil()).concat(Cons('b', Nil())).reduce(f, '')).toBe('ab');
+        expect(Cons('a', Nil())['fantasy-land/concat'](Cons('b', Nil())).reduce(f, '')).toBe('ab');
         expect(Cons('a', Nil()).concat(Nil()).reduce(f, '')).toBe('');
+        expect(Cons('a', Nil())['fantasy-land/concat'](Nil()).reduce(f, '')).toBe('');
         expect(Nil().concat(Cons('b', Nil())).reduce(f, '')).toBe('');
+        expect(Nil()['fantasy-land/concat'](Cons('b', Nil())).reduce(f, '')).toBe('');
         expect(Nil().concat(Nil()).reduce(f, '')).toBe('');
+        expect(Nil()['fantasy-land/concat'](Nil()).reduce(f, '')).toBe('');
     });
 
     it('should be able to map', () => {
         expect(a.map(x => x + 1).reduce(f, 0)).toBe(2);
+        expect(a['fantasy-land/map'](x => x + 1).reduce(f, 0)).toBe(2);
         expect(c.map(x => x + 1).reduce(f, 0)).toBe(0);
+        expect(c['fantasy-land/map'](x => x + 1).reduce(f, 0)).toBe(0);
     });
 
     it('should be able to flatten', () => {
@@ -74,12 +83,14 @@ describe('List', () => {
 
     it('should be able to chain/flatMap', () => {
         expect(a.flatMap(x => Cons(x + 1, Nil())).reduce(f, 0)).toBe(2);
+        expect(a['fantasy-land/chain'](x => Cons(x + 1, Nil())).reduce(f, 0)).toBe(2);
         expect(c.flatMap(x => Cons(x + 1, Nil())).reduce(f, 0)).toBe(0);
+        expect(c['fantasy-land/chain'](x => Cons(x + 1, Nil())).reduce(f, 0)).toBe(0);
     });
 
     it('should be able to extract', () => {
         expect(a.extract()).toBe(1);
-        expect(c.extract()).toBe(null);
+        expect(c.extract()).toEqual(c);
     });
 
     it('should be able to extend', () => {
@@ -89,13 +100,18 @@ describe('List', () => {
 
     it('should be able to ap', () => {
         expect(Cons(x => x + 1, Nil()).ap(a).reduce(f, 0)).toBe(2);
+        expect(a['fantasy-land/ap'](Cons(x => x + 1, Nil())).reduce(f, 0)).toBe(2);
         expect(Cons(x => x + 1, Nil()).ap(c).reduce(f, 0)).toBe(0);
+        expect(c['fantasy-land/ap'](Cons(x => x + 1, Nil())).reduce(f, 0)).toBe(0);
         expect(c.ap(a).reduce(f, 0)).toBe(0);
+        expect(a['fantasy-land/ap'](c).reduce(f, 0)).toBe(0);
     });
 
     it('should be able to reduce', () => {
         expect(a.reduce(f, 'r')).toBe('r1');
+        expect(a['fantasy-land/reduce'](f, 'r')).toBe('r1');
         expect(c.reduce(f, 'l')).toBe('l');
+        expect(c['fantasy-land/reduce'](f, 'l')).toBe('l');
     });
 
     it('should be able to reduce right', () => {
@@ -105,17 +121,23 @@ describe('List', () => {
 
     it('should be able to traverse', () => {
         expect(a.traverse(x => Id.of(x), Id).toString()).toBe('Id(Cons(1, Nil))');
+        expect(a['fantasy-land/traverse'](Id, x => Id.of(x)).toString()).toBe('Id(Cons(1, Nil))');
         expect(c.traverse(x => Id.of(x), Id).toString()).toBe('Id(Nil)');
+        expect(c['fantasy-land/traverse'](Id, x => Id.of(x)).toString()).toBe('Id(Nil)');
     });
 
     it('should be able to sequence', () => {
         expect(Cons(Id.of(1), Nil()).sequence(Id).toString()).toBe('Id(Cons(1, Nil))');
+        expect(Cons(Id.of(1), Nil())['fantasy-land/sequence'](Id).toString()).toBe('Id(Cons(1, Nil))');
         expect(c.sequence(Id).toString()).toBe('Id(Nil)');
+        expect(c['fantasy-land/sequence'](Id).toString()).toBe('Id(Nil)');
     });
 
     it('should be able to choose alternatives', () => {
         expect(a.alt(Cons('r', Nil())).reduce(f, '')).toBe('1');
+        expect(a['fantasy-land/alt'](Cons('r', Nil())).reduce(f, '')).toBe('1');
         expect(c.alt(Cons('r', Nil())).reduce(f, '')).toBe('r');
+        expect(c['fantasy-land/alt'](Cons('r', Nil())).reduce(f, '')).toBe('r');
     });
 
     it('should be able to foldmap', () => {
@@ -130,6 +152,7 @@ describe('List', () => {
 
     it('should be able to filter', () => {
         expect(Cons(1, Cons(2, Nil())).filter(x => x % 2 === 0).toString()).toBe('Cons(2, Nil)');
+        expect(Cons(1, Cons(2, Nil()))['fantasy-land/filter'](x => x % 2 === 0).toString()).toBe('Cons(2, Nil)');
     });
 
     it('should be able to intersperse', () => {
@@ -146,7 +169,7 @@ describe('List', () => {
 
     it('should be able to reach the head', () => {
         expect(a.head).toBe(1);
-        expect(c.head).toBe(null);
+        expect(c.head).toEqual(c);
     });
 
     it('should be able to reach the tail', () => {

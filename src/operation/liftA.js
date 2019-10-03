@@ -5,13 +5,9 @@
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-
 /*
  * @module operation
  */
-
-
 
 /**
  * The liftA function. Use liftA to lift a curried function to 2 or
@@ -27,11 +23,15 @@
  * const {liftA} = require('futils').operation;
  *
  * const add = (a) => (b) => (c) => a + b + c;
- * 
+ *
  * liftA(add, Id.of(1), Id.of(2), Id.of(3)); // -> Id(6)
- * liftA(add);                               // -> (Apply -> Apply -> Apply -> Apply)
+ * liftA(add);                 // -> (Apply -> Apply -> Apply -> Apply)
  */
-export const liftA = (f, a, ...as) => f === void 0 ? liftA :
-                                      a === void 0 ? (b, ...bs) => liftA(f, b, ...bs) :
-                                      as.length < 1 ? (...bs) => liftA(f, a, ...bs) :
-                                      as.reduce((x, y) => x.ap(y), a.map(f));
+export const liftA = (f, a, ...as) =>
+  f === void 0
+    ? liftA
+    : a === void 0
+    ? (b, ...bs) => liftA(f, b, ...bs)
+    : as.length < 1
+    ? (...bs) => liftA(f, a, ...bs)
+    : as.reduce((x, y) => x.ap(y), a.map(f));

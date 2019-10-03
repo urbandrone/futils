@@ -6,13 +6,9 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import { typeOf } from '../core/typeof';
 
-
-
 /*
  * @module operation
  */
-
-
 
 const matchPattern = (o, p) => {
   const t = typeOf(o);
@@ -23,9 +19,7 @@ const matchPattern = (o, p) => {
     return p._(o);
   }
   throw `caseOf :: No pattern matched ${t} in ${Object.keys(o)}`;
-}
-
-
+};
 
 /**
  * The caseOf function is useful to apply pattern matching to a type. This allows
@@ -54,16 +48,15 @@ const matchPattern = (o, p) => {
  * reverse(nums); // -> [4, 3, 2, 1]
  * reverse(text); // -> '!olleH'
  *
- * 
- *  
- * @example Usage with a custom union type
+ *
+ *  * @example Usage with a custom union type
  * const {caseOf} = require('futils').operation;
  * const {UnionType} = require('futils').adt;
  *
  * const Num = UnionType('Num', { OK: ['value'], Err: ['desc'] });
  * const {OK, Err} = Num;
  *
- * 
+ *
  * const divBy = a => caseOf({
  *   OK: b => a === 0 ? Err('ZeroDivision: ${b}/${a}') : OK(b / a),
  *   Err: b => Err(b),
@@ -77,7 +70,11 @@ const matchPattern = (o, p) => {
  *
  * div18ByNums; // -> Err({ desc: 'ZeroDivison 9 / 0' })
  */
-export const caseOf = (a, b) => a === void 0 ? caseOf :
-                                b === void 0 ? (c) => caseOf(a, c) :
-                                b && typeOf(b.caseOf) === 'Function' ? b.caseOf(a) :
-                                matchPattern(b, a);
+export const caseOf = (a, b) =>
+  a === void 0
+    ? caseOf
+    : b === void 0
+    ? c => caseOf(a, c)
+    : b && typeOf(b.caseOf) === 'Function'
+    ? b.caseOf(a)
+    : matchPattern(b, a);

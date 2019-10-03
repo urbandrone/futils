@@ -4,14 +4,11 @@
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
+import { compatAp as flCompat } from '../core/fl-compat';
 
 /*
  * @module operation
  */
-
-
 
 /**
  * The ap function allows to apply a function inside a Applicative to a value in
@@ -29,14 +26,18 @@
  *
  * const upper = Id.of((a) => a.toUpperCase());
  * const calc = [(a) => a + 1, (a) => a * 2];
- * 
+ *
  * ap(upper, Id.of('a')); // -> Id('A')
- * ap(upper);             // -> (Functor -> Functor)
- * ap(calc, [1, 2]);      // -> [4, 6]
+ * ap(upper);       // -> (Functor -> Functor)
+ * ap(calc, [1, 2]);    // -> [4, 6]
  */
-export const ap = (af, a) => af === void 0 ? ap :
-                             a === void 0 ? (b) => ap(af, b) : 
-                             a === null ? null :
-                             typeof af.then === 'function' ? af.then(f => a.then(f, x => x), x => x) :
-                             typeof af.ap === 'function' ? af.ap(a) :
-                             a.reduce((b, x) => b.concat(af.reduce((c, f) => f(c), x)), []);
+export const ap = (af, a) =>
+  af === void 0
+    ? ap
+    : a === void 0
+    ? b => ap(af, b)
+    : a === null || af === null
+    ? null
+    : typeof af.then === 'function'
+    ? af.then(f => a.then(f, x => x), x => x)
+    : flCompat(af, af.ap, a);

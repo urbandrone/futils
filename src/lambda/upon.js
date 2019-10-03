@@ -4,23 +4,21 @@
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import {arity} from '../core/arity';
-import {typeOf} from '../core/typeof';
-
+import { arity } from '../core/arity';
+import { typeOf } from '../core/typeof';
 
 /*
  * @module lambda
  */
 
-
 const _upon = (f, g) => {
-    let tF = typeOf(f), tG = typeOf(g);
-    if (tF === 'Function' && tG === 'Function') {
-      return g(f);
-    }
-    throw `upon :: Expected all arguments to be of type function but saw ${tF} & ${tG}`;
-}
-
+  let tF = typeOf(f),
+    tG = typeOf(g);
+  if (tF === 'Function' && tG === 'Function') {
+    return g(f);
+  }
+  throw `upon :: Expected all arguments to be of type function but saw ${tF} & ${tG}`;
+};
 
 /**
  * The upon function takes two functions and returns the result of calling the
@@ -40,9 +38,8 @@ const _upon = (f, g) => {
  *
  * const safeDouble = upon(double, safe);
  *
- * safeDouble(2);    // -> 4
+ * safeDouble(2);  // -> 4
  * safeDouble(null); // -> 0
  */
-export const upon = (f, g) => f === void 0 ? upon :
-                              g === void 0 ? (h) => upon(f, h) :
-                              _upon(f, g);
+export const upon = (f, g) =>
+  f === void 0 ? upon : g === void 0 ? h => upon(f, h) : _upon(f, g);

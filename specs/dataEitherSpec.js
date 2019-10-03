@@ -9,6 +9,8 @@ describe('Either', () => {
 
     it('should be able to construct Right via of', () => {
         expect(Either.of('r').toString()).toBe('Right(r)');
+        expect(a.constructor.of === Either.of).toBe(true);
+        expect(Either['fantasyland/of']('r').toString()).toBe('Right(r)');
     });
 
     it('should be able to construct Left/Right via from', () => {
@@ -23,6 +25,7 @@ describe('Either', () => {
 
     it('should be able to construct an empty instance', () => {
         expect(Left.is(Either.empty())).toBe(true);
+        expect(Left.is(Maybe['fantasy-land/empty']())).toBe(true);
     });
 
     it('should be able to construct from Id', () => {
@@ -67,14 +70,20 @@ describe('Either', () => {
 
     it('should be able to concat', () => {
         expect(Right('a').concat(Right('b')).value).toBe('ab');
+        expect(Right('a')['fantasy-land/concat'](Right('b')).value).toBe('ab');
         expect(Right('a').concat(Left('b')).value).toBe('b');
+        expect(Right('a')['fantasy-land/concat'](Left('b')).value).toBe('b');
         expect(Left('a').concat(Right('b')).value).toBe('a');
+        expect(Left('a')['fantasy-land/concat'](Right('b')).value).toBe('a');
         expect(Left('a').concat(Left('b')).value).toBe('a');
+        expect(Left('a')['fantasy-land/concat'](Left('b')).value).toBe('a');
     });
 
     it('should be able to map', () => {
         expect(a.map(x => x + 1).value).toBe(2);
+        expect(a['fantasy-land/map'](x => x + 1).value).toBe(2);
         expect(c.map(x => x + 1).value).toBe(1);
+        expect(c['fantasy-land/map'](x => x + 1).value).toBe(1);
     });
 
     it('should be able to flatten', () => {
@@ -84,7 +93,9 @@ describe('Either', () => {
 
     it('should be able to chain/flatMap', () => {
         expect(a.flatMap(x => Right(x + 1)).value).toBe(2);
+        expect(a['fantasy-land/chain'](x => Right(x + 1)).value).toBe(2);
         expect(c.flatMap(x => Right(x + 1)).value).toBe(1);
+        expect(c['fantasy-land/chain'](x => Right(x + 1)).value).toBe(1);
     });
 
     it('should be able to extract', () => {
@@ -99,28 +110,39 @@ describe('Either', () => {
 
     it('should be able to ap', () => {
         expect(Right(x => x + 1).ap(a).value).toBe(2);
+        expect(a['fantasy-land/ap'](Right(x => x + 1)).value).toBe(2);
         expect(Right(x => x + 1).ap(c).value).toBe(1);
+        expect(c['fantasy-land/ap'](Right(x => x + 1)).value).toBe(1);
         expect(c.ap(a).value).toBe(1);
+        expect(a['fantasy-land/ap'](c).value).toBe(1);
     });
 
     it('should be able to biMap', () => {
         expect(a.biMap(() => 'l', x => x).value).toBe(1);
+        expect(a['fantasy-land/bimap'](() => 'l', x => x).value).toBe(1);
         expect(c.biMap(() => 'l', x => x).value).toBe('l');
+        expect(c['fantasy-land/bimap'](() => 'l', x => x).value).toBe('l');
     });
 
     it('should be able to reduce', () => {
         expect(a.reduce((x, y) => x + y, 'r')).toBe('r1');
+        expect(a['fantasy-land/reduce']((x, y) => x + y, 'r')).toBe('r1');
         expect(c.reduce((x, y) => x + y, 'l')).toBe('l');
+        expect(c['fantasy-land/reduce']((x, y) => x + y, 'l')).toBe('l');
     });
 
     it('should be able to traverse', () => {
         expect(a.traverse(x => [x], Array).join('')).toBe('Right(1)');
+        expect(a['fantasy-land/traverse'](Array, x => [x]).join('')).toBe('Right(1)');
         expect(c.traverse(x => [x], Array).join('')).toBe('Left(1)');
+        expect(c['fantasy-land/traverse'](Array, x => [x]).join('')).toBe('Left(1)');
     });
 
     it('should be able to sequence', () => {
         expect(Right([1]).sequence(Array).join('')).toBe('Right(1)');
+        expect(Right([1])['fantasy-land/sequence'](Array).join('')).toBe('Right(1)');
         expect(c.sequence(Array).join('')).toBe('Left(1)');
+        expect(c['fantasy-land/sequence'](Array).join('')).toBe('Left(1)');
     });
 
     it('should be able to swap', () => {
@@ -130,6 +152,8 @@ describe('Either', () => {
 
     it('should be able to choose alternatives', () => {
         expect(a.alt(Right('r')).value).toBe(1);
+        expect(a['fantasy-land/alt'](Right('r')).value).toBe(1);
         expect(c.alt(Right('r')).value).toBe('r');
+        expect(c['fantasy-land/alt'](Right('r')).value).toBe('r');
     });
 });

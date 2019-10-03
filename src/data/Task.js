@@ -4,32 +4,22 @@
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import {typeOf} from '../core/typeof';
-import {Type} from '../adt';
-import {Show} from '../generics/Show';
-import {Eq} from '../generics/Eq';
-
-
-
-/* Utilities */
-const delay = (f) => typeof setImmediate !== 'undefined' ? setImmediate(f) :
-              typeof process !== 'undefined' ? process.nextTick(f) :
-              setTimeout(f, 0);
-
-const voids = () => void 0;
-
-
-
+import { typeOf } from '../core/typeof';
+import { Type } from '../adt';
+import { Show } from '../generics/Show';
+import { Eq } from '../generics/Eq';
 
 /*
  * @module data
  */
 
-
-
-
-
-
+/* Utilities */
+const delay = f =>
+  typeof setImmediate !== 'undefined'
+    ? setImmediate(f)
+    : typeof process !== 'undefined'
+    ? process.nextTick(f)
+    : setTimeout(f, 0);
 
 /**
  * The Task data structure. Use Task to encapsulate asynchronous
@@ -46,18 +36,13 @@ const voids = () => void 0;
  * const one = Task((rej, res) => res(1));
  *
  * one.run(
- *     (err) => { console.error(err); },
- *     (num) => { console.log(num); }
+ *   (err) => { console.error(err); },
+ *   (num) => { console.log(num); }
  * )
  */
-export const Task = Type('Task', ['run']).
-    deriving(Show, Eq);
+export const Task = Type('Task', ['run']).deriving(Show, Eq);
 
-Task.fn.cleanUp = voids;
-
-
-
-
+Task.fn.cleanUp = () => void 0;
 
 /**
  * Lifts a value into a Task. The resulting Task always resolves with the given
@@ -73,7 +58,11 @@ Task.fn.cleanUp = voids;
  *
  * Task.of(1); // -> Task(_, 1)
  */
-Task.of = (a) => Task((_, ok) => { ok(a); });
+Task.of = a =>
+  Task((_, ok) => {
+    ok(a);
+  });
+
 /**
  * Monoid implementation for Task. Returns a Task which neither resolves nor rejects
  * @method empty
@@ -86,7 +75,8 @@ Task.of = (a) => Task((_, ok) => { ok(a); });
  *
  * Task.empty(); // -> Task(?, ?)
  */
-Task.empty = () => Task(voids);
+Task.empty = () => Task(() => void 0);
+
 /**
  * Lifts a value into a Task. The resulting Task always resolves with the given
  * value
@@ -102,6 +92,7 @@ Task.empty = () => Task(voids);
  * Task.resolve(1); // -> Task(_, 1)
  */
 Task.resolve = Task.of;
+
 /**
  * Lifts a value into a Task. The resulting Task always fails with the given
  * value
@@ -116,7 +107,11 @@ Task.resolve = Task.of;
  *
  * Task.reject(1); // -> Task(1, _)
  */
-Task.reject = (a) => Task(fail => { fail(a); });
+Task.reject = a =>
+  Task(fail => {
+    fail(a);
+  });
+
 /**
  * Creates a Task which resolves a function after the given amount of milliseconds
  * @method timeout
@@ -131,11 +126,25 @@ Task.reject = (a) => Task(fail => { fail(a); });
  *
  * const delayed = () => 1;
  *
- * Task.timeout(400, delayed); // -> Task(_, 1) 
+ * Task.timeout(400, delayed); // -> Task(_, 1)
  */
-Task.timeout = (ms, f) => Task((_, ok) => {
-    setTimeout(() => ok(f()), ms);
-});
+Task.timeout = (ms, f) => {
+  let tId;
+
+  const task = Task((_, ok) => {
+    tId = setTimeout(() => {
+      ok(f());
+    }, ms);
+  });
+  task.cleanUp = () => {
+    if (tId) {
+      clearTimeout(tId);
+    }
+  };
+
+  return task;
+};
+
 /**
  * Converts a Promise returning function into a Task returning form
  * @method fromPromiseFunction
@@ -152,9 +161,13 @@ Task.timeout = (ms, f) => Task((_, ok) => {
  *
  * readFile('example.txt', 'utf8'); // -> Task(Error, String)
  */
-Task.fromPromiseFunction = f => (...a) => Task((fail, ok) => {
-    f(...a).then(ok).catch(fail);
-});
+Task.fromPromiseFunction = f => (...a) =>
+  Task((fail, ok) => {
+    f(...a)
+      .then(ok)
+      .catch(fail);
+  });
+
 /**
  * Converts a Node style continuation passing function into a Task returning form
  * @method fromNodeFunction
@@ -171,9 +184,17 @@ Task.fromPromiseFunction = f => (...a) => Task((fail, ok) => {
  *
  * readFile('example.txt', 'utf8'); // -> Task(Error, String)
  */
-Task.fromNodeFunction = f => (...a) => Task((fail, ok) => {
-    f(...a, (err, v) => { if (err) { fail(err); } else { ok(v); } });
-});
+Task.fromNodeFunction = f => (...a) =>
+  Task((fail, ok) => {
+    f(...a, (err, v) => {
+      if (err) {
+        fail(err);
+      } else {
+        ok(v);
+      }
+    });
+  });
+
 /**
  * A natural transformation from an Id into a Task
  * @method  fromId
@@ -190,6 +211,7 @@ Task.fromNodeFunction = f => (...a) => Task((fail, ok) => {
  * Task.fromId(id); // -> Task(_, 'a value')
  */
 Task.fromId = a => Task.of(a.value);
+
 /**
  * A natural transformation from a Maybe.Some or Maybe.None into a Task. If the
  * Maybe is a Maybe.None, the resulting Task rejects
@@ -208,7 +230,15 @@ Task.fromId = a => Task.of(a.value);
  * Task.fromMaybe(some); // -> Task(_, 'a value')
  * Task.fromMaybe(none); // -> Task(null, _)
  */
-Task.fromMaybe = a => Task((fail, ok) => { if (a.isSome()) { ok(a.value); } else { fail(null); } });
+Task.fromMaybe = a =>
+  Task((fail, ok) => {
+    if (a.isSome()) {
+      ok(a.value);
+    } else {
+      fail(null);
+    }
+  });
+
 /**
  * A natural transformation from a Either.Right or Either.Left into a Task. If the
  * Either is a Either.Left, the resulting Task rejects
@@ -227,7 +257,11 @@ Task.fromMaybe = a => Task((fail, ok) => { if (a.isSome()) { ok(a.value); } else
  * Task.fromEither(r); // -> Task(_, 'a value')
  * Task.fromEither(l); // -> Task('fallback', _)
  */
-Task.fromEither = a => Task((fail, ok) => { a.cata({Left: fail, Right: ok}); });
+Task.fromEither = a =>
+  Task((fail, ok) => {
+    a.cata({ Left: fail, Right: ok });
+  });
+
 /**
  * A natural transformation from a List into a Task. Please note that this
  * transformation looses data, because only the first element of the list is
@@ -245,7 +279,12 @@ Task.fromEither = a => Task((fail, ok) => { a.cata({Left: fail, Right: ok}); });
  *
  * Task.fromList(ls); // -> Task(_, 1)
  */
-Task.fromList = a => a.head == null ? Task.reject(a.head) : Task.of(a.head);
+Task.fromList = a =>
+  a.caseOf({
+    Nil: () => Task.reject(a),
+    Cons: h => Task.resolve(h)
+  });
+
 /**
  * A natural transformation from an IO into a Task. If the IO results in an Error,
  * the resulting Task fails with the exception
@@ -262,8 +301,14 @@ Task.fromList = a => a.head == null ? Task.reject(a.head) : Task.of(a.head);
  *
  * Task.fromIO(env('arch')); // -> Task(_, <architecture>)
  */
-Task.fromIO = a => Task((fail, ok) => { try { ok(a.run()); } catch (exc) { fail(exc); }});
-
+Task.fromIO = a =>
+  Task((fail, ok) => {
+    try {
+      ok(a.run());
+    } catch (exc) {
+      fail(exc);
+    }
+  });
 
 /**
  * A natural transformation from a Task into a Promise
@@ -277,9 +322,12 @@ Task.fromIO = a => Task((fail, ok) => { try { ok(a.run()); } catch (exc) { fail(
  *
  * Task.of(1).toPromise(); // -> Promise(1)
  */
-Task.fn.toPromise = function () {
-    return new Promise((ok, fail) => { this.run(fail, ok); });
-}
+Task.fn.toPromise = function() {
+  return new Promise((ok, fail) => {
+    this.run(fail, ok);
+  });
+};
+
 /**
  * Concatenates a Task with another. Resolves with the Task which resolves faster
  * or rejects if either of both fail
@@ -297,30 +345,35 @@ Task.fn.toPromise = function () {
  *
  * ms500.concat(ms300); // -> Task(_, 1)
  */
-Task.fn.concat = function (a) {
-    if (Task.is(a)) {
-        const clean = (x, y) => { this.cleanUp(x); a.cleanUp(y); };
-        const task = Task((fail, ok) => {
-            let done = false,
-                states = [];
+Task.fn.concat = function(a) {
+  if (Task.is(a)) {
+    const clean = (x, y) => {
+      this.cleanUp(x);
+      a.cleanUp(y);
+    };
+    const task = Task((fail, ok) => {
+      let done = false,
+        states = [];
 
-            const g = f => v => {
-                if (!done) {
-                    done = true;
-                    delay(() => clean(states[0], states[1]));
-                    f(v);
-                }
-            }
+      const g = f => v => {
+        if (!done) {
+          done = true;
+          delay(() => clean(states[0], states[1]));
+          f(v);
+        }
+      };
 
-            states[0] = this.run(g(fail), g(ok));
-            states[1] = a.run(g(fail), g(ok));
-            return states;
-        });
-        task.cleanUp = clean;
-        return task;
-    }
-    throw `Task::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
-}
+      states[0] = this.run(g(fail), g(ok));
+      states[1] = a.run(g(fail), g(ok));
+
+      return states;
+    });
+    task.cleanUp = clean;
+    return task;
+  }
+  throw `Task::concat cannot append ${typeOf(a)} to ${typeOf(this)}`;
+};
+
 /**
  * Maps a function over the value and resolves with the result
  * @method map
@@ -336,11 +389,15 @@ Task.fn.concat = function (a) {
  *
  * one.map((n) => n + 1); // -> Task(_, 2)
  */
-Task.fn.map = function (f) {
-    const task = Task((fail, ok) => { this.run(fail, v => ok(f(v))); });
-    task.cleanUp = this.cleanUp;
-    return task;
-}
+Task.fn.map = function(f) {
+  const task = Task((fail, ok) => {
+    this.run(fail, v => ok(f(v)));
+  });
+  task.cleanUp = this.cleanUp;
+
+  return task;
+};
+
 /**
  * Flattens a nested Task one level
  * @method flat
@@ -355,11 +412,15 @@ Task.fn.map = function (f) {
  *
  * tasks.flat(); // -> Task(_, 1)
  */
-Task.fn.flat = function () {
-    const task = Task((fail, ok) => { this.run(fail, a => a.run(fail, ok)); });
-    task.cleanUp = this.cleanUp;
-    return task;
-}
+Task.fn.flat = function() {
+  const task = Task((fail, ok) => {
+    this.run(fail, a => a.run(fail, ok));
+  });
+  task.cleanUp = this.cleanUp;
+
+  return task;
+};
+
 /**
  * Maps a Task returning function over a Task and flattens the result
  * @method flatMap
@@ -378,11 +439,15 @@ Task.fn.flat = function () {
  *
  * task.flatMap(inc); // -> Task(_, 2)
  */
-Task.fn.flatMap = function (f) {
-    const task = Task((fail, ok) => { this.run(fail, v => f(v).run(fail, ok)); });
-    task.cleanUp = this.cleanUp;
-    return task;
-}
+Task.fn.flatMap = function(f) {
+  const task = Task((fail, ok) => {
+    this.run(fail, v => f(v).run(fail, ok));
+  });
+  task.cleanUp = this.cleanUp;
+
+  return task;
+};
+
 /**
  * Applies a Task with a function to another Task. Resolves when both resolve or
  * fails if either of both fails
@@ -401,34 +466,61 @@ Task.fn.flatMap = function (f) {
  *
  * apply.ap(task); // -> Task(_, 2)
  */
-Task.fn.ap = function (a) {
-    const clean = (x, y) => { this.cleanUp(x); a.cleanUp(y); };
-    const task = Task((fail, ok) => {
-        let aOk = false,
-            aLoad = false,
-            bOk = false,
-            bLoad = false,
-            rej = false,
-            states = [];
+Task.fn.ap = function(a) {
+  const clean = (x, y) => {
+    this.cleanUp(x);
+    a.cleanUp(y);
+  };
+  const task = Task((fail, ok) => {
+    let aOk = false,
+      aLoad = false,
+      bOk = false,
+      bLoad = false,
+      rej = false,
+      states = [];
 
-        const gRej = v => { if (!rej) { rej = true; fail(v); } }
-        const gRes = f => v => {
-            if (rej) { return; }
-            f(v);
-            if (aLoad && bLoad) {
-                delay(() => clean(states[0], states[1]));
-                return ok(aOk(bOk));
-            }
-            return v;
-        }
+    const gRej = v => {
+      if (!rej) {
+        rej = true;
+        fail(v);
+      }
+    };
 
-        states[0] = this.run(gRej, gRes(w => { aLoad = true; aOk = w; }));
-        states[1] = a.run(gRej, gRes(w => { bLoad = true; bOk = w; }));
-        return states;
-    });
-    task.cleanUp = clean;
-    return task;
-}
+    const gRes = f => v => {
+      if (rej) {
+        return;
+      }
+      f(v);
+      if (aLoad && bLoad) {
+        delay(() => clean(states[0], states[1]));
+        return ok(aOk(bOk));
+      }
+
+      return v;
+    };
+
+    states[0] = this.run(
+      gRej,
+      gRes(w => {
+        aLoad = true;
+        aOk = w;
+      })
+    );
+    states[1] = a.run(
+      gRej,
+      gRes(w => {
+        bLoad = true;
+        bOk = w;
+      })
+    );
+
+    return states;
+  });
+  task.cleanUp = clean;
+
+  return task;
+};
+
 /**
  * Swaps the disjunction of a Task, meaning if it normally resolves it fails and
  * if it normally fails it resolves
@@ -446,11 +538,15 @@ Task.fn.ap = function (a) {
  * ok.swap(); // -> Task(1, _)
  * fail.swap(); // -> Task(_, 1)
  */
-Task.fn.swap = function () {
-    const task = Task((fail, ok) => { this.run(ok, fail); });
-    task.cleanUp = this.cleanUp;
-    return task;
-}
+Task.fn.swap = function() {
+  const task = Task((fail, ok) => {
+    this.run(ok, fail);
+  });
+  task.cleanUp = this.cleanUp;
+
+  return task;
+};
+
 /**
  * Alt implementation, allows to swap a failing Task
  * @method alt
@@ -464,11 +560,15 @@ Task.fn.swap = function () {
  *
  * Task.reject(0).alt(Task.of(1)); // -> Task(_, 1)
  */
-Task.fn.alt = function (a) {
-    const task = Task((fail, ok) => { this.run(() => a.run(fail, ok), ok); });
-    task.cleanUp = this.cleanUp;
-    return task;
-}
+Task.fn.alt = function(a) {
+  const task = Task((fail, ok) => {
+    this.run(() => a.run(fail, ok), ok);
+  });
+  task.cleanUp = this.cleanUp;
+
+  return task;
+};
+
 /**
  * Bifunctor interface, maps either of two functions over the value inside a Task
  * @method biMap
@@ -483,18 +583,21 @@ Task.fn.alt = function (a) {
  * const {Left, Right} = Either;
  *
  * const errToLeft = err =>
- *     err instanceof Error
- *         ? Left(err.message)
- *         : Left(err)
- * 
+ *   err instanceof Error
+ *     ? Left(err.message)
+ *     : Left(err)
+ *
  * const failure = Task.reject(new Error('Should fail'));
  * const success = Task.of(1);
- * 
+ *
  * failure.biMap(errToLeft, Right); // -> Task(Left('Should fail'), _)
  * success.biMap(errToLeft, Right); // -> Task(_, Right(1))
  */
-Task.fn.biMap = function (f, g) {
-    const task = Task((fail, ok) => { this.run(x => fail(f(x)), v => ok(g(v))); });
-    task.cleanUp = this.cleanUp;
-    return task;
-}
+Task.fn.biMap = function(f, g) {
+  const task = Task((fail, ok) => {
+    this.run(x => fail(f(x)), v => ok(g(v)));
+  });
+  task.cleanUp = this.cleanUp;
+
+  return task;
+};

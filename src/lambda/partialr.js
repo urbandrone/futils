@@ -5,12 +5,9 @@
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-
 /*
  * @module lambda
  */
-
 
 /**
  * The partialRight function  allows to implement partial application.
@@ -25,25 +22,27 @@
  * const {partialRight} = require('futils').lambda;
  *
  * const greet = (greeting, separator, name) => {
- *     return `${greeting}${separator}${name}`;
+ *   return `${greeting}${separator}${name}`;
  * }
  *
  * const pGreet = partialRight(greet);
  *
- * greet('Hello', ', ', 'world');         // -> 'Hello, world'
- * greet('Hello', ', ');                  // -> 'Hello, undefined'
+ * greet('Hello', ', ', 'world');     // -> 'Hello, world'
+ * greet('Hello', ', ');          // -> 'Hello, undefined'
  *
- * pGreet('Hello', ', ', 'world');        // -> 'world, Hello'
- * pGreet('Hello', ', ');                 // -> (a -> '${a}, Hello')
+ * pGreet('Hello', ', ', 'world');    // -> 'world, Hello'
+ * pGreet('Hello', ', ');         // -> (a -> '${a}, Hello')
  * pGreet(undefined, undefined, 'world'); // -> (a -> b -> 'world${b}${a}')
  */
 export const partialRight = (f, ...xs) => {
-    let a = xs;
-    if (a.length < f.length) {
-        a = a.concat(new Array(Math.max(0, f.length - a.length)).fill(void 0));
-    }
-    return (...ys) => {
-        let bs = a.map(x => x === void 0 ? ys.shift() : x);
-        return bs.lastIndexOf(void 0) >= 0 ? partialRight(f, ...bs) : f(...bs.reverse());
-    }
-}
+  let a = xs;
+  if (a.length < f.length) {
+    a = a.concat(new Array(Math.max(0, f.length - a.length)).fill(void 0));
+  }
+  return (...ys) => {
+    let bs = a.map(x => (x === void 0 ? ys.shift() : x));
+    return bs.lastIndexOf(void 0) >= 0
+      ? partialRight(f, ...bs)
+      : f(...bs.reverse());
+  };
+};

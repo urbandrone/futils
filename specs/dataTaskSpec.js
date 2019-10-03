@@ -62,7 +62,7 @@ describe('Task', () => {
             Task.timeout(200, () => 1).run(ignore, (n) => { v = n; });
         });
 
-        waitsFor(() => v === 1, 'v should be 1', 500);
+        waitsFor(() => v === 1, 'v should be 1', 3000);
 
         runs(function() {
           expect(v).toBe(1);
@@ -149,11 +149,11 @@ describe('Task', () => {
             Task.fromList(List.Nil()).run(n => { w = n; }, ignore);
         });
 
-        waitsFor(() => v === 1 && w === null, 'v should be 1', 500);
+        waitsFor(() => v === 1 && List.Nil.is(w), 'v should be 1, w should be Nil', 500);
 
         runs(function() {
             expect(v).toBe(1);
-            expect(w).toBe(null);
+            expect(w).toEqual(List.Nil());
         });
     });
 
