@@ -8,6 +8,9 @@
 [![dependencies](https://david-dm.org/urbandrone/futils.svg)](https://david-dm.org/urbandrone/futils)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+# Note
+⚠️ _This project is in maintenance mode and won't receive further updates or changes. If you find a bug, please open a new issue and I'll look after it. In the meantime, you might be interested in my [new project](https://github.com/urbandrone/sibilisp/)._
+
 # About
 futils is a small (around 10 Kilobytes when minimized and gzipped) library for generic functional programming in javascript. It is divided into several namespaces which you can see below:
 
